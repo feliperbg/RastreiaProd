@@ -25,6 +25,7 @@ Este projeto tem como objetivo desenvolver um sistema para o controle das etapas
 ### 🔹 Hardware
 - **ESP32**
 - **RFID**
+- **PROTOCOLO MQTT**
 
 ## 📖 Justificativa
 Atualmente, há poucos sistemas que conseguem monitorar e identificar, com precisão, o tempo de cada etapa do processo de produção e os componentes utilizados de maneira rastreável. Nosso projeto visa preencher essa lacuna, proporcionando um sistema eficiente e acessível.
