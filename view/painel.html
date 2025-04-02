@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel</title>
+    <link rel="stylesheet" type="text/css" href="painel.css">
+
+</head>
+
+<body>
+    <div class = "container">
+
+        <h1><div id="div_dados_usuario"></div> </h1>
+        <nav>
+            <div>
+                <a href="divisoesCSV.html">Enviar CSV Divisoes</a>
+            </div>
+            <div>
+                <a href="divisoes.html">Divisoes</a>
+            </div>
+            <div>
+                <a href="times.html">Times</a>
+            </div>
+            <div>
+                <a href="jogadores.html">Jogadores</a>
+            </div>
+        </nav>
+    </div>
+    
+    <script>
+        const dadosUsuario = localStorage.getItem("dados");
+        const objUsuario = JSON.parse(dadosUsuario);
+        const div_dados_usuario = document.getElementById("div_dados_usuario");
+        div_dados_usuario.appendChild(document.createTextNode("Usuario: " + objUsuario.email))
+        
+    </script>
+</body>
+
+</html>
