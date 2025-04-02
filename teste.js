@@ -9,7 +9,7 @@ async function criarFuncionario() {
     const funcionario = new Funcionario();
 
     // Define os atributos do funcionário
-    funcionario.nome = "ze";
+    funcionario.nome = "joao";
     funcionario.turno = "Manhã";
     funcionario.senha = "senha123";
     funcionario.CPF = "123.456.789-00";
