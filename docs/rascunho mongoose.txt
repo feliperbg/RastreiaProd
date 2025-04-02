@@ -1,0 +1,50 @@
+const {*nome coleção*, *nome tabela*} = mongoose;
+
+const produtoTabela = new Schema({
+	nome: String,
+	código: Number,
+	descrição: String,
+	componentesNecessarios:[{
+		...
+		...
+		...
+	}]
+	validade: Date,
+	precoMontagem: Number,
+	precoVenda: Number,
+	dimensões: Number,
+	quantidade: Number,
+	etapas:[{
+	...
+	}]
+});
+const componentesTabela = new Schema({
+	nome: String,
+	código: Number,
+	descrição: String,
+	dataEntrada: Date,
+	validade: Date,
+	quantidade: Number,
+	precoPagoLote: Number,
+	precoUnidade: Number, 
+	dimensões:[{
+	...
+	}]
+});
+const funcionariosTabela = new Schema({
+	nome: String,
+	código: Number,
+	turno: String,
+	senha: String,
+	validade: Date,
+	cpf: Number,
+	email: String,
+	telefone: Number, 
+	credencial: Number,
+	dataNascimento: Date,
+	permissões:[{
+	...
+	}]
+});
+
+	

@@ -1,0 +1,19 @@
+{
+  "name": "tcc",
+  "version": "1.0.0",
+  "description": "Sistema de Contrles de Etapa do Processo de Producao e Rastreabilidade de Componentes",
+  "main": "app.js",
+  "scripts": {
+    "start": "npx nodemon app.js"
+  },
+  "author": "Felipe Goncalves, Jose Gadioli, Joao Nogueira",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.13.0",
+    "mongoose": "^8.10.1"
+  }
+}
