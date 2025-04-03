@@ -85,6 +85,29 @@ body {
   font-size: 16px;
   color: #000000;
 }
+.user-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-toggle-icon {
+  position: absolute;
+  right: 10px;
+  cursor: pointer;
+  z-index: 10;  /* Garante que o ícone esteja na frente */
+  padding: 5px;  /* Aumenta a área de clique */
+}
+
+
+
+/* Move o label para cima quando o input tem autocomplete */
+.user-box input:-webkit-autofill ~ label,
+.user-box input:-webkit-autofill:focus ~ label {
+  transform: translateY(-20px); /* Animação da label */
+  font-size: 16px;
+  color: #000000;
+}
 
 
 button {

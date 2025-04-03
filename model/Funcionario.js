@@ -19,7 +19,7 @@ class Funcionario {
     constructor(nome, turno, senha, CPF, email, telefone, credencial, dataNascimento, permissoes, role) {
         this._nome = nome;
         this._turno = turno;
-        this._senha = hashSenha(senha);
+        this._senha = senha;
         this._CPF = CPF;
         this._email = email;
         this._telefone = telefone;
@@ -28,9 +28,78 @@ class Funcionario {
         this._permissoes = permissoes;
         this._role = role;
     }
-    hashSenha(senha) {
-        return bcrypt.hashSync(senha, 10);
+
+    // Getters e Setters
+    get nome() {
+        return this._nome;
     }
+    set nome(nome) {
+        this._nome = nome;
+    }
+
+    get turno() {
+        return this._turno;
+    }
+    set turno(turno) {
+        this._turno = turno;
+    }
+
+    get senha() {
+        return this._senha;
+    }
+    set senha(senha) {
+        this._senha = senha;
+    }
+
+    get CPF() {
+        return this._CPF;
+    }
+    set CPF(CPF) {
+        this._CPF = CPF;
+    }
+
+    get email() {
+        return this._email;
+    }
+    set email(email) {
+        this._email = email;
+    }
+
+    get telefone() {
+        return this._telefone;
+    }
+    set telefone(telefone) {
+        this._telefone = telefone;
+    }
+
+    get credencial() {
+        return this._credencial;
+    }
+    set credencial(credencial) {
+        this._credencial = credencial;
+    }
+
+    get dataNascimento() {
+        return this._dataNascimento;
+    }
+    set dataNascimento(dataNascimento) {
+        this._dataNascimento = dataNascimento;
+    }
+
+    get permissoes() {
+        return this._permissoes;
+    }
+    set permissoes(permissoes) {
+        this._permissoes = permissoes;
+    }
+
+    get role() {
+        return this._role;
+    }
+    set role(role) {
+        this._role = role;
+    }
+    
     /**
      * Método para criar um novo funcionário no banco de dados.
      * A senha é hasheada antes de ser salva para garantir a segurança.
@@ -117,20 +186,21 @@ class Funcionario {
         try {
             const funcionario = await Funcionarios.findOne({ credencial: this._credencial });
             if (funcionario) {
-                // Compara a senha fornecida com a senha hash armazenada no banco
-                const senhaValida = await bcrypt.compare(this._senha, funcionario.senha);
-                if (senhaValida) {
-                    this._idFuncionario = funcionario._id;  // Armazena o ID do funcionário
-                    return true;  // Retorna true se a senha for válida
+                // Comparação direta (sem hash)
+                if (this._senha === funcionario.senha) {
+                    this._idFuncionario = funcionario._id;
+                    return true; // Login bem-sucedido
                 }
             }
-            return false;  // Retorna false se as credenciais forem inválidas
+            return false; // Credenciais inválidas
         } catch (error) {
             console.error('Erro ao realizar login:', error);
-            return false;  // Retorna false em caso de erro
+            return false;
         }
     }
-
+    
+    
+    
     /**
      * Método para buscar todos os funcionários cadastrados no banco de dados.
      * Retorna os funcionários ordenados por nome.

@@ -11,11 +11,11 @@ async function criarFuncionario() {
     // Define os atributos do funcionário
     funcionario.nome = "Felps Jubior";
     funcionario.turno = "Manhã";
-    funcionario.senha = "senha123";
+    funcionario.senha = "senha1234";
     funcionario.CPF = "123.456.789-00";
     funcionario.email = "joao.silva@example.com";
     funcionario.telefone = "(11) 98765-4321";
-    funcionario.credencial = "12345";
+    funcionario.credencial = "123456";
     funcionario.dataNascimento = new Date("1990-01-01");
     funcionario.permissoes = ["admin", "gerente"];
 
@@ -65,9 +65,7 @@ async function consultarFuncionariosPelaCredencial() {
 async function main() {
     await criarFuncionario(); // Cria um funcionário
     await consultarFuncionarios(); // Consulta todos os funcionários
-    await deletarFuncionario();
     await consultarFuncionariosPelaCredencial();
-    Banco.close(); // Fecha a conexão com o banco de dados
 }
 
 main().catch(err => console.error('Erro durante a execução:', err));

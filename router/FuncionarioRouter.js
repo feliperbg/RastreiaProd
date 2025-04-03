@@ -11,6 +11,5 @@ module.exports = class FuncionariRouter {
         this._router.post('/',
             this._funcionarioControl.login
         );
-        return this._router;
     }
 }

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Esqueceu a Senha</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        .container h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .form-group input:focus {
+            border-color: #007BFF;
+            outline: none;
+        }
+        .btn {
+            width: 100%;
+            padding: 10px;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Recuperar Senha</h1>
+        <form action="/recuperar-senha" method="POST">
+            <div class="form-group">
+                <label for="credential">Credencial</label>
+                <input type="text" id="txtCredencial" name="credential" placeholder="Digite sua credencial" required>
+            </div>
+            <div class="form-group">
+                <label for="birthdate">Data de Nascimento</label>
+                <input type="date" id="data_nasc" name="birthdate" required>
+            </div>
+            <button type="submit" class="btnRecuperar">Enviar</button>
+        </form>
+    </div>
+</body>
+<script>
+    const btnRecuperar = document.getElementById("btnRecuperar");
+    const txtCredencial = document.getElementById("txtCredencial");
+    const txtDataNascimento = document.getElementById("dtDataNascimento");
+    // Ação do botão de login
+    btnLogin.onclick = function (event) {
+    event.preventDefault(); // Evita o comportamento padrão do botão
+    recuperarSenhar();
+    };
+</script>
+</html>
