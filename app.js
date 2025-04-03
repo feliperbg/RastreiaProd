@@ -2,11 +2,12 @@ const express = require('express');
 const path = require('path');
 const FuncionarioRouter = require('./router/FuncionarioRouter');
 const BancoMongoose = require("./model/BancoMongoose");
-
-
+const cors = require("cors");
+app.use(cors());m
 const app = express();
 const Banco = new BancoMongoose();
 const portaServico = 8081;
+
 app.use(express.json()); 
 app.use(express.static(path.join(__dirname, 'view')));
 
