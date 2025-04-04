@@ -1,106 +1,48 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Sistema LP</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login</title>
+  <link rel="stylesheet" href="style.css"/>
+  <script defer src="scriptLogin.js"></script>
 </head>
 <body>
-    <div class="container">
-        <div class="login-box">
-            <img class="logo-login" src="logo-login.jpg">
-            <h1>Login</h1>
-            <h2>Por favor identifique-se.</h2>
-            <form id="loginForm">
-                <div class="user-box">
-                    <span><i class="fa-solid fa-user"></i></span>
-                    <input type="text" name="txtCredencial" id="txtCredencial" required>
-                    <label>Credencial</label>
-                </div>
-                <div class="user-box">
-                    <span><i class="fa-solid fa-lock"></i></span>
-                    <input type="password" name="txtSenha" id="password" required>
-                    <label>Senha</label>
-                    <span class="password-toggle-icon">
-                        <i class="fas fa-eye"></i>
-                    </span>
-                </div>
-                <div class="esqueceuSenha">
-                    <a href="esqueceuSenha.html">Esqueceu sua senha?</a>
-                </div>
-                <button type="submit">ENTRAR</button>
-            </form>
-            <div id="divResposta"></div>
+  <div class="container">
+    <div class="login-box">
+      <h1>Login</h1>
+      <h2>Bem-vindo de volta</h2>
+
+      <form id="loginForm">
+        <div class="user-box">
+          <span><i class="fa-solid fa-user"></i></span>
+          <input type="text" id="txtCredencial" required />
+          <label>Credencial</label>
         </div>
+
+        <div class="user-box">
+          <span><i class="fa-solid fa-lock"></i></span>
+          <input type="password" id="password" required />
+          <label>Senha</label>
+          <span id="togglePassword" class="password-toggle-icon">
+            <i class="fas fa-eye"></i>
+          </span>
+        </div>
+
+        <div class="lembrar-senha">
+          <input type="checkbox" id="lembrarSenha" />
+          <label for="lembrarSenha">Lembrar-me</label>
+        </div>
+
+        <div class="esqueceuSenha">
+          <a href="#">Esqueceu sua senha?</a>
+        </div>
+
+        <button type="submit" id="btnLogin">ENTRAR</button>
+      </form>
+
+      <div id="divResposta"></div>
     </div>
+  </div>
 </body>
-<script>
-document.querySelector(".password-toggle-icon").addEventListener("click", function () {
-    const passwordField = document.getElementById("password");
-    const toggleIcon = this.querySelector("i");
-
-    if (passwordField.type === "password") {
-        passwordField.type = "text";
-        toggleIcon.classList.remove("fa-eye");
-        toggleIcon.classList.add("fa-eye-slash");
-    } else {
-        passwordField.type = "password";
-        toggleIcon.classList.remove("fa-eye-slash");
-        toggleIcon.classList.add("fa-eye");
-    }
-});
-
-document.getElementById("loginForm").addEventListener("submit", function (event) {
-    event.preventDefault();
-    fazerLogin();
-});
-
-function fazerLogin() {
-    const credencial = document.getElementById("txtCredencial").value.trim();
-    const senha = document.getElementById("password").value.trim();
-
-    fetch("/login", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ Funcionario: { credencial, senha } }),
-    })
-    .then(res => {
-        if (!res.ok) throw new Error("Erro na resposta do servidor");
-        return res.json();
-    })
-    .then(dados => {
-        if (dados.status) {
-            Swal.fire({
-                icon: "success",
-                title: "Sucesso",
-                text: "Login feito com sucesso!",
-                confirmButtonText: "Ok",
-            }).then(() => {
-                localStorage.setItem("dados", JSON.stringify(dados));
-                window.location.href = "painel.html";
-            });
-        } else {
-            Swal.fire({
-                icon: "warning",
-                title: "Atenção",
-                text: "Credencial ou senha incorretos!",
-            });
-        }
-    })
-    .catch(err => {
-        Swal.fire({
-            icon: "warning",
-            title: "Erro",
-            text: err.message,
-        });
-    });
-}
-</script>
 </html>

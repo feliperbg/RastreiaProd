@@ -11,18 +11,23 @@ module.exports = class FuncionarioControl {
         const logou = await funcionario.login();
         
         if (logou) {
-            // Payload para o token JWT
             const payloadToken = {
                 credencialFuncionario: funcionario.credencial,
                 idFuncionario: funcionario.idFuncionario,
-                role: funcionario.role,  // 🔹 Agora o role vem do banco!
+                role: funcionario.role,
             };
-    
-            // Gera o token JWT
+
             const jwt = new TokenJWT();
             const token_string = jwt.gerarToken(payloadToken);
-    
-            // Resposta de sucesso
+
+            // 🔒 Envia o token como cookie HTTPOnly (seguro e invisível ao JS do navegador)
+            response.cookie("authToken", token_string, {
+                httpOnly: true,
+                maxAge: 1000 * 60 * 60 * 24 * 30, // 30 dias
+                sameSite: "Lax", // Evita CSRF básico
+                secure: false // Coloque `true` se estiver usando HTTPS
+            });
+
             const objResposta = {
                 status: true,
                 cod: 1,
@@ -30,17 +35,16 @@ module.exports = class FuncionarioControl {
                 Funcionario: {
                     idFuncionario: funcionario.idFuncionario,
                     credencialFuncionario: funcionario.credencial,
-                    role: funcionario.role,  // 🔹 Pegando do banco!
-                },
-                token: token_string,
+                    role: funcionario.role,
+                }
             };
+
             return response.status(200).send(objResposta);
         } else {
-            // Resposta de falha
             return response.status(401).send({
                 status: false,
                 msg: 'Usuário ou senha inválidos',
             });
         }
-    }    
+    }
 };
