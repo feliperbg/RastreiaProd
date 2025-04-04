@@ -1,96 +1,123 @@
-const Swal = require("sweetalert2");
-
-const btnLogin = document.getElementById("btnLogin");
-const txtCredencial = document.getElementById("txtEmail");
-const txtSenha = document.getElementById("txtSenha");
-const divResposta = document.getElementById("divResposta");
-const passwordField = document.getElementById("password");
-const togglePassword = document.getElementById("togglePassword");
-
-function togglePasswordVisibility() {
+document.addEventListener("DOMContentLoaded", function () {
+  const btnLogin = document.getElementById("btnLogin");
+  const txtCredencial = document.getElementById("txtCredencial");
   const passwordField = document.getElementById("password");
-  const toggleIcon = document.querySelector(".password-toggle-icon i");
+  const togglePassword = document.getElementById("togglePassword");
+  const lembrarSenha = document.getElementById("lembrarSenha");
+  const divResposta = document.getElementById("divResposta");
 
-  if (passwordField.type === "password") {
-    passwordField.type = "text";
-    toggleIcon.classList.remove("fa-eye");
-    toggleIcon.classList.add("fa-eye-slash");
-  } else {
-    passwordField.type = "password";
-    toggleIcon.classList.remove("fa-eye-slash");
-    toggleIcon.classList.add("fa-eye");
+  if (!btnLogin || !txtCredencial || !passwordField || !togglePassword || !lembrarSenha || !divResposta) {
+      console.error("Erro: Elementos HTML não encontrados!");
+      return;
   }
-}
 
+  // Mostrar/ocultar senha
+  togglePassword.addEventListener("click", function () {
+    const icon = togglePassword.querySelector("i");
+    if (passwordField.type === "password") {
+      passwordField.type = "text";
+      icon.classList.replace("fa-eye", "fa-eye-slash");
+    } else {
+      passwordField.type = "password";
+      icon.classList.replace("fa-eye-slash", "fa-eye");
+    }
+  });
 
+  // Verifica se há login salvo
+  let loginSalvo;
+  try {
+    loginSalvo = JSON.parse(localStorage.getItem("loginSalvo"));
+  } catch (e) {
+    console.error("Erro ao ler loginSalvo:", e);
+    localStorage.removeItem("loginSalvo");
+  }
 
+  if (loginSalvo) {
+    txtCredencial.value = loginSalvo.credencial; // Apenas a credencial
+  }
 
+  btnLogin.addEventListener("click", function (event) {
+    event.preventDefault();
+    fazerLogin(false);
+  });
 
-// Ação do botão de login
-btnLogin.onclick = function (event) {
-  event.preventDefault(); // Evita o comportamento padrão do botão
-  fazerLogin();
-};
+  function fazerLogin(automatico) {
+    const credencial = txtCredencial.value.trim();
+    const senha = passwordField.value.trim();
 
-// Função de login
-function fazerLogin() {
-  const credencial = txtCredencial.value.trim();
-  const senha = txtSenha.value.trim();
-  const dados = {
-    Funcionario: {
-      credencial: credencial,
-      senha: senha,
-    },
-  };
+    if (!credencial || !senha) {
+      exibirMensagem("Preencha todos os campos!", "erro");
+      return;
+    }
+
+    fetch("/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ credencial, senha }),
+      credentials: "include"
+    })
+    .then(res => {
+      if (!res.ok) throw new Error("Erro na resposta do servidor");
+      return res.json();
+    })
+    .then(dados => {
+      console.log("Dados do servidor:", dados);
+      if (dados.status) {
+        if (!automatico && lembrarSenha.checked) {
+          localStorage.setItem("loginSalvo", JSON.stringify({ credencial }));
+        }
+        exibirMensagem("Login bem-sucedido! Redirecionando...", "sucesso");
+        setTimeout(() => {
+          sessionStorage.setItem("dados", JSON.stringify(dados));
+          window.location.href = "painel.html";
+        }, 2000);
+      } else {
+        exibirMensagem(dados.msg || "Credencial ou senha incorretos!", "erro");
+      }
+    })
+    .catch(error => {
+      exibirMensagem(`Erro ao fazer login: ${error.message}`, "erro");
+    });
+  }
+  document.addEventListener("DOMContentLoaded", function () {
+    fetch("/verifica-login", {
+      method: "GET",
+      credentials: "include"
+    })
+      .then(res => res.json())
+      .then(dados => {
+        if (dados.status) {
+          // Login automático com sucesso
+          console.log("Usuário ainda autenticado:", dados.funcionario);
+          window.location.href = "painel.html";
+        } else {
+          console.log("Token inválido, fazer login normal.");
+        }
+      })
+      .catch(err => {
+        console.error("Erro ao verificar login automático:", err);
+      });
+  });
   
 
-  const uri = "/login";
-  fetch(uri, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(dados),
-  })
-    .then((resposta_backEnd) => {
-      if (!resposta_backEnd.ok) {
-        throw new Error("Erro na resposta do servidor");
-      }
-      return resposta_backEnd.json();
-    })
-    .then((dados_resposta) => {
-      processarResultados(dados_resposta);
-    })
-    .catch((error) => {
-      Swal.fire({
-        icon: "warning",
-        title: "Atenção",
-        text: error.message,
-      });
-    });
-}
+  function exibirMensagem(texto, tipo) {
+    divResposta.innerText = texto;
+    divResposta.style.padding = "10px";
+    divResposta.style.marginTop = "10px";
+    divResposta.style.borderRadius = "5px";
+    divResposta.style.textAlign = "center";
 
-// Processar resultados do login
-function processarResultados(dados) {
-  if (dados.status) {
-    Swal.fire({
-      icon: "success",
-      title: "Sucesso",
-      text: "Login feito com sucesso!",
-      showCancelButton: true,
-      confirmButtonText: "Ok",
-      cancelButtonText: "Cancelar",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        localStorage.setItem("dados", JSON.stringify(dados));
-        window.location.href = "painel.html";
-      }
-    });
-  } else {
-    Swal.fire({
-      icon: "warning",
-      title: "Atenção",
-      text: "Credencial ou senha incorretos!",
-    });
+    if (tipo === "sucesso") {
+      divResposta.style.backgroundColor = "#d4edda";
+      divResposta.style.color = "#155724";
+    } else {
+      divResposta.style.backgroundColor = "#f8d7da";
+      divResposta.style.color = "#721c24";
+    }
+
+    setTimeout(() => {
+      divResposta.innerText = "";
+      divResposta.style = "";
+    }, 3000);
   }
-}
+});
