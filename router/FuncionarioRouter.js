@@ -8,29 +8,12 @@ module.exports = class FuncionarioRouter {
     }
 
     createRoutes() {
-        this._router.post('/', (req, res) => {
-            const { credencial, senha } = req.body;
-
-            // Simulação de login bem-sucedido
-            if (credencial === '123456' && senha === 'senha1234') {
-                // Criar um token (exemplo simples)
-                const dadosUsuario = localStorage.getItem("dados");
-                dadosUsuario = JSON.parse(dadosUsuario);
-                token = dadosUsuario.token;
-
-                // Configurar o cookie seguro
-                res.cookie('auth_token', token, {
-                    httpOnly: true, // Impede acesso via JavaScript
-                    secure: false, // Altere para true se usar HTTPS
-                    sameSite: 'Strict' // Protege contra CSRF
-                });
-
-                return res.json({ status: true, msg: "Logado com sucesso" });
-            } else {
-                return res.status(401).json({ status: false, msg: "Credenciais inválidas" });
-            }
-        });
-
+        // POST para fazer login (chamando o controller)
+        this._router.post('/login', (req, res) => {
+            console.log('POST /funcionario/login foi chamado');
+            this._funcionarioControl.login(req, res);
+        });                     
+    
         return this._router;
     }
 };
