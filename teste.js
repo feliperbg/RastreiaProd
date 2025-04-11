@@ -51,7 +51,7 @@ async function consultarFuncionariosPelaCredencial() {
       console.error('Erro ao consultar funcionários:', error);
   }
 }
-/*async function deletarFuncionario(){
+async function deletarFuncionario(){
   const funcionario = new Funcionario();
   try{
     funcionario.idFuncionario = '67c8e18023889a6fd7cd9de6';
@@ -60,7 +60,7 @@ async function consultarFuncionariosPelaCredencial() {
   }catch(error){
     console.error('Erro ao deletar funcionários:', error);
   }
-}*/
+}
 // Executa os testes em sequência
 async function main() {
     await criarFuncionario(); // Cria um funcionário
