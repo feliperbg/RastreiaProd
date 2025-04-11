@@ -1,4 +1,37 @@
 @import url("https://fonts.googleapis.com/css?family=Poppins:400,500&display=swap");
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css");
+
+:root {
+  /* Cores principais */
+  --cor-primaria: #1a00af;
+  --cor-primaria-hover: #0026ff;
+  --cor-texto: #333;
+  --cor-texto-secundario: #646464;
+  --cor-fundo: #fff;
+  --cor-borda: #333;
+  --cor-borda-ativa: #000;
+  --cor-icone: #333;
+  --cor-icone-hover: #000;
+  
+  /* Tamanhos */
+  --tamanho-icone: 18px;
+  --tamanho-texto: 16px;
+  --tamanho-texto-pequeno: 12px;
+  --tamanho-texto-label: 14px;
+  
+  /* Espaçamentos */
+  --espacamento-pequeno: 5px;
+  --espacamento-medio: 10px;
+  --espacamento-grande: 20px;
+  
+  /* Bordas */
+  --borda-radius: 5px;
+  --borda-espessura: 2px;
+  
+  /* Transições */
+  --transicao-rapida: 0.3s;
+  --transicao-media: 0.5s;
+}
 
 * {
   margin: 0;
@@ -12,33 +45,34 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #fff;
+  background-color: var(--cor-fundo);
 }
 
 .container {
   width: 100%;
   max-width: 400px;
-  padding: 20px;
+  padding: var(--espacamento-grande);
 }
 
 .login-box {
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 5px;
+  background-color: var(--cor-fundo);
+  padding: var(--espacamento-grande);
+  border-radius: var(--borda-radius);
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .login-box h1 {
   padding: 0;
-  color: #333;
+  color: var(--cor-texto);
   text-align: center;
   text-transform: uppercase;
 }
+
 .login-box h2 {
-  font-size: 12px;
+  font-size: var(--tamanho-texto-pequeno);
   margin: 0 0 30px;
   padding: 0;
-  color: #646464;
+  color: var(--cor-texto-secundario);
   text-align: center;
   text-transform: uppercase;
 }
@@ -51,18 +85,18 @@ body {
 }
 
 .user-box span {
-  margin-right: 10px; /* Espaço entre o ícone e o input */
-  font-size: 20px; /* Tamanho do ícone */
-  color: #333;
+  margin-right: var(--espacamento-medio);
+  font-size: 20px;
+  color: var(--cor-icone);
 }
 
 .user-box input {
-  flex: 1; /* Faz o input ocupar o restante do espaço */
-  padding: 10px 0;
-  font-size: 16px;
-  color: #333;
+  flex: 1;
+  padding: var(--espacamento-medio) 0;
+  font-size: var(--tamanho-texto);
+  color: var(--cor-texto);
   border: none;
-  border-bottom: 2px solid #333;
+  border-bottom: var(--borda-espessura) solid var(--cor-borda);
   outline: none;
   background: transparent;
   position: relative;
@@ -72,29 +106,25 @@ body {
   position: absolute;
   top: 0;
   left: 0;
-  padding: 10px 30px;
-  font-size: 16px;
-  color: #333;
+  padding: var(--espacamento-medio) 30px;
+  font-size: var(--tamanho-texto);
+  color: var(--cor-texto);
   pointer-events: none;
-  transition: 0.5s;
+  transition: all var(--transicao-media) ease;
 }
 
 .user-box input:focus ~ label,
 .user-box input:valid ~ label {
-  transform: translateY(-20px); /* Animação da label */
-  font-size: 16px;
-  color: #000000;
+  transform: translateY(-20px);
+  font-size: var(--tamanho-texto);
+  color: var(--cor-borda-ativa);
 }
-.user-box {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
+
 .lembrar-senha {
   display: flex;
   align-items: center;
-  gap: 5px;
-  margin-bottom: 10px;
+  gap: var(--espacamento-pequeno);
+  margin-bottom: var(--espacamento-medio);
 }
 
 .lembrar-senha input {
@@ -103,73 +133,62 @@ body {
 }
 
 .lembrar-senha label {
-  font-size: 14px;
+  font-size: var(--tamanho-texto-label);
   cursor: pointer;
 }
-
 
 .password-toggle-icon {
   position: absolute;
-  right: 10px;
-  cursor: pointer;
-  z-index: 10;  /* Garante que o ícone esteja na frente */
-  padding: 5px;  /* Aumenta a área de clique */
-}
-
-
-
-/* Move o label para cima quando o input tem autocomplete */
-.user-box input:-webkit-autofill ~ label,
-.user-box input:-webkit-autofill:focus ~ label {
-  transform: translateY(-20px); /* Animação da label */
-  font-size: 16px;
-  color: #000000;
-}
-
-
-button {
-  background-color: #1a00af;
-  color: #fff;
-  width: 100%;
-  padding: 10px 20px;
-  font-size: 16px;
-  border-radius: 5px;
-  border: #fff;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #0026ff;
-  color: #fff;
-  border: 1px solid #fff;
-}
-.password-toggle-icon {
-  position: absolute;
+  right: var(--espacamento-medio);
   top: 50%;
-  right: 10px;
   transform: translateY(-50%);
   cursor: pointer;
+  z-index: 10;
+  padding: var(--espacamento-pequeno);
 }
 
 .password-toggle-icon i {
-  font-size: 18px;
+  font-size: var(--tamanho-icone);
   line-height: 1;
-  color: #333;
-  transition: color 0.3s ease-in-out;
-  margin-bottom: 20px;
+  color: var(--cor-icone);
+  transition: color var(--transicao-rapida) ease-in-out;
 }
 
 .password-toggle-icon i:hover {
-  color: #000;
+  color: var(--cor-icone-hover);
 }
 
-.esqueceuSenha{
-  color: #333;
-  margin: 0 0 10px;
-  font-size: 12px;
+.user-box input:-webkit-autofill ~ label,
+.user-box input:-webkit-autofill:focus ~ label {
+  transform: translateY(-20px);
+  font-size: var(--tamanho-texto);
+  color: var(--cor-borda-ativa);
+}
+
+button {
+  background-color: var(--cor-primaria);
+  color: var(--cor-fundo);
+  width: 100%;
+  padding: var(--espacamento-medio) var(--espacamento-grande);
+  font-size: var(--tamanho-texto);
+  border-radius: var(--borda-radius);
+  border: 1px solid var(--cor-fundo);
+  cursor: pointer;
+  transition: all var(--transicao-rapida) ease;
+}
+
+button:hover {
+  background-color: var(--cor-primaria-hover);
+}
+
+.esqueceuSenha {
+  color: var(--cor-texto);
+  margin: 0 0 var(--espacamento-medio);
+  font-size: var(--tamanho-texto-pequeno);
   text-align: center;
 }
-.logo-login{
+
+.logo-login {
   width: 100%;
   height: 60px;
 }
