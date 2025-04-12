@@ -1,21 +1,7 @@
-const Funcionarios = require('./FuncionariosTabela');  // Modelo Mongoose, importação do modelo de Funcionários
-const bcrypt = require('bcrypt');  // Biblioteca bcrypt para hash de senhas
+const Funcionarios = require('./FuncionariosTabela');  // Modelo Mongoose
+const bcrypt = require('bcrypt');
 
 class Funcionario {
-    /**
-     * Construtor para inicializar os dados de um funcionário.
-     * 
-     * @param {string} nome - Nome do funcionário.
-     * @param {string} turno - Turno de trabalho do funcionário.
-     * @param {string} senha - Senha do funcionário, que será hasheada.
-     * @param {string} CPF - CPF do funcionário.
-     * @param {string} email - E-mail do funcionário.
-     * @param {string} telefone - Número de telefone do funcionário.
-     * @param {string} credencial - Credencial do funcionário usada para login.
-     * @param {Date} dataNascimento - Data de nascimento do funcionário.
-     * @param {Array} permissoes - Permissões atribuídas ao funcionário.
-     * @param {string} role - Cargo ou função do funcionário.
-     */
     constructor(nome, turno, senha, CPF, email, telefone, credencial, dataNascimento, permissoes, role) {
         this._nome = nome;
         this._turno = turno;
@@ -30,89 +16,53 @@ class Funcionario {
     }
 
     // Getters e Setters
-    get nome() {
-        return this._nome;
-    }
-    set nome(nome) {
-        this._nome = nome;
+    get nome() { return this._nome; }
+    set nome(nome) { this._nome = nome; }
+
+    get turno() { return this._turno; }
+    set turno(turno) { this._turno = turno; }
+
+    get senha() { return this._senha; }
+    set senha(senha) { this._senha = senha; }
+
+    get CPF() { return this._CPF; }
+    set CPF(CPF) { this._CPF = CPF; }
+
+    get email() { return this._email; }
+    set email(email) { this._email = email; }
+
+    get telefone() { return this._telefone; }
+    set telefone(telefone) { this._telefone = telefone; }
+
+    get credencial() { return this._credencial; }
+    set credencial(credencial) { this._credencial = credencial; }
+
+    get dataNascimento() { return this._dataNascimento; }
+    set dataNascimento(dataNascimento) { this._dataNascimento = dataNascimento; }
+
+    get permissoes() { return this._permissoes; }
+    set permissoes(permissoes) { this._permissoes = permissoes; }
+
+    get role() { return this._role; }
+    set role(role) { this._role = role; }
+
+    get idFuncionario() { return this._idFuncionario; }
+    set idFuncionario(id) { this._idFuncionario = id; }
+
+    // Hasheia a senha com bcrypt
+    async hashSenha(senha) {
+        return await bcrypt.hash(senha, 10);
     }
 
-    get turno() {
-        return this._turno;
-    }
-    set turno(turno) {
-        this._turno = turno;
-    }
-
-    get senha() {
-        return this._senha;
-    }
-    set senha(senha) {
-        this._senha = senha;
-    }
-
-    get CPF() {
-        return this._CPF;
-    }
-    set CPF(CPF) {
-        this._CPF = CPF;
-    }
-
-    get email() {
-        return this._email;
-    }
-    set email(email) {
-        this._email = email;
-    }
-
-    get telefone() {
-        return this._telefone;
-    }
-    set telefone(telefone) {
-        this._telefone = telefone;
-    }
-
-    get credencial() {
-        return this._credencial;
-    }
-    set credencial(credencial) {
-        this._credencial = credencial;
-    }
-
-    get dataNascimento() {
-        return this._dataNascimento;
-    }
-    set dataNascimento(dataNascimento) {
-        this._dataNascimento = dataNascimento;
-    }
-
-    get permissoes() {
-        return this._permissoes;
-    }
-    set permissoes(permissoes) {
-        this._permissoes = permissoes;
-    }
-
-    get role() {
-        return this._role;
-    }
-    set role(role) {
-        this._role = role;
-    }
-    
-    /**
-     * Método para criar um novo funcionário no banco de dados.
-     * A senha é hasheada antes de ser salva para garantir a segurança.
-     * 
-     * @returns {boolean} Retorna true se o funcionário foi criado com sucesso, ou false em caso de erro.
-     */
+    // Cria um novo funcionário
     async create() {
         try {
-            // Criação do novo documento usando o modelo Mongoose
+            const senhaHasheada = await this.hashSenha(this._senha);
+
             const funcionario = new Funcionarios({
                 nome: this._nome,
                 turno: this._turno,
-                senha: this._senha, 
+                senha: senhaHasheada,
                 CPF: this._CPF,
                 email: this._email,
                 telefone: this._telefone,
@@ -122,44 +72,23 @@ class Funcionario {
                 role: this._role,
             });
 
-            // Salvando o funcionário no banco de dados
             await funcionario.save();
-            return true;  // Retorna true se o funcionário foi criado com sucesso
+            return true;
         } catch (error) {
             console.error('Erro ao criar funcionário:', error);
-            return false;  // Retorna false em caso de erro
+            return false;
         }
     }
 
-    /**
-     * Método para excluir um funcionário do banco de dados usando seu ID.
-     * 
-     * @returns {boolean} Retorna true se o funcionário foi excluído com sucesso, ou false se houve erro.
-     */
-    async delete() {
-        try {
-            const result = await Funcionarios.findByIdAndDelete(this._idFuncionario);
-            return result !== null;  // Retorna true se o funcionário foi excluído
-        } catch (error) {
-            console.error('Erro ao excluir funcionário:', error);
-            return false;  // Retorna false em caso de erro
-        }
-    }
-
-    /**
-     * Método para atualizar os dados de um funcionário no banco de dados.
-     * Se a senha for alterada, ela será novamente hasheada.
-     * 
-     * @returns {boolean} Retorna true se o funcionário foi atualizado com sucesso, ou false em caso de erro.
-     */
+    // Atualiza os dados de um funcionário
     async update() {
         try {
+            const senhaHasheada = await this.hashSenha(this._senha);
 
-            // Atualizando os dados do funcionário
             const updatedFuncionario = await Funcionarios.findByIdAndUpdate(this._idFuncionario, {
                 nome: this._nome,
                 turno: this._turno,
-                senha: this._senha,
+                senha: senhaHasheada,
                 CPF: this._CPF,
                 email: this._email,
                 telefone: this._telefone,
@@ -167,90 +96,79 @@ class Funcionario {
                 dataNascimento: this._dataNascimento,
                 permissoes: this._permissoes,
                 role: this._role
-            }, { new: true });  // Retorna o documento atualizado
+            }, { new: true });
 
-            return updatedFuncionario !== null;  // Retorna true se a atualização for bem-sucedida
+            return updatedFuncionario !== null;
         } catch (error) {
             console.error('Erro ao atualizar funcionário:', error);
-            return false;  // Retorna false em caso de erro
+            return false;
         }
     }
 
-    /**
-     * Método para realizar o login de um funcionário.
-     * Compara a senha fornecida com a senha armazenada no banco de dados.
-     * 
-     * @returns {boolean} Retorna true se o login for bem-sucedido, ou false se a credencial ou senha estiverem incorretas.
-     */
+    // Login do funcionário (validação de senha com bcrypt)
     async login() {
         try {
             const funcionario = await Funcionarios.findOne({ credencial: this._credencial });
             if (funcionario) {
-                // Comparação direta (sem hash)
-                if (this._senha === funcionario.senha) {
+                const senhaConfere = await bcrypt.compare(this._senha, funcionario.senha);
+                if (senhaConfere) {
                     this._idFuncionario = funcionario._id;
-                    return true; // Login bem-sucedido
+                    return true;
                 }
             }
-            return false; // Credenciais inválidas
+            return false;
         } catch (error) {
             console.error('Erro ao realizar login:', error);
             return false;
         }
     }
-    
-    
-    
-    /**
-     * Método para buscar todos os funcionários cadastrados no banco de dados.
-     * Retorna os funcionários ordenados por nome.
-     * 
-     * @returns {Array} Retorna uma lista de funcionários ou uma lista vazia em caso de erro.
-     */
-    async readAll() {
+
+    // Deleta um funcionário pelo ID
+    async delete() {
         try {
-            return await Funcionarios.find().sort('nome');  // Retorna todos os funcionários ordenados por nome
+            const result = await Funcionarios.findByIdAndDelete(this._idFuncionario);
+            return result !== null;
         } catch (error) {
-            console.error('Erro ao buscar funcionários:', error);
-            return [];  // Retorna uma lista vazia em caso de erro
+            console.error('Erro ao excluir funcionário:', error);
+            return false;
         }
     }
 
-    /**
-     * Método para buscar um funcionário específico pelo seu ID.
-     * 
-     * @param {string} idFuncionario - ID do funcionário a ser buscado.
-     * @returns {Object|null} Retorna o funcionário encontrado ou null caso não encontre.
-     */
+    // Lista todos os funcionários
+    async readAll() {
+        try {
+            return await Funcionarios.find().sort('nome');
+        } catch (error) {
+            console.error('Erro ao buscar funcionários:', error);
+            return [];
+        }
+    }
+
+    // Busca um funcionário por ID
     async readByID(idFuncionario) {
         try {
             const funcionario = await Funcionarios.findById(idFuncionario);
             if (funcionario) {
-                this._idFuncionario = funcionario._id;  // Armazena o ID do funcionário encontrado
-                return funcionario;  // Retorna o funcionário encontrado
+                this._idFuncionario = funcionario._id;
+                return funcionario;
             }
-            return null;  // Retorna null caso o funcionário não seja encontrado
+            return null;
         } catch (error) {
             console.error('Erro ao buscar funcionário por ID:', error);
-            return null;  // Retorna null em caso de erro
+            return null;
         }
     }
 
-    /**
-     * Método para verificar se já existe um funcionário com a credencial fornecida.
-     * 
-     * @param {string} credencial - Credencial do funcionário a ser verificada.
-     * @returns {boolean} Retorna true se a credencial já estiver cadastrada, ou false caso contrário.
-     */
+    // Verifica se já existe funcionário com determinada credencial
     async isFuncionarioByCredencial(credencial) {
         try {
             const count = await Funcionarios.countDocuments({ credencial });
-            return count > 0;  // Retorna true se a credencial já estiver cadastrada
+            return count > 0;
         } catch (error) {
             console.error('Erro ao verificar credencial:', error);
-            return false;  // Retorna false em caso de erro
+            return false;
         }
     }
 }
 
-module.exports = Funcionario;  // Exporta a classe para ser utilizada em outras partes do sistema
+module.exports = Funcionario;

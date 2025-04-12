@@ -8,13 +8,17 @@ module.exports = class FuncionarioControl {
      * @param {Object} request - Objeto de requisição HTTP
      * @param {Object} response - Objeto de resposta HTTP
      */
+
     async login(request, response) {
+        console.log("BODY RECEBIDO:", request.body);
+
         const funcionario = new Funcionario();
-        funcionario.credencial = request.body.credencial;
-        funcionario.senha = request.body.senha;
+        funcionario.credencial = request.body.Funcionario.credencial;
+        funcionario.senha = request.body.Funcionario.senha;
 
         const logou = await funcionario.login();
-        
+        console.log("LOGIN SUCESSO?", logou);
+
         if (logou) {
             // Busca os dados completos do funcionário
             const funcionarioCompleto = await funcionario.readByID(funcionario._idFuncionario);

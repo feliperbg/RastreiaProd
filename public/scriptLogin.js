@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   // Verifica se há login salvo
-  let loginSalvo;
+  var loginSalvo;
   try {
     loginSalvo = JSON.parse(localStorage.getItem("loginSalvo"));
   } catch (e) {
@@ -33,7 +33,8 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   if (loginSalvo) {
-    txtCredencial.value = loginSalvo.credencial; // Apenas a credencial
+    txtCredencial.value = loginSalvo.credencial;
+    passwordField.value = loginSalvo.senha;
   }
 
   btnLogin.addEventListener("click", function (event) {
@@ -42,19 +43,25 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   function fazerLogin(automatico) {
-    const credencial = txtCredencial.value.trim();
-    const senha = passwordField.value.trim();
+    const credencialFuncionario = txtCredencial.value.trim();
+    const senhaFuncionario = passwordField.value.trim();
 
-    if (!credencial || !senha) {
+    if (!credencialFuncionario || !senhaFuncionario) {
       exibirMensagem("Preencha todos os campos!", "erro");
       return;
     }
 
-    fetch("/login", {
+    fetch("/funcionario/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ credencial, senha }),
-      credentials: "include"
+      body: JSON.stringify(
+        {
+          Funcionario: {
+            credencial: credencialFuncionario,
+            senha: senhaFuncionario
+          }
+        }
+    ),
     })
     .then(res => {
       if (!res.ok) throw new Error("Erro na resposta do servidor");
@@ -64,7 +71,12 @@ document.addEventListener("DOMContentLoaded", function () {
       console.log("Dados do servidor:", dados);
       if (dados.status) {
         if (!automatico && lembrarSenha.checked) {
-          localStorage.setItem("loginSalvo", JSON.stringify({ credencial }));
+          localStorage.setItem("loginSalvo", JSON.stringify(
+            { 
+              credencial: credencialFuncionario,
+               senha: senhaFuncionario
+            }
+          ));
         }
         exibirMensagem("Login bem-sucedido! Redirecionando...", "sucesso");
         setTimeout(() => {
@@ -81,8 +93,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
   document.addEventListener("DOMContentLoaded", function () {
     fetch("/verifica-login", {
-      method: "GET",
-      credentials: "include"
+      method: "GET",S
     })
       .then(res => res.json())
       .then(dados => {
