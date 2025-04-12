@@ -6,39 +6,43 @@
   <title>Login</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-  <div class="login-container">
-    <div class="login-header">
+  <div class="container">
+    <div class="login-box">
       <h1>LOGIN</h1>
-      <p>BEM-VINDO DE VOLTA</p>
+      <h2>BEM-VINDO DE VOLTA</h2>
+
+      <form>
+        <div class="user-box">
+          <label for="txtCredencial">Credencial</label>
+          <div class="input-icon">
+            <i class="fas fa-user"></i>
+            <input type="text" id="txtCredencial" required />
+          </div>
+        </div>
+
+        <div class="user-box">
+          <label for="password">Senha</label>
+          <div class="input-icon">
+            <i class="fas fa-lock"></i>
+            <input type="password" id="password" required />
+            <div class="password-toggle-icon" id="togglePassword"><i class="fas fa-eye"></i></div>
+          </div>
+        </div>
+        
+        <div class="lembrar-senha">
+          <label for="lembrarSenha"><input type="checkbox" id="lembrarSenha" /> Lembrar-me</label>
+          <a href="/esqueceu_senha">Esqueceu sua senha?</a>
+        </div>
+        <button type="submit" id="btnLogin">ENTRAR</button>
+        <div class="divResposta">
+          <label for="btnLogin" id="divResposta"></label>
+        </div>
+      </form>
     </div>
-    
-    <form>
-      <div class="input-group">
-        <label for="credencial">Credencial</label>
-        <input type="text" id="credencial" placeholder="123456">
-      </div>
-      
-      <div class="input-group">
-        <label for="senha">Senha</label>
-        <input type="password" id="senha" placeholder="••••••">
-        <i class="fas fa-eye password-toggle"></i>
-      </div>
-      
-      <div class="options">
-        <div class="remember-me">
-          <input type="checkbox" id="lembrar">
-          <label for="lembrar">Lembrar-me</label>
-        </div>
-        <div class="forgot-password">
-          <a href="#">Esqueceu sua senha?</a>
-        </div>
-      </div>
-      
-      <button type="submit" class="login-button">ENTRAR</button>
-    </form>
-  </div>
+  </div>                                                            
 </body>
+<script src="/scriptLogin.js"></script>
 </html>
