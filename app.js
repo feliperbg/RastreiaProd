@@ -13,6 +13,7 @@ const portaServico = 8081;
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));  // Para assets (CSS, JS, imagens)
+app.use(express.static(path.join(__dirname, 'dist'))); 
 app.use(express.static(path.join(__dirname, 'view')));    // Para arquivos HTML
 // app.use(logoutRouter); // Descomente quando precisar usar
 
@@ -30,6 +31,12 @@ app.get('*', (req, res) => {
   
 app.get('/login/esqueceu_senha', (req, res) => {
     res.sendFile(path.join(__dirname, 'view', 'esqueceuSenha.html')); // Caminho absoluto
+});
+
+app.post('/', logoutRouter);
+
+app.get('/painel', (req, res) => {
+    res.sendFile(path.join(__dirname, 'view', 'painel.html')); // Caminho absoluto
 });
 
 app.listen(portaServico, '0.0.0.0', () => {

@@ -81,7 +81,7 @@ document.addEventListener("DOMContentLoaded", function () {
         exibirMensagem("Login bem-sucedido! Redirecionando...", "sucesso");
         setTimeout(() => {
           sessionStorage.setItem("dados", JSON.stringify(dados));
-          window.location.href = "painel.html";
+          window.location.href = "/painel";
         }, 2000);
       } else {
         exibirMensagem(dados.msg || "Credencial ou senha incorretos!", "erro");
@@ -93,7 +93,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
   document.addEventListener("DOMContentLoaded", function () {
     fetch("/verifica-login", {
-      method: "GET",S
+      method: "GET",
     })
       .then(res => res.json())
       .then(dados => {

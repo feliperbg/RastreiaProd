@@ -13,9 +13,14 @@
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
+    "ejs": "^3.1.10",
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.13.0",
     "mongoose": "^8.13.2"
-  }
+  },
+  "directories": {
+    "doc": "docs"
+  },
+  "keywords": []
 }
