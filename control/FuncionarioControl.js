@@ -111,7 +111,7 @@ module.exports = class FuncionarioControl {
             const novoFuncionario = new Funcionario(
                 nome,
                 turno,
-                senha,  // Observação: A classe Funcionario deve hash esta senha no método create
+                senha,
                 CPF,
                 email,
                 telefone,
