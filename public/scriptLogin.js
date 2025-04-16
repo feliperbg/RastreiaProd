@@ -34,7 +34,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   if (loginSalvo) {
     txtCredencial.value = loginSalvo.credencial;
-    passwordField.value = loginSalvo.senha;
   }
 
   btnLogin.addEventListener("click", function (event) {
@@ -50,7 +49,6 @@ document.addEventListener("DOMContentLoaded", function () {
       exibirMensagem("Preencha todos os campos!", "erro");
       return;
     }
-
     fetch("/funcionario/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -64,25 +62,21 @@ document.addEventListener("DOMContentLoaded", function () {
     ),
     })
     .then(res => {
-      if (!res.ok) throw new Error("Erro na resposta do servidor");
+      if (!res.ok){
+        throw new Error(exibirMensagem(`Erro na resposta do servidor: ${error.message}`, "erro"));
+        
+      }                                                                     
       return res.json();
     })
     .then(dados => {
       console.log("Dados do servidor:", dados);
       if (dados.status) {
         if (!automatico && lembrarSenha.checked) {
-          localStorage.setItem("loginSalvo", JSON.stringify(
-            { 
-              credencial: credencialFuncionario,
-               senha: senhaFuncionario
-            }
-          ));
+          localStorage.setItem('userData', JSON.stringify(dados.funcionario));
+          localStorage.setItem('authToken', dados.token);
         }
         exibirMensagem("Login bem-sucedido! Redirecionando...", "sucesso");
-        setTimeout(() => {
-          sessionStorage.setItem("dados", JSON.stringify(dados));
-          window.location.href = "/painel";
-        }, 2000);
+        window.location.href = "/painel";
       } else {
         exibirMensagem(dados.msg || "Credencial ou senha incorretos!", "erro");
       }
@@ -91,24 +85,24 @@ document.addEventListener("DOMContentLoaded", function () {
       exibirMensagem(`Erro ao fazer login: ${error.message}`, "erro");
     });
   }
-  document.addEventListener("DOMContentLoaded", function () {
-    fetch("/verifica-login", {
-      method: "GET",
-    })
-      .then(res => res.json())
-      .then(dados => {
-        if (dados.status) {
-          // Login automático com sucesso
-          console.log("Usuário ainda autenticado:", dados.funcionario);
-          window.location.href = "painel.html";
-        } else {
-          console.log("Token inválido, fazer login normal.");
-        }
-      })
-      .catch(err => {
-        console.error("Erro ao verificar login automático:", err);
-      });
-  });
+  // document.addEventListener("DOMContentLoaded", function () {
+  //   fetch("/verifica-login", {
+  //     method: "GET",
+  //   })
+  //     .then(res => res.json())
+  //     .then(dados => {
+  //       if (dados.status) {
+  //         // Login automático com sucesso
+  //         console.log("Usuário ainda autenticado:", dados.funcionario);
+  //         window.location.href = "painel.html";
+  //       } else {
+  //         console.log("Token inválido, fazer login normal.");
+  //       }
+  //     })
+  //     .catch(err => {
+  //       console.error("Erro ao verificar login automático:", err);
+  //     });
+  // });
   
 
   function exibirMensagem(texto, tipo) {

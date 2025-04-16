@@ -1,5 +1,5 @@
 // Importa a classe responsável por lidar com a validação do token JWT
-const MeuTokenJWT = require('../model/MeuTokenJWT');
+const TokenJWT = require('../model/TokenJWT');
 
 // Exporta a classe do middleware de autenticação JWT
 module.exports = class JWTMiddleware {
@@ -13,7 +13,7 @@ module.exports = class JWTMiddleware {
             // Extrai apenas o token, removendo "Bearer " do início da string
             const token = authHeader.split(' ')[1];
 
-            const objMeuTokenJWT = new MeuTokenJWT();
+            const objMeuTokenJWT = new TokenJWT();
 
             // Valida o token utilizando a classe MeuTokenJWT
             if (objMeuTokenJWT.validarToken(token) === true) {
@@ -32,6 +32,6 @@ module.exports = class JWTMiddleware {
                 status: false,
                 msg: 'Token não fornecido.'
             });
-        }
-    }
+        }
+    }
 }
