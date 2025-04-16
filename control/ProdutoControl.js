@@ -1,0 +1,315 @@
+const Produto = require('../model/Produto');
+const TokenJWT = require('../model/TokenJWT');
+const bcrypt = require('bcrypt');
+
+module.exports = class ProdutoControl {
+    /**
+     * Realiza o login de um produto
+     * @param {Object} request - Objeto de requisição HTTP
+     * @param {Object} response - Objeto de resposta HTTP
+     */
+
+    async login(request, response) {
+        console.log("BODY RECEBIDO:", request.body);
+
+        const produto = new Produto();
+        produto.produto = request.body.Produto.credencial;
+        produto.senha = request.body.Produto.senha;
+
+        const logou = await Produto.login();
+        console.log("LOGIN SUCESSO?", logou);
+
+        if (logou) {
+            // Busca os dados completos do produto
+            const produtoCompleto = await produto.readByID(produto._idProduto);
+            
+            const payloadToken = {
+                credencialProduto: produto.credencial,
+                idProduto: produto._idProduto,
+                role: produtoCompleto.role,
+                permissoes: produtoCompleto.permissoes
+            };
+
+            const jwt = new TokenJWT();
+            const token_string = jwt.gerarToken(payloadToken);
+
+            const objResposta = {
+                status: true,
+                msg: 'Logado com sucesso',
+                produto: {
+                    id: produto._idProduto,
+                    nome: produtoCompleto.nome,
+                    credencial: produto.credencial,
+                    role: produtoCompleto.role,
+                    permissoes: produtoCompleto.permissoes
+                },
+                token: token_string
+            };
+            return response.status(200).send(objResposta);
+
+        } else {
+            return response.status(401).send({
+                status: false,
+                msg: 'Credencial ou senha inválidos',
+            });
+        }
+    }
+
+    /**
+     * Realiza o logout do sistema
+     * @param {Object} request - Objeto de requisição HTTP
+     * @param {Object} response - Objeto de resposta HTTP
+     */
+    async logout(request, response) {
+        try {
+            // Em uma implementação real, você poderia invalidar o token aqui
+            return response.status(200).send({
+                status: true,
+                msg: "Logout realizado com sucesso."
+            });
+        } catch (error) {
+            console.error('Erro no logout:', error);
+            return response.status(500).send({
+                status: false,
+                msg: 'Erro durante o logout'
+            });
+        }
+    }
+
+    /**
+     * Cria um novo produto
+     * @param {Object} request - Objeto de requisição HTTP
+     * @param {Object} response - Objeto de resposta HTTP
+     */
+    async create(request, response) {
+        try {
+            const {
+                nome,
+                codigo,
+                descricao,
+                componentesNecessarios,
+                validade,
+                precoMontagem,
+                precoVenda,
+                dimensoes,
+                quantidade,
+                etapas
+            } = request.body;
+
+            // Verifica se a credencial já existe
+            const produto = new Produto();
+            const credencialExiste = await produto.isProdutoByCredencial(credencial);
+            
+            if (credencialExiste) {
+                return response.status(400).send({
+                    status: false,
+                    msg: 'Já existe um produto com esta credencial'
+                });
+            }
+
+            // Cria o novo produto
+            const novoProduto = new Produto(
+                nome,
+                codigo,
+                descricao,
+                componentesNecessarios,
+                validade,
+                precoMontagem,
+                precoVenda,
+                dimensoes,
+                quantidade || [],
+                etapas || 'produto'
+            );
+
+            const criado = await novoProduto.create();
+            
+            if (criado) {
+                return response.status(201).send({
+                    status: true,
+                    msg: 'Produto criado com sucesso',
+                    produto: {
+                        nome: novoProduto.nome,
+                        credencial: novoProduto.credencial,
+                        role: novoProduto.role
+                    }
+                });
+            } else {
+                return response.status(500).send({
+                    status: false,
+                    msg: 'Erro ao criar produto'
+                });
+            }
+        } catch (error) {
+            console.error('Erro ao criar produto:', error);
+            return response.status(500).send({
+                status: false,
+                msg: 'Erro interno ao criar produto'
+            });
+        }
+    }
+
+    /**
+     * Lista todos os produtos
+     * @param {Object} request - Objeto de requisição HTTP
+     * @param {Object} response - Objeto de resposta HTTP
+     */
+    async listAll(request, response) {
+        try {
+            const produto = new Produto();
+            const produtos = await produto.readAll();
+            
+            // Remove informações sensíveis antes de retornar
+            const produtosSanitizados = produtos.map(p => ({
+                id: p._id,
+                nome: p.nome,
+                codigo: p.codigo,
+                descricao: p.descricao,
+                componentesNecessarios: p.componentesNecessarios,
+                validade: p.validade,
+                precoMontagem: p.precoMontagem,
+                precoVenda: p.precoVenda,
+                dimensoes: p.dimensoes,
+                quantidade: p.quantidade,
+                etapas: p.etapas
+            }));
+
+            return response.status(200).send({
+                status: true,
+                produtos: produtosSanitizados
+            });
+        } catch (error) {
+            console.error('Erro ao listar produtos:', error);
+            return response.status(500).send({
+                status: false,
+                msg: 'Erro ao listar produtos'
+            });
+        }
+    }
+
+    /**
+     * Obtém um produto específico por ID
+     * @param {Object} request - Objeto de requisição HTTP
+     * @param {Object} response - Objeto de resposta HTTP
+     */
+    async getById(request, response) {
+        try {
+            const { id } = request.params;
+            const produto = new Produto();
+            const encontrado = await produto.readByID(id);
+            
+            if (encontrado) {
+                // Remove informações sensíveis antes de retornar
+                const produtoSanitizado = {
+                    id: encontrado._id,
+                    nome: encontrado.nome,
+                    codigo: encontrado.codigo,
+                    descricao: encontrado.descricao,
+                    componentesNecessarios: encontrado.componentesNecessarios,
+                    validade: encontrado.validade,
+                    precoMontagem: encontrado.precoMontagem,
+                    precoVenda: encontrado.precoVenda,
+                    dimensoes: encontrado.dimensoes,
+                    quantidade: encontrado.quantidade,
+                    etapas: encontrado.etapas
+                };
+                
+                return response.status(200).send({
+                    status: true,
+                    produto: produtoSanitizado
+                });
+            } else {
+                return response.status(404).send({
+                    status: false,
+                    msg: 'Produto não encontrado'
+                });
+            }
+        } catch (error) {
+            console.error('Erro ao buscar produto:', error);
+            return response.status(500).send({
+                status: false,
+                msg: 'Erro ao buscar produto'
+            });
+        }
+    }
+
+    /**
+     * Atualiza um produto existente
+     * @param {Object} request - Objeto de requisição HTTP
+     * @param {Object} response - Objeto de resposta HTTP
+     */
+    async update(request, response) {
+        try {
+            const { id } = request.params;
+            const dadosAtualizacao = request.body;
+            
+            const produto = new Produto();
+            // Primeiro busca o produto para ter os dados atuais
+            await produto.readByID(id);
+            
+            // Atualiza apenas os campos permitidos
+            if (dadosAtualizacao.nome) produto.nome = dadosAtualizacao.nome;
+            if (dadosAtualizacao.codigo) produto.codigo = dadosAtualizacao.codigo;
+            if (dadosAtualizacao.descricao) produto.descricao = dadosAtualizacao.descricao;
+            if (dadosAtualizacao.componentesNecessarios) produto.componentesNecessarios = dadosAtualizacao.componentesNecessarios;
+            if (dadosAtualizacao.validade) produto.validade = dadosAtualizacao.validade;
+            if (dadosAtualizacao.precoMontagem) produto.precoMontagem = dadosAtualizacao.precoMontagem;
+            if (dadosAtualizacao.precoVenda) produto.precoVenda = dadosAtualizacao.precoVenda;
+            if (dadosAtualizacao.dimensoes) produto.dimensoes = dadosAtualizacao.dimensoes;
+            if (dadosAtualizacao.quantidade) produto.quantidade = dadosAtualizacao.quantidade;
+            if (dadosAtualizacao.etapas) produto.etapas = dadosAtualizacao.etapas;
+            
+            const atualizado = await produto.update();
+            
+            if (atualizado) {
+                return response.status(200).send({
+                    status: true,
+                    msg: 'Produto atualizado com sucesso'
+                });
+            } else {
+                return response.status(500).send({
+                    status: false,
+                    msg: 'Erro ao atualizar produto'
+                });
+            }
+        } catch (error) {
+            console.error('Erro ao atualizar produto:', error);
+            return response.status(500).send({
+                status: false,
+                msg: 'Erro interno ao atualizar produto'
+            });
+        }
+    }
+
+    /**
+     * Remove um produto
+     * @param {Object} request - Objeto de requisição HTTP
+     * @param {Object} response - Objeto de resposta HTTP
+     */
+    async delete(request, response) {
+        try {
+            const { id } = request.params;
+            const produto = new Produto();
+            produto._idProduto = id;
+            
+            const deletado = await produto.delete();
+            
+            if (deletado) {
+                return response.status(200).send({
+                    status: true,
+                    msg: 'Produto removido com sucesso'
+                });
+            } else {
+                return response.status(404).send({
+                    status: false,
+                    msg: 'Produto não encontrado'
+                });
+            }
+        } catch (error) {
+            console.error('Erro ao remover produto:', error);
+            return response.status(500).send({
+                status: false,
+                msg: 'Erro ao remover produto'
+            });
+        }
+    }
+};
