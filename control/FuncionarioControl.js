@@ -60,20 +60,12 @@ module.exports = class FuncionarioControl {
      * @param {Object} request - Objeto de requisição HTTP
      * @param {Object} response - Objeto de resposta HTTP
      */
-    async logout(request, response) {
-        try {
-            // Em uma implementação real, você poderia invalidar o token aqui
-            return response.status(200).send({
-                status: true,
-                msg: "Logout realizado com sucesso."
-            });
-        } catch (error) {
-            console.error('Erro no logout:', error);
-            return response.status(500).send({
-                status: false,
-                msg: 'Erro durante o logout'
-            });
-        }
+    async  logout(req, res) {
+        return res.status(200).json({
+            status: true,
+            message: "Logout realizado com sucesso.",
+            action: "clearToken" 
+        });
     }
 
     /**
@@ -153,24 +145,13 @@ module.exports = class FuncionarioControl {
      * @param {Object} request - Objeto de requisição HTTP
      * @param {Object} response - Objeto de resposta HTTP
      */
-    async listAll(request, response) {
+    async readAll(request, response) {
         try {
             const funcionario = new Funcionario();
             const funcionarios = await funcionario.readAll();
-            
-            // Remove informações sensíveis antes de retornar
-            const funcionariosSanitizados = funcionarios.map(f => ({
-                id: f._id,
-                nome: f.nome,
-                email: f.email,
-                turno: f.turno,
-                role: f.role,
-                credencial: f.credencial
-            }));
-
             return response.status(200).send({
                 status: true,
-                funcionarios: funcionariosSanitizados
+                funcionarios: funcionarios
             });
         } catch (error) {
             console.error('Erro ao listar funcionários:', error);
@@ -186,7 +167,7 @@ module.exports = class FuncionarioControl {
      * @param {Object} request - Objeto de requisição HTTP
      * @param {Object} response - Objeto de resposta HTTP
      */
-    async getById(request, response) {
+    async readByID(request, response) {
         try {
             const { id } = request.params;
             const funcionario = new Funcionario();

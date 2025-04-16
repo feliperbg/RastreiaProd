@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Exibir Imagem Base64</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    img {
+      max-width: 300px;
+      display: block;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Exibir Imagem Base64</h1>
+
+  <textarea id="base64Input" placeholder="Cole aqui o base64 completo" rows="6" style="width: 100%"></textarea>
+  <button onclick="mostrarImagem()">Mostrar Imagem</button>
+
+  <img id="imagemBase64" alt="Imagem carregada" />
+
+  <script>
+    function mostrarImagem() {
+      const base64 = document.getElementById('base64Input').value.trim();
+      const img = document.getElementById('imagemBase64');
+
+      if (base64.startsWith("data:image")) {
+        img.src = base64;
+      } else {
+        alert("Base64 inválido! Ele precisa começar com 'data:image/...' ");
+      }
+    }
+  </script>
+</body>
+</html>

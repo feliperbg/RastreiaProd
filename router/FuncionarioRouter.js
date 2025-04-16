@@ -1,19 +1,70 @@
 const express = require('express');
+const path = require('path');
 const FuncionarioControl = require('../control/FuncionarioControl');
+const JWTMiddleware = require('../middleware/TokenJWTMiddleware');
 
 module.exports = class FuncionarioRouter {
     constructor() {
-        this._router = express.Router();
-        this._funcionarioControl = new FuncionarioControl();
+        this.router = express.Router();
+        this.funcionarioControl = new FuncionarioControl();
+        this.jwtMiddleware = new JWTMiddleware();
+        this.createRoutes();
     }
 
     createRoutes() {
-        // POST para fazer login (chamando o controller)
-        this._router.post('/login', (req, res) => {
+        // Rota estática
+        this.router.get('/', (req, res) => {
+            res.sendFile(path.join(__dirname, '..', 'view', 'funcionario.html'));
+        });
+
+        // Login (sem autenticação)
+        this.router.post('/login', (req, res) => {
             console.log('POST /funcionario/login foi chamado');
-            this._funcionarioControl.login(req, res);
-        });                     
-    
-        return this._router;
+            this.funcionarioControl.login(req, res);
+        });
+
+        // Logout
+        this.router.post('/logout', (req, res) => {
+            console.log('POST /funcionario/logout foi chamado');
+            this.funcionarioControl.logout(req, res);
+        });
+
+        // Rota para esqueceu senha
+        this.router.get('/esqueceu-senha', (req, res) => {
+            console.log('GET /funcionario/esqueceu-senha foi chamado');
+            res.sendFile(path.join(__dirname, '..', 'view', 'esqueceuSenha.html'));
+        });
+
+        // Rotas protegidas por JWT (forma correta)
+        this.router.get('/perfil/:id',
+            (req, res, next) => this.jwtMiddleware.validate(req, res, next),
+            (req, res) => this.funcionarioControl.readByID(req, res)
+        );
+
+        this.router.get('/readALL',
+            (req, res, next) => this.jwtMiddleware.validate(req, res, next),
+            (req, res) => this.funcionarioControl.readAll(req, res)
+        );
+
+        this.router.get('/:id',
+            (req, res, next) => this.jwtMiddleware.validate(req, res, next),
+            (req, res) => this.funcionarioControl.readByID(req, res)
+        );
+
+        this.router.post('/',
+            (req, res) => this.funcionarioControl.create(req, res)
+        );
+
+        this.router.delete('/:id',
+            (req, res, next) => this.jwtMiddleware.validate(req, res, next),
+            (req, res) => this.funcionarioControl.delete(req, res)
+        );
+
+        this.router.put('/:id',
+            (req, res, next) => this.jwtMiddleware.validate(req, res, next),
+            (req, res) => this.funcionarioControl.update(req, res)
+        );
+
+        return this.router;
     }
-};
+}

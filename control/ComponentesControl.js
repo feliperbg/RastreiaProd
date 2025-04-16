@@ -1,8 +1,8 @@
 // Importa a classe de modelo Componente
-const Componentes = require('../model/Componentes');
+import Componentes from '../model/Componentes';
 
 // Exporta a classe controladora de componentes
-module.exports = class ComponenteControl {
+export default class ComponenteControl {
     
     // Método para criar um novo componente
     async create(request, response) {
