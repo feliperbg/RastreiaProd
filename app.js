@@ -1,10 +1,16 @@
 const express = require('express');
-const FuncionarioRouter = require('./router/FuncionarioRouter');
-const BancoMongoose = require("./model/BancoMongoose");
-const app = express();
 const path = require('path');
+const BancoMongoose = require("./model/BancoMongoose");
+const FuncionariosRouter = require('./router/FuncionarioRouter');
+const ComponentesRouter = require('./router/ComponenteRouter');
+const ProdutosRouter = require('./router/ProdutoRouter');
+
+const app = express();
 const Banco = new BancoMongoose();
-const funcionarioRouter = new FuncionarioRouter();
+
+const FuncionarioRouter = new FuncionariosRouter();
+const ComponenteRouter = new ComponentesRouter();
+const ProdutoRouter = new ProdutosRouter();
 const portaServico = 8081;
 
 
@@ -21,11 +27,11 @@ app.get('/painel', (req, res) => {
     res.sendFile(path.join(__dirname, 'view', 'painel.html')); // Caminho absoluto
 });
 
-app.use('/funcionario', funcionarioRouter.createRoutes());
+app.use('/funcionario', FuncionarioRouter.createRoutes());
 
-//app.use('/componentes', componentesRouter.createRoutes());
+app.use('/componente', ComponenteRouter.createRoutes());
 
-//app.use('/produtos', produtosRouter.createRoutes());
+app.use('/produto', ProdutoRouter.createRoutes());
 
 
 app.listen(portaServico, '0.0.0.0', () => {

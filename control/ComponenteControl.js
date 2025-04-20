@@ -1,5 +1,5 @@
 // Importa a classe de modelo Componente
-import Componentes from '../model/Componentes';
+import Componentes from '../model/Componente';
 
 // Exporta a classe controladora de componentes
 export default class ComponenteControl {
