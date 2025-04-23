@@ -1,15 +1,15 @@
 // Importa a classe de modelo Componente
-import Componentes from '../model/Componente';
+const Componente = require('../model/Componente');
 
 // Exporta a classe controladora de componentes
-export default class ComponenteControl {
+module.exports = class ComponenteControl {
     
     // Método para criar um novo componente
     async create(request, response) {
         const dados = request.body.Componente;
 
         // Cria uma nova instância da classe Componente
-        const componente = new Componentes(
+        const componente = new Componente(
             dados.nome,
             dados.codigo,
             dados.descricao,
@@ -38,7 +38,7 @@ export default class ComponenteControl {
         const dados = request.body.Componente;
 
         // Cria uma nova instância da classe Componente
-        const componente = new Componentes(
+        const componente = new Componente(
             dados.nome,
             dados.codigo,
             dados.descricao,
@@ -68,7 +68,7 @@ export default class ComponenteControl {
         const idComponente = request.params.id;
 
         // Cria uma nova instância de Componente
-        const componente = new Componentes();
+        const componente = new Componente();
         componente.idComponente = idComponente;
 
         const isDeleted = await componente.delete();
@@ -82,7 +82,7 @@ export default class ComponenteControl {
 
     // Método para buscar todos os componentes
     async readAll(request, response) {
-        const componente = new Componentes();
+        const componente = new Componente();
 
         const lista = await componente.readAll();
 
@@ -98,7 +98,7 @@ export default class ComponenteControl {
     async readByID(request, response) {
         const idComponente = request.params.id;
 
-        const componente = new Componentes();
+        const componente = new Componente();
         const resultado = await componente.readByID(idComponente);
 
         response.status(200).send({
@@ -108,5 +108,5 @@ export default class ComponenteControl {
             componente: resultado
         });
     }
-};
+}
 

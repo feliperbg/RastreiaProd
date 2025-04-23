@@ -71,10 +71,8 @@ document.addEventListener("DOMContentLoaded", function () {
     .then(dados => {
       console.log("Dados do servidor:", dados);
       if (dados.status) {
-        if (!automatico && lembrarSenha.checked) {
-          localStorage.setItem('userData', JSON.stringify(dados.funcionario));
-          localStorage.setItem('authToken', dados.token);
-        }
+        localStorage.setItem('userData', JSON.stringify(dados.funcionario));
+        localStorage.setItem('authToken', dados.token);
         exibirMensagem("Login bem-sucedido! Redirecionando...", "sucesso");
         window.location.href = "/painel";
       } else {
