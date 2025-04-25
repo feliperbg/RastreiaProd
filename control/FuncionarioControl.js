@@ -41,7 +41,8 @@ module.exports = class FuncionarioControl {
                     nome: funcionarioCompleto.nome,
                     credencial: funcionario.credencial,
                     role: funcionarioCompleto.role,
-                    permissoes: funcionarioCompleto.permissoes
+                    permissoes: funcionarioCompleto.permissoes,
+                    imagem: funcionarioCompleto.imagemFuncionario,
                 },
                 token: token_string
             };

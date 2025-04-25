@@ -4,6 +4,8 @@ const BancoMongoose = require("./model/BancoMongoose");
 const FuncionariosRouter = require('./router/FuncionarioRouter');
 const ComponentesRouter = require('./router/ComponenteRouter');
 const ProdutosRouter = require('./router/ProdutoRouter');
+const JWTMiddleware = require('./middleware/TokenJWTMiddleware');
+
 
 const app = express();
 const Banco = new BancoMongoose();
@@ -11,20 +13,27 @@ const Banco = new BancoMongoose();
 const FuncionarioRouter = new FuncionariosRouter();
 const ComponenteRouter = new ComponentesRouter();
 const ProdutoRouter = new ProdutosRouter();
+const jwt = new JWTMiddleware();
 const portaServico = 8081;
-
-
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));  // Para assets (CSS, JS, imagens)
-app.use(express.static(path.join(__dirname, 'dist')));    // Pasta do AdminLTE
-app.use(express.static(path.join(__dirname, 'view')));    // Para arquivos HTML
+ 
+// Configurações do EJS
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'view')); // Define o diretório de views para o EJS
 
-// Rotas
-app.get('/login', (req, res) => {
+// Arquivos estáticos (CSS, JS, imagens, etc.)
+app.use(express.static(path.join(__dirname, 'public')));  // Para assets (CSS, JS, imagens)
+
+app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'view', 'login.html')); // Caminho absoluto
 });
+
 app.get('/painel', (req, res) => {
-    res.sendFile(path.join(__dirname, 'view', 'painel.html')); // Caminho absoluto
+    res.render('painel'); // Caminho absoluto
+});
+
+app.get('/verifica-login', jwt.validate, (req, res) => {
+    res.status(200).json({ status: true, funcionario: req.funcionario });
 });
 
 app.use('/funcionario', FuncionarioRouter.createRoutes());
@@ -32,6 +41,8 @@ app.use('/funcionario', FuncionarioRouter.createRoutes());
 app.use('/componente', ComponenteRouter.createRoutes());
 
 app.use('/produto', ProdutoRouter.createRoutes());
+
+
 
 
 app.listen(portaServico, '0.0.0.0', () => {
