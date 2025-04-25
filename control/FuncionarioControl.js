@@ -64,7 +64,6 @@ module.exports = class FuncionarioControl {
         return res.status(200).json({
             status: true,
             message: "Logout realizado com sucesso.",
-            action: "clearToken" 
         });
     }
 
