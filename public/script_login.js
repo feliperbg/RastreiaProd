@@ -83,25 +83,6 @@ document.addEventListener("DOMContentLoaded", function () {
       exibirMensagem(`Erro ao fazer login: ${error.message}`, "erro");
     });
   }
-  // document.addEventListener("DOMContentLoaded", function () {
-  //   fetch("/verifica-login", {
-  //     method: "GET",
-  //   })
-  //     .then(res => res.json())
-  //     .then(dados => {
-  //       if (dados.status) {
-  //         // Login automático com sucesso
-  //         console.log("Usuário ainda autenticado:", dados.funcionario);
-  //         window.location.href = "painel.html";
-  //       } else {
-  //         console.log("Token inválido, fazer login normal.");
-  //       }
-  //     })
-  //     .catch(err => {
-  //       console.error("Erro ao verificar login automático:", err);
-  //     });
-  // });
-  
 
   function exibirMensagem(texto, tipo) {
     divResposta.innerText = texto;
