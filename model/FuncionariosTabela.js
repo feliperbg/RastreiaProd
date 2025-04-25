@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const AutoIncrement = require('mongoose-sequence')(mongoose);
 const { Schema, model } = mongoose;
 
 const FuncionariosTabela = new Schema({
@@ -27,8 +28,8 @@ const FuncionariosTabela = new Schema({
 		required: true,
 	},
 	credencial: {
-		type: String,
-		required: true,
+		type: Number,
+		unique: true,
 	},
 	dataNascimento: {
 		type: Date,
@@ -37,8 +38,13 @@ const FuncionariosTabela = new Schema({
 	permissoes:[{
 		type: String, 
 		required: true,
-	}]
+	}],
+	imagemFuncionario: {
+		type: String,
+		default: 'https://cdn-icons-png.flaticon.com/512/149/149071.png',
+	},
 });
+FuncionariosTabela.plugin(AutoIncrement, { inc_field: 'credencial' , start_seq: 1});
 
 const Funcionarios = model('Funcionarios', FuncionariosTabela);
 module.exports = Funcionarios;

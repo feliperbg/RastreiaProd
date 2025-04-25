@@ -2,7 +2,7 @@ const Funcionarios = require('./FuncionariosTabela');  // Modelo Mongoose
 const bcrypt = require('bcrypt');
 
 class Funcionario {
-    constructor(nome, turno, senha, CPF, email, telefone, credencial, dataNascimento, permissoes, role) {
+    constructor(nome, turno, senha, CPF, email, telefone, credencial, dataNascimento, permissoes, role, imagemFuncionario) {
         this._nome = nome;
         this._turno = turno;
         this._senha = senha;
@@ -13,6 +13,7 @@ class Funcionario {
         this._dataNascimento = dataNascimento;
         this._permissoes = permissoes;
         this._role = role;
+        this._imagemFuncionario = imagemFuncionario;
     }
 
     // Getters e Setters
@@ -46,6 +47,9 @@ class Funcionario {
     get role() { return this._role; }
     set role(role) { this._role = role; }
 
+    get imagemFuncionario() { return this._imagemFuncionario; }
+    set imagemFuncionario(imagemFuncionario) { this._imagemFuncionario = imagemFuncionario; }
+
     get idFuncionario() { return this._idFuncionario; }
     set idFuncionario(id) { this._idFuncionario = id; }
 
@@ -70,6 +74,7 @@ class Funcionario {
                 dataNascimento: this._dataNascimento,
                 permissoes: this._permissoes,
                 role: this._role,
+                imagemFuncionario: this._imagemFuncionario,
             });
 
             await funcionario.save();

@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <title>Painel de Controle</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Bootstrap e AdminLTE -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="css/adminlte.css" />
+  </head>
+  <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
+    
+    <div class="app-wrapper">
+      <!-- Header -->
+      <%- include('partials/header.ejs') %>
+     
+      <!-- Sidebar -->
+      <%- include('partials/sidebar.ejs') %>
+
+      <!-- Conteúdo principal -->
+      <main class="app-main">
+        <div class="app-content-header">
+          <div class="container-fluid">
+            <h3 class="mb-3">Dashboard</h3>
+          </div>
+        </div>
+
+        <div class="app-content">
+          <div class="container-fluid">
+            <div class="row">
+              <!-- Exemplo de card -->
+              <div class="col-md-6 col-xl-6 mb-4">
+                <div class="card text-bg-primary">
+                  <div class="card-body">
+                    <h5 class="card-title">Linhas de produção ativas</h5>
+                    <p class="card-text fs-4">puxar do banco</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6 col-xl-3 mb-4">
+                <div class="card text-bg-success">
+                  <div class="card-body">
+                    <h5 class="card-title">Última Leitura</h5>
+                    <p class="card-text fs-6">ID: #F123 - 14:22</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Adicione mais cards aqui -->
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <!-- Rodapé -->
+      <footer class="app-footer text-center py-3">
+        <strong>&copy; 2025 Sistema de Produção.</strong> Todos os direitos reservados.
+      </footer>
+    </div>
+
+    <!-- Container de Toasts -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+      <div id="meuToast" class="toast align-items-center border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+          <div id="toast-body" class="toast-body"></div>
+          <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/adminlte.js"></script>
+    <script src="/js/script_painel.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </body>
+</html>
