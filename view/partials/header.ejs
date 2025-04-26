@@ -26,6 +26,14 @@
         </li>
       </ul>
     </div>
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+      <div id="meuToast" class="toast align-items-center border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+          <div id="toast-body" class="toast-body"></div>
+          <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
+        </div>
+      </div>
+    </div>
   </nav>
   <script>
     // Exemplo de como definir o nome do funcionário no cabeçalho
@@ -33,7 +41,10 @@
         const nomeFuncionario = document.getElementById("nomeFuncionario");
         const userDataJSON = localStorage.getItem("userData");
         const fotoFuncionario = document.getElementById("user-image");
+        const btnLogout = document.getElementById("btnLogout");
+
         fotoFuncionario.src = localStorage.getItem("userImage");
+
         if (userDataJSON) {
         const userData = JSON.parse(userDataJSON);
         nomeFuncionario.textContent = userData.nome || "Funcionário";
@@ -49,4 +60,40 @@
         }
 
     });
+
+    btnLogout.addEventListener("click", function (event) {
+      event.preventDefault();
+      fazerLogout();
+    });
+
+    function fazerLogout() {
+      fetch("/funcionario/logout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: localStorage.getItem("authToken") }),
+      })
+      .then(res => {
+        if (!res.ok){
+          throw new Error(exibirMensagem(`Erro na resposta do servidor: ${error.message}`, "erro"));
+          
+        }                                                                     
+        return res.json();
+      })
+      .then(dados => {
+        console.log("Dados do servidor:", dados);
+        if (dados.status) {
+          localStorage.removeItem('userData');
+          localStorage.removeItem('authToken');
+          localStorage.removeItem('userImage');
+          exibirMensagem("Logout bem-sucedido! Redirecionando...", "sucesso");
+          window.location.href = '/';
+        } else {
+          exibirMensagem(dados.msg || "Credencial ou senha incorretos!", "erro");
+        }
+      })
+      .catch(error => {
+        exibirMensagem(`Erro ao fazer logout: ${error.message}`, "erro");
+      });
+    }
+
   </script>

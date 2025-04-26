@@ -61,12 +61,13 @@ module.exports = class FuncionarioControl {
      * @param {Object} request - Objeto de requisição HTTP
      * @param {Object} response - Objeto de resposta HTTP
      */
-    async  logout(req, res) {
+    async logout(req, res) {
         return res.status(200).json({
             status: true,
             message: "Logout realizado com sucesso.",
         });
     }
+    
 
     /**
      * Cria um novo funcionário

@@ -5,63 +5,54 @@ document.addEventListener("DOMContentLoaded", function () {
   const togglePassword = document.getElementById("togglePassword");
   const lembrarSenha = document.getElementById("lembrarSenha");
   const divResposta = document.getElementById("divResposta");
-
-  if (!btnLogin || !txtCredencial || !passwordField || !togglePassword || !lembrarSenha || !divResposta) {
-    console.error("Erro: Elementos HTML não encontrados!");
-    return;
-  }
-  // Adiciona o evento de clique ao botão de login
-  btnLogin.addEventListener("click", function (event) {
-    event.preventDefault();
-    fazerLogin(lembrarSenha.checked);
-  });
-
-  // Mostrar/ocultar senha
-  togglePassword.addEventListener("click", function () {
-    const icon = togglePassword.querySelector("i");
-    if (passwordField.type === "password") {
-      passwordField.type = "text";
-      icon.classList.replace("fa-eye", "fa-eye-slash");
-    } else {
-      passwordField.type = "password";
-      icon.classList.replace("fa-eye-slash", "fa-eye");
+  const token = localStorage.getItem("authToken");
+  if (token) {
+    fetch("/verifica-login", {
+      method: "GET",
+      headers: { "Authorization": `Bearer ${token}` }
+    })
+    .then(res => res.json())
+    .then(dados => {
+      if (dados.status) {
+        // Token válido, redireciona para o painel
+        window.location.href = "/painel";
+      } else {
+        // Token inválido, redireciona para a tela de login
+        window.location.href = "/";
+      }
+    })
+    .catch(err => {
+      // Se houver erro na requisição, redireciona para a tela de login
+      window.location.href = "/";
+    });
+  }else {
+    document.body.style.display = "flex";
+    // Se não houver token, continua com a lógica normal do login
+    if (!btnLogin || !txtCredencial || !passwordField || !togglePassword || !lembrarSenha || !divResposta) {
+      console.error("Erro: Elementos HTML não encontrados!");
+      return;
     }
-  });
 
-  // Verifica se há login salvo
-  let loginSalvo = null;
-  try {
-    loginSalvo = JSON.parse(localStorage.getItem("userData"));
-    if (loginSalvo) {
-      console.log("Login salvo encontrado:", loginSalvo);
-      const token = localStorage.getItem("authToken");
-      if (!token) return;
-      fetch("/verifica-login", {
-        method: "GET",
-        headers: {
-          "Authorization": `Bearer ${token}`
-        }
-      })
-        .then(res => res.json())
-        .then(dados => {
-          if (dados.status) {
-            console.log("Usuário ainda autenticado:", loginSalvo.nome, loginSalvo.credencial);
-            window.location.href = "/painel";
-          } else {
-            console.log("Token inválido, fazer login normal.");
-          }
-        })
-        .catch(err => {
-          console.error("Erro ao verificar login automático:", err);
-        });
-    } else {
-      console.log("Nenhum login salvo encontrado.");
-    }
-  } catch (e) {
-    console.error("Erro ao ler userData:", e);
-    localStorage.removeItem("userData");
+    // Adiciona o evento de clique ao botão de login
+    btnLogin.addEventListener("click", function (event) {
+      event.preventDefault();
+      fazerLogin(lembrarSenha.checked);
+    });
+
+    // Mostrar/ocultar senha
+    togglePassword.addEventListener("click", function () {
+      const icon = togglePassword.querySelector("i");
+      if (passwordField.type === "password") {
+        passwordField.type = "text";
+        icon.classList.replace("fa-eye", "fa-eye-slash");
+      } else {
+        passwordField.type = "password";
+        icon.classList.replace("fa-eye-slash", "fa-eye");
+      }
+    });
   }
-
+  
+  // Função para fazer login
   function fazerLogin() {
     const credencialFuncionario = txtCredencial.value.trim();
     const senhaFuncionario = passwordField.value.trim();
@@ -70,22 +61,14 @@ document.addEventListener("DOMContentLoaded", function () {
       exibirMensagem("Preencha todos os campos!", "erro");
       return;
     }
+
     fetch("/funcionario/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(
-        {
-          Funcionario: {
-            credencial: credencialFuncionario,
-            senha: senhaFuncionario
-          }
-        }
-      ),
+      body: JSON.stringify({ Funcionario: { credencial: credencialFuncionario, senha: senhaFuncionario } })
     })
-      .then(res => {
-        return res.json();
-      })
-      .then(dados =>{
+      .then(res => res.json())
+      .then(dados => {
         if (dados.status) {
           if (lembrarSenha) {
             localStorage.setItem('userData', JSON.stringify(dados.funcionario));
@@ -101,7 +84,7 @@ document.addEventListener("DOMContentLoaded", function () {
       .catch(error => {
         exibirMensagem(`Erro ao fazer login: ${error.message}`, "erro");
       });
-    }
+  }
 
   function exibirMensagem(texto, tipo) {
     divResposta.innerText = texto;

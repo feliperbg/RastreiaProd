@@ -9,6 +9,7 @@ const produtoTabela = new Schema({
 	codigo: { 
 		type: Number,
 		required: true,
+		unique: true,
 	},
 	descricao: { 
 		type: String,

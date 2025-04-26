@@ -9,7 +9,7 @@ async function criarFuncionario() {
     const funcionario = new Funcionario();
 
     // Define os atributos do funcionário
-    funcionario.nome = "deepseek";
+    funcionario.nome = "felps";
     funcionario.turno = "Manhã";
     funcionario.senha = "senha1234";
     funcionario.CPF = "123.456.789-00";
@@ -17,7 +17,6 @@ async function criarFuncionario() {
     funcionario.telefone = "(11) 98765-4321";
     funcionario.dataNascimento = new Date("1990-01-01");
     funcionario.permissoes = ["gerente"];
-    funcionario.imagemFuncionario = "./public/imagens/funcionarios/me.jpg";
 
     try {
         const criado = await funcionario.create();

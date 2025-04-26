@@ -14,7 +14,7 @@ module.exports = class ComponenteRouter {
     createRoutes() {
         // Rota estática
         this.router.get('/', (req, res) => {
-            res.sendFile(path.join(__dirname, '..', 'view', 'componente.html'));
+            res.render('componente');
         });
 
         // Rotas protegidas por JWT (forma correta)
