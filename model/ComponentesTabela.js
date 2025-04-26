@@ -7,8 +7,9 @@ const ComponentesTabela = new Schema({
 		required: true,
 	},
 	codigo: {
-		type: Number,
+		type: String,
 		required: true,
+		unique: true,
 	},
 	descricao: {
 		type: String,

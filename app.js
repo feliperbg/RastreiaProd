@@ -25,15 +25,18 @@ app.set('views', path.join(__dirname, 'view')); // Define o diretório de views 
 app.use(express.static(path.join(__dirname, 'public')));  // Para assets (CSS, JS, imagens)
 
 app.get('/', (req, res) => {
+    // Verifica se o token existe na requisição
     res.sendFile(path.join(__dirname, 'view', 'login.html')); // Caminho absoluto
 });
+
 
 app.get('/painel', (req, res) => {
     res.render('painel'); // Caminho absoluto
 });
 
 app.get('/verifica-login', jwt.validate, (req, res) => {
-    res.status(200).json({ status: true, funcionario: req.funcionario });
+    // Verifica se o token existe na requisição
+    return res.status(200).json({ status: true, msg: "Usuário autenticado" });
 });
 
 app.use('/funcionario', FuncionarioRouter.createRoutes());

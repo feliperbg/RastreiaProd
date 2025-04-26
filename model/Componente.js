@@ -17,7 +17,7 @@ class Componente {
      * @param {number} precoUnidade - Preço por unidade do componente.
      * @param {Object} dimensoes - Dimensões do componente (comprimento, largura, altura).
      */
-    constructor(nome, codigo, descricao, dataEntrada, validade, quantidade, precoPagoLote, precoUnidade, dimensoes) {
+    constructor(idComponente, nome, codigo, descricao, dataEntrada, validade, quantidade, precoPagoLote, precoUnidade, dimensoes) {
         this._idComponente = idComponente;
         this._nome = nome;
         this._codigo = codigo;
@@ -27,11 +27,7 @@ class Componente {
         this._quantidade = quantidade;
         this._precoPagoLote = precoPagoLote;
         this._precoUnidade =  precoUnidade;
-        this._dimensoes = {
-            comprimento: null,
-            largura: null,
-            altura: null
-        };
+        this._dimensoes = dimensoes;
     }
 
     /**

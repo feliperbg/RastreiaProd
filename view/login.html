@@ -5,12 +5,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" >
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link rel="stylesheet" href="/css/login.css">
 </head>
 
-<body>
+<body style="display: none;">
   <div class="container">
     <div class="login-box">
       <h1>LOGIN</h1>
@@ -38,13 +38,15 @@
           <label for="lembrarSenha"><input type="checkbox" id="lembrarSenha" /> Lembrar-me</label>
           <a href="/esqueceu_senha">Esqueceu sua senha?</a>
         </div>
+
         <button type="submit" id="btnLogin">ENTRAR</button>
-        <div class="divResposta">
-          <label id="divResposta"></label>
-        </div>
+
+        <div id="divResposta" class="divResposta"></div>
       </form>
     </div>
   </div>
+
+  <script src="/js/script_login.js"></script>
 </body>
-<script src="/js/script_login.js"></script>
+
 </html>
