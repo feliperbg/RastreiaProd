@@ -216,23 +216,25 @@ module.exports = class FuncionarioControl {
         try {
             const { id } = request.params;
             const dadosAtualizacao = request.body;
-            
+
             const funcionario = new Funcionario();
-            // Primeiro busca o funcionário para ter os dados atuais
             await funcionario.readByID(id);
-            
-            // Atualiza apenas os campos permitidos
-            if (dadosAtualizacao.nome) funcionario.nome = dadosAtualizacao.nome;
-            if (dadosAtualizacao.turno) funcionario.turno = dadosAtualizacao.turno;
-            if (dadosAtualizacao.senha) funcionario.senha = dadosAtualizacao.senha;
-            if (dadosAtualizacao.email) funcionario.email = dadosAtualizacao.email;
-            if (dadosAtualizacao.telefone) funcionario.telefone = dadosAtualizacao.telefone;
-            if (dadosAtualizacao.dataNascimento) funcionario.dataNascimento = dadosAtualizacao.dataNascimento;
-            if (dadosAtualizacao.permissoes) funcionario.permissoes = dadosAtualizacao.permissoes;
-            if (dadosAtualizacao.role) funcionario.role = dadosAtualizacao.role;
-            
+
+            // Campos permitidos para atualização
+            const camposPermitidos = [
+                'nome', 'turno', 'senha', 'email',
+                'telefone', 'dataNascimento', 'permissoes', 'role'
+            ];
+
+            // Atualiza dinamicamente os campos que vieram no body
+            camposPermitidos.forEach(campo => {
+                if (dadosAtualizacao[campo]) {
+                    funcionario[campo] = dadosAtualizacao[campo];
+                }
+            });
+
             const atualizado = await funcionario.update();
-            
+
             if (atualizado) {
                 return response.status(200).send({
                     status: true,
@@ -252,6 +254,7 @@ module.exports = class FuncionarioControl {
             });
         }
     }
+
 
     /**
      * Remove um funcionário
