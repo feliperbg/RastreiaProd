@@ -11,6 +11,18 @@
     <!-- SweetAlert2 CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <style>
+        /* Estilos para centralizar o conteúdo da tabela */
+        .table td, .table th {
+            text-align: center;
+            vertical-align: middle;
+        }
+        
+        /* Ajuste para a coluna de ações */
+        .table td[data-label="Ações"] {
+            white-space: nowrap;
+        }
+        
+        /* Estilos responsivos */
         @media (max-width: 768px) {
             .table-responsive {
                 border: 0;
@@ -50,7 +62,7 @@
     <%- include('partials/header.ejs') %>
 
     <div class="container mt-4">
-        <h1 class="mb-4">Lista de Funcionários</h1>    
+        <h1 class="mb-4 text-center">Lista de Funcionários</h1>    
         <div class="card mb-4">
             <div class="card-body">
                 <div class="row">
@@ -116,6 +128,25 @@
             return telefone.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
         }
         
+        // Função para formatar as permissões
+        function formatarPermissoes(permissoes) {
+            if (!Array.isArray(permissoes)) return '';
+            if (permissoes.length === 0) return '';
+            
+            return permissoes.map(p => {
+                // Se já estiver formatado, mantém
+                if (p.includes(' ')) return p;
+                
+                // mantendo os acentos originais
+                const palavras = p.split('_');
+                return palavras.map(palavra => {
+                    return palavra.length > 0 
+                        ? palavra.charAt(0).toUpperCase() + palavra.slice(1)
+                        : palavra;
+                }).join(' ');
+            }).join(', ');
+        }
+        
         // Função para mostrar loading
         function showLoading() {
             Swal.fire({
@@ -150,7 +181,7 @@
                 }
             
                 const resultado = await response.json();
-                console.log(resultado);
+                console.log('Dados recebidos:', resultado);
                 
                 const funcionarios = Array.isArray(resultado) ? resultado : resultado.funcionarios;
                 
@@ -162,6 +193,7 @@
             
                 funcionarios.forEach(func => {
                     const tr = document.createElement("tr");
+                    console.log('Dados do funcionário:', func);
                     tr.innerHTML = `
                         <td data-label="Credencial">${func.credencial}</td>
                         <td data-label="Nome">${func.nome}</td>
@@ -170,9 +202,9 @@
                         <td data-label="Email">${func.email}</td>
                         <td data-label="Telefone">${formatarTelefone(func.telefone)}</td>
                         <td data-label="Data Nasc.">${formatarData(func.dataNascimento)}</td>
-                        <td data-label="Permissões">${Array.isArray(func.permissoes) ? func.permissoes.join(', ') : ''}</td>
+                        <td data-label="Permissões">${formatarPermissoes(func.permissoes)}</td>
                         <td data-label="Ações">
-                            <button class="btn btn-sm btn-primary mb-1" onclick="editarFuncionario('${func._id}')">
+                            <button class="btn btn-sm btn-primary mb-1" onclick="editarFuncionario('${func._id}', '${func.credencial}')">
                                 <i class="bi bi-pencil"></i> Editar
                             </button>
                             <button class="btn btn-sm btn-danger mb-1" onclick="deletarFuncionario('${func._id}')">
@@ -207,22 +239,18 @@
             }
         }
         
-        function editarFuncionario(id) {
+        function editarFuncionario(id, credencial) {
+            console.log('Editando funcionário - ID:', id, 'Credencial:', credencial);
             Swal.fire({
                 title: 'Editar Funcionário',
-                text: `Você deseja editar o funcionário com ID: ${id}?`,
+                text: `Você deseja editar o funcionário com a credencial: ${credencial}?`,
                 icon: 'question',
                 showCancelButton: true,
                 confirmButtonText: 'Sim, editar',
                 cancelButtonText: 'Cancelar'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // window.location.href = `/editar-funcionario?id=${id}`;
-                    Swal.fire(
-                        'Redirecionando...',
-                        'Você será redirecionado para a página de edição.',
-                        'info'
-                    );
+                    window.location.href = `/editar-funcionario?id=${id}`;
                 }
             });
         }
@@ -286,8 +314,6 @@
         
         // Carrega os dados quando a página é carregada
         document.addEventListener('DOMContentLoaded', carregarTabela);
-
-        
     </script>
-  </body>
+</body>
 </html>

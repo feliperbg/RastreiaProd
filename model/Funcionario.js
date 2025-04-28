@@ -88,12 +88,9 @@ class Funcionario {
     // Atualiza os dados de um funcionário
     async update() {
         try {
-            const senhaHasheada = await this.hashSenha(this._senha);
-
-            const updatedFuncionario = await Funcionarios.findByIdAndUpdate(this._idFuncionario, {
+            let updateFields = {
                 nome: this._nome,
                 turno: this._turno,
-                senha: senhaHasheada,
                 CPF: this._CPF,
                 email: this._email,
                 telefone: this._telefone,
@@ -101,14 +98,27 @@ class Funcionario {
                 dataNascimento: this._dataNascimento,
                 permissoes: this._permissoes,
                 role: this._role
-            }, { new: true });
-
+            };
+    
+            // Se tiver senha preenchida, gera hash e inclui
+            if (this._senha && this._senha.trim() !== '') {
+                const senhaHasheada = await this.hashSenha(this._senha);
+                updateFields.senha = senhaHasheada;
+            }
+    
+            const updatedFuncionario = await Funcionarios.findByIdAndUpdate(
+                this._idFuncionario,
+                updateFields,
+                { new: true }
+            );  
+                                                                                                        
             return updatedFuncionario !== null;
         } catch (error) {
             console.error('Erro ao atualizar funcionário:', error);
             return false;
         }
     }
+    
 
     // Login do funcionário (validação de senha com bcrypt)
     async login() {

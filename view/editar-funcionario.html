@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-bs-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Editar Funcionário</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- intl-tel-input CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.15/build/css/intlTelInput.min.css">
+</head>
+<style>
+  body {
+    background-color: #f8f9fa;
+    font-family: Arial, sans-serif;
+  }
+  .container {
+    max-width: 500px;
+    margin-top: 50px;
+  }
+  .form-label {
+    font-weight: 600;
+    color: #495057;
+  }
+  .form-control, .form-select {
+    border-radius: 5px;
+    box-shadow: none;
+    padding: 0.8rem 1rem;
+  }
+  .form-control:focus, .form-select:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.25rem rgba(38, 143, 255, 0.25);
+  }
+  .btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    border-radius: 5px;
+    padding: 0.6rem 1.5rem;
+    font-weight: bold;
+  }
+  .btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+  }
+  .mb-3 {
+    margin-bottom: 1rem;
+  }
+</style>
+<body class="p-3">
+
+  <div class="container">
+    <h1>Editar Funcionário</h1>
+    
+    <form id="form-editar">
+      <div class="mb-3">
+        <label for="nome" class="form-label">Nome</label>
+        <input type="text" id="nome" name="nome" class="form-control" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="email" class="form-label">E-mail</label>
+        <input type="email" id="email" name="email" class="form-control" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="telefone" class="form-label">Telefone</label>
+        <input type="tel" id="telefone" name="telefone" class="form-control">
+      </div>
+
+      <div class="mb-3">
+        <label for="turno" class="form-label">Turno</label>
+        <select id="turno" name="turno" class="form-select" required>
+          <option value="" selected>Selecione o turno</option>
+          <option value="Manhã">Manhã</option>
+          <option value="Tarde">Tarde</option>
+          <option value="Noite">Noite</option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label for="dataNascimento" class="form-label">Data de Nascimento</label>
+        <input type="date" id="dataNascimento" name="dataNascimento" class="form-control">
+      </div>
+
+    <div class="mb-3">
+      <label class="form-label">Permissões</label>
+      <div class="border p-3 rounded">
+        <div class="form-check mb-2">
+          <input class="form-check-input" type="checkbox" id="permissao-admin" name="permissoes" value="administrador">
+          <label class="form-check-label" for="permissao-admin">Administrador</label>
+        </div>
+        <div class="form-check mb-2">
+          <input class="form-check-input" type="checkbox" id="permissao-editar" name="permissoes" value="editar_conteúdos">
+          <label class="form-check-label" for="permissao-editar">Editar Conteúdo</label>
+        </div>
+        <div class="form-check mb-2">
+          <input class="form-check-input" type="checkbox" id="permissao-excluir" name="permissoes" value="excluir_conteúdos">
+          <label class="form-check-label" for="permissao-excluir">Excluir Conteúdo</label>
+        </div>
+        <div class="form-check mb-2">
+          <input class="form-check-input" type="checkbox" id="permissao-usuarios" name="permissoes" value="gerenciar_usuários">
+          <label class="form-check-label" for="permissao-usuarios">Gerenciar Usuários</label>
+        </div>
+        <div class="form-check mb-2">
+          <input class="form-check-input" type="checkbox" id="permissao-relatorios" name="permissoes" value="gerar_relatórios">
+          <label class="form-check-label" for="permissao-relatorios">Gerar Relatórios</label>
+        </div>
+      </div>
+    </div>
+
+      <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+    </form>
+  </div>
+
+  <script src="js/toast.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.15/build/js/intlTelInput.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/inputmask@5.0.6/dist/inputmask.min.js"></script>
+  
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const phoneInput = document.getElementById('telefone');
+      
+      // Inicializa a biblioteca intl-tel-input
+      const iti = window.intlTelInput(phoneInput, {
+        initialCountry: "br", // Defina o país inicial
+        preferredCountries: ["br", "us", "gb"], // Países preferidos na lista
+        utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.15/build/js/utils.js", // Necessário para a formatação
+      });
+
+      // Função para atualizar a máscara
+      function atualizarMascara() {
+        const countryData = iti.getSelectedCountryData();
+        const dialCode = countryData.dialCode;
+
+        // Atualize a máscara de acordo com o código de discagem do país
+        let mask;
+        if (dialCode === "55") {
+          mask = "(99) 99999-9999"; // Brasil
+        } else if (dialCode === "1") {
+          mask = "(999) 999-9999"; // EUA
+        } else {
+          mask = "(99) 9999-9999"; // Padrão para outros países
+        }
+        
+        // Aplica a máscara atualizada ao campo de telefone
+        Inputmask(mask).mask(phoneInput);
+      }
+
+      // Detecta mudança de país e atualiza a máscara
+      iti.setCountry(iti.getSelectedCountryData().iso2);
+      phoneInput.addEventListener('countrychange', function() {
+        atualizarMascara();
+      });
+
+      // Aplica a máscara inicial
+      atualizarMascara();
+    });
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get('id');
+
+    if (!id) {
+      alert('ID do funcionário não encontrado!');
+      window.location.href = '/painel';
+    }
+
+    async function carregarFuncionario() {
+      try {
+        const response = await fetch(`/funcionario/${id}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+          },
+        });
+        const dados = await response.json();
+        
+        if (dados.status && dados.funcionario) {
+          const funcionario = dados.funcionario;
+          document.getElementById('nome').value = funcionario.nome || '';
+          document.getElementById('email').value = funcionario.email || '';
+          document.getElementById('telefone').value = funcionario.telefone || '';
+          document.getElementById('turno').value = funcionario.turno || '';
+          document.getElementById('dataNascimento').value = funcionario.dataNascimento ? funcionario.dataNascimento.substring(0, 10) : '';
+          if (funcionario.permissoes) {
+            funcionario.permissoes.forEach(permissao => {
+              const checkbox = document.querySelector(`input[name="permissoes"][value="${permissao}"]`);
+              if (checkbox) checkbox.checked = true;
+            });
+          }
+        } else {
+          exibirMensagem('Funcionário não encontrado!', 'erro');
+        }
+      } catch (error) {
+        console.error('Erro ao carregar funcionário:', error);
+        exibirMensagem('Erro ao carregar informações do funcionário.', 'erro');
+      }
+    }
+
+    async function atualizarFuncionario(event) {
+      event.preventDefault();
+
+      const permissoes = Array.from(document.querySelectorAll('input[name="permissoes"]:checked')).map(checkbox => checkbox.value);
+      const dadosAtualizados = {
+        nome: document.getElementById('nome').value,
+        email: document.getElementById('email').value,
+        telefone: document.getElementById('telefone').value,
+        turno: document.getElementById('turno').value,
+        dataNascimento: document.getElementById('dataNascimento').value,
+        permissoes: permissoes,
+      };
+
+      try {
+        const resposta = await fetch(`/funcionario/${id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+          },
+          body: JSON.stringify(dadosAtualizados)
+        });
+
+        if (resposta.ok) {
+          exibirMensagem('Funcionário atualizado com sucesso!', 'sucesso');
+          window.location.href = '/funcionario';
+        } else {
+          exibirMensagem('Erro ao atualizar funcionário.', 'erro');
+        }
+      } catch (error) {
+        console.error('Erro ao atualizar funcionário:', error);
+        exibirMensagem('Erro interno ao tentar atualizar.', 'erro');
+      }
+    }
+
+    document.getElementById('form-editar').addEventListener('submit', atualizarFuncionario);
+    carregarFuncionario();
+  </script>
+</body>
+</html>
