@@ -17,7 +17,7 @@ async function criarComponente() {
         "R222",
         "Resistor de 220 ohms para circuitos eletrônicos",
         new Date("2025-04-01"),
-        null,
+        new Date("2025-04-02"),
         1000,
         150.00,
         0.15,
