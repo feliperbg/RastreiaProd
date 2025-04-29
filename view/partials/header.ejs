@@ -75,7 +75,6 @@
       .then(res => {
         if (!res.ok){
           throw new Error(exibirMensagem(`Erro na resposta do servidor: ${error.message}`, "erro"));
-          
         }                                                                     
         return res.json();
       })

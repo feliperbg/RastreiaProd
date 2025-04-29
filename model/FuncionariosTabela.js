@@ -38,11 +38,7 @@ const FuncionariosTabela = new Schema({
 	permissoes:[{
 		type: String, 
 		required: true,
-	}],
-	imagemFuncionario: {
-		type: String,
-		default: 'https://cdn-icons-png.flaticon.com/512/149/149071.png',
-	},
+	}]
 });
 FuncionariosTabela.plugin(AutoIncrement, { inc_field: 'credencial' , start_seq: 1});
 
