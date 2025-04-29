@@ -2,9 +2,24 @@ document.addEventListener("DOMContentLoaded", function () {
   const loginAutomatico = localStorage.getItem("loginAutomatico");
 
   if (loginAutomatico === "true") {
-    // Exibe o Toast com a mensagem de login automático
     exibirMensagem("Login automático realizado com sucesso!", "sucesso");
-    // Limpa o item após exibir o toast para não mostrar novamente
     localStorage.removeItem("loginAutomatico");
-  }  
+  }
+
+  // --- Verificar permissões para mostrar ou remover o menu Funcionários
+  const userDataJSON = localStorage.getItem("userData");
+  if (userDataJSON) {
+    try {
+      const authData = JSON.parse(userDataJSON);
+      // Verifica se existe o campo permissoes e se inclui "Administrador"
+      if (!authData.permissoes || !authData.permissoes.includes("administrador")) {
+        const menuFuncionarios = document.getElementById("menu-funcionarios");
+        if (menuFuncionarios) {
+          menuFuncionarios.remove(); // Remove o <li> do DOM
+        }
+      }
+    } catch (e) {   
+      console.error("Erro ao ler authData:", e);
+    }
+  }
 });
