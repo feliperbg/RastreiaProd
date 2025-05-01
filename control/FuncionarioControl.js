@@ -21,8 +21,8 @@ module.exports = class FuncionarioControl {
 
         if (logou) {
             // Busca os dados completos do funcionário
-            const funcionarioCompleto = await funcionario.readByID(funcionario._idFuncionario);
-            
+            const funcionarioCompleto = await funcionario.readByID(funcionario.idFuncionario);
+            console.log(funcionarioCompleto);
             const payloadToken = {
                 credencialFuncionario: funcionario.credencial,
                 idFuncionario: funcionario._idFuncionario,

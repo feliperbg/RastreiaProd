@@ -6,23 +6,22 @@ const Banco = new BancoMongoose();
 
 //teste para criar um funcionário
 async function criarFuncionario() {
-    const funcionario = new Funcionario();
-
-    // Define os atributos do funcionário
-    funcionario.nome = "felps";
-    funcionario.turno = "Manhã";
-    funcionario.senha = "senha1234";
-    funcionario.CPF = "123.456.789-00";
-    funcionario.email = "joao.silva@example.com";
-    funcionario.telefone = "(11) 98765-4321";
-    funcionario.dataNascimento = new Date("1990-01-01");
-    funcionario.permissoes = ["gerente"];
-
-    try {
-        const criado = await funcionario.create();
+    const funcionarioTeste = new Funcionario(
+        "João Silva", // Nome
+        "Manhã", // Turno
+        "senha1234", // Senha
+        "123.456.789-00", // CPF
+        "joao.silva@example.com", // Email
+        "(11) 98765-4321", // Telefone
+        new Date("1990-01-01"), // Data de nascimento
+        ["gerente"], // Permissões
+        "Gerente", // Role
+    );
+    try { 
+        const criado = await funcionarioTeste.create();
         if (criado) {
             console.log('Funcionário criado com sucesso!');
-            console.log('ID do Funcionário:', funcionario.idFuncionario);
+            console.log('ID do Funcionário:', funcionarioTeste.idFuncionario); // Correção: funcionarioTeste ao invés de funcionario
         } else {
             console.log('Erro ao criar o funcionário.');
         }
@@ -41,6 +40,7 @@ async function consultarFuncionarios() {
         console.error('Erro ao consultar funcionários:', error);
     }
 }
+
 async function consultarFuncionariosPelaCredencial() {
   const funcionario = new Funcionario();
   try {
@@ -50,21 +50,23 @@ async function consultarFuncionariosPelaCredencial() {
       console.error('Erro ao consultar funcionários:', error);
   }
 }
-async function deletarFuncionario(){
+
+async function deletarFuncionario() {
   const funcionario = new Funcionario();
-  try{
+  try {
     funcionario.idFuncionario = '67c8e18023889a6fd7cd9de6';
     const deletado = await funcionario.delete();
-    console.log('Funcionários deletado:', deletado);
-  }catch(error){
-    console.error('Erro ao deletar funcionários:', error);
+    console.log('Funcionário deletado:', deletado);
+  } catch (error) {
+    console.error('Erro ao deletar funcionário:', error);
   }
 }
+
 // Executa os testes em sequência
 async function main() {
     await criarFuncionario(); // Cria um funcionário
-   // await consultarFuncionarios(); // Consulta todos os funcionários
-    //await consultarFuncionariosPelaCredencial();
+    // await consultarFuncionarios(); // Consulta todos os funcionários
+    // await consultarFuncionariosPelaCredencial();
 }
 
 main().catch(err => console.error('Erro durante a execução:', err));
