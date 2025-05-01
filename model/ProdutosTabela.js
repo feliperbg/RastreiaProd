@@ -7,7 +7,7 @@ const produtoTabela = new Schema({
 		required: true,
 	},
 	codigo: { 
-		type: Number,
+		type: String,
 		required: true,
 		unique: true,
 	},
@@ -15,14 +15,20 @@ const produtoTabela = new Schema({
 		type: String,
 		required: true,
 	},
-	componentesNecessarios: [{
-		type: Schema.Types.ObjectId,
-		ref: 'Componentes',
-	}],
+	dataEntrada: {
+		type: Date,
+		required: true,
+		default: Date.now,
+	},
 	validade: {
 		type: Date,
 		required: true,
 	},
+	componentesNecessarios: [{
+		type: Schema.Types.ObjectId,
+		ref: 'Componentes',
+		required: true,
+	}],
 	precoMontagem: {
 		type: Number,
 		required: true,
@@ -31,7 +37,7 @@ const produtoTabela = new Schema({
 		type: Number,
 		required: true,
 	},
-	dimensoes: { 
+	dimensoes: {
 		comprimento: {
 			type: Number,
 			required: true,

@@ -44,7 +44,7 @@ async function consultarFuncionarios() {
 async function consultarFuncionariosPelaCredencial() {
   const funcionario = new Funcionario();
   try {
-      const funcionarios = await funcionario.isFuncionarioByCredencial("12345");
+      const funcionarios = await funcionario.readByID("680ae90f9c0db36cd2e838e9");
       console.log('Funcionários encontrados:', funcionarios);
   } catch (error) {
       console.error('Erro ao consultar funcionários:', error);
@@ -64,9 +64,9 @@ async function deletarFuncionario() {
 
 // Executa os testes em sequência
 async function main() {
-    await criarFuncionario(); // Cria um funcionário
+   //await criarFuncionario(); // Cria um funcionário
     // await consultarFuncionarios(); // Consulta todos os funcionários
-    // await consultarFuncionariosPelaCredencial();
+     await consultarFuncionariosPelaCredencial();
 }
 
 main().catch(err => console.error('Erro durante a execução:', err));
