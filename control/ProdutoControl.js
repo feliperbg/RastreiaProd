@@ -153,29 +153,14 @@ module.exports = class ProdutoControl {
      * @param {Object} request - Objeto de requisição HTTP
      * @param {Object} response - Objeto de resposta HTTP
      */
-    async listAll(request, response) {
+    async readAll(request, response) {
         try {
             const produto = new Produto();
             const produtos = await produto.readAll();
-            
-            // Remove informações sensíveis antes de retornar
-            const produtosSanitizados = produtos.map(p => ({
-                id: p._id,
-                nome: p.nome,
-                codigo: p.codigo,
-                descricao: p.descricao,
-                componentesNecessarios: p.componentesNecessarios,
-                validade: p.validade,
-                precoMontagem: p.precoMontagem,
-                precoVenda: p.precoVenda,
-                dimensoes: p.dimensoes,
-                quantidade: p.quantidade,
-                etapas: p.etapas
-            }));
 
             return response.status(200).send({
                 status: true,
-                produtos: produtosSanitizados
+                produtos: produtos,
             });
         } catch (error) {
             console.error('Erro ao listar produtos:', error);
@@ -191,7 +176,7 @@ module.exports = class ProdutoControl {
      * @param {Object} request - Objeto de requisição HTTP
      * @param {Object} response - Objeto de resposta HTTP
      */
-    async getById(request, response) {
+    async readByID(request, response) {
         try {
             const { id } = request.params;
             const produto = new Produto();
@@ -205,6 +190,7 @@ module.exports = class ProdutoControl {
                     codigo: encontrado.codigo,
                     descricao: encontrado.descricao,
                     componentesNecessarios: encontrado.componentesNecessarios,
+                    dataEntrada: encontrado.dataEntrada,
                     validade: encontrado.validade,
                     precoMontagem: encontrado.precoMontagem,
                     precoVenda: encontrado.precoVenda,
@@ -310,6 +296,14 @@ module.exports = class ProdutoControl {
                 status: false,
                 msg: 'Erro ao remover produto'
             });
+        }
+    }
+    async readAllJSON(request, response) {
+        try {
+            const produtos = await Produtos.find().lean();
+            res.status(200).json(produtos);
+        } catch (error) {
+            res.status(500).json({ erro: 'Erro ao buscar produtos.' });
         }
     }
 };

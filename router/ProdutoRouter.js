@@ -14,7 +14,7 @@ module.exports = class ProdutoRouter {
     createRoutes() {
         // Rota estática
         this.router.get('/', (req, res) => {
-            res.sendFile(path.join(__dirname, '..', 'view', 'produto.html'));
+            res.render('produto');
         });
 
         // Rotas protegidas por JWT (forma correta)
@@ -41,6 +41,14 @@ module.exports = class ProdutoRouter {
             (req, res, next) => this.jwtMiddleware.validate(req, res, next),
             (req, res) => this.produtoControl.update(req, res)
         );
+
+        // routes/produtos.js
+        this.router.get('/json', async (req, res) => {
+            (req, res) => this.produtoControl.update(req, res),
+            (req, res) => this.produtoControl.readAllJSON(req, res)
+            
+        });
+  
 
         return this.router;
     }

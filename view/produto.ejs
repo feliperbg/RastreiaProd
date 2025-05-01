@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Produtos</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body class="container py-4">
+
+  <h1 class="mb-4">Produtos</h1>
+
+  <div class="mb-3">
+    <a href="/cadastro-produto" class="btn btn-success">Cadastrar Novo Produto</a>
+  </div>
+
+  <input type="text" id="filtro" class="form-control mb-3" placeholder="Filtrar por nome ou código...">
+
+  <table class="table table-bordered table-hover">
+    <thead class="table-dark">
+      <tr>
+        <th>Nome</th>
+        <th>Código</th>
+        <th>Descrição</th>
+        <th>Componentes Necessários</th>
+        <th>Data Entrada</th>
+        <th>Validade</th>
+        <th>Preço Montagem</th>
+        <th>Preço Venda</th>
+        <th>Dimensões (C x L x A)</th>
+        <th>Quantidade</th>
+        <th>Etapas</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody id="tabela-produtos">
+      <!-- Conteúdo será carregado via JavaScript -->
+    </tbody>
+  </table>
+
+  <script>
+    async function obterNomeComponente(id) {
+      try {
+        const resposta = await fetch(`/componente/${id}`, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+          }
+        });
+
+        if (!resposta.ok) throw new Error('Erro ao buscar componente');
+        const dados = await resposta.json();
+;
+        return dados.componente.codigo || "Desconhecido";
+      } catch (e) {
+        console.error(`Erro ao buscar componente ${id}:`, e);
+        return "Erro";
+      }
+  }
+
+  async function carregarTabelaProdutos() {
+    try {
+      const resposta = await fetch('/produto/readALL', {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+        }
+      });
+
+      if (!resposta.ok) throw new Error("Erro ao carregar produtos");
+
+      const dados = await resposta.json();
+      const tabela = document.getElementById("tabela-produtos");
+      tabela.innerHTML = "";
+
+      const produtos = Array.isArray(dados) ? dados : dados.produtos || [];
+      if (!Array.isArray(produtos)) {
+        throw new Error("Resposta da API não é uma lista de produtos.");
+      }
+
+      if (produtos.length === 0) {
+        tabela.innerHTML = `<tr><td colspan="12">Nenhum produto encontrado.</td></tr>`;
+        return;
+      }
+
+      for (const prod of produtos) {
+        const nomesComponentes = await Promise.all(
+          (prod.componentesNecessarios || []).map(obterNomeComponente)
+        );
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${prod.nome}</td>
+          <td>${prod.codigo}</td>
+          <td>${prod.descricao}</td>
+          <td>${nomesComponentes.join(", ")}</td>
+          <td>${new Date(prod.dataEntrada).toLocaleDateString("pt-BR")}</td>
+          <td>${new Date(prod.validade).toLocaleDateString("pt-BR")}</td>
+          <td>R$ ${prod.precoMontagem.toFixed(2)}</td>
+          <td>R$ ${prod.precoVenda.toFixed(2)}</td>
+          <td>${prod.dimensoes.comprimento} x ${prod.dimensoes.largura} x ${prod.dimensoes.altura}</td>
+          <td>${prod.quantidade}</td>
+          <td>${(prod.etapas || []).join(", ")}</td>
+          <td>
+            <a href="/editar-produto?id=${prod._id}" class="btn btn-sm btn-primary mb-1">
+              <i class="bi bi-pencil"></i> Editar
+            </a>
+            <button class="btn btn-sm btn-danger mb-1" onclick="deletarProduto('${prod._id}')">
+              <i class="bi bi-trash"></i> Deletar
+            </button>
+          </td>
+        `;
+        tabela.appendChild(tr);
+      }
+    } catch (erro) {
+      console.error(erro);
+      Swal.fire('Erro!', 'Não foi possível carregar os produtos.', 'error');
+    }
+  }
+
+
+    function deletarProduto(id) {
+      Swal.fire({
+        title: 'Tem certeza?',
+        text: 'Essa ação não poderá ser desfeita!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sim, deletar',
+        cancelButtonText: 'Cancelar'
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          try {
+            const resposta = await fetch(`/produto/${id}`, {
+              method: 'DELETE',
+              headers: {
+                'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+              }
+            });
+
+            if (!resposta.ok) throw new Error("Erro ao deletar");
+            Swal.fire('Deletado!', 'Produto removido com sucesso.', 'success');
+            carregarTabelaProdutos();
+          } catch (erro) {
+            console.error(erro);
+            Swal.fire('Erro!', 'Não foi possível deletar o produto.', 'error');
+          }
+        }
+      });
+    }
+
+    // Filtro dinâmico
+    document.getElementById("filtro").addEventListener("input", function () {
+      const termo = this.value.toLowerCase();
+      const linhas = document.querySelectorAll("#tabela-produtos tr");
+
+      linhas.forEach(tr => {
+        const texto = tr.textContent.toLowerCase();
+        tr.style.display = texto.includes(termo) ? "" : "none";
+      });
+    });
+
+    // Inicialização
+    carregarTabelaProdutos();
+  </script>
+
+</body>
+</html>

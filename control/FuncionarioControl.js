@@ -10,23 +10,17 @@ module.exports = class FuncionarioControl {
      */
 
     async login(request, response) {
-        console.log("BODY RECEBIDO:", request.body);
-
         const funcionario = new Funcionario();
         funcionario.credencial = request.body.Funcionario.credencial;
         funcionario.senha = request.body.Funcionario.senha;
-
         const logou = await funcionario.login();
-        console.log("LOGIN SUCESSO?", logou);
-
         if (logou) {
             // Busca os dados completos do funcionário
             const funcionarioCompleto = await funcionario.readByID(funcionario.idFuncionario);
             console.log(funcionarioCompleto);
             const payloadToken = {
                 credencialFuncionario: funcionario.credencial,
-                idFuncionario: funcionario._idFuncionario,
-                role: funcionarioCompleto.role,
+                idFuncionario: funcionario._id,
                 permissoes: funcionarioCompleto.permissoes
             };
 

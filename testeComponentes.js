@@ -22,7 +22,7 @@ async function criarComponente() {
         150.00,
         0.15,
         dimensoes
-    );
+    )
 
     const criado = await componente.create();
     if (criado) {
