@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Editar Produto</title>
+  <title>Editar Componente</title> 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
 </head>
 <style>
@@ -46,7 +46,7 @@
 <body class="p-3">
 
   <div class="container">
-    <h1>Editar Produto</h1>
+    <h1>Editar Componente</h1> 
 
     <form id="form-editar">
       <div class="mb-3">
@@ -103,7 +103,7 @@
     const id = urlParams.get('id');
   
     if (!id) {
-      alert('ID do componente não encontrado!');
+      exibirMensagem('ID do componente não encontrado!', 'erro');
       window.location.href = '/painel';
     }
   
@@ -130,11 +130,11 @@
           document.getElementById('precoUnidade').value = c.precoUnidade || '';
           document.getElementById('dimensoes').value = c.dimensoes || '';
         } else {
-          alert('Componente não encontrado!');
+          exibirMensagem('Componente não encontrado!', 'erro');
         }
       } catch (error) {
         console.error('Erro ao carregar componente:', error);
-        alert('Erro ao carregar informações do componente.');
+        exibirMensagem('Erro ao carregar informações do componente.', 'erro');
       }
     }
   
@@ -164,19 +164,30 @@
         });
   
         if (resposta.ok) {
-          alert('Componente atualizado com sucesso!');
+          exibirMensagem('Componente atualizado com sucesso!', 'sucesso');
           window.location.href = '/componente';
         } else {
-          alert('Erro ao atualizar componente.');
+          exibirMensagem('Erro ao atualizar componente.', 'erro');
         }
       } catch (error) {
         console.error('Erro ao atualizar componente:', error);
-        alert('Erro interno ao tentar atualizar.');
+        exibirMensagem('Erro interno ao tentar atualizar.', 'erro');
       }
     }
   
     document.getElementById('form-editar').addEventListener('submit', atualizarComponente);
     carregarComponente();
   </script>  
+
+  <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+    <div id="meuToast" class="toast align-items-center text-white border-0" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="d-flex">
+        <div id="toast-body" class="toast-body">
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>

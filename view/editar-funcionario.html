@@ -158,7 +158,7 @@
     const id = urlParams.get('id');
 
     if (!id) {
-      alert('ID do funcionário não encontrado!');
+      exibirMensagem('ID do funcionário não encontrado!', 'erro');
       window.location.href = '/painel';
     }
 
