@@ -104,7 +104,7 @@
     const id = urlParams.get('id');
 
     if (!id) {
-      alert('ID do produto não encontrado!');
+      exibirMensagem('ID do produto não encontrado!', 'erro');
       window.location.href = '/painel';
     }
 
@@ -133,11 +133,11 @@
           document.getElementById('quantidade').value = p.quantidade || '';
           document.getElementById('etapas').value = p.etapas || '';
         } else {
-          alert('Produto não encontrado!');
+          exibirMensagem('Produto não encontrado!', 'erro');
         }
       } catch (error) {
         console.error('Erro ao carregar produto:', error);
-        alert('Erro ao carregar informações do produto.');
+        exibirMensagem('Erro ao carregar informações do produto.', 'erro');
       }
     }
 
@@ -168,14 +168,14 @@
         });
 
         if (resposta.ok) {
-          alert('Produto atualizado com sucesso!');
-          window.location.href = '/produtos';
+          exibirMensagem('Produto atualizado com sucesso!', 'sucesso');
+          window.location.href = '/produto';
         } else {
-          alert('Erro ao atualizar produto.');
+          exibirMensagem('Erro ao atualizar produto.', 'erro');
         }
       } catch (error) {
         console.error('Erro ao atualizar produto:', error);
-        alert('Erro interno ao tentar atualizar.');
+        exibirMensagem('Erro interno ao tentar atualizar.', 'erro');
       }
     }
 
