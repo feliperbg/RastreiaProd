@@ -64,9 +64,9 @@ async function deletarFuncionario() {
 
 // Executa os testes em sequência
 async function main() {
-   //await criarFuncionario(); // Cria um funcionário
+    await criarFuncionario(); // Cria um funcionário
     // await consultarFuncionarios(); // Consulta todos os funcionários
-     await consultarFuncionariosPelaCredencial();
+    // await consultarFuncionariosPelaCredencial();
 }
 
 main().catch(err => console.error('Erro durante a execução:', err));
