@@ -21,7 +21,8 @@ async function criarFuncionario() {
         const criado = await funcionarioTeste.create();
         if (criado) {
             console.log('Funcionário criado com sucesso!');
-            console.log('ID do Funcionário:', funcionarioTeste.idFuncionario); // Correção: funcionarioTeste ao invés de funcionario
+            console.log('ID do Funcionário:', funcionarioTeste.idFuncionario); 
+            console.log("Credencial do funcioanrio: ", funcionarioTeste.credencial);// Correção: funcionarioTeste ao invés de funcionario
         } else {
             console.log('Erro ao criar o funcionário.');
         }
@@ -29,44 +30,4 @@ async function criarFuncionario() {
         console.error('Erro durante a criação do funcionário:', error);
     }
 }
-
-//teste para consultar todos os funcionários
-async function consultarFuncionarios() {
-    const funcionario = new Funcionario();
-    try {
-        const funcionarios = await funcionario.readAll();
-        console.log('Funcionários encontrados:', funcionarios);
-    } catch (error) {
-        console.error('Erro ao consultar funcionários:', error);
-    }
-}
-
-async function consultarFuncionariosPelaCredencial() {
-  const funcionario = new Funcionario();
-  try {
-      const funcionarios = await funcionario.readByID("680ae90f9c0db36cd2e838e9");
-      console.log('Funcionários encontrados:', funcionarios);
-  } catch (error) {
-      console.error('Erro ao consultar funcionários:', error);
-  }
-}
-
-async function deletarFuncionario() {
-  const funcionario = new Funcionario();
-  try {
-    funcionario.idFuncionario = '67c8e18023889a6fd7cd9de6';
-    const deletado = await funcionario.delete();
-    console.log('Funcionário deletado:', deletado);
-  } catch (error) {
-    console.error('Erro ao deletar funcionário:', error);
-  }
-}
-
-// Executa os testes em sequência
-async function main() {
-    await criarFuncionario(); // Cria um funcionário
-    // await consultarFuncionarios(); // Consulta todos os funcionários
-    // await consultarFuncionariosPelaCredencial();
-}
-
-main().catch(err => console.error('Erro durante a execução:', err));
+criarFuncionario();
