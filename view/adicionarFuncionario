@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-bs-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Adicionar Funcionário</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.15/build/css/intlTelInput.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body class="p-3">
+  <div class="container">
+    <h1>Adicionar Funcionário</h1>
+    
+    <form id="form-adicionar">
+      <div class="mb-3">
+        <label for="nome" class="form-label">Nome</label>
+        <input type="text" id="nome" name="nome" class="form-control" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="email" class="form-label">E-mail</label>
+        <input type="email" id="email" name="email" class="form-control" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="telefone" class="form-label">Telefone</label>
+        <input type="tel" id="telefone" name="telefone" class="form-control">
+      </div>
+
+      <div class="mb-3">
+        <label for="turno" class="form-label">Turno</label>
+        <select id="turno" name="turno" class="form-select" required>
+          <option value="" selected>Selecione o turno</option>
+          <option value="Manhã">Manhã</option>
+          <option value="Tarde">Tarde</option>
+          <option value="Noite">Noite</option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label for="dataNascimento" class="form-label">Data de Nascimento</label>
+        <input type="date" id="dataNascimento" name="dataNascimento" class="form-control">
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Permissões</label>
+        <div class="border p-3 rounded">
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" name="permissoes" value="administrador"> Administrador
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" name="permissoes" value="editar_conteúdos"> Editar Conteúdo
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" name="permissoes" value="excluir_conteúdos"> Excluir Conteúdo
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" name="permissoes" value="gerenciar_usuários"> Gerenciar Usuários
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" name="permissoes" value="gerar_relatórios"> Gerar Relatórios
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Adicionar Funcionário</button>
+    </form>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.15/build/js/intlTelInput.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/inputmask@5.0.6/dist/inputmask.min.js"></script>
+
+  <script>
+    // Máscara de telefone com intl-tel-input
+    document.addEventListener("DOMContentLoaded", function () {
+      const phoneInput = document.getElementById('telefone');
+      const iti = window.intlTelInput(phoneInput, {
+        initialCountry: "br",
+        preferredCountries: ["br", "us", "gb"],
+        utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.15/build/js/utils.js",
+      });
+
+      function atualizarMascara() {
+        const countryData = iti.getSelectedCountryData();
+        const dialCode = countryData.dialCode;
+        let mask = dialCode === "55" ? "(99) 99999-9999" : "(99) 9999-9999";
+        Inputmask(mask).mask(phoneInput);
+      }
+
+      iti.setCountry(iti.getSelectedCountryData().iso2);
+      phoneInput.addEventListener('countrychange', atualizarMascara);
+      atualizarMascara();
+    });
+
+    // Submissão do formulário
+    document.getElementById('form-adicionar').addEventListener('submit', async function (event) {
+      event.preventDefault();
+
+      const permissoes = Array.from(document.querySelectorAll('input[name="permissoes"]:checked')).map(cb => cb.value);
+      const dados = {
+        nome: document.getElementById('nome').value,
+        email: document.getElementById('email').value,
+        telefone: document.getElementById('telefone').value,
+        turno: document.getElementById('turno').value,
+        dataNascimento: document.getElementById('dataNascimento').value,
+        permissoes: permissoes
+      };
+
+      try {
+        const response = await fetch('/funcionario', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(dados)
+        });
+
+        const resultado = await response.json();
+
+        if (response.ok && resultado.funcionario) {
+          Swal.fire({
+            title: 'Funcionário criado!',
+            html: `Credencial: <b>${resultado.funcionario.credencial}</b><br>ID: <b>${resultado.funcionario.id}</b>`,
+            icon: 'success',
+            confirmButtonText: 'OK'
+          }).then(() => {
+            window.location.href = '/funcionarios';
+          });
+        } else {
+          Swal.fire('Erro', resultado.message || 'Erro ao criar funcionário.', 'error');
+        }
+      } catch (error) {
+        console.error('Erro ao criar funcionário:', error);
+        Swal.fire('Erro', 'Erro ao conectar com o servidor.', 'error');
+      }
+    });
+  </script>
+</body>
+</html>
