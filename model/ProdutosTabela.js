@@ -24,11 +24,6 @@ const produtoTabela = new Schema({
 		type: Date,
 		required: true,
 	},
-	componentesNecessarios: [{
-		type: Schema.Types.ObjectId,
-		ref: 'Componentes',
-		required: true,
-	}],
 	precoMontagem: {
 		type: Number,
 		required: true,
@@ -56,8 +51,10 @@ const produtoTabela = new Schema({
 		required: true,
 	},
 	etapas: [{
-		type: String,
-	}]
+        type: Schema.Types.ObjectId,
+        ref: 'etapas',
+        required: true,
+    }],
 });
 
 const Produtos = model('Produtos', produtoTabela); 
