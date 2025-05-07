@@ -64,6 +64,7 @@ class Funcionario {
     set telefone(telefone) { this._telefone = telefone; }
 
     get credencial() { return this._credencial; }
+    set credencial(credencial) { this._credencial = credencial; }
 
     get dataNascimento() { return this._dataNascimento; }
     set dataNascimento(dataNascimento) { this._dataNascimento = dataNascimento; }
