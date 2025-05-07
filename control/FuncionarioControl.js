@@ -13,7 +13,9 @@ module.exports = class FuncionarioControl {
         const funcionario = new Funcionario();
         funcionario.credencial = request.body.Funcionario.credencial;
         funcionario.senha = request.body.Funcionario.senha;
+        
         const logou = await funcionario.login();
+
         if (logou) {
             // Busca os dados completos do funcionário
             const funcionarioCompleto = await funcionario.readByID(funcionario.idFuncionario);
