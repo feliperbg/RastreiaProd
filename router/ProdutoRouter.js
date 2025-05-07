@@ -48,6 +48,9 @@ module.exports = class ProdutoRouter {
             (req, res) => this.produtoControl.readAllJSON(req, res)
             
         });
+        this.router.get('/cadastro-produto', (req, res) => {
+            res.sendFile(path.join(__dirname, '..', 'view', 'adicionarProduto.html'));
+        });
   
 
         return this.router;
