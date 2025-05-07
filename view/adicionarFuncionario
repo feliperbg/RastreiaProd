@@ -5,17 +5,36 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Adicionar Funcionário</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.15/build/css/intlTelInput.min.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body class="p-3">
   <div class="container">
     <h1>Adicionar Funcionário</h1>
-    
+
     <form id="form-adicionar">
       <div class="mb-3">
         <label for="nome" class="form-label">Nome</label>
         <input type="text" id="nome" name="nome" class="form-control" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="turno" class="form-label">Turno</label>
+        <select id="turno" name="turno" class="form-select" required>
+          <option value="">Selecione o turno</option>
+          <option value="Manhã">Manhã</option>
+          <option value="Tarde">Tarde</option>
+          <option value="Noite">Noite</option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label for="senha" class="form-label">Senha</label>
+        <input type="password" id="senha" name="senha" class="form-control" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="CPF" class="form-label">CPF</label>
+        <input type="text" id="CPF" name="CPF" class="form-control" required>
       </div>
 
       <div class="mb-3">
@@ -29,16 +48,6 @@
       </div>
 
       <div class="mb-3">
-        <label for="turno" class="form-label">Turno</label>
-        <select id="turno" name="turno" class="form-select" required>
-          <option value="" selected>Selecione o turno</option>
-          <option value="Manhã">Manhã</option>
-          <option value="Tarde">Tarde</option>
-          <option value="Noite">Noite</option>
-        </select>
-      </div>
-
-      <div class="mb-3">
         <label for="dataNascimento" class="form-label">Data de Nascimento</label>
         <input type="date" id="dataNascimento" name="dataNascimento" class="form-control">
       </div>
@@ -46,73 +55,50 @@
       <div class="mb-3">
         <label class="form-label">Permissões</label>
         <div class="border p-3 rounded">
-          <div class="form-check mb-2">
-            <input class="form-check-input" type="checkbox" name="permissoes" value="administrador"> Administrador
-          </div>
-          <div class="form-check mb-2">
-            <input class="form-check-input" type="checkbox" name="permissoes" value="editar_conteúdos"> Editar Conteúdo
-          </div>
-          <div class="form-check mb-2">
-            <input class="form-check-input" type="checkbox" name="permissoes" value="excluir_conteúdos"> Excluir Conteúdo
-          </div>
-          <div class="form-check mb-2">
-            <input class="form-check-input" type="checkbox" name="permissoes" value="gerenciar_usuários"> Gerenciar Usuários
-          </div>
-          <div class="form-check mb-2">
-            <input class="form-check-input" type="checkbox" name="permissoes" value="gerar_relatórios"> Gerar Relatórios
-          </div>
+          <div class="form-check"><input class="form-check-input" type="checkbox" name="permissoes" value="administrador"> Administrador</div>
+          <div class="form-check"><input class="form-check-input" type="checkbox" name="permissoes" value="editar_conteudos"> Editar Conteúdos</div>
+          <div class="form-check"><input class="form-check-input" type="checkbox" name="permissoes" value="excluir_conteudos"> Excluir Conteúdos</div>
+          <div class="form-check"><input class="form-check-input" type="checkbox" name="permissoes" value="gerenciar_usuarios"> Gerenciar Usuários</div>
+          <div class="form-check"><input class="form-check-input" type="checkbox" name="permissoes" value="gerar_relatorios"> Gerar Relatórios</div>
         </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="role" class="form-label">Role</label>
+        <select id="role" name="role" class="form-select">
+          <option value="">Selecione o nível</option>
+          <option value="user">User</option>
+          <option value="admin">Admin</option>
+          <option value="superadmin">Superadmin</option>
+        </select>
       </div>
 
       <button type="submit" class="btn btn-primary">Adicionar Funcionário</button>
     </form>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.15/build/js/intlTelInput.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/inputmask@5.0.6/dist/inputmask.min.js"></script>
-
   <script>
-    // Máscara de telefone com intl-tel-input
-    document.addEventListener("DOMContentLoaded", function () {
-      const phoneInput = document.getElementById('telefone');
-      const iti = window.intlTelInput(phoneInput, {
-        initialCountry: "br",
-        preferredCountries: ["br", "us", "gb"],
-        utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.15/build/js/utils.js",
-      });
-
-      function atualizarMascara() {
-        const countryData = iti.getSelectedCountryData();
-        const dialCode = countryData.dialCode;
-        let mask = dialCode === "55" ? "(99) 99999-9999" : "(99) 9999-9999";
-        Inputmask(mask).mask(phoneInput);
-      }
-
-      iti.setCountry(iti.getSelectedCountryData().iso2);
-      phoneInput.addEventListener('countrychange', atualizarMascara);
-      atualizarMascara();
-    });
-
-    // Submissão do formulário
     document.getElementById('form-adicionar').addEventListener('submit', async function (event) {
       event.preventDefault();
 
       const permissoes = Array.from(document.querySelectorAll('input[name="permissoes"]:checked')).map(cb => cb.value);
+
       const dados = {
         nome: document.getElementById('nome').value,
+        turno: document.getElementById('turno').value,
+        senha: document.getElementById('senha').value,
+        CPF: document.getElementById('CPF').value,
         email: document.getElementById('email').value,
         telefone: document.getElementById('telefone').value,
-        turno: document.getElementById('turno').value,
         dataNascimento: document.getElementById('dataNascimento').value,
-        permissoes: permissoes
+        permissoes: permissoes,
+        role: document.getElementById('role').value
       };
 
       try {
         const response = await fetch('/funcionario', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(dados)
         });
 
@@ -120,7 +106,7 @@
 
         if (response.ok && resultado.funcionario) {
           Swal.fire({
-            title: 'Funcionário criado!',
+            title: 'Funcionário Criado!',
             html: `Credencial: <b>${resultado.funcionario.credencial}</b><br>ID: <b>${resultado.funcionario.id}</b>`,
             icon: 'success',
             confirmButtonText: 'OK'
@@ -131,8 +117,8 @@
           Swal.fire('Erro', resultado.message || 'Erro ao criar funcionário.', 'error');
         }
       } catch (error) {
-        console.error('Erro ao criar funcionário:', error);
-        Swal.fire('Erro', 'Erro ao conectar com o servidor.', 'error');
+        console.error('Erro:', error);
+        Swal.fire('Erro', 'Erro de conexão com o servidor.', 'error');
       }
     });
   </script>
