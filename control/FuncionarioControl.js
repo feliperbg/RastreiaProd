@@ -13,7 +13,9 @@ module.exports = class FuncionarioControl {
         const funcionario = new Funcionario();
         funcionario.credencial = request.body.Funcionario.credencial;
         funcionario.senha = request.body.Funcionario.senha;
+        
         const logou = await funcionario.login();
+
         if (logou) {
             // Busca os dados completos do funcionário
             const funcionarioCompleto = await funcionario.readByID(funcionario.idFuncionario);
@@ -77,24 +79,20 @@ module.exports = class FuncionarioControl {
                 CPF,
                 email,
                 telefone,
-                credencial,
                 dataNascimento,
                 permissoes,
                 role
             } = request.body;
 
-            // Verifica se a credencial já existe
-            const funcionario = new Funcionario();
-            const credencialExiste = await funcionario.isFuncionarioByCredencial(credencial);
-            
-            if (credencialExiste) {
+            // Verificação básica de campos obrigatórios
+            if (!nome || !turno || !senha || !CPF || !email || !telefone || !dataNascimento) {
                 return response.status(400).send({
                     status: false,
-                    msg: 'Já existe um funcionário com esta credencial'
+                    msg: 'Campos obrigatórios não preenchidos'
                 });
             }
 
-            // Cria o novo funcionário
+            // Instancia um novo funcionário
             const novoFuncionario = new Funcionario(
                 nome,
                 turno,
@@ -102,14 +100,16 @@ module.exports = class FuncionarioControl {
                 CPF,
                 email,
                 telefone,
-                credencial,
                 dataNascimento,
                 permissoes || [],
-                role || 'funcionario'
+                role || 'funcionario',
+                request.file?.path // ou request.body.imagemFuncionario, dependendo de como você está enviando a imagem
             );
-
-            const criado = await novoFuncionario.create();
             
+
+            // Tenta criar o funcionário no banco de dados
+            const criado = await novoFuncionario.create();
+
             if (criado) {
                 return response.status(201).send({
                     status: true,
@@ -126,6 +126,7 @@ module.exports = class FuncionarioControl {
                     msg: 'Erro ao criar funcionário'
                 });
             }
+
         } catch (error) {
             console.error('Erro ao criar funcionário:', error);
             return response.status(500).send({

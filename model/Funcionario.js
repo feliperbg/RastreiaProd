@@ -24,26 +24,26 @@ class Funcionario {
      * @param {String} role - Papel/função no sistema.
      * @param {String} imagemFuncionario - Caminho da imagem do funcionário.
      */
-    constructor(nome, turno, senha, CPF, email, telefone, credencial, dataNascimento, permissoes, role) {
+    constructor(nome, turno, senha, CPF, email, telefone, dataNascimento, permissoes, role, imagemFuncionario) {
         this._id = null;
         this._nome = nome;
         this._turno = turno;
-        this._senha = senha
+        this._senha = senha;
         this._CPF = CPF;
         this._email = email;
-        this._telefone = telefone;                                                                         ;
+        this._telefone = telefone;
         this._dataNascimento = dataNascimento;
         this._permissoes = permissoes;
         this._role = role;
-        this._credencial = null;
+        this._imagemFuncionario = imagemFuncionario; // << adicionado
     }
+    
 
     // -------------------
     // Getters e Setters
     // -------------------
 
-    get idFuncionario() { return this._id; }
-    set idFuncionario(id) { this._id = id; }
+    get idFuncionario() { return this._id; } 
 
     get nome() { return this._nome; }
     set nome(nome) { this._nome = nome; }
@@ -112,23 +112,22 @@ class Funcionario {
             // Primeiro salva o funcionario para garantir que a 'credencial' seja gerada
             const funcionarioSalvo = await funcionario.save();  
     
-            const idFuncionario = funcionarioSalvo._id.toString();
+            this._id = funcionarioSalvo._id.toString();
             this._credencial = funcionarioSalvo.credencial.toString();
             
     
-            const caminhoImagem = path.join(__dirname, '..', 'public', 'imagens', 'funcionario', `${idFuncionario}.png`);
-    
+            const caminhoImagem = path.join(__dirname, '..', 'public', 'imagens', 'funcionario', `${this.idFuncionario}.png`);
+
             if (this._imagemFuncionario) {
                 await fs.promises.copyFile(this._imagemFuncionario, caminhoImagem);
             } else {
                 const imagemPadrao = path.join(__dirname, '..', 'public', 'imagens', 'funcionario', 'default.png');
                 await fs.promises.copyFile(imagemPadrao, caminhoImagem);
             }
-            
-    
-            // Agora atualiza o caminho da imagem no funcionário salvo
-            funcionarioSalvo.imagemFuncionario = `/imagens/funcionario/${idFuncionario}.png`;
-            await funcionarioSalvo.save(); // Atualiza com o caminho da imagem
+
+            funcionarioSalvo.imagemFuncionario = `/imagens/funcionario/${this.idFuncionario}.png`;
+            await funcionarioSalvo.save();
+
     
             return true;
         } catch (error) {
