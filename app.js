@@ -34,6 +34,17 @@ app.get('/editar-funcionario', (req, res) => {
     res.sendFile(path.join(__dirname, 'view', 'editar-funcionario.html')); // Caminho absoluto
 });
 
+
+app.get('/editar-componente', (req, res) => {
+    // Verifica se o token existe na requisição
+    res.sendFile(path.join(__dirname, 'view', 'editar-componente.html')); // Caminho absoluto
+});
+
+app.get('/editar-produto', (req, res) => {
+    // Verifica se o token existe na requisição
+    res.sendFile(path.join(__dirname, 'view', 'editar-produto.html')); // Caminho absoluto
+});
+
 app.get('/painel', (req, res) => {
     res.render('painel'); // Caminho absoluto
 });
