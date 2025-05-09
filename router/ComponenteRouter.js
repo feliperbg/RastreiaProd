@@ -17,8 +17,12 @@ module.exports = class ComponenteRouter {
             res.render('componente');
         });
 
+
+        
+
         // Rotas protegidas por JWT (forma correta)
         this.router.post('/',
+            (req, res, next) => this.jwtMiddleware.validate(req, res, next),
             (req, res) => this.componenteControl.create(req, res)
         );
 
@@ -41,7 +45,13 @@ module.exports = class ComponenteRouter {
             (req, res, next) => this.jwtMiddleware.validate(req, res, next),
             (req, res) => this.componenteControl.update(req, res)
         );
-
+        
+        this.router.get('/editar-componente/:id', 
+            (req, res, next) => this.jwtMiddleware.validate(req, res, next), 
+            (req, res) => {
+                res.sendFile(path.join(__dirname, 'view', 'editar-componente.html'));
+            }
+        );
         return this.router;
     }
 }

@@ -6,7 +6,8 @@ document.addEventListener("DOMContentLoaded", function () {
   const lembrarSenha = document.getElementById("lembrarSenha");
   const divResposta = document.getElementById("divResposta");
   const token = localStorage.getItem("authToken");
-  if (token) {
+  const rememberPassword = JSON.parse(localStorage.getItem('rememberPassword'));
+  if (token && rememberPassword) {
     fetch("/verifica-login", {
       method: "GET",
       headers: { "Authorization": `Bearer ${token}` }
@@ -19,6 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
       } else {
         // Token inválido, redireciona para a tela de login
         window.location.href = "/";
+        exibirMensagem("Sessão expirada, faça login novamnete!", "erro");
       }
     })
     .catch(err => {
@@ -53,15 +55,15 @@ document.addEventListener("DOMContentLoaded", function () {
   }
   
   // Função para fazer login
-  function fazerLogin() {
+  function fazerLogin(lembrarSenhaChecked) {
     const credencialFuncionario = txtCredencial.value.trim();
     const senhaFuncionario = passwordField.value.trim();
-
+  
     if (!credencialFuncionario || !senhaFuncionario) {
       exibirMensagem("Preencha todos os campos!", "erro");
       return;
     }
-
+  
     fetch("/funcionario/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -70,11 +72,15 @@ document.addEventListener("DOMContentLoaded", function () {
       .then(res => res.json())
       .then(dados => {
         if (dados.status) {
-          if (lembrarSenha) {
-            localStorage.setItem('userData', JSON.stringify(dados.funcionario));
+          if (lembrarSenhaChecked) {
+            localStorage.setItem('rememberPassword', JSON.stringify(true));
+          } else {
+            localStorage.setItem('rememberPassword', JSON.stringify(false));
           }
+          
+          localStorage.setItem('userData', JSON.stringify(dados.funcionario));
           localStorage.setItem('authToken', dados.token);
-          localStorage.setItem('userImage', dados.funcionario.imagem || "https://cdn-icons-png.flaticon.com/512/149/149071.png");
+          localStorage.setItem('userImage', dados.funcionario.imagem || "imagens/funcionario/default.png");
           exibirMensagem("Login bem-sucedido! Redirecionando...", "sucesso");
           window.location.href = "/painel";
         } else {

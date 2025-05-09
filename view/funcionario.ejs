@@ -58,11 +58,11 @@
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <%- include('partials/header.ejs') %>
+      <!-- Header -->
+      <%- include('partials/header.ejs') %>
 
     <div class="container mt-4">
-        <h1 class="mb-4 text-center">Lista de Funcionários</h1>    
+        <h1 class="mb-4 text-center">Funcionários</h1>    
         <div class="card mb-4">
             <div class="card-body">
                 <div class="row">
@@ -70,7 +70,7 @@
                         <input type="text" id="filtro" class="form-control" placeholder="Pesquisar funcionário...">
                     </div>
                     <div class="col-md-6 text-end">
-                        <button class="btn btn-primary" onclick="window.location.href='/adicionar-funcionario'">
+                        <button class="btn btn-primary" onclick="window.location.href='/funcionario/adicionar-funcionario'">
                             <i class="bi bi-plus-circle"></i> Adicionar Funcionário
                         </button>
                     </div>
@@ -166,7 +166,6 @@
         async function carregarTabela() {
             try {
                 showLoading();
-                const tbody = document.getElementById("tabela-funcionarios");
             
                 const response = await fetch('/funcionario/readALL', {
                     method: 'GET',
@@ -181,6 +180,7 @@
                 }
             
                 const resultado = await response.json();
+                const tabela = document.getElementById("tabela-funcionarios");
                 console.log('Dados recebidos:', resultado);
                 
                 const funcionarios = Array.isArray(resultado) ? resultado : resultado.funcionarios;
@@ -188,8 +188,11 @@
                 if (!Array.isArray(funcionarios)) {
                     throw new Error("Resposta da API não é uma lista de funcionários.");
                 }
-                
-                tbody.innerHTML = ""; // Limpa tabela após carregamento
+                if (funcionarios.length === 0) {
+                    tabela.innerHTML = `<tr><td colspan="12">Nenhum produto encontrado.</td></tr>`;
+                    return;
+                }
+                tabela.innerHTML = ""; // Limpa tabela após carregamento
             
                 funcionarios.forEach(func => {
                     const tr = document.createElement("tr");
@@ -212,7 +215,7 @@
                             </button>
                         </td>
                     `;
-                    tbody.appendChild(tr);
+                    tabela.appendChild(tr);
                 });
             
             } catch (error) {
@@ -240,7 +243,6 @@
         }
         
         function editarFuncionario(id, credencial) {
-            console.log('Editando funcionário - ID:', id, 'Credencial:', credencial);
             Swal.fire({
                 title: 'Editar Funcionário',
                 text: `Você deseja editar o funcionário com a credencial: ${credencial}?`,
@@ -248,12 +250,42 @@
                 showCancelButton: true,
                 confirmButtonText: 'Sim, editar',
                 cancelButtonText: 'Cancelar'
-            }).then((result) => {
+            }).then(result => {
                 if (result.isConfirmed) {
-                    window.location.href = `/editar-funcionario?id=${id}`;
+                    // Recupera o token do localStorage
+                    const token = localStorage.getItem('authToken');
+                    
+                    // Verifica se o token existe
+                    if (token) {
+                        // Se o token existir, faz a requisição com o token
+                        fetch(`/editar-funcionario/${id}`, {
+                            method: 'GET',  // ou 'POST', dependendo da sua rota
+                            headers: {
+                                'Authorization': `Bearer ${token}`  // Envia o token no cabeçalho
+                            }
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Erro na requisição');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            // Exemplo: redirecionar para a página de edição
+                            window.location.href = `/funcionario/editar-funcionario/${id}`;
+                        })
+                        .catch(error => {
+                            console.error('Erro ao editar o funcionário:', error);
+                            Swal.fire('Erro!', 'Não foi possível editar o funcionário.', 'error');
+                        });
+                    } else {
+                        Swal.fire('Erro!', 'Você não está autenticado. Faça login novamente.', 'error');
+                    }
                 }
             });
         }
+
+
         
         async function deletarFuncionario(id) {
             const { isConfirmed } = await Swal.fire({
