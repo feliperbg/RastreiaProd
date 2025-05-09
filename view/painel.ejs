@@ -29,8 +29,14 @@
             <ul class="nav sidebar-menu flex-column" role="menu">
               <li class="nav-item">
                 <a href="/painel" class="nav-link active">
-                  <i class="nav-icon bi bi-speedometer"></i>
+                  <i class="nav-icon bi-graph-up-arrow"></i>
                   <p>Dashboard</p>
+                </a>
+              </li>
+              <li class="nav-item" id="menu-funcionarios" display="none">
+                <a href="/funcionario" class="nav-link">
+                  <i class="nav-icon bi bi-person-lines-fill"></i>
+                  <p>Funcionários</p>
                 </a>
               </li>
               <li class="nav-item">
@@ -46,15 +52,15 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a href="/linha_producao" class="nav-link">
-                  <i class="nav-icon bi bi-diagram-3"></i>
-                  <p>Linha de Produção</p>
+                <a href="/etapa" class="nav-link">
+                  <i class="nav-icon bi-list-check"></i>
+                  <p>Controle de Etapas</p>
                 </a>
               </li>
-                <li class="nav-item" id="menu-funcionarios" display="none">
-                  <a href="/funcionario" class="nav-link">
-                    <i class="nav-icon bi bi-person-lines-fill"></i>
-                    <p>Funcionários</p>
+                <li class="nav-item">
+                  <a href="/linha_producao" class="nav-link">
+                    <i class="nav-icon bi bi-diagram-3"></i>
+                    <p>Linha de Produção</p>
                   </a>
                 </li>
             </ul>                      
@@ -73,24 +79,56 @@
         <div class="app-content">
           <div class="container-fluid">
             <div class="row">
-              <!-- Exemplo de card -->
-              <div class="col-md-6 col-xl-6 mb-4">
-                <div class="card text-bg-primary">
+              <!-- Funcionários: Barras -->
+              <div class="col-md-4 mb-3">
+                <div class="card">
+                  <div class="card-header bg-primary text-white">Etapas executadas por Funcionário</div>
                   <div class="card-body">
-                    <h5 class="card-title">Linhas de produção ativas</h5>
-                    <p class="card-text fs-4">puxar do banco</p>
+                    <canvas id="graficoFuncionarios"></canvas>
+                  </div>
+                </div>
+              </div>
+              <!-- Controle de Etapas: Linha -->
+              <div class="col-md-4 mb-3">
+                <div class="card">
+                  <div class="card-header bg-info text-white">Etapas Finalizadas por Dia</div>
+                  <div class="card-body">
+                    <canvas id="graficoEtapas"></canvas>
                   </div>
                 </div>
               </div>
 
-              <div class="col-md-6 col-xl-3 mb-4">
-                <div class="card text-bg-success">
+              <!-- Componentes: Barras horizontais -->
+              <div class="col-md-4 mb-3">
+                <div class="card">
+                  <div class="card-header bg-warning text-white">Componentes Mais Utilizados</div>
                   <div class="card-body">
-                    <h5 class="card-title">Última Leitura</h5>
-                    <p class="card-text fs-6">ID: #F123 - 14:22</p>
+                    <canvas id="graficoComponentes"></canvas>
                   </div>
                 </div>
               </div>
+              <!-- Produtos: Pizza -->
+              <div class="col-md-5 mb-4">
+                <div class="card">
+                  <div class="card-header bg-success text-white">Distribuição de Produtos por Categoria</div>
+                  <div class="card-body">
+                    <canvas id="graficoProdutos"></canvas>
+                  </div>
+                </div>
+              </div>
+              <!--Espaçamento-->
+              <div class="col-md-2 mb-3"> </div>
+              <!-- Linha de Produção: Donut -->
+              <div class="col-md-5 mb-4">
+                <div class="card">
+                  <div class="card-header bg-danger text-white">Ocupação das Linhas de Produção</div>
+                  <div class="card-body">
+                    <canvas id="graficoLinhas"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+
 
               <!-- Adicione mais cards aqui -->
             </div>
@@ -118,8 +156,115 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
     <script src="/js/adminlte.js"></script>
     <script src="/js/script_painel.js"></script>
     <script src="/js/toast.js"></script>
+    <script>
+      // Gráfico de Funcionários
+      new Chart(document.getElementById('graficoFuncionarios'), {
+        type: 'bar',
+        data: {
+          labels: ['João', 'Maria', 'Carlos', 'Ana'],
+          datasets: [{
+            label: 'Etapas',
+            data: [12, 19, 7, 14],
+            backgroundColor: '#0d6efd'
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { display: false } }
+        }
+      });
+
+      new Chart(document.getElementById('graficoProdutos'), {
+        type: 'pie',
+        data: {
+          labels: ['Eletrônicos', 'Mecânicos', 'Químicos'],
+          datasets: [{
+            label: 'Categoria',
+            data: [30, 45, 25],
+            backgroundColor: ['#198754', '#20c997', '#0dcaf0']
+          }]
+        },
+        options: {
+          plugins: {
+            datalabels: {
+              color: '#fff',
+              font: {
+                weight: 'bold',
+                size: 14
+              },
+              formatter: (value) => `${value}`
+            }
+          }
+        },
+        plugins: [ChartDataLabels]
+      });
+
+    
+      // Gráfico de Componentes
+      new Chart(document.getElementById('graficoComponentes'), {
+        type: 'bar',
+        data: {
+          labels: ['Parafuso', 'Resistor', 'Motor', 'Sensor'],
+          datasets: [{
+            label: 'Uso',
+            data: [50, 80, 30, 60],
+            backgroundColor: '#ffc107'
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          plugins: { legend: { display: false } }
+        }
+      });
+    
+      // Gráfico de Etapas
+      new Chart(document.getElementById('graficoEtapas'), {
+        type: 'line',
+        data: {
+          labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex'],
+          datasets: [{
+            label: 'Etapas Finalizadas',
+            data: [5, 9, 7, 6, 10],
+            borderColor: '#0dcaf0',
+            backgroundColor: 'rgba(13,202,240,0.2)',
+            fill: true,
+            tension: 0.4
+          }]
+        },
+        options: { responsive: true }
+      });
+    
+      // Gráfico de Linhas de Produção
+      new Chart(document.getElementById('graficoLinhas'), {
+        type: 'doughnut',
+        data: {
+          labels: ['Linha A', 'Linha B', 'Linha C'],
+          datasets: [{
+            data: [40, 35, 25],
+            backgroundColor: ['#dc3545', '#fd7e14', '#ffc107']
+          }]
+        },
+        options: { 
+          responsive: true,
+          plugins: {
+            datalabels: {
+              color: '#fff',
+              font: {
+                weight: 'bold',
+                size: 14
+              },
+              formatter: (value) => `${value}`
+            }
+          }
+        },
+        plugins: [ChartDataLabels]
+        });
+    </script>
+    
   </body>
 </html>

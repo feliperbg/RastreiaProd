@@ -18,11 +18,12 @@
             <span id= "nomeFuncionario" class="d-none d-md-inline">Usuário</span>
           </a>
           <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
-            <li class="user-footer">
-              <a href="#" class="btn btn-default btn-flat">Perfil</a>
-              <a id = "btnLogout" class="btn btn-default btn-flat float-end">Sair</a>
+            <li class="user-footer d-flex justify-content-between px-3 py-2">
+              <button id="btnPerfil" class="btn btn-sm btn-outline-primary">Perfil</button>
+              <button id="btnLogout" class="btn btn-sm btn-outline-danger">Sair</button>
             </li>
           </ul>
+          
         </li>
       </ul>
     </div>
@@ -35,6 +36,25 @@
       </div>
     </div>
   </nav>
+<!-- Modal de Perfil -->
+<div class="modal fade" id="modalPerfil" tabindex="-1" aria-labelledby="modalPerfilLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalPerfilLabel">Meu Perfil</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body text-center">
+        <img id="perfilImagem" src="" class="rounded-circle mb-3" width="80" height="80" alt="Foto de Perfil" />
+        <p><strong>Nome:</strong> <span id="perfilNome"></span></p>
+        <p><strong>Cargo:</strong> <span id="perfilCargo"></span></p>
+        <p><strong>Credencial:</strong> <span id="perfilCredencial"></span></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
   <script>
     // Exemplo de como definir o nome do funcionário no cabeçalho
     document.addEventListener('DOMContentLoaded', function() {
@@ -47,13 +67,13 @@
 
         if (userDataJSON) {
         const userData = JSON.parse(userDataJSON);
+        fotoFuncionario.src = userData.imagem;
         nomeFuncionario.textContent = userData.nome || "Funcionário";
         } else {
         nomeFuncionario.textContent = "Funcionário";
         }
         const icone = document.getElementById('iconeSideBar');
         const urlAtual = window.location.href;
-        // Verifica se a URL contém "painel" e altera o ícone
         if (urlAtual.includes('painel')) {
             icone.classList.remove('bi', 'bi-arrow-left');
             icone.classList.add('bi', 'bi-list');
@@ -84,6 +104,7 @@
           localStorage.removeItem('userData');
           localStorage.removeItem('authToken');
           localStorage.removeItem('userImage');
+          localStorage.removeItem('rememberPassword');
           exibirMensagem("Logout bem-sucedido! Redirecionando...", "sucesso");
           window.location.href = '/';
         } else {
@@ -94,5 +115,15 @@
         exibirMensagem(`Erro ao fazer logout: ${error.message}`, "erro");
       });
     }
+    document.getElementById('btnPerfil').addEventListener('click', () => {
+    const dados = JSON.parse(localStorage.getItem('userData') || '{}');
 
+    document.getElementById('perfilNome').textContent = dados.nome || '---';
+    document.getElementById('perfilCargo').textContent = dados.role || '---';
+    document.getElementById('perfilCredencial').textContent = dados.credencial || '---';
+    document.getElementById('perfilImagem').src = dados.imagem || "imagens/funcionario/default.png";
+
+    const modal = new bootstrap.Modal(document.getElementById('modalPerfil'));
+    modal.show();
+  });
   </script>

@@ -64,7 +64,11 @@ module.exports = class FuncionarioRouter {
             (req, res, next) => this.jwtMiddleware.validate(req, res, next),
             (req, res) => this.funcionarioControl.update(req, res)
         );
-
+        this.router.get('/editar-funcionario/:id', 
+            (req, res, next) => this.jwtMiddleware.validate(req, res, next),
+            (req, res) => {
+                res.sendFile(path.join(__dirname, 'view', 'editar-funcionario.html'));
+            });
         return this.router;
     }
 }

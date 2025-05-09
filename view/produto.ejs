@@ -2,41 +2,114 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Produtos</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <style>
+        /* Estilos para centralizar o conteúdo da tabela */
+        .table td, .table th {
+            text-align: center;
+            vertical-align: middle;
+        }
+        
+        /* Ajuste para a coluna de ações */
+        .table td[data-label="Ações"] {
+            white-space: nowrap;
+        }
+        
+        /* Estilos responsivos */
+        @media (max-width: 768px) {
+            .table-responsive {
+                border: 0;
+            }
+            
+            .table-responsive thead {
+                display: none;
+            }
+            
+            .table-responsive tr {
+                display: block;
+                margin-bottom: 1rem;
+                border: 1px solid #dee2e6;
+            }
+            
+            .table-responsive td {
+                display: block;
+                text-align: right;
+                border-bottom: 1px solid #dee2e6;
+            }
+            
+            .table-responsive td::before {
+                content: attr(data-label);
+                float: left;
+                font-weight: bold;
+            }
+            
+            .table-responsive td:last-child {
+                border-bottom: 0;
+                text-align: center;
+            }
+        }
+    </style>
 </head>
-<body class="container py-4">
+<body>
+  <!-- Header -->
+  <%- include('partials/header.ejs') %>
 
-  <h1 class="mb-4">Produtos</h1>
-
-  <div class="mb-3">
-    <a href="/cadastro-produto" class="btn btn-success">Cadastrar Novo Produto</a>
+  <div class="container mt-4">
+      <h1 class="mb-4 text-center">Produtos</h1>    
+      <div class="card mb-4">
+          <div class="card-body">
+              <div class="row">
+                  <div class="col-md-6">
+                      <input type="text" id="filtro" class="form-control" placeholder="Filtrar por nome ou código...">
+                  </div>
+                  <div class="col-md-6 text-end">
+                      <a href="/produto/cadastro-produto" class="btn btn-primary">
+                          <i class="bi bi-plus-circle"></i> Cadastrar Novo Produto
+                      </a>
+                  </div>
+              </div>
+          </div>
+      </div>
+      
+      <div class="table-responsive">
+          <table class="table table-striped table-hover table-bordered">
+              <thead class="table-dark">
+                  <tr>
+                      <th>Nome</th>
+                      <th>Código</th>
+                      <th>Descrição</th>
+                      <th>Componentes Necessários</th>
+                      <th>Data Entrada</th>
+                      <th>Validade</th>
+                      <th>Preço Montagem</th>
+                      <th>Preço Venda</th>
+                      <th>Dimensões (C x L x A)</th>
+                      <th>Quantidade</th>
+                      <th>Etapas</th>
+                      <th>Ações</th>
+                  </tr>
+              </thead>
+              <tbody id="tabela-produtos">
+                  <tr>
+                      <td colspan="12">Carregando dados...</td>
+                  </tr>
+              </tbody>
+          </table>
+      </div>
   </div>
 
-  <input type="text" id="filtro" class="form-control mb-3" placeholder="Filtrar por nome ou código...">
-
-  <table class="table table-bordered table-hover">
-    <thead class="table-dark">
-      <tr>
-        <th>Nome</th>
-        <th>Código</th>
-        <th>Descrição</th>
-        <th>Componentes Necessários</th>
-        <th>Data Entrada</th>
-        <th>Validade</th>
-        <th>Preço Montagem</th>
-        <th>Preço Venda</th>
-        <th>Dimensões (C x L x A)</th>
-        <th>Quantidade</th>
-        <th>Etapas</th>
-        <th>Ações</th>
-      </tr>
-    </thead>
-    <tbody id="tabela-produtos">
-      <!-- Conteúdo será carregado via JavaScript -->
-    </tbody>
-  </table>
+  <!-- Bootstrap JS Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- SweetAlert2 JS -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</body>
 
   <script>
     async function obterNomeComponente(id) {
@@ -90,26 +163,27 @@
 
         const tr = document.createElement("tr");
         tr.innerHTML = `
-          <td>${prod.nome}</td>
-          <td>${prod.codigo}</td>
-          <td>${prod.descricao}</td>
-          <td>${nomesComponentes.join(", ")}</td>
-          <td>${new Date(prod.dataEntrada).toLocaleDateString("pt-BR")}</td>
-          <td>${new Date(prod.validade).toLocaleDateString("pt-BR")}</td>
-          <td>R$ ${prod.precoMontagem.toFixed(2)}</td>
-          <td>R$ ${prod.precoVenda.toFixed(2)}</td>
-          <td>${prod.dimensoes.comprimento} x ${prod.dimensoes.largura} x ${prod.dimensoes.altura}</td>
-          <td>${prod.quantidade}</td>
-          <td>${(prod.etapas || []).join(", ")}</td>
-          <td>
-            <a href="/editar-produto?id=${prod._id}" class="btn btn-sm btn-primary mb-1">
+          <td data-label="Nome">${prod.nome}</td>
+          <td data-label="Código">${prod.codigo}</td>
+          <td data-label="Descrição">${prod.descricao}</td>
+          <td data-label="Componentes Necessários">${nomesComponentes.join(", ")}</td>
+          <td data-label="Data Entrada">${new Date(prod.dataEntrada).toLocaleDateString("pt-BR")}</td>
+          <td data-label="Validade">${new Date(prod.validade).toLocaleDateString("pt-BR")}</td>
+          <td data-label="Preço Montagem">R$ ${prod.precoMontagem.toFixed(2)}</td>
+          <td data-label="Preço Venda">R$ ${prod.precoVenda.toFixed(2)}</td>
+          <td data-label="Dimensões (C x L x A)">${prod.dimensoes.comprimento} x ${prod.dimensoes.largura} x ${prod.dimensoes.altura}</td>
+          <td data-label="Quantidade">${prod.quantidade}</td>
+          <td data-label="Etapas">${(prod.etapas || []).join(", ")}</td>
+          <td data-label="Ações">
+            <button class="btn btn-sm btn-primary mb-1" onclick="editarProduto('${prod._id}')">
               <i class="bi bi-pencil"></i> Editar
-            </a>
+            </button>
             <button class="btn btn-sm btn-danger mb-1" onclick="deletarProduto('${prod._id}')">
               <i class="bi bi-trash"></i> Deletar
             </button>
           </td>
         `;
+
         tabela.appendChild(tr);
       }
     } catch (erro) {
@@ -119,34 +193,83 @@
   }
 
 
-    function deletarProduto(id) {
-      Swal.fire({
-        title: 'Tem certeza?',
-        text: 'Essa ação não poderá ser desfeita!',
-        icon: 'warning',
+  function editarProduto(id) {
+    Swal.fire({
+        title: 'Editar Produto',
+        text: `Deseja editar o produto com ID: ${id}?`,
+        icon: 'question',
         showCancelButton: true,
-        confirmButtonText: 'Sim, deletar',
+        confirmButtonText: 'Sim, editar',
         cancelButtonText: 'Cancelar'
-      }).then(async (result) => {
+    }).then(result => {
         if (result.isConfirmed) {
-          try {
-            const resposta = await fetch(`/produto/${id}`, {
-              method: 'DELETE',
-              headers: {
-                'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-              }
-            });
-
-            if (!resposta.ok) throw new Error("Erro ao deletar");
-            Swal.fire('Deletado!', 'Produto removido com sucesso.', 'success');
-            carregarTabelaProdutos();
-          } catch (erro) {
-            console.error(erro);
-            Swal.fire('Erro!', 'Não foi possível deletar o produto.', 'error');
-          }
+            // Recupera o token do localStorage
+            const token = localStorage.getItem('authToken');
+            
+            // Verifica se o token existe
+            if (token) {
+                // Se o token existir, faz a requisição com o token
+                fetch(`/produto/editar-produto/${id}`, {
+                    method: 'GET',  // Ou 'POST', dependendo da sua rota
+                    headers: {
+                        'Authorization': `Bearer ${token}`  // Envia o token no cabeçalho
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erro na requisição');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Exemplo: redirecionar para a página de edição, caso a requisição seja bem-sucedida
+                    window.location.href = `/produto/editar-produto?id=${id}`;
+                })
+                .catch(error => {
+                    console.error('Erro ao editar o produto:', error);
+                    Swal.fire('Erro!', 'Não foi possível editar o produto.', 'error');
+                });
+            } else {
+                Swal.fire('Erro!', 'Você não está autenticado. Faça login novamente.', 'error');
+            }
         }
+    });
+  }
+
+
+  async function deletarProduto(id) {
+      const { isConfirmed } = await Swal.fire({
+          title: 'Confirmar Exclusão',
+          text: "Tem certeza que deseja deletar este produto?",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Sim, deletar',
+          cancelButtonText: 'Cancelar'
       });
-    }
+
+      if (isConfirmed) {
+          try {
+              Swal.fire({ title: 'Deletando...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+              const response = await fetch(`/produto/${id}`, {
+                  method: 'DELETE',
+                  headers: {
+                      'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                  }
+              });
+
+              if (!response.ok) throw new Error("Erro ao deletar");
+
+              Swal.fire('Deletado!', 'Produto removido com sucesso.', 'success');
+              carregarTabelaProdutos();
+          } catch (error) {
+              console.error(error);
+              Swal.fire('Erro!', 'Não foi possível deletar o produto.', 'error');
+          } finally {
+              hideLoading();
+          }
+      }
+  }
+
 
     // Filtro dinâmico
     document.getElementById("filtro").addEventListener("input", function () {
