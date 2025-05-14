@@ -25,7 +25,8 @@ class Funcionario {
      * @param {String} imagemFuncionario - Caminho da imagem do funcionário.
      */
     constructor(nome, turno, senha, CPF, email, telefone, dataNascimento, permissoes, role, imagemFuncionario) {
-        this._id = null;
+        this._id = null; // ID do funcionário (gerado pelo MongoDB)
+        this._credencial = null; // Número da sequence do MongoDB
         this._nome = nome;
         this._turno = turno;
         this._senha = senha;
@@ -35,7 +36,7 @@ class Funcionario {
         this._dataNascimento = dataNascimento;
         this._permissoes = permissoes;
         this._role = role;
-        this._imagemFuncionario = imagemFuncionario; // << adicionado
+        this._imagemFuncionario = imagemFuncionario;
     }
     
 
@@ -44,6 +45,7 @@ class Funcionario {
     // -------------------
 
     get idFuncionario() { return this._id; } 
+    set idFuncionario(id) { this._id = id; }
 
     get nome() { return this._nome; }
     set nome(nome) { this._nome = nome; }
@@ -245,9 +247,9 @@ class Funcionario {
             const funcionario = await Funcionarios.findById(idFuncionario);
             if (funcionario) {
                 this._id = funcionario._id;
+                this._credencial = funcionario.credencial;
                 console.log(funcionario);
                 return funcionario;
-                
             }
             return null;
         } catch (error) {

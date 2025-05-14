@@ -17,8 +17,10 @@ module.exports = class JWTMiddleware {
 
             // Valida o token utilizando a classe MeuTokenJWT
             if (objMeuTokenJWT.validarToken(token) === true) {
+                console.log('Token válido');
                 next(); // Token válido, segue para o próximo middleware ou rota
             } else {
+                console.log('Token inválido');
                 // Token inválido
                 response.status(401).json({
                     status: false,
@@ -27,6 +29,7 @@ module.exports = class JWTMiddleware {
             }
 
         } else {
+            console.log('Token não fornecido');
             // Token não fornecido
             response.status(401).json({
                 status: false,

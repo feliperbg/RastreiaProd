@@ -34,6 +34,20 @@ module.exports = class FuncionarioRouter {
             console.log('GET /funcionario/esqueceu-senha foi chamado');
             res.sendFile(path.join(__dirname, '..', 'view', 'esqueceuSenha.html'));
         });
+        
+        this.router.get('/adicionar-funcionario',
+            (req, res) => {
+                console.log('GET /funcionario/adicionar-funcionario foi chamado');
+                res.sendFile(path.join(__dirname, '..', 'view', 'adicionar-funcionario.html'));
+            }
+        );
+
+       this.router.get('/editar-funcionario/:id',
+            (req, res) => {
+                console.log('GET /funcionario/editar-funcionario foi chamado');
+                res.sendFile(path.join(__dirname, '..', 'view', 'editar-funcionario.html'));
+            }
+        );
 
         // Rotas protegidas por JWT (forma correta)
         this.router.get('/perfil/:id',
@@ -64,11 +78,6 @@ module.exports = class FuncionarioRouter {
             (req, res, next) => this.jwtMiddleware.validate(req, res, next),
             (req, res) => this.funcionarioControl.update(req, res)
         );
-        this.router.get('/editar-funcionario/:id', 
-            (req, res, next) => this.jwtMiddleware.validate(req, res, next),
-            (req, res) => {
-                res.sendFile(path.join(__dirname, 'view', 'editar-funcionario.html'));
-            });
         return this.router;
     }
 }
