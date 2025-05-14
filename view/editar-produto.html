@@ -100,9 +100,7 @@
   </div>
 
   <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const id = urlParams.get('id');
-
+    const id = new URLSearchParams(window.location.search).get('id');
     if (!id) {
       exibirMensagem('ID do produto não encontrado!', 'erro');
       window.location.href = '/painel';

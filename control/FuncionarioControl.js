@@ -1,6 +1,6 @@
+const mongoose = require('mongoose');
 const Funcionario = require('../model/Funcionario');
 const TokenJWT = require('../model/TokenJWT');
-const bcrypt = require('bcrypt');
 
 module.exports = class FuncionarioControl {
     /**
@@ -19,7 +19,6 @@ module.exports = class FuncionarioControl {
         if (logou) {
             // Busca os dados completos do funcionário
             const funcionarioCompleto = await funcionario.readByID(funcionario.idFuncionario);
-            console.log(funcionarioCompleto);
             const payloadToken = {
                 credencialFuncionario: funcionario.credencial,
                 idFuncionario: funcionario._id,
@@ -33,7 +32,7 @@ module.exports = class FuncionarioControl {
                 status: true,
                 msg: 'Logado com sucesso',
                 funcionario: {
-                    id: funcionario._idFuncionario,
+                    id: funcionario.idFuncionario,
                     nome: funcionarioCompleto.nome,
                     credencial: funcionario.credencial,
                     role: funcionarioCompleto.role,
@@ -165,7 +164,11 @@ module.exports = class FuncionarioControl {
      */
     async readByID(request, response) {
         try {
-            const { id } = request.params;
+            const id = request.params.id;
+            console.log('ID do funcionário a ser buscado:', id);
+            if (!mongoose.Types.ObjectId.isValid(id)) {
+                return response.status(400).json({ erro: 'ID inválido' });
+            }
             const funcionario = new Funcionario();
             const encontrado = await funcionario.readByID(id);
             
@@ -209,24 +212,32 @@ module.exports = class FuncionarioControl {
      */
     async update(request, response) {
         try {
-            const { id } = request.params;
+            const id = request.params.id;
             const dadosAtualizacao = request.body;
 
             const funcionario = new Funcionario();
             await funcionario.readByID(id);
+            // Preserva a credencial original
+            console.log(funcionario);
+            const credencialOriginal = funcionario.credencial;
+            console.log('Credencial original:', credencialOriginal);
 
             // Campos permitidos para atualização
             const camposPermitidos = [
                 'nome', 'turno', 'senha', 'email',
                 'telefone', 'dataNascimento', 'permissoes', 'role'
             ];
+           
 
-            // Atualiza dinamicamente os campos que vieram no body
+            // Atualiza apenas os campos permitidos
             camposPermitidos.forEach(campo => {
                 if (dadosAtualizacao[campo]) {
                     funcionario[campo] = dadosAtualizacao[campo];
                 }
             });
+
+            // Restaura a credencial original
+            funcionario.credencial = credencialOriginal;
 
             const atualizado = await funcionario.update();
 
@@ -258,9 +269,13 @@ module.exports = class FuncionarioControl {
      */
     async delete(request, response) {
         try {
-            const { id } = request.params;
+            const id = request.params.id;
+            console.log('ID do funcionário a ser removido:', id);
+            if (!mongoose.Types.ObjectId.isValid(id)) {
+                return response.status(400).json({ erro: 'ID inválido' });
+            }
             const funcionario = new Funcionario();
-            funcionario._idFuncionario = id;
+            funcionario.idFuncionario = id;
             
             const deletado = await funcionario.delete();
             

@@ -110,60 +110,63 @@
       <button type="submit" class="btn btn-primary">Salvar Alterações</button>
     </form>
   </div>
+      <!-- Container de Toasts -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+      <div id="meuToast" class="toast align-items-center border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+          <div id="toast-body" class="toast-body"></div>
+          <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
+        </div>
+      </div>
+    </div>
 
-  <script src="js/toast.js"></script>
+  <script src="/js/toast.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.15/build/js/intlTelInput.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/inputmask@5.0.6/dist/inputmask.min.js"></script>
   
   <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const phoneInput = document.getElementById('telefone');
-      
-      // Inicializa a biblioteca intl-tel-input
-      const iti = window.intlTelInput(phoneInput, {
-        initialCountry: "br", // Defina o país inicial
-        preferredCountries: ["br", "us", "gb"], // Países preferidos na lista
-        utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.15/build/js/utils.js", // Necessário para a formatação
-      });
-
-      // Função para atualizar a máscara
-      function atualizarMascara() {
-        const countryData = iti.getSelectedCountryData();
-        const dialCode = countryData.dialCode;
-
-        // Atualize a máscara de acordo com o código de discagem do país
-        let mask;
-        if (dialCode === "55") {
-          mask = "(99) 99999-9999"; // Brasil
-        } else if (dialCode === "1") {
-          mask = "(999) 999-9999"; // EUA
-        } else {
-          mask = "(99) 9999-9999"; // Padrão para outros países
-        }
-        
-        // Aplica a máscara atualizada ao campo de telefone
-        Inputmask(mask).mask(phoneInput);
-      }
-
-      // Detecta mudança de país e atualiza a máscara
-      iti.setCountry(iti.getSelectedCountryData().iso2);
-      phoneInput.addEventListener('countrychange', function() {
-        atualizarMascara();
-      });
-
-      // Aplica a máscara inicial
-      atualizarMascara();
+  const pathParts = window.location.pathname.split('/');
+  const id = pathParts[pathParts.length - 1]; 
+  document.addEventListener("DOMContentLoaded", function () {
+    const phoneInput = document.getElementById('telefone');
+    
+    // Inicializa a biblioteca intl-tel-input
+    const iti = window.intlTelInput(phoneInput, {
+      initialCountry: "br",
+      preferredCountries: ["br", "us", "gb"],
+      utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.15/build/js/utils.js",
     });
-    const urlParams = new URLSearchParams(window.location.search);
-    const id = urlParams.get('id');
 
-    if (!id) {
-      exibirMensagem('ID do funcionário não encontrado!', 'erro');
-      window.location.href = '/painel';
+    function atualizarMascara() {
+      const countryData = iti.getSelectedCountryData();
+      const dialCode = countryData.dialCode;
+      let mask;
+      if (dialCode === "55") {
+        mask = "(99) 99999-9999";
+      } else if (dialCode === "1") {
+        mask = "(999) 999-9999";
+      } else {
+        mask = "(99) 9999-9999";
+      }
+      Inputmask(mask).mask(phoneInput);
     }
 
+    iti.setCountry(iti.getSelectedCountryData().iso2);
+    phoneInput.addEventListener('countrychange', atualizarMascara);
+    atualizarMascara();
+
+    if (!id || id === 'undefined') {
+      exibirMensagem('ID do funcionário não encontrado!', 'erro');
+      return;
+    }
+
+    carregarFuncionario();
+  });
+  
     async function carregarFuncionario() {
       try {
+        console.log('Carregando funcionário com ID:', id);
         const response = await fetch(`/funcionario/${id}`, {
           method: 'GET',
           headers: {
@@ -171,6 +174,11 @@
             'Authorization': `Bearer ${localStorage.getItem('authToken')}`
           },
         });
+
+        if (!response.ok) {
+          throw new Error(`Erro na requisição: ${response.status}`);
+        }
+
         const dados = await response.json();
         
         if (dados.status && dados.funcionario) {
@@ -218,17 +226,20 @@
           body: JSON.stringify(dadosAtualizados)
         });
 
-        if (resposta.ok) {
-          exibirMensagem('Funcionário atualizado com sucesso!', 'sucesso');
-          window.location.href = '/funcionario';
-        } else {
-          exibirMensagem('Erro ao atualizar funcionário.', 'erro');
+        if (!resposta.ok) {
+          const erro = await resposta.json();
+          exibirMensagem(erro.msg || 'Erro ao atualizar funcionário.', 'erro');
+          return;
         }
+
+        exibirMensagem('Funcionário atualizado com sucesso!', 'sucesso');
+        window.location.href = '/funcionario';
       } catch (error) {
         console.error('Erro ao atualizar funcionário:', error);
         exibirMensagem('Erro interno ao tentar atualizar.', 'erro');
       }
     }
+
 
     document.getElementById('form-editar').addEventListener('submit', atualizarFuncionario);
     carregarFuncionario();

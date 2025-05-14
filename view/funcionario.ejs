@@ -10,49 +10,61 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <!-- SweetAlert2 CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <style>
+<style>
         /* Estilos para centralizar o conteúdo da tabela */
         .table td, .table th {
             text-align: center;
             vertical-align: middle;
         }
-        
+
         /* Ajuste para a coluna de ações */
         .table td[data-label="Ações"] {
             white-space: nowrap;
         }
-        
+
         /* Estilos responsivos */
         @media (max-width: 768px) {
             .table-responsive {
                 border: 0;
             }
-            
+
             .table-responsive thead {
                 display: none;
             }
-            
+
             .table-responsive tr {
                 display: block;
                 margin-bottom: 1rem;
                 border: 1px solid #dee2e6;
             }
-            
+
             .table-responsive td {
                 display: block;
                 text-align: right;
                 border-bottom: 1px solid #dee2e6;
             }
-            
+
             .table-responsive td::before {
                 content: attr(data-label);
                 float: left;
                 font-weight: bold;
             }
-            
+
             .table-responsive td:last-child {
                 border-bottom: 0;
                 text-align: center;
+            }
+        }
+
+        /* Estilo para a coluna de CPF em telas maiores */
+        @media (min-width: 769px) {
+            .table th:nth-child(4),
+            .table td:nth-child(4) {
+                min-width: 150px; /* Ajuste esse valor conforme necessário */
+            }
+            .table th:nth-child(6),
+            .table td:nth-child(6) {
+                min-width: 150px; /* Ajuste esse valor conforme necessário */
             }
         }
     </style>
@@ -181,7 +193,6 @@
             
                 const resultado = await response.json();
                 const tabela = document.getElementById("tabela-funcionarios");
-                console.log('Dados recebidos:', resultado);
                 
                 const funcionarios = Array.isArray(resultado) ? resultado : resultado.funcionarios;
                 
@@ -196,7 +207,6 @@
             
                 funcionarios.forEach(func => {
                     const tr = document.createElement("tr");
-                    console.log('Dados do funcionário:', func);
                     tr.innerHTML = `
                         <td data-label="Credencial">${func.credencial}</td>
                         <td data-label="Nome">${func.nome}</td>
@@ -242,53 +252,24 @@
             }
         }
         
-        function editarFuncionario(id, credencial) {
-            Swal.fire({
-                title: 'Editar Funcionário',
-                text: `Você deseja editar o funcionário com a credencial: ${credencial}?`,
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonText: 'Sim, editar',
-                cancelButtonText: 'Cancelar'
-            }).then(result => {
-                if (result.isConfirmed) {
-                    // Recupera o token do localStorage
-                    const token = localStorage.getItem('authToken');
-                    
-                    // Verifica se o token existe
-                    if (token) {
-                        // Se o token existir, faz a requisição com o token
-                        fetch(`/editar-funcionario/${id}`, {
-                            method: 'GET',  // ou 'POST', dependendo da sua rota
-                            headers: {
-                                'Authorization': `Bearer ${token}`  // Envia o token no cabeçalho
-                            }
-                        })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('Erro na requisição');
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                            // Exemplo: redirecionar para a página de edição
-                            window.location.href = `/funcionario/editar-funcionario/${id}`;
-                        })
-                        .catch(error => {
-                            console.error('Erro ao editar o funcionário:', error);
-                            Swal.fire('Erro!', 'Não foi possível editar o funcionário.', 'error');
-                        });
-                    } else {
-                        Swal.fire('Erro!', 'Você não está autenticado. Faça login novamente.', 'error');
-                    }
-                }
-            });
-        }
+      function editarFuncionario(id, credencial) {
+        Swal.fire({
+            title: 'Editar Funcionário',
+            text: `Você deseja editar o funcionário com a credencial: ${credencial}?`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Sim, editar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = `/funcionario/editar-funcionario/${id}`;
+            }
+        });
+    }
 
-
-        
-        async function deletarFuncionario(id) {
-            const { isConfirmed } = await Swal.fire({
+    // Função para deletar funcionário
+    async function deletarFuncionario(id) {
+        const { isConfirmed } = await Swal.fire({
                 title: 'Tem certeza?',
                 text: "Você não poderá reverter isso!",
                 icon: 'warning',
