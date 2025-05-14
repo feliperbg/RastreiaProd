@@ -11,19 +11,19 @@ class Componente {
      * @param {string} codigo - Código do componente.
      * @param {string} descricao - Descrição do componente.
      * @param {Date} dataEntrada - Data de entrada do componente.
-     * @param {Date} validade - Validade do componente.
+     * @param {Date} dataValidade - Data de validade do componente.
      * @param {number} quantidade - Quantidade do componente.
      * @param {number} precoPagoLote - Preço pago pelo lote do componente.
      * @param {number} precoUnidade - Preço por unidade do componente.
      * @param {Object} dimensoes - Dimensões do componente (comprimento, largura, altura).
      */
-    constructor(idComponente, nome, codigo, descricao, dataEntrada, validade, quantidade, precoPagoLote, precoUnidade, dimensoes) {
-        this._idComponente = idComponente;
+    constructor(nome, codigo, descricao, dataEntrada, dataValidade, quantidade, precoPagoLote, precoUnidade, dimensoes) {
+        this._idComponente = null;
         this._nome = nome;
         this._codigo = codigo;
         this._descricao =  descricao;
         this._dataEntrada = dataEntrada;
-        this._validade = validade;
+        this._dataValidade = dataValidade;
         this._quantidade = quantidade;
         this._precoPagoLote = precoPagoLote;
         this._precoUnidade =  precoUnidade;
@@ -44,7 +44,7 @@ class Componente {
                 codigo: this._codigo,
                 descricao: this._descricao,
                 dataEntrada: this._dataEntrada,
-                validade: this._validade,
+                dataValidade: this._dataValidade,
                 quantidade: this._quantidade,
                 precoPagoLote: this._precoPagoLote,
                 precoUnidade: this._precoUnidade,
@@ -55,7 +55,7 @@ class Componente {
             const componenteSalvo = await componente.save();
 
             // Atualiza o ID do componente após a inserção no banco de dados.
-            this._idComponente = componenteSalvo._id;
+            this._idComponente = componenteSalvo.idComponente;
 
             return true; // Retorna 'true' indicando sucesso.
         } catch (error) {
@@ -97,7 +97,7 @@ class Componente {
                     codigo: this._codigo,
                     descricao: this._descricao,
                     dataEntrada: this._dataEntrada,
-                    validade: this._validade,
+                    dataValidade: this._dataValidade,
                     quantidade: this._quantidade,
                     precoPagoLote: this._precoPagoLote,
                     precoUnidade: this._precoUnidade,
@@ -148,7 +148,7 @@ class Componente {
                 this._codigo = componente.codigo;
                 this._descricao = componente.descricao;
                 this._dataEntrada = componente.dataEntrada;
-                this._validade = componente.validade;
+                this._dataValidade = componente.dataValidade;
                 this._quantidade = componente.quantidade;
                 this._precoPagoLote = componente.precoPagoLote;
                 this._precoUnidade = componente.precoUnidade;
@@ -198,11 +198,11 @@ class Componente {
         this._dataEntrada = dataEntrada;
     }
 
-    get validade() {
-        return this._validade;
+    get dataValidade() {
+        return this._dataValidade;
     }
-    set validade(validade) {
-        this._validade = validade;
+    set dataValidade(dataValidade) {
+        this._dataValidade = dataValidade;
     }
 
     get quantidade() {

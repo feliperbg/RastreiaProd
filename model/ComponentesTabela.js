@@ -19,7 +19,7 @@ const ComponentesTabela = new Schema({
 		type: Date,
 		required: true,
 	},
-	validade: {
+	dataValidade: {
 		type: Date,
 		required: true,
 	},

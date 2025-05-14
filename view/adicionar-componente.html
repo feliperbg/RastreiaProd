@@ -5,25 +5,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Adicionar Componente</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <script src="/js/toast.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <style>
+    body {
+      background-color: #f8f9fa;
+      font-family: Arial, sans-serif;
+    }
+    .container {
+      margin-top: 40px;
+    }
+    .form-label {
+      font-weight: 600;
+    }
+    .form-control {
+      border-radius: 5px;
+    }
+  </style>
 </head>
-<style>
-  body {
-    background-color: #f8f9fa;
-    font-family: Arial, sans-serif;
-  }
-  .container {
-    margin-top: 40px;
-  }
-  .form-label {
-    font-weight: 600;
-  }
-  .form-control {
-    border-radius: 5px;
-  }
-  table {
-    margin-top: 40px;
-  }
-</style>
 <body class="p-3">
 
   <div class="container">
@@ -31,11 +31,11 @@
 
     <form id="form-adicionar">
       <div class="mb-3">
-        <label for="nome" class="form-label">Nome</label>
+        <label for="nome" class="form-label">Nome *</label>
         <input type="text" id="nome" name="nome" class="form-control" required />
       </div>
       <div class="mb-3">
-        <label for="codigo" class="form-label">Código</label>
+        <label for="codigo" class="form-label">Código *</label>
         <input type="text" id="codigo" name="codigo" class="form-control" required />
       </div>
       <div class="mb-3">
@@ -51,37 +51,46 @@
         <input type="date" id="dataValidade" name="dataValidade" class="form-control" />
       </div>
       <div class="mb-3">
-        <label for="quantidade" class="form-label">Quantidade</label>
-        <input type="number" id="quantidade" name="quantidade" class="form-control" />
+        <label for="quantidade" class="form-label">Quantidade *</label>
+        <input type="number" id="quantidade" name="quantidade" class="form-control" required min="1" />
       </div>
       <div class="mb-3">
-        <label for="precoPagoLote" class="form-label">Preço Pago por Lote</label>
-        <input type="number" id="precoPagoLote" name="precoPagoLote" class="form-control" />
+        <label for="precoPagoLote" class="form-label">Preço Pago por Lote *</label>
+        <input type="number" id="precoPagoLote" name="precoPagoLote" class="form-control" required min="0.01" step="0.01" />
       </div>
       <div class="mb-3">
-        <label for="precoUnidade" class="form-label">Preço por Unidade</label>
-        <input type="number" id="precoUnidade" name="precoUnidade" class="form-control" />
+        <label for="precoUnidade" class="form-label">Preço por Unidade *</label>
+        <input type="number" id="precoUnidade" name="precoUnidade" class="form-control" required min="0.01" step="0.01" />
       </div>
       <div class="mb-3">
-        <label for="dimensoes" class="form-label">Dimensões</label>
-        <input type="text" id="dimensoes" name="dimensoes" class="form-control" />
+        <label class="form-label">Dimensões</label>
+        <div class="row">
+          <div class="col-md-4 mb-2">
+            <label for="altura" class="form-label">Altura</label>
+            <input type="number" id="altura" name="altura" class="form-control" min="0" step="0.01" />
+          </div>
+          <div class="col-md-4 mb-2">
+            <label for="comprimento" class="form-label">Comprimento</label>
+            <input type="number" id="comprimento" name="comprimento" class="form-control" min="0" step="0.01" />
+          </div>
+          <div class="col-md-4 mb-2">
+            <label for="largura" class="form-label">Largura</label>
+            <input type="number" id="largura" name="largura" class="form-control" min="0" step="0.01" />
+          </div>
+        </div>
       </div>
 
       <button type="submit" class="btn btn-primary">Adicionar Componente</button>
     </form>
+  </div>
 
-    <h2 class="mt-5">Componentes Cadastrados</h2>
-    <table class="table table-bordered table-striped" id="tabela-componentes">
-      <thead class="table-dark">
-        <tr>
-          <th>Nome</th>
-          <th>Código</th>
-          <th>Quantidade</th>
-          <th>Data Entrada</th>
-        </tr>
-      </thead>
-      <tbody id="tabela-corpo"></tbody>
-    </table>
+  <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+    <div id="meuToast" class="toast align-items-center text-white border-0" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="d-flex">
+        <div id="toast-body" class="toast-body"></div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -90,16 +99,56 @@
     async function adicionarComponente(event) {
       event.preventDefault();
 
+      // Validações adicionais
+      const nome = document.getElementById('nome').value.trim();
+      const codigo = document.getElementById('codigo').value.trim();
+      const quantidade = parseInt(document.getElementById('quantidade').value, 10);
+      const precoPagoLote = parseFloat(document.getElementById('precoPagoLote').value);
+      const precoUnidade = parseFloat(document.getElementById('precoUnidade').value);
+      const dataEntrada = document.getElementById('dataEntrada').value;
+      const dataValidade = document.getElementById('dataValidade').value;
+
+      if (!nome || !codigo) {
+        exibirMensagem('Por favor, preencha os campos obrigatórios: Nome e Código.', 'erro');
+        return;
+      }
+
+      if (isNaN(quantidade) || quantidade <= 0) {
+        exibirMensagem('A Quantidade deve ser um número positivo.', 'erro');
+        return;
+      }
+
+      if (isNaN(precoPagoLote) || precoPagoLote <= 0) {
+        exibirMensagem('O Preço Pago por Lote deve ser um número positivo.', 'erro');
+        return;
+      }
+
+      if (isNaN(precoUnidade) || precoUnidade <= 0) {
+        exibirMensagem('O Preço por Unidade deve ser um número positivo.', 'erro');
+        return;
+      }
+
+      if (dataEntrada && dataValidade && dataValidade < dataEntrada) {
+        exibirMensagem('A Data de Validade não pode ser anterior à Data de Entrada.', 'erro');
+        return;
+      }
+
       const novoComponente = {
-        nome: document.getElementById('nome').value,
-        codigo: document.getElementById('codigo').value,
-        descricao: document.getElementById('descricao').value,
-        dataEntrada: document.getElementById('dataEntrada').value,
-        dataValidade: document.getElementById('dataValidade').value,
-        quantidade: document.getElementById('quantidade').value,
-        precoPagoLote: document.getElementById('precoPagoLote').value,
-        precoUnidade: document.getElementById('precoUnidade').value,
-        dimensoes: document.getElementById('dimensoes').value
+        Componente:{
+          nome,
+          codigo,
+          descricao: document.getElementById('descricao').value.trim(),
+          dataEntrada,
+          dataValidade,
+          quantidade,
+          precoPagoLote,
+          precoUnidade,
+          dimensoes: {
+            altura: parseFloat(document.getElementById('altura').value) || null,
+            comprimento: parseFloat(document.getElementById('comprimento').value) || null,
+            largura: parseFloat(document.getElementById('largura').value) || null
+          }
+        }
       };
 
       try {
@@ -114,68 +163,16 @@
 
         if (resposta.ok) {
           exibirMensagem('Componente adicionado com sucesso!', 'sucesso');
-          document.getElementById('form-adicionar').reset();
-          carregarComponentes(); // Atualiza a tabela
+          window.location.href = '/componente'; // Redireciona para a listagem
         } else {
-          exibirMensagem('Erro ao adicionar componente.', 'erro');
+          const erro = await resposta.json();
+          exibirMensagem(erro.msg || 'Erro ao adicionar componente.', 'erro');
         }
       } catch (error) {
         console.error('Erro ao adicionar componente:', error);
         exibirMensagem('Erro interno ao tentar adicionar.', 'erro');
       }
     }
-
-    async function carregarComponentes() {
-      try {
-        const response = await fetch('/componente/readALL', {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-          }
-        });
-        const dados = await response.json();
-
-        const tabela = document.getElementById('tabela-corpo');
-        tabela.innerHTML = '';
-
-        if (dados.status && dados.lista) {
-          dados.lista.forEach(c => {
-            const linha = document.createElement('tr');
-            linha.innerHTML = `
-              <td>${c.nome}</td>
-              <td>${c.codigo}</td>
-              <td>${c.quantidade}</td>
-              <td>${c.dataEntrada ? c.dataEntrada.substring(0, 10) : ''}</td>
-            `;
-            tabela.appendChild(linha);
-          });
-        }
-      } catch (error) {
-        console.error('Erro ao carregar componentes:', error);
-      }
-    }
-
-    function exibirMensagem(mensagem, tipo) {
-      const toast = document.getElementById('meuToast');
-      const toastBody = document.getElementById('toast-body');
-      toast.className = `toast align-items-center text-white bg-${tipo === 'sucesso' ? 'success' : 'danger'} border-0`;
-      toastBody.textContent = mensagem;
-
-      const toastBootstrap = new bootstrap.Toast(toast);
-      toastBootstrap.show();
-    }
-
-    carregarComponentes();
   </script>
-
-  <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
-    <div id="meuToast" class="toast align-items-center text-white border-0" role="alert" aria-live="assertive" aria-atomic="true">
-      <div class="d-flex">
-        <div id="toast-body" class="toast-body"></div>
-        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-      </div>
-    </div>
-  </div>
-
 </body>
 </html>
