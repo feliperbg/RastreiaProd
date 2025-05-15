@@ -81,9 +81,22 @@
       </div>
 
       <div class="mb-3">
-        <label for="dimensoes" class="form-label">Dimensões</label>
-        <input type="text" id="dimensoes" name="dimensoes" class="form-control" />
-      </div>
+        <label class="form-label">Dimensões</label>
+        <div class="row">
+            <div class="col-md-4 mb-2">
+                <label for="altura" class="form-label">Altura</label>
+                <input type="number" id="altura" name="altura" class="form-control" />
+            </div>
+            <div class="col-md-4 mb-2">
+                <label for="comprimento" class="form-label">Comprimento</label>
+                <input type="number" id="comprimento" name="comprimento" class="form-control" />
+            </div>
+            <div class="col-md-4 mb-2">
+                <label for="largura" class="form-label">Largura</label>
+                <input type="number" id="largura" name="largura" class="form-control" />
+            </div>
+        </div>
+    </div>
 
       <div class="mb-3">
         <label for="quantidade" class="form-label">Quantidade</label>
@@ -99,6 +112,17 @@
     </form>
   </div>
 
+  <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+    <div id="meuToast" class="toast align-items-center border-0" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="d-flex">
+        <div id="toast-body" class="toast-body"></div>
+        <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/toast.js"></script>
   <script>
     const id = new URLSearchParams(window.location.search).get('id');
     if (!id) {
@@ -127,9 +151,13 @@
           document.getElementById('dataValidade').value = p.validade ? p.validade.substring(0, 10) : '';
           document.getElementById('precoMontagem').value = p.precoMontagem || '';
           document.getElementById('precoVenda').value = p.precoVenda || '';
-          document.getElementById('dimensoes').value = p.dimensoes || '';
           document.getElementById('quantidade').value = p.quantidade || '';
           document.getElementById('etapas').value = p.etapas || '';
+          if (c.dimensoes) {
+                        document.getElementById('altura').value = c.dimensoes.altura || '';
+                        document.getElementById('comprimento').value = c.dimensoes.comprimento || '';
+                        document.getElementById('largura').value = c.dimensoes.largura || '';
+                    }
         } else {
           exibirMensagem('Produto não encontrado!', 'erro');
         }
@@ -143,42 +171,79 @@
       event.preventDefault();
 
       const dadosAtualizados = {
-        nome: document.getElementById('nome').value,
-        codigo: document.getElementById('codigo').value,
-        descricao: document.getElementById('descricao').value,
-        componentes: document.getElementById('componentesNecessarios').value,
-        validade: document.getElementById('dataValidade').value,
-        precoMontagem: parseFloat(document.getElementById('precoMontagem').value) || 0,
-        precoVenda: parseFloat(document.getElementById('precoVenda').value) || 0,
-        dimensoes: document.getElementById('dimensoes').value,
-        quantidade: parseInt(document.getElementById('quantidade').value) || 0,
-        etapas: document.getElementById('etapas').value
+        Produto: {
+            nome: document.getElementById('nome').value,
+            codigo: document.getElementById('codigo').value,
+            descricao: document.getElementById('descricao').value,
+            componentes: document.getElementById('componentesNecessarios').value,
+            validade: document.getElementById('dataValidade').value,
+            precoMontagem: parseFloat(document.getElementById('precoMontagem').value),
+            precoVenda: parseFloat(document.getElementById('precoVenda').value),
+            dimensoes: document.getElementById('dimensoes').value,
+            quantidade: parseInt(document.getElementById('quantidade').value),
+            etapas: document.getElementById('etapas').value,
+            dimensoes: {
+              altura: document.getElementById('altura').value,
+              comprimento: document.getElementById('comprimento').value,
+              largura: document.getElementById('largura').value
+            }
+        }  
       };
 
-      try {
-        const resposta = await fetch(`/produto/${id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-          },
-          body: JSON.stringify(dadosAtualizados)
+      fetch(`/produto/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+            },
+            body: JSON.stringify(dadosAtualizados)
+        })
+        .then(resposta => {
+            if (!resposta.ok) {
+                return resposta.json().then(erro => {
+                    exibirMensagem(erro.msg || 'Erro ao atualizar produto.', 'erro');
+                    throw new Error('Erro na requisição');
+                });
+            }
+            return resposta.json(); // Se a resposta for ok, podemos parsear o JSON aqui (opcional, dependendo do backend)
+        })
+        .then(dados => {
+            exibirMensagem('Produto atualizado com sucesso!', 'sucesso');
+            window.location.href = '/produto';
+        })
+        .catch(error => {
+            console.error('Erro ao atualizar produto:', error);
+            exibirMensagem('Erro interno ao tentar atualizar.', 'erro');
         });
-
-        if (resposta.ok) {
-          exibirMensagem('Produto atualizado com sucesso!', 'sucesso');
-          window.location.href = '/produto';
-        } else {
-          exibirMensagem('Erro ao atualizar produto.', 'erro');
-        }
-      } catch (error) {
-        console.error('Erro ao atualizar produto:', error);
-        exibirMensagem('Erro interno ao tentar atualizar.', 'erro');
-      }
     }
+        document.addEventListener('DOMContentLoaded', function() {
+            const precoMontagem = document.getElementById('precoMontagem');
 
-    document.getElementById('form-editar').addEventListener('submit', atualizarProduto);
-    carregarProduto();
-  </script>
+            precoMontagemInput.addEventListener('input', function(event) {
+                // Remove qualquer caractere que não seja número ou ponto decimal
+                this.value = this.value.replace(/[^0-9.]/g, '');
+
+                // Garante que haja apenas um ponto decimal
+                const parts = this.value.split('.');
+                if (parts.length > 2) {
+                    this.value = parts[0] + '.' + parts.slice(1).join('');
+                }
+            });
+            const precoVenda = document.getElementById('precoVenda');
+
+            precoVendaInput.addEventListener('input', function(event) {
+                // Remove qualquer caractere que não seja número ou ponto decimal
+                this.value = this.value.replace(/[^0-9.]/g, '');
+
+                // Garante que haja apenas um ponto decimal
+                const parts = this.value.split('.');
+                if (parts.length > 2) {
+                    this.value = parts[0] + '.' + parts.slice(1).join('');
+                }
+            });
+        });
+        document.getElementById('form-editar').addEventListener('submit', atualizarProduto);
+        carregarProduto();
+    </script>
 </body>
 </html>
