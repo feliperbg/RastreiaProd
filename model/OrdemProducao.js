@@ -3,7 +3,7 @@ const OrdemProducao = require('./OrdemProducaoTabela'); // Importa o schema do M
 /**
  * Classe representando uma ordem de produção.
  */
-class OrdemProducaoClass {
+class OrdemProducaoClasse {
     /**
      * Construtor para inicializar os dados de uma ordem de produção.
      * 
@@ -165,4 +165,4 @@ class OrdemProducaoClass {
     }
 }
 
-module.exports = OrdemProducao;
+module.exports = OrdemProducaoClasse;
