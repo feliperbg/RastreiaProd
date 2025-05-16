@@ -70,8 +70,8 @@
                       <input type="text" id="filtro" class="form-control" placeholder="Filtrar por nome ou código...">
                   </div>
                   <div class="col-md-6 text-end">
-                      <a href="/produto/cadastro-produto" class="btn btn-primary">
-                          <i class="bi bi-plus-circle"></i> Cadastrar Novo Produto
+                      <a href="/produto/adicionar-produto" class="btn btn-primary">
+                          <i class="bi bi-plus-circle"></i> Adicionar Novo Produto
                       </a>
                   </div>
               </div>
@@ -160,7 +160,7 @@
         const nomesComponentes = await Promise.all(
           (prod.componentesNecessarios || []).map(obterNomeComponente)
         );
-
+        console.log(prod);
         const tr = document.createElement("tr");
         tr.innerHTML = `
           <td data-label="Nome">${prod.nome}</td>
@@ -175,7 +175,7 @@
           <td data-label="Quantidade">${prod.quantidade}</td>
           <td data-label="Etapas">${(prod.etapas || []).join(", ")}</td>
           <td data-label="Ações">
-            <button class="btn btn-sm btn-primary mb-1" onclick="editarProduto('${prod._id}')">
+            <button class="btn btn-sm btn-primary mb-1" onclick="editarProduto('${prod._id}', '${prod.codigo}')">
               <i class="bi bi-pencil"></i> Editar
             </button>
             <button class="btn btn-sm btn-danger mb-1" onclick="deletarProduto('${prod._id}')">
@@ -193,49 +193,21 @@
   }
 
 
-  function editarProduto(id) {
-    Swal.fire({
-        title: 'Editar Produto',
-        text: `Deseja editar o produto com ID: ${id}?`,
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonText: 'Sim, editar',
-        cancelButtonText: 'Cancelar'
-    }).then(result => {
-        if (result.isConfirmed) {
-            // Recupera o token do localStorage
-            const token = localStorage.getItem('authToken');
-            
-            // Verifica se o token existe
-            if (token) {
-                // Se o token existir, faz a requisição com o token
-                fetch(`/produto/editar-produto/${id}`, {
-                    method: 'GET',  // Ou 'POST', dependendo da sua rota
-                    headers: {
-                        'Authorization': `Bearer ${token}`  // Envia o token no cabeçalho
-                    }
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Erro na requisição');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    // Exemplo: redirecionar para a página de edição, caso a requisição seja bem-sucedida
-                    window.location.href = `/produto/editar-produto?id=${id}`;
-                })
-                .catch(error => {
-                    console.error('Erro ao editar o produto:', error);
-                    Swal.fire('Erro!', 'Não foi possível editar o produto.', 'error');
-                });
-            } else {
-                Swal.fire('Erro!', 'Você não está autenticado. Faça login novamente.', 'error');
-            }
-        }
-    });
-  }
 
+      function editarProduto(id, codigo) {
+        Swal.fire({
+            title: 'Editar Produto',
+            text: `Você deseja editar o produto com o código: ${codigo}?`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Sim, editar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = `/produto/editar-produto/${id}`;
+            }
+        });
+    }
 
   async function deletarProduto(id) {
       const { isConfirmed } = await Swal.fire({

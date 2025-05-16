@@ -21,6 +21,11 @@ module.exports = class ProdutoRouter {
             // Verifica se o token existe na requisição
             res.sendFile(path.join(__dirname, 'view', 'editar-produto.html')); // Caminho absoluto
         });
+
+        this.router.get('/adicionar-produto', (req, res) => {
+            res.sendFile(path.join(__dirname, '..', 'view', 'adicionar-produto.html'));
+        });
+
         // Rotas protegidas por JWT (forma correta)
         this.router.post('/',
             (req, res) => this.produtoControl.create(req, res)
@@ -52,9 +57,7 @@ module.exports = class ProdutoRouter {
             (req, res) => this.produtoControl.readAllJSON(req, res)
             
         });
-        this.router.get('/cadastro-produto', (req, res) => {
-            res.sendFile(path.join(__dirname, '..', 'view', 'adicionarProduto.html'));
-        });
+
   
 
         return this.router;

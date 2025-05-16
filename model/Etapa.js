@@ -8,8 +8,8 @@ class Etapa {
     /**
      * Construtor para inicializar os dados de uma etapa.
      */
-    constructor(idEtapa, nome, sequencias, departamentoResponsavel, procedimentos, componenteConclusao, funcionariosResponsaveis) {
-        this._idEtapa = idEtapa ? mongoose.Types.ObjectId(idEtapa) : null; // Usa ObjectId caso o id seja fornecido
+    constructor(nome, sequencias, departamentoResponsavel, procedimentos, componenteConclusao, funcionariosResponsaveis) {
+        this._idEtapa = null;
         this._nome = nome;
         this._sequencias = sequencias;
         this._departamentoResponsavel = departamentoResponsavel;
@@ -120,6 +120,9 @@ class Etapa {
 
     get idEtapa() {
         return this._idEtapa;
+    }
+    set idEtapa(idEtapa) {
+        this._idEtapa = idEtapa;
     }
 
     get nome() {
