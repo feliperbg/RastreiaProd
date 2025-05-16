@@ -8,8 +8,8 @@ class Produto {
     /**
      * Construtor para inicializar os dados de um produto.
      */
-    constructor(idProduto, nome, codigo, descricao, dataEntrada, validade, componentesNecessarios, precoMontagem, precoVenda, dimensoes, quantidade, etapas) {
-        this._idProduto = idProduto ? mongoose.Types.ObjectId(idProduto) : null; // Usa ObjectId caso o id seja fornecido
+    constructor(nome, codigo, descricao, dataEntrada, validade, componentesNecessarios, precoMontagem, precoVenda, dimensoes, quantidade, etapas) {
+        this._idProduto = null;
         this._nome = nome;
         this._codigo = codigo;
         this._descricao = descricao;
