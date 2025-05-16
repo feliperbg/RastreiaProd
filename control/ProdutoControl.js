@@ -4,79 +4,6 @@ const bcrypt = require('bcrypt');
 
 module.exports = class ProdutoControl {
     /**
-     * Realiza o login de um produto
-     * @param {Object} request - Objeto de requisição HTTP
-     * @param {Object} response - Objeto de resposta HTTP
-     */
-
-    async login(request, response) {
-        console.log("BODY RECEBIDO:", request.body);
-
-        const produto = new Produto();
-        produto.produto = request.body.Produto.credencial;
-        produto.senha = request.body.Produto.senha;
-
-        const logou = await Produto.login();
-        console.log("LOGIN SUCESSO?", logou);
-
-        if (logou) {
-            // Busca os dados completos do produto
-            const produtoCompleto = await produto.readByID(produto._idProduto);
-            
-            const payloadToken = {
-                credencialProduto: produto.credencial,
-                idProduto: produto._idProduto,
-                role: produtoCompleto.role,
-                permissoes: produtoCompleto.permissoes
-            };
-
-            const jwt = new TokenJWT();
-            const token_string = jwt.gerarToken(payloadToken);
-
-            const objResposta = {
-                status: true,
-                msg: 'Logado com sucesso',
-                produto: {
-                    id: produto._idProduto,
-                    nome: produtoCompleto.nome,
-                    credencial: produto.credencial,
-                    role: produtoCompleto.role,
-                    permissoes: produtoCompleto.permissoes
-                },
-                token: token_string
-            };
-            return response.status(200).send(objResposta);
-
-        } else {
-            return response.status(401).send({
-                status: false,
-                msg: 'Credencial ou senha inválidos',
-            });
-        }
-    }
-
-    /**
-     * Realiza o logout do sistema
-     * @param {Object} request - Objeto de requisição HTTP
-     * @param {Object} response - Objeto de resposta HTTP
-     */
-    async logout(request, response) {
-        try {
-            // Em uma implementação real, você poderia invalidar o token aqui
-            return response.status(200).send({
-                status: true,
-                msg: "Logout realizado com sucesso."
-            });
-        } catch (error) {
-            console.error('Erro no logout:', error);
-            return response.status(500).send({
-                status: false,
-                msg: 'Erro durante o logout'
-            });
-        }
-    }
-
-    /**
      * Cria um novo produto
      * @param {Object} request - Objeto de requisição HTTP
      * @param {Object} response - Objeto de resposta HTTP
@@ -84,29 +11,19 @@ module.exports = class ProdutoControl {
     async create(request, response) {
         try {
             const {
-                nome,
-                codigo,
-                descricao,
-                componentesNecessarios,
-                validade,
-                precoMontagem,
-                precoVenda,
-                dimensoes,
-                quantidade,
-                etapas
+                Produto: {
+                    nome,
+                    codigo,
+                    descricao,
+                    componentesNecessarios,
+                    validade,
+                    precoMontagem,
+                    precoVenda,
+                    dimensoes,
+                    quantidade,
+                    etapas
+                }
             } = request.body;
-
-            // Verifica se a credencial já existe
-            const produto = new Produto();
-            const credencialExiste = await produto.isProdutoByCredencial(credencial);
-            
-            if (credencialExiste) {
-                return response.status(400).send({
-                    status: false,
-                    msg: 'Já existe um produto com esta credencial'
-                });
-            }
-
             // Cria o novo produto
             const novoProduto = new Produto(
                 nome,
@@ -128,9 +45,7 @@ module.exports = class ProdutoControl {
                     status: true,
                     msg: 'Produto criado com sucesso',
                     produto: {
-                        nome: novoProduto.nome,
-                        credencial: novoProduto.credencial,
-                        role: novoProduto.role
+                        nome: novoProduto.nome
                     }
                 });
             } else {
