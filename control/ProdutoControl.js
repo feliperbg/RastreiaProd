@@ -1,6 +1,4 @@
 const Produto = require('../model/Produto');
-const TokenJWT = require('../model/TokenJWT');
-const bcrypt = require('bcrypt');
 
 module.exports = class ProdutoControl {
     /**
