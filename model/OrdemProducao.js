@@ -1,9 +1,9 @@
-const OrdemProducao = require('./OrdemProducaoTabela'); // Importa o schema do Mongoose
+const OrdensProducao = require('./OrdemProducaoTabela'); // Importa o schema do Mongoose
 
 /**
  * Classe representando uma ordem de produção.
  */
-class OrdemProducaoClass {
+class OrdemProducao {
     /**
      * Construtor para inicializar os dados de uma ordem de produção.
      * 
@@ -27,7 +27,7 @@ class OrdemProducaoClass {
      */
     async create() {
         try {
-            const novaOrdem = new OrdemProducao({
+            const novaOrdem = new OrdensProducao({
                 status: this._status,
                 produto: this._produto,
                 etapa: this._etapa,
@@ -49,7 +49,7 @@ class OrdemProducaoClass {
      */
     async update() {
         try {
-            const result = await OrdemProducao.findByIdAndUpdate(
+            const result = await OrdensProducao.findByIdAndUpdate(
                 this._idOrdem,
                 {
                     status: this._status,
@@ -73,7 +73,7 @@ class OrdemProducaoClass {
      */
     async delete() {
         try {
-            const result = await OrdemProducao.findByIdAndDelete(this._idOrdem);
+            const result = await OrdensProducao.findByIdAndDelete(this._idOrdem);
             return result !== null;
         } catch (error) {
             console.error('Erro ao deletar a ordem de produção:', error);
@@ -86,7 +86,7 @@ class OrdemProducaoClass {
      */
     async readAll() {
         try {
-            const ordens = await OrdemProducao.find()
+            const ordens = await OrdensProducao.find()
                 .populate('produto')
                 .sort({ 'timestampProducao.inicio': -1 });
             return ordens;
@@ -104,7 +104,7 @@ class OrdemProducaoClass {
     async readByID(idOrdem) {
         this._idOrdem = idOrdem;
         try {
-            const ordem = await OrdemProducao.findById(this._idOrdem)
+            const ordem = await OrdensProducao.findById(this._idOrdem)
                 .populate('produto etapa.etapa funcionarioAtivo.funcionario');
             if (ordem) {
                 this._status = ordem.status;
@@ -164,5 +164,4 @@ class OrdemProducaoClass {
         this._timestampProducao = timestamp;
     }
 }
-
 module.exports = OrdemProducao;

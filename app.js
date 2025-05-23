@@ -5,6 +5,7 @@ const FuncionariosRouter = require('./router/FuncionarioRouter');
 const ComponentesRouter = require('./router/ComponenteRouter');
 const ProdutosRouter = require('./router/ProdutoRouter');
 const EtapasRouter = require('./router/EtapaRouter');
+const OrdensProducaoRouter = require('./router/OrdemProducaoRouter');
 const JWTMiddleware = require('./middleware/TokenJWTMiddleware');
 
 
@@ -15,6 +16,7 @@ const FuncionarioRouter = new FuncionariosRouter();
 const ComponenteRouter = new ComponentesRouter();
 const ProdutoRouter = new ProdutosRouter();
 const EtapaRouter = new EtapasRouter();
+const OrdemProducaoRouter = new OrdensProducaoRouter();
 const jwt = new JWTMiddleware();
 const portaServico = 8081;
 app.use(express.json());
@@ -50,11 +52,9 @@ app.use('/produto', ProdutoRouter.createRoutes());
 
 app.use('/etapa', EtapaRouter.createRoutes());
 
-
-
+app.use('/ordem-producao', OrdemProducaoRouter.createRoutes());
 
 app.listen(portaServico, '0.0.0.0', () => {
     console.log(`API rodando no endereço: http://localhost:${portaServico}/`);
     Banco.getConexao();
 });
-
