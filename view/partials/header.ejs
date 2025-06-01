@@ -2,12 +2,13 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
 <link rel="stylesheet" href="css/adminlte.css" /> 
  <!-- Header -->
+<body>
   <nav class="app-header navbar navbar-expand bg-body">
     <div class="container-fluid">
       <ul class="navbar-nav">
         <li class="nav-item">
-          <a class="nav-link" data-lte-toggle="sidebar" href="painel" role="button">
-            <i id ="iconeSideBar" class="bi bi-arrow-left"></i>
+          <a class="nav-link" data-lte-toggle="sidebar" href="/painel" role="button">
+            <i id ="iconeSideBar" class="bi bi-list"></i>
           </a>
         </li>
       </ul>
@@ -36,24 +37,24 @@
       </div>
     </div>
   </nav>
-<!-- Modal de Perfil -->
-<div class="modal fade" id="modalPerfil" tabindex="-1" aria-labelledby="modalPerfilLabel" aria-hidden="true">
-  <div class="modal-dialog modal-sm modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="modalPerfilLabel">Meu Perfil</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-      </div>
-      <div class="modal-body text-center">
-        <img id="perfilImagem" src="" class="rounded-circle mb-3" width="80" height="80" alt="Foto de Perfil" />
-        <p><strong>Nome:</strong> <span id="perfilNome"></span></p>
-        <p><strong>Cargo:</strong> <span id="perfilCargo"></span></p>
-        <p><strong>Credencial:</strong> <span id="perfilCredencial"></span></p>
+  <!-- Modal de Perfil -->
+  <div class="modal fade" id="modalPerfil" tabindex="-1" aria-labelledby="modalPerfilLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalPerfilLabel">Meu Perfil</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body text-center">
+          <img id="perfilImagem" src="" class="rounded-circle mb-3" width="80" height="80" alt="Foto de Perfil" />
+          <p><strong>Nome:</strong> <span id="perfilNome"></span></p>
+          <p><strong>Cargo:</strong> <span id="perfilCargo"></span></p>
+          <p><strong>Credencial:</strong> <span id="perfilCredencial"></span></p>
+        </div>
       </div>
     </div>
   </div>
-</div>
-
+</body>
 
   <script>
     // Exemplo de como definir o nome do funcionário no cabeçalho
@@ -71,12 +72,6 @@
         nomeFuncionario.textContent = userData.nome || "Funcionário";
         } else {
         nomeFuncionario.textContent = "Funcionário";
-        }
-        const icone = document.getElementById('iconeSideBar');
-        const urlAtual = window.location.href;
-        if (urlAtual.includes('painel')) {
-            icone.classList.remove('bi', 'bi-arrow-left');
-            icone.classList.add('bi', 'bi-list');
         }
 
     });
