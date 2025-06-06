@@ -58,7 +58,7 @@
             }
         }
 
-        /* Estilo para colunas em telas maiores */
+        /* Estilo para a coluna de CPF em telas maiores */
         @media (min-width: 769px) {
 
             .table th:nth-child(2),
@@ -79,17 +79,24 @@
             .table th:nth-child(6),
             .table td:nth-child(6) {
                 min-width: 150px;
+                /* Ajuste esse valor conforme necessário */
+            }
+
+            .table th:nth-child(2),
+            .table td:nth-child(2) {
+                min-width: 150px;
+                /* Ajuste esse valor conforme necessário */
             }
         }
     </style>
 </head>
 <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
-    <div class="app-wrapper">
-        <%- include('partials/header.ejs') %>
-        <%- include('partials/sidebar.ejs') %>
+    <%- include('partials/header.ejs') %>
+    <%- include('partials/sidebar.ejs') %>
             <main class="app-main">
                 <div class="app-content">
-                    <div class="container-fluid">
+                    <div class="container-fixed">
+                        <div class="col">
                             <h1 class="mb-4 text-center">Funcionários</h1>
                             <div class="card mb-4">
                                 <div class="card-body">
@@ -121,14 +128,15 @@
                                             <th>Data Nasc.</th>
                                             <th>Permissões</th>
                                             <th>Ações</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="tabela-funcionarios">
-                                        <tr>
-                                            <td colspan="9">Carregando dados...</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tabela-funcionarios">
+                                            <tr>
+                                                <td colspan="9">Carregando dados...</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
