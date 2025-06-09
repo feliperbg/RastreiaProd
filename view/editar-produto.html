@@ -61,10 +61,16 @@
       </div>
 
       <div class="mb-3">
-        <label for="componentesNecessarios" class="form-label">Componentes Necessários</label>
-        <input type="text" id="componentesNecessarios" name="componentesNecessarios" class="form-control" />
+        <label class="form-label">Componentes Necessários</label>
+        <div class="input-group">
+          <input type="text" id="componentesNecessarios" name="componentesNecessarios" class="form-control" readonly data-ids="" />
+          <button type="button" class="btn btn-outline-secondary" id="btnSelecionarComponentes">Selecionar</button>
+        </div>
       </div>
-
+      <div class="mb-3">
+        <label for="dataEntrada" class="form-label">Data de Entrada</label>
+        <input type="date" id="dataEntrada" name="dataEntrada" class="form-control" />
+      </div>
       <div class="mb-3">
         <label for="dataValidade" class="form-label">Data de Validade</label>
         <input type="date" id="dataValidade" name="dataValidade" class="form-control" />
@@ -104,8 +110,11 @@
       </div>
 
       <div class="mb-3">
-        <label for="etapas" class="form-label">Etapas de Montagem</label>
-        <input id="etapas" name="etapas" class="form-control" />
+        <label class="form-label">Etapas de Montagem</label>
+        <div class="input-group">
+          <input type="text" id="etapas" name="etapas" class="form-control" readonly data-ids="" />
+          <button type="button" class="btn btn-outline-secondary" id="btnSelecionarEtapas">Selecionar</button>
+        </div>
       </div>
 
       <button type="submit" class="btn btn-primary">Salvar Alterações</button>
@@ -123,11 +132,13 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="/js/toast.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script>
-    const id = new URLSearchParams(window.location.search).get('id');
+    const pathParts = window.location.pathname.split('/');
+    const id = pathParts[pathParts.length - 1]; 
+    console.log('ID do produto:', id);
     if (!id) {
       exibirMensagem('ID do produto não encontrado!', 'erro');
-      window.location.href = '/painel';
     }
 
     async function carregarProduto() {
@@ -144,20 +155,23 @@
 
         if (dados.status && dados.produto) {
           const p = dados.produto;
+          console.log('Produto carregado:', p);
           document.getElementById('nome').value = p.nome || '';
           document.getElementById('codigo').value = p.codigo || '';
           document.getElementById('descricao').value = p.descricao || '';
           document.getElementById('componentesNecessarios').value = p.componentes || '';
-          document.getElementById('dataValidade').value = p.validade ? p.validade.substring(0, 10) : '';
+          document.getElementById('dataEntrada').value = p.dataEntrada ? p.dataEntrada.substring(0, 10) : '';
+          document.getElementById('dataValidade').value = p.dataValidade ? p.dataValidade.substring(0, 10) : '';
           document.getElementById('precoMontagem').value = p.precoMontagem || '';
           document.getElementById('precoVenda').value = p.precoVenda || '';
           document.getElementById('quantidade').value = p.quantidade || '';
           document.getElementById('etapas').value = p.etapas || '';
-          if (c.dimensoes) {
-                        document.getElementById('altura').value = c.dimensoes.altura || '';
-                        document.getElementById('comprimento').value = c.dimensoes.comprimento || '';
-                        document.getElementById('largura').value = c.dimensoes.largura || '';
-                    }
+          if (p.dimensoes) {
+            document.getElementById('altura').value = p.dimensoes.altura || '';
+            document.getElementById('comprimento').value = p.dimensoes.comprimento || '';
+            document.getElementById('largura').value = p.dimensoes.largura || '';
+          }
+          document.title = `Editar Produto - ${p.nome}`;
         } else {
           exibirMensagem('Produto não encontrado!', 'erro');
         }
@@ -169,26 +183,41 @@
 
     async function atualizarProduto(event) {
       event.preventDefault();
-
       const dadosAtualizados = {
-        Produto: {
-            nome: document.getElementById('nome').value,
-            codigo: document.getElementById('codigo').value,
-            descricao: document.getElementById('descricao').value,
-            componentes: document.getElementById('componentesNecessarios').value,
-            validade: document.getElementById('dataValidade').value,
-            precoMontagem: parseFloat(document.getElementById('precoMontagem').value),
-            precoVenda: parseFloat(document.getElementById('precoVenda').value),
-            dimensoes: document.getElementById('dimensoes').value,
-            quantidade: parseInt(document.getElementById('quantidade').value),
-            etapas: document.getElementById('etapas').value,
-            dimensoes: {
-              altura: document.getElementById('altura').value,
-              comprimento: document.getElementById('comprimento').value,
-              largura: document.getElementById('largura').value
-            }
-        }  
-      };
+          nome: document.getElementById('nome').value,
+          codigo: document.getElementById('codigo').value,
+          descricao: document.getElementById('descricao').value,
+          componentesNecessarios: document.getElementById('componentesNecessarios').value.split(',').map(s => s.trim()).filter(Boolean),
+          dataEntrada: document.getElementById('dataEntrada').value,
+          dataValidade: document.getElementById('dataValidade').value,
+          dimensoes: {
+            altura: document.getElementById('altura').value,
+            comprimento: document.getElementById('comprimento').value,
+            largura: document.getElementById('largura').value
+          },
+          precoMontagem: parseFloat(document.getElementById('precoMontagem').value),
+          precoVenda: parseFloat(document.getElementById('precoVenda').value),
+          quantidade: parseInt(document.getElementById('quantidade').value),
+          etapas: document.getElementById('etapas').value.split(',').map(s => s.trim()).filter(Boolean),
+        };
+
+        // Validação simples
+        if (!dadosAtualizados.nome || !dadosAtualizados.codigo) {
+            exibirMensagem('Nome e código são obrigatórios.', 'erro');
+            return;
+        }
+
+        // Verifica se o preço de montagem e venda são números válidos
+        if (isNaN(dadosAtualizados.precoMontagem) || isNaN(dadosAtualizados.precoVenda)) {
+            exibirMensagem('Preços devem ser números válidos.', 'erro');
+            return;
+        }
+
+        // Verifica se a quantidade é um número válido
+        if (isNaN(dadosAtualizados.quantidade)) {
+            exibirMensagem('Quantidade deve ser um número válido.', 'erro');
+            return;
+        }
 
       fetch(`/produto/${id}`, {
             method: 'PUT',
@@ -209,7 +238,7 @@
         })
         .then(dados => {
             exibirMensagem('Produto atualizado com sucesso!', 'sucesso');
-            window.location.href = '/produto';
+            console.log('Produto atualizado:', dados);
         })
         .catch(error => {
             console.error('Erro ao atualizar produto:', error);
@@ -219,7 +248,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             const precoMontagem = document.getElementById('precoMontagem');
 
-            precoMontagemInput.addEventListener('input', function(event) {
+            precoMontagem.addEventListener('input', function(event) {
                 // Remove qualquer caractere que não seja número ou ponto decimal
                 this.value = this.value.replace(/[^0-9.]/g, '');
 
@@ -231,7 +260,7 @@
             });
             const precoVenda = document.getElementById('precoVenda');
 
-            precoVendaInput.addEventListener('input', function(event) {
+            precoVenda.addEventListener('input', function(event) {
                 // Remove qualquer caractere que não seja número ou ponto decimal
                 this.value = this.value.replace(/[^0-9.]/g, '');
 
@@ -245,5 +274,203 @@
         document.getElementById('form-editar').addEventListener('submit', atualizarProduto);
         carregarProduto();
     </script>
+  <script>
+  let listaComponentes = [];
+  let listaEtapas = [];
+
+  // Utilitário para buscar nomes pelos IDs
+  function nomesPorIds(lista, ids) {
+    return lista.filter(item => ids.includes(item._id)).map(item => item.nome);
+  }
+
+  async function carregarListas() {
+    const [comp, etapas] = await Promise.all([
+      fetch('/componente/readALL', {headers: {'Authorization': `Bearer ${localStorage.getItem('authToken')}`}}).then(r => r.json()),
+      fetch('/etapa/readALL', {headers: {'Authorization': `Bearer ${localStorage.getItem('authToken')}`}}).then(r => r.json())
+    ]);
+    listaComponentes = Array.isArray(comp) ? comp : comp.componentes || [];
+    listaEtapas = Array.isArray(etapas) ? etapas : etapas.etapas || [];
+  }
+
+  // Atualiza o campo de nomes visíveis
+  function atualizarNomesSelecionados(inputId, lista, ids) {
+    document.getElementById(inputId).value = nomesPorIds(lista, ids).join(', ');
+    document.getElementById(inputId).dataset.ids = ids.join(',');
+  }
+
+  document.getElementById('btnSelecionarComponentes').addEventListener('click', async function() {
+    if (!listaComponentes.length) await carregarListas();
+    const selecionados = (document.getElementById('componentesNecessarios').dataset.ids || '').split(',').filter(Boolean);
+    const result = await selecionarMultiplos('Selecionar Componentes', listaComponentes, selecionados);
+    if (result.isConfirmed) {
+      atualizarNomesSelecionados('componentesNecessarios', listaComponentes, result.value);
+    }
+  });
+
+  document.getElementById('btnSelecionarEtapas').addEventListener('click', async function() {
+    if (!listaEtapas.length) await carregarListas();
+    const selecionados = (document.getElementById('etapas').dataset.ids || '').split(',').filter(Boolean);
+    const result = await selecionarMultiplos('Selecionar Etapas', listaEtapas, selecionados);
+    if (result.isConfirmed) {
+      atualizarNomesSelecionados('etapas', listaEtapas, result.value);
+    }
+  });
+
+  // Carregue as listas ao abrir a página
+  carregarListas();
+
+  // Carregar produto e preencher campos corretamente
+  async function carregarProduto() {
+    try {
+      if (!listaComponentes.length || !listaEtapas.length) await carregarListas();
+      const response = await fetch(`/produto/${id}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+        },
+      });
+
+      const dados = await response.json();
+
+      if (dados.status && dados.produto) {
+        const p = dados.produto;
+        document.getElementById('nome').value = p.nome || '';
+        document.getElementById('codigo').value = p.codigo || '';
+        document.getElementById('descricao').value = p.descricao || '';
+        // Componentes
+        const componentesIds = Array.isArray(p.componentesNecessarios) ? p.componentesNecessarios : (p.componentes || []);
+        atualizarNomesSelecionados('componentesNecessarios', listaComponentes, componentesIds);
+        // Etapas
+        const etapasIds = Array.isArray(p.etapas) ? p.etapas : [];
+        atualizarNomesSelecionados('etapas', listaEtapas, etapasIds);
+
+        document.getElementById('dataValidade').value = p.validade ? p.validade.substring(0, 10) : '';
+        document.getElementById('precoMontagem').value = p.precoMontagem || '';
+        document.getElementById('precoVenda').value = p.precoVenda || '';
+        document.getElementById('quantidade').value = p.quantidade || '';
+        if (p.dimensoes) {
+          document.getElementById('altura').value = p.dimensoes.altura || '';
+          document.getElementById('comprimento').value = p.dimensoes.comprimento || '';
+          document.getElementById('largura').value = p.dimensoes.largura || '';
+        }
+        document.title = `Editar Produto - ${p.nome}`;
+      } else {
+        exibirMensagem('Produto não encontrado!', 'erro');
+      }
+    } catch (error) {
+      console.error('Erro ao carregar produto:', error);
+      exibirMensagem('Erro ao carregar informações do produto.', 'erro');
+    }
+  }
+
+  // Atualizar produto - envia apenas os IDs
+  async function atualizarProduto(event) {
+    event.preventDefault();
+    const componentesIds = (document.getElementById('componentesNecessarios').dataset.ids || '').split(',').filter(Boolean);
+    const etapasIds = (document.getElementById('etapas').dataset.ids || '').split(',').filter(Boolean);
+    const dadosAtualizados = {
+        nome: document.getElementById('nome').value,
+        codigo: document.getElementById('codigo').value,
+        descricao: document.getElementById('descricao').value,
+        componentesNecessarios: componentesIds,
+        dataEntrada: document.getElementById('dataEntrada').value,
+        dataValidade: document.getElementById('dataValidade').value,
+        precoMontagem: parseFloat(document.getElementById('precoMontagem').value),
+        precoVenda: parseFloat(document.getElementById('precoVenda').value),
+        quantidade: parseInt(document.getElementById('quantidade').value),
+        etapas: etapasIds,
+        dimensoes: {
+          altura: Number(document.getElementById('altura').value),
+          comprimento: Number(document.getElementById('comprimento').value),
+          largura: Number(document.getElementById('largura').value)
+        }
+      }
+    };
+
+    // Validação simples
+    if (!dadosAtualizados.nome || !dadosAtualizados.codigo) {
+      exibirMensagem('Nome e código são obrigatórios.', 'erro');
+      return;
+    }
+    if (isNaN(dadosAtualizados.precoMontagem) || isNaN(dadosAtualizados.precoVenda)) {
+      exibirMensagem('Preços devem ser números válidos.', 'erro');
+      return;
+    }
+    if (isNaN(dadosAtualizados.quantidade)) {
+      exibirMensagem('Quantidade deve ser um número válido.', 'erro');
+      return;
+    }
+
+    fetch(`/produto/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+      },
+      body: JSON.stringify(dadosAtualizados)
+    })
+    .then(resposta => {
+      if (!resposta.ok) {
+        return resposta.json().then(erro => {
+          exibirMensagem(erro.msg || 'Erro ao atualizar produto.', 'erro');
+          throw new Error('Erro na requisição');
+        });
+      }
+      return resposta.json();
+    })
+    .then(dados => {
+      exibirMensagem('Produto atualizado com sucesso!', 'sucesso');
+      console.log('Produto atualizado:', dados);
+    })
+    .catch(error => {
+      console.error('Erro ao atualizar produto:', error);
+      exibirMensagem('Erro interno ao tentar atualizar.', 'erro');
+    });
+
+  document.getElementById('form-editar').addEventListener('submit', atualizarProduto);
+
+  // Aguarda listas carregarem antes de carregar produto
+  document.addEventListener('DOMContentLoaded', async function() {
+    await carregarListas();
+    await carregarProduto();
+    // ... seus outros listeners de input ...
+  });
+</script>
+  <script>
+    // Função genérica para seleção múltipla com filtro
+async function selecionarMultiplos(titulo, lista, selecionados) {
+  return Swal.fire({
+    title: titulo,
+    html: `
+      <input type="text" id="swal-filtro" class="form-control mb-2" placeholder="Filtrar...">
+      <div id="swal-lista" style="max-height:300px;overflow:auto;text-align:left">
+        ${lista.map(item => `
+          <div>
+            <input type="checkbox" id="swal-${item._id}" value="${item._id}" ${selecionados.includes(item._id) ? 'checked' : ''}>
+            <label for="swal-${item._id}">${item.nome}</label>
+          </div>
+        `).join('')}
+      </div>
+    `,
+    showCancelButton: true,
+    confirmButtonText: 'Selecionar',
+    cancelButtonText: 'Cancelar',
+    preConfirm: () => {
+      const checked = Array.from(document.querySelectorAll('#swal-lista input[type=checkbox]:checked')).map(cb => cb.value);
+      return checked;
+    },
+    didOpen: () => {
+      const filtro = document.getElementById('swal-filtro');
+      filtro.addEventListener('input', function() {
+        const val = this.value.toLowerCase();
+        document.querySelectorAll('#swal-lista label').forEach(label => {
+          label.parentElement.style.display = label.textContent.toLowerCase().includes(val) ? '' : 'none';
+        });
+      });
+    }
+  });
+}
+  </script>
 </body>
 </html>

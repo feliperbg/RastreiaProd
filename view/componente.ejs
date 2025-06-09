@@ -176,7 +176,11 @@
                     tr.innerHTML = `
                         <td data-label="Nome">${comp.nome}</td>
                         <td data-label="Código">${comp.codigo}</td>
-                        <td data-label="Descrição">${comp.descricao}</td>
+                        <td data-label="Descrição">
+                            <button class="btn btn-sm btn-outline-primary" onclick="verDescricao('${escapeHtml(comp.descricao || '')}')" title="Ver descrição">
+                                <i class="bi bi-file-earmark-text"></i>
+                            </button>
+                        </td>
                         <td data-label="Data Entrada">${formatarData(comp.dataEntrada)}</td>
                         <td data-label="Validade">${formatarData(comp.dataValidade)}</td>
                         <td data-label="Quantidade">${comp.quantidade}</td>
@@ -212,6 +216,22 @@
          // Função para fechar loading
          function hideLoading() {
             Swal.close();
+        }
+        
+        function escapeHtml(text) {
+        return text
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+        }
+        function verDescricao(descricao) {
+            Swal.fire({
+                title: 'Descrição',
+                html: descricao ? `<ul style="text-align:left"><li>${descricao}</li></ul>` : '<i>Sem descrição.</i>',
+                confirmButtonText: 'Fechar'
+            });
         }
 
         function editarComponente(id, codigo) {

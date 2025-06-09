@@ -1,0 +1,620 @@
+type: collection.insomnia.rest/5.0
+name: TCC
+meta:
+  id: wrk_e0852e90721b4398bdcdb988a7f9903f
+  created: 1749420916680
+  modified: 1749420916680
+collection:
+  - name: Produto
+    meta:
+      id: fld_2f59471679704aaf975f3f770a0e5a2d
+      created: 1749419832226
+      modified: 1749419832226
+      sortKey: -1743781350013
+    children:
+      - url: localhost:8081/produto
+        name: Criar Produto
+        meta:
+          id: req_c64ea6edf34248c79a6d6843bc52007e
+          created: 1749419832229
+          modified: 1749420178460
+          isPrivate: false
+          sortKey: -1748005008766
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "status": 0,
+              "produto": "6813cc1c0dbcb4be6ac4fa53",
+              "etapa": [
+                {
+                  "etapa": "6827178d7563a533b9fd2b71",
+                  "observacao": "Iniciada etapa 1",
+                  "inicio":" 22/05/25",
+                  "status": "em andamento"
+                }
+              ],
+              "funcionarioAtivo": [
+              {
+                "funcionario": "682483e66e0e03bb87aceae8",
+                "inicio": "22/05/25"
+              }
+            ],
+              "timestampProducao": { "inicio": "22/05/25" }
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdCIsInN1YiI6ImFjZXNzb19zaXN0ZW1hIiwiaWF0IjoxNzQ4MDA1MjkyLCJleHAiOjE3NTA1OTcyOTIsIm5iZiI6MTc0ODAwNTI5MiwianRpIjoiMTg2YzA5YzA3MzU5ODkwNjAxYWM3NzEzNzdjMmJjOGUiLCJjcmVkZW5jaWFsRnVuY2lvbmFyaW8iOjcsImlkRnVuY2lvbmFyaW8iOiI2ODBhZTkwZjljMGRiMzZjZDJlODM4ZTkifQ.ZDU0WCWeABrZX_lglF4l8tuItOXmK-FhCLC2Ckt82nQ
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:8081/produto/readALL
+        name: Listar Todas
+        meta:
+          id: req_c79ce8614d684c69a5822bef9793d6c4
+          created: 1749419832232
+          modified: 1749421086261
+          isPrivate: false
+          sortKey: -1748005008873
+        method: GET
+        headers:
+          - name: Authorization
+            value: Bearer
+              eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdCIsInN1YiI6ImFjZXNzb19zaXN0ZW1hIiwiaWF0IjoxNzQ4MDA1OTU3LCJleHAiOjE3NTA1OTc5NTcsIm5iZiI6MTc0ODAwNTk1NywianRpIjoiYWM2M2MyMzJlMThhYWU5ZThkNzZkYWZhYmU1NzM2OTMiLCJjcmVkZW5jaWFsRnVuY2lvbmFyaW8iOjcsImlkRnVuY2lvbmFyaW8iOiI2ODBhZTkwZjljMGRiMzZjZDJlODM4ZTkifQ.ETTsahWWnLvKHmUmd2bmD3bU705ZqvoqUBx8etJWdj0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:8081/produto/<id>
+        name: Buscar por ID
+        meta:
+          id: req_f187b3a41ab249739d562693af87226d
+          created: 1749419832233
+          modified: 1749419972211
+          isPrivate: false
+          sortKey: -1748005008769
+        method: GET
+        headers:
+          - name: Authorization
+            value: Bearer {{ jwt }}
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:8081/produto/<id>
+        name: Atualizar Produto
+        meta:
+          id: req_42472374499f408882128ae9573ee33b
+          created: 1749419832236
+          modified: 1749420172752
+          isPrivate: false
+          sortKey: -1748005008771
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "status": 1
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: Authorization
+            value: Bearer {{ jwt }}
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:8081/produto/<id>
+        name: Deletar Produto
+        meta:
+          id: req_b0ff53e57f9f4081a593bd4433b8c913
+          created: 1749419832238
+          modified: 1749420141488
+          isPrivate: false
+          sortKey: -1748005008773
+        method: DELETE
+        headers:
+          - name: Authorization
+            value: Bearer {{ jwt }}
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: Funcionario
+    meta:
+      id: fld_095d19ba8c3d4b6db8d0f34d3b810814
+      created: 1749419844685
+      modified: 1749419844685
+      sortKey: -1741669520638
+    children:
+      - url: localhost:8081/funcionario
+        name: Criar Funcionario
+        meta:
+          id: req_f9709fac47294ce0b29ad4dd3a977f63
+          created: 1749419844687
+          modified: 1749420116786
+          isPrivate: false
+          sortKey: -1748005008766
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "status": 0,
+              "produto": "6813cc1c0dbcb4be6ac4fa53",
+              "etapa": [
+                {
+                  "etapa": "6827178d7563a533b9fd2b71",
+                  "observacao": "Iniciada etapa 1",
+                  "inicio":" 22/05/25",
+                  "status": "em andamento"
+                }
+              ],
+              "funcionarioAtivo": [
+              {
+                "funcionario": "682483e66e0e03bb87aceae8",
+                "inicio": "22/05/25"
+              }
+            ],
+              "timestampProducao": { "inicio": "22/05/25" }
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdCIsInN1YiI6ImFjZXNzb19zaXN0ZW1hIiwiaWF0IjoxNzQ4MDA1MjkyLCJleHAiOjE3NTA1OTcyOTIsIm5iZiI6MTc0ODAwNTI5MiwianRpIjoiMTg2YzA5YzA3MzU5ODkwNjAxYWM3NzEzNzdjMmJjOGUiLCJjcmVkZW5jaWFsRnVuY2lvbmFyaW8iOjcsImlkRnVuY2lvbmFyaW8iOiI2ODBhZTkwZjljMGRiMzZjZDJlODM4ZTkifQ.ZDU0WCWeABrZX_lglF4l8tuItOXmK-FhCLC2Ckt82nQ
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:8081/funcionario/readALL
+        name: Listar Todas
+        meta:
+          id: req_9ed651aa0e7242a990f89d303fb8008e
+          created: 1749419844689
+          modified: 1749420318899
+          isPrivate: false
+          sortKey: -1748005008768
+        method: GET
+        headers:
+          - name: Authorization
+            value: Bearer
+              eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdCIsInN1YiI6ImFjZXNzb19zaXN0ZW1hIiwiaWF0IjoxNzQ4MDA1OTU3LCJleHAiOjE3NTA1OTc5NTcsIm5iZiI6MTc0ODAwNTk1NywianRpIjoiYWM2M2MyMzJlMThhYWU5ZThkNzZkYWZhYmU1NzM2OTMiLCJjcmVkZW5jaWFsRnVuY2lvbmFyaW8iOjcsImlkRnVuY2lvbmFyaW8iOiI2ODBhZTkwZjljMGRiMzZjZDJlODM4ZTkifQ.ETTsahWWnLvKHmUmd2bmD3bU705ZqvoqUBx8etJWdj0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:8081/funcionario/<id>
+        name: Buscar por ID
+        meta:
+          id: req_08f74ac0a0184942b62cea9915a646e1
+          created: 1749419844690
+          modified: 1749420083796
+          isPrivate: false
+          sortKey: -1748005008769
+        method: GET
+        headers:
+          - name: Authorization
+            value: Bearer {{ jwt }}
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:8081/funcionario/<id>
+        name: Atualizar Funcionario
+        meta:
+          id: req_12340cd1c0f54eda9d319495cb03e4e6
+          created: 1749419844692
+          modified: 1749420062875
+          isPrivate: false
+          sortKey: -1748005008771
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "status": 1
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: Authorization
+            value: Bearer {{ jwt }}
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:8081/funcionario/<id>
+        name: Deletar Funcionario
+        meta:
+          id: req_ad623ce344534ef0a5e680b8f24f6d29
+          created: 1749419844694
+          modified: 1749420038541
+          isPrivate: false
+          sortKey: -1748005008773
+        method: DELETE
+        headers:
+          - name: Authorization
+            value: Bearer {{ jwt }}
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: Etapas
+    meta:
+      id: fld_e9024da8e96d4e1ca448a79affe47ab0
+      created: 1749420204708
+      modified: 1749420204708
+      sortKey: -1740613605950.5
+    children:
+      - url: localhost:8081/etapa
+        name: Criar Etapa
+        meta:
+          id: req_f8fdc2e8311c4b48b4d3c6e7d41e3365
+          created: 1749420204710
+          modified: 1749420292084
+          isPrivate: false
+          sortKey: -1748005008766
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "status": 0,
+              "produto": "6813cc1c0dbcb4be6ac4fa53",
+              "etapa": [
+                {
+                  "etapa": "6827178d7563a533b9fd2b71",
+                  "observacao": "Iniciada etapa 1",
+                  "inicio":" 22/05/25",
+                  "status": "em andamento"
+                }
+              ],
+              "funcionarioAtivo": [
+              {
+                "funcionario": "682483e66e0e03bb87aceae8",
+                "inicio": "22/05/25"
+              }
+            ],
+              "timestampProducao": { "inicio": "22/05/25" }
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdCIsInN1YiI6ImFjZXNzb19zaXN0ZW1hIiwiaWF0IjoxNzQ4MDA1OTU3LCJleHAiOjE3NTA1OTc5NTcsIm5iZiI6MTc0ODAwNTk1NywianRpIjoiYWM2M2MyMzJlMThhYWU5ZThkNzZkYWZhYmU1NzM2OTMiLCJjcmVkZW5jaWFsRnVuY2lvbmFyaW8iOjcsImlkRnVuY2lvbmFyaW8iOiI2ODBhZTkwZjljMGRiMzZjZDJlODM4ZTkifQ.ETTsahWWnLvKHmUmd2bmD3bU705ZqvoqUBx8etJWdj0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:8081/etapa/readALL
+        name: Listar Todas
+        meta:
+          id: req_d928b6d191914ba1bfa09a88d7178c5d
+          created: 1749420204711
+          modified: 1749420300935
+          isPrivate: false
+          sortKey: -1748005008768
+        method: GET
+        headers:
+          - name: Authorization
+            value: Bearer
+              eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdCIsInN1YiI6ImFjZXNzb19zaXN0ZW1hIiwiaWF0IjoxNzQ4MDA1OTU3LCJleHAiOjE3NTA1OTc5NTcsIm5iZiI6MTc0ODAwNTk1NywianRpIjoiYWM2M2MyMzJlMThhYWU5ZThkNzZkYWZhYmU1NzM2OTMiLCJjcmVkZW5jaWFsRnVuY2lvbmFyaW8iOjcsImlkRnVuY2lvbmFyaW8iOiI2ODBhZTkwZjljMGRiMzZjZDJlODM4ZTkifQ.ETTsahWWnLvKHmUmd2bmD3bU705ZqvoqUBx8etJWdj0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:8081/etapa/<id>
+        name: Buscar por ID
+        meta:
+          id: req_d5e8a1792c5d4f7693c3c0bf87ad6c07
+          created: 1749420204713
+          modified: 1749420242145
+          isPrivate: false
+          sortKey: -1748005008769
+        method: GET
+        headers:
+          - name: Authorization
+            value: Bearer {{ jwt }}
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:8081/etapa/<id>
+        name: Atualizar Etapas
+        meta:
+          id: req_b3afdb4f482f46779951784346a16480
+          created: 1749420204715
+          modified: 1749420224432
+          isPrivate: false
+          sortKey: -1748005008771
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "status": 1
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: Authorization
+            value: Bearer {{ jwt }}
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:8081/etapa/<id>
+        name: Deletar Etapas
+        meta:
+          id: req_e2bac50e984a42699ba0d799601c0e2b
+          created: 1749420204716
+          modified: 1749420236868
+          isPrivate: false
+          sortKey: -1748005008773
+        method: DELETE
+        headers:
+          - name: Authorization
+            value: Bearer {{ jwt }}
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: Ordem de Produção
+    meta:
+      id: fld_bfc411097cc0442ab9481d7a9a44ac78
+      created: 1749420376541
+      modified: 1749420393671
+      sortKey: -1742725435325.5
+    children:
+      - url: localhost:8081/ordem-producao
+        name: Criar OP
+        meta:
+          id: req_9957ea12cbff48049931c532c8a4b457
+          created: 1749420376542
+          modified: 1749420441663
+          isPrivate: false
+          sortKey: -1748005008766
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "status": 0,
+              "produto": "6813cc1c0dbcb4be6ac4fa53",
+              "etapa": [
+                {
+                  "etapa": "6827178d7563a533b9fd2b71",
+                  "observacao": "Iniciada etapa 1",
+                  "inicio":" 22/05/25",
+                  "status": "em andamento"
+                }
+              ],
+              "funcionarioAtivo": [
+              {
+                "funcionario": "682483e66e0e03bb87aceae8",
+                "inicio": "22/05/25"
+              }
+            ],
+              "timestampProducao": { "inicio": "22/05/25" }
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdCIsInN1YiI6ImFjZXNzb19zaXN0ZW1hIiwiaWF0IjoxNzQ4MDA1MjkyLCJleHAiOjE3NTA1OTcyOTIsIm5iZiI6MTc0ODAwNTI5MiwianRpIjoiMTg2YzA5YzA3MzU5ODkwNjAxYWM3NzEzNzdjMmJjOGUiLCJjcmVkZW5jaWFsRnVuY2lvbmFyaW8iOjcsImlkRnVuY2lvbmFyaW8iOiI2ODBhZTkwZjljMGRiMzZjZDJlODM4ZTkifQ.ZDU0WCWeABrZX_lglF4l8tuItOXmK-FhCLC2Ckt82nQ
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:8081/ordem-producao/readALL
+        name: Listar Todas
+        meta:
+          id: req_e6a404d9d5e549528b299f330f719951
+          created: 1749420376543
+          modified: 1749420438184
+          isPrivate: false
+          sortKey: -1748005008768
+        method: GET
+        headers:
+          - name: Authorization
+            value: Bearer
+              eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdCIsInN1YiI6ImFjZXNzb19zaXN0ZW1hIiwiaWF0IjoxNzQ4MDA1OTU3LCJleHAiOjE3NTA1OTc5NTcsIm5iZiI6MTc0ODAwNTk1NywianRpIjoiYWM2M2MyMzJlMThhYWU5ZThkNzZkYWZhYmU1NzM2OTMiLCJjcmVkZW5jaWFsRnVuY2lvbmFyaW8iOjcsImlkRnVuY2lvbmFyaW8iOiI2ODBhZTkwZjljMGRiMzZjZDJlODM4ZTkifQ.ETTsahWWnLvKHmUmd2bmD3bU705ZqvoqUBx8etJWdj0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:8081/ordem-producao/<id>
+        name: Buscar por ID
+        meta:
+          id: req_9ad3076747f841689e6871bea45aae09
+          created: 1749420376545
+          modified: 1749420435457
+          isPrivate: false
+          sortKey: -1748005008769
+        method: GET
+        headers:
+          - name: Authorization
+            value: Bearer {{ jwt }}
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:8081/ordem-producao/<id>
+        name: Atualizar OP
+        meta:
+          id: req_511b2eb658104106aef954a70a05bff6
+          created: 1749420376548
+          modified: 1749420432554
+          isPrivate: false
+          sortKey: -1748005008771
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "status": 1
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: Authorization
+            value: Bearer {{ jwt }}
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:8081/ordem-producao/<id>
+        name: Deletar OP
+        meta:
+          id: req_ff43f4372ebf41068bdb020cd515b9a1
+          created: 1749420376550
+          modified: 1749420425333
+          isPrivate: false
+          sortKey: -1748005008773
+        method: DELETE
+        headers:
+          - name: Authorization
+            value: Bearer {{ jwt }}
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - url: localhost:8081/funcionario/login
+    name: Fazer Login
+    meta:
+      id: req_e260d26fc4e94d5ba958f0b51ffdace7
+      created: 1739557693732
+      modified: 1749421315375
+      isPrivate: false
+      sortKey: -1740085648606.75
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"Funcionario": {
+        		"credencial" : 7,
+        		"senha" : "senha1234"
+        	}
+        }
+    parameters:
+      - disabled: false
+        id: pair_e2a69e3ef8de4fd2a8d6dce40f440604
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/10.3.1
+    authentication:
+      type: none
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_e5bf6b990aa14a59b0bcdf5b0a4c682e
+    created: 1739557678487
+    modified: 1739557678487
+environments:
+  name: Base Environment
+  meta:
+    id: env_d73cab4056d74d5b94403a533b79751d
+    created: 1739557678485
+    modified: 1739557678485
+    isPrivate: false
