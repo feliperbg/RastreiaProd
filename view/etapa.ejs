@@ -112,32 +112,25 @@
     <script src="/js/adminlte.js"></script>
 
     <script>
-        // Função para formatar a data no formato dd/mm/yyyy
-        function formatarSequencias(sequencias) {
-            if (!Array.isArray(sequencias)) return '';
-            return sequencias.join(', ');
-        }
-        
-        // Função para formatar os procedimentos
-        function formatarProcedimentos(procedimentos) {
-            if (!Array.isArray(procedimentos)) return '';
-            return procedimentos.join(', ');
-        }
-
         // Função para formatar os componentes de conclusão
-        function formatarComponentes(componentes) {
+        async function formatarComponentes(componentes) {
             if (!Array.isArray(componentes)) return '';
-            // Exibe cada ID no formato ID - <ID>
-            return componentes.map(id => `${id} - <${id}>`).join('<br>');
+            const nomes = await Promise.all(componentes.map(async (id) => {
+                const nome = await nomesComponentes(id);
+                return `<span class="badge bg-secondary">${nome}</span>`;
+            }));
+            return nomes.join('<br>');
         }
 
         // Função para formatar os funcionários responsáveis
-        function formatarFuncionarios(funcionarios) {
+        async function formatarFuncionarios(funcionarios) {
             if (!Array.isArray(funcionarios)) return '';
-            // Exibe cada ID no formato ID - <ID>
-            return funcionarios.map(id => `${id} - <${id}>`).join('<br>');
+            const nomes = await Promise.all(funcionarios.map(async (id) => {
+                const nome = await nomeFuncionario(id);
+                return `<span class="badge bg-secondary">${nome}</span>`;
+            }));
+            return nomes.join('<br>');
         }
-        
         // Função para mostrar loading
         function showLoading() {
             Swal.fire({
@@ -187,14 +180,23 @@
 
                 etapas.forEach(etapa => {
                     const tr = document.createElement("tr");
-                    console.log('Dados da etapa:', etapa);
                     tr.innerHTML = `
                         <td data-label="Nome">${etapa.nome}</td>
-                        <td data-label="Sequências">${formatarSequencias(etapa.sequencias)}</td>
+                        <td data-label="Sequências">
+                            <button class="btn btn-outline-secondary btn-sm" title="Ver Sequências"
+                                onclick='mostrarModalArray("Sequências", ${JSON.stringify(etapa.sequencias)})'>
+                                <i class="bi bi-diagram-3"></i>
+                            </button>
+                        </td>
                         <td data-label="Departamento Responsável">${etapa.departamentoResponsavel}</td>
-                        <td data-label="Procedimentos">${formatarProcedimentos(etapa.procedimentos)}</td>
-                        <td data-label="Componente Conclusão">${formatarComponentes(etapa.componenteConclusao)}</td>
-                        <td data-label="Funcionários Responsáveis">${formatarFuncionarios(etapa.funcionariosResponsaveis)}</td>
+                        <td data-label="Procedimentos">
+                            <button class="btn btn-outline-info btn-sm" title="Ver Procedimentos"
+                                onclick='mostrarModalArray("Procedimentos", ${JSON.stringify(etapa.procedimentos)})'>
+                                <i class="bi bi-list-check"></i>
+                            </button>
+                        </td>
+                        <td data-label="Componente Conclusão"><span class="componentes-loading">Carregando...</span></td>
+                        <td data-label="Funcionários Responsáveis"><span class="funcionarios-loading">Carregando...</span></td>
                         <td data-label="Ações">
                             <button class="btn btn-sm btn-primary mb-1" onclick="editarEtapa('${etapa._id}')">
                                 <i class="bi bi-pencil"></i> Editar
@@ -205,6 +207,17 @@
                         </td>
                     `;
                     tabela.appendChild(tr);
+
+                    // Funcionários e componentes continuam assíncronos
+                    // Para componentes:
+                    formatarArrayAssincrono(etapa.componenteConclusao, id => buscarNomePorId(id, 'componente', 'componente')).then(html => {
+                        tr.querySelector('.componentes-loading').innerHTML = html;
+                    });
+
+                    // Para funcionários:
+                    formatarArrayAssincrono(etapa.funcionariosResponsaveis, id => buscarNomePorId(id, 'funcionario', 'funcionario')).then(html => {
+                        tr.querySelector('.funcionarios-loading').innerHTML = html;
+                    });
                 });
             
             } catch (error) {
@@ -299,5 +312,49 @@
                 }
             });
         });
+
+        function mostrarModalArray(titulo, arr) {
+            Swal.fire({
+                title: titulo,
+                html: Array.isArray(arr) && arr.length > 0
+                    ? `<ul style="text-align:left">${arr.map(item => `<li>${item}</li>`).join('')}</ul>`
+                    : '<i>Nenhum item encontrado.</i>',
+                confirmButtonText: 'Fechar'
+            });
+        }
+
+        function formatarArray(arr) {
+            if (!Array.isArray(arr)) return '';
+            return arr.join(', ');
+        }
+
+        async function formatarArrayAssincrono(arr, fetchNomeFn) {
+            if (!Array.isArray(arr)) return '';
+            const nomes = await Promise.all(arr.map(async (id) => {
+                const nome = await fetchNomeFn(id);
+                return `<span class="badge bg-secondary">${nome}</span>`;
+            }));
+            return nomes.join('<br>');
+        }
+
+        async function buscarNomePorId(id, urlBase, atributo) {
+            try {
+                const response = await fetch(`/${urlBase}/${id}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                    },
+                });
+                if (!response.ok) {
+                    throw new Error(`Erro HTTP: ${response.status}`);
+                }
+                const resposta = await response.json();
+                return resposta[atributo]?.nome || 'Desconhecido';
+            } catch (error) {
+                console.error(`Erro ao buscar ${atributo}:`, error);
+                return 'Desconhecido';
+            }
+        }
     </script>
 </html>

@@ -89,7 +89,7 @@
                                   <th>Descrição</th>
                                   <th>Componentes Necessários</th>
                                   <th>Data Entrada</th>
-                                  <th>Validade</th>
+                                  <th>Data Validade</th>
                                   <th>Preços</th>
                                   <th>Dimensões Produto</th>
                                   <th>Quantidade</th>
@@ -163,7 +163,7 @@
         const nomesComponentes = await Promise.all(
           (prod.componentesNecessarios || []).map(obterNomeComponente)
         );
-        console.log(prod);
+      
         const modalIdDesc = `modal-desc-${prod._id}`;
         const modalIdDim = `modal-dim-${prod._id}`;
         const modalIdEtapas = `modal-etapas-${prod._id}`;
@@ -174,45 +174,46 @@
             return `${nomesComponentes[idx] || "Desconhecido"} - <${comp}>`;
           })
           .join("<br>");
-
+        console.log(`Componentes para o produto ${prod.nome}:`, componentesInfo);
+        console.log(prod);
         const tr = document.createElement("tr");
         tr.innerHTML = `
           <td data-label="Nome">${prod.nome}</td>
           <td data-label="Código">${prod.codigo}</td>
           <td data-label="Descrição">
-            <button class="btn btn-sm btn-info" onclick="verDescricao('${escapeHtml(prod.descricao || '')}')" title="Ver descrição">
-              <i class="bi bi-file-earmark-text"></i> Ver Descrição
+            <button class="btn btn-sm btn-outline-primary" onclick="verDescricao('${escapeHtml(prod.descricao || '')}')" title="Ver descrição">
+              <i class="bi bi-file-earmark-text"></i>
             </button>
           </td>
           <td data-label="Componentes Necessários">
-            <button class="btn btn-sm btn-info" onclick="verComponentes(\`${componentesInfo}\`)" title="Ver componentes">
-              <i class="bi bi-puzzle"></i> Ver Componentes
+            <button class="btn btn-sm btn-outline-secondary" onclick="verComponentes(\`${componentesInfo}\`)" title="Ver componentes">
+              <i class="bi bi-puzzle"></i>
             </button>
           </td>
           <td data-label="Data Entrada">${new Date(prod.dataEntrada).toLocaleDateString("pt-BR")}</td>
-          <td data-label="Data Validade">${new Date(prod.validade).toLocaleDateString("pt-BR")}</td>
+          <td data-label="Data dataValidade">${new Date(prod.dataValidade).toLocaleDateString("pt-BR")}</td>
           <td data-label="Preços">
-            <button class="btn btn-sm btn-info" onclick="verPrecos('${prod.precoMontagem.toFixed(2)}','${prod.precoVenda.toFixed(2)}')" title="Ver preços">
-              <i class="bi bi-currency-dollar"></i> Ver Preços
+            <button class="btn btn-sm btn-outline-success" onclick="verPrecos('${prod.precoMontagem.toFixed(2)}','${prod.precoVenda.toFixed(2)}')" title="Ver preços">
+              <i class="bi bi-currency-dollar"></i>
             </button>
           </td>
           <td data-label="Dimensões">
-            <button class="btn btn-sm btn-info" onclick="verDimensoes('${prod.dimensoes.comprimento}','${prod.dimensoes.largura}','${prod.dimensoes.altura}')" title="Ver dimensões">
-              <i class="bi bi-rulers"></i> Ver Dimensões
+            <button class="btn btn-sm btn-outline-warning" onclick="verDimensoes('${prod.dimensoes.comprimento}','${prod.dimensoes.largura}','${prod.dimensoes.altura}')" title="Ver dimensões">
+              <i class="bi bi-rulers"></i>
             </button>
           </td>
           <td data-label="Quantidade">${prod.quantidade}</td>
           <td data-label="Etapas">
-            <button class="btn btn-sm btn-info" onclick="verEtapas('${escapeHtml((prod.etapas || []).join('<br>'))}')" title="Ver etapas">
-              <i class="bi bi-list-check"></i> Ver Etapas
+            <button class="btn btn-sm btn-outline-info" onclick="verEtapas('${escapeHtml((prod.etapas || []).join('<br>'))}')" title="Ver etapas">
+              <i class="bi bi-list-check"></i>
             </button>
           </td>
           <td data-label="Ações">
             <button class="btn btn-sm btn-primary mb-1" onclick="editarProduto('${prod._id}', '${prod.codigo}')">
-              <i class="bi bi-pencil"></i> Editar
+              <i class="bi bi-pencil"></i>
             </button>
             <button class="btn btn-sm btn-danger mb-1" onclick="deletarProduto('${prod._id}')">
-              <i class="bi bi-trash"></i> Deletar
+              <i class="bi bi-trash"></i>
             </button>
           </td>
         `;
@@ -236,7 +237,7 @@
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
-                window.location.href = `/produto/editar-produto/${id}`;
+              window.location.href = `/produto/editar-produto/${id}`;
             }
         });
     }
@@ -287,8 +288,7 @@
     function verDescricao(descricao) {
       Swal.fire({
         title: 'Descrição',
-        html: descricao || 'Sem descrição.',
-        icon: 'info',
+        html: descricao ? `<ul style="text-align:left"><li>${descricao}</li></ul>` : '<i>Sem descrição.</i>',
         confirmButtonText: 'Fechar'
       });
     }
@@ -296,8 +296,11 @@
     function verDimensoes(comprimento, largura, altura) {
       Swal.fire({
         title: 'Dimensões',
-        html: `Comprimento: ${comprimento}<br>Largura: ${largura}<br>Altura: ${altura}`,
-        icon: 'info',
+        html: `<ul style="text-align:left">
+      <li><strong>Comprimento:</strong> ${comprimento}</li>
+      <li><strong>Largura:</strong> ${largura}</li>
+      <li><strong>Altura:</strong> ${altura}</li>
+    </ul>`,
         confirmButtonText: 'Fechar'
       });
     }
@@ -305,8 +308,9 @@
     function verEtapas(etapasHtml) {
       Swal.fire({
         title: 'Etapas',
-        html: etapasHtml || 'Sem etapas.',
-        icon: 'info',
+        html: etapasHtml
+          ? `<ul style="text-align:left">${etapasHtml.split('<br>').map(e => `<li>${e}</li>`).join('')}</ul>`
+          : '<i>Sem etapas.</i>',
         confirmButtonText: 'Fechar'
       });
     }
@@ -314,11 +318,10 @@
     function verPrecos(precoMontagem, precoVenda) {
       Swal.fire({
         title: 'Preços',
-        html: `
-          <strong>Preço de Montagem:</strong> R$ ${precoMontagem}<br>
-          <strong>Preço de Venda:</strong> R$ ${precoVenda}
-        `,
-        icon: 'info',
+        html: `<ul style="text-align:left">
+      <li><strong>Preço de Montagem:</strong> R$ ${precoMontagem}</li>
+      <li><strong>Preço de Venda:</strong> R$ ${precoVenda}</li>
+    </ul>`,
         confirmButtonText: 'Fechar'
       });
     }
@@ -326,8 +329,9 @@
     function verComponentes(componentesHtml) {
       Swal.fire({
         title: 'Componentes Necessários',
-        html: componentesHtml || 'Sem componentes.',
-        icon: 'info',
+        html: componentesHtml
+          ? `<ul style="text-align:left">${componentesHtml.split('<br>').map(e => `<li>${e}</li>`).join('')}</ul>`
+          : '<i>Sem componentes.</i>',
         confirmButtonText: 'Fechar'
       });
     }

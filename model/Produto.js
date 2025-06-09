@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Produtos = require('./ProdutosTabela'); // Importa o modelo de produtos
+const Produtos = require('./ProdutosTabela'); // Modelo Mongoose
 
 /**
  * Classe representando um produto.
@@ -8,19 +8,19 @@ class Produto {
     /**
      * Construtor para inicializar os dados de um produto.
      */
-    constructor(nome, codigo, descricao, dataEntrada, validade, componentesNecessarios, precoMontagem, precoVenda, dimensoes, quantidade, etapas) {
+    constructor(nome, codigo, descricao, dataEntrada, dataValidade, componentesNecessarios, precoMontagem, precoVenda, dimensoes, quantidade, etapas) {
         this._idProduto = null;
         this._nome = nome;
         this._codigo = codigo;
         this._descricao = descricao;
         this._dataEntrada = dataEntrada;
-        this._validade = validade;
-        this._componentesNecessarios = componentesNecessarios;
+        this._dataValidade = dataValidade;
+        this._componentesNecessarios = componentesNecessarios || [];
         this._precoMontagem = precoMontagem;
         this._precoVenda = precoVenda;
-        this._dimensoes = dimensoes;
+        this._dimensoes = dimensoes || {};
         this._quantidade = quantidade;
-        this._etapas = etapas;
+        this._etapas = etapas || [];
     }
 
     /**
@@ -33,17 +33,17 @@ class Produto {
                 codigo: this._codigo,
                 descricao: this._descricao,
                 dataEntrada: this._dataEntrada,
-                validade: this._validade,
+                dataValidade: this._dataValidade,
                 componentesNecessarios: this._componentesNecessarios,
                 precoMontagem: this._precoMontagem,
                 precoVenda: this._precoVenda,
                 dimensoes: this._dimensoes,
                 quantidade: this._quantidade,
-                etapas: this._etapas,
+                etapas: this._etapas
             });
 
             const produtoSalvo = await produto.save();
-            this._idProduto = produtoSalvo._id;  // MongoDB cria automaticamente um ObjectId
+            this._idProduto = produtoSalvo._id;
 
             return true;
         } catch (error) {
@@ -77,11 +77,13 @@ class Produto {
                     codigo: this._codigo,
                     descricao: this._descricao,
                     dataEntrada: this._dataEntrada,
-                    validade: this._validade,
+                    dataValidade: this._dataValidade,
                     quantidade: this._quantidade,
                     precoMontagem: this._precoMontagem,
                     precoVenda: this._precoVenda,
-                    dimensoes: this._dimensoes
+                    dimensoes: this._dimensoes,
+                    componentesNecessarios: this._componentesNecessarios,
+                    etapas: this._etapas
                 },
                 { new: true }
             );
@@ -119,11 +121,13 @@ class Produto {
                 this._codigo = produto.codigo;
                 this._descricao = produto.descricao;
                 this._dataEntrada = produto.dataEntrada;
-                this._validade = produto.validade;
+                this._dataValidade = produto.dataValidade;
                 this._quantidade = produto.quantidade;
                 this._precoMontagem = produto.precoMontagem;
                 this._precoVenda = produto.precoVenda;
                 this._dimensoes = produto.dimensoes;
+                this._componentesNecessarios = produto.componentesNecessarios;
+                this._etapas = produto.etapas;
             }
             return produto;
         } catch (error) {
@@ -166,11 +170,11 @@ class Produto {
         this._dataEntrada = dataEntrada;
     }
 
-    get validade() {
-        return this._validade;
+    get dataValidade() {
+        return this._dataValidade;
     }
-    set validade(validade) {
-        this._validade = validade;
+    set dataValidade(dataValidade) {
+        this._dataValidade = dataValidade;
     }
 
     get quantidade() {
@@ -199,6 +203,20 @@ class Produto {
     }
     set dimensoes(dimensoes) {
         this._dimensoes = dimensoes;
+    }
+
+    get componentesNecessarios() {
+        return this._componentesNecessarios;
+    }
+    set componentesNecessarios(componentesNecessarios) {
+        this._componentesNecessarios = componentesNecessarios;
+    }
+
+    get etapas() {
+        return this._etapas;
+    }
+    set etapas(etapas) {
+        this._etapas = etapas;
     }
 }
 
