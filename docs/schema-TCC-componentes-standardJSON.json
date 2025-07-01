@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "_id",
+    "__v",
+    "codigo",
+    "dataEntrada",
+    "dataValidade",
+    "descricao",
+    "dimensoes",
+    "nome",
+    "precoPagoLote",
+    "precoUnidade",
+    "quantidade"
+  ],
+  "properties": {
+    "_id": {
+      "$ref": "#/$defs/ObjectId"
+    },
+    "__v": {
+      "type": "integer"
+    },
+    "codigo": {
+      "type": "string"
+    },
+    "dataEntrada": {
+      "$ref": "#/$defs/Date"
+    },
+    "dataValidade": {
+      "$ref": "#/$defs/Date"
+    },
+    "descricao": {
+      "type": "string"
+    },
+    "dimensoes": {
+      "type": "object",
+      "required": [
+        "altura",
+        "comprimento",
+        "largura"
+      ],
+      "properties": {
+        "altura": {
+          "type": "integer"
+        },
+        "comprimento": {
+          "type": "integer"
+        },
+        "largura": {
+          "type": "integer"
+        }
+      }
+    },
+    "nome": {
+      "type": "string"
+    },
+    "precoPagoLote": {
+      "$ref": "#/$defs/Double"
+    },
+    "precoUnidade": {
+      "$ref": "#/$defs/Double"
+    },
+    "quantidade": {
+      "type": "integer"
+    }
+  },
+  "$defs": {
+    "ObjectId": {
+      "type": "object",
+      "properties": {
+        "$oid": {
+          "type": "string",
+          "pattern": "^[0-9a-fA-F]{24}$"
+        }
+      },
+      "required": [
+        "$oid"
+      ],
+      "additionalProperties": false
+    },
+    "Double": {
+      "oneOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "$numberDouble": {
+              "enum": [
+                "Infinity",
+                "-Infinity",
+                "NaN"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "Date": {
+      "type": "object",
+      "properties": {
+        "$date": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "$date"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

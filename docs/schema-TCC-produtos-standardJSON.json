@@ -1,0 +1,168 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "_id",
+    "__v",
+    "codigo",
+    "componentesNecessarios",
+    "dataEntrada",
+    "dataValidade",
+    "descricao",
+    "dimensoes",
+    "etapas",
+    "nome",
+    "precoMontagem",
+    "precoVenda",
+    "quantidade"
+  ],
+  "properties": {
+    "_id": {
+      "$ref": "#/$defs/ObjectId"
+    },
+    "__v": {
+      "type": "integer"
+    },
+    "codigo": {
+      "type": "string"
+    },
+    "componentesNecessarios": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/ObjectId"
+      }
+    },
+    "dataEntrada": {
+      "$ref": "#/$defs/Date"
+    },
+    "dataValidade": {
+      "$ref": "#/$defs/Date"
+    },
+    "descricao": {
+      "type": "string"
+    },
+    "dimensoes": {
+      "type": "object",
+      "required": [
+        "_id",
+        "altura",
+        "comprimento",
+        "largura"
+      ],
+      "properties": {
+        "_id": {
+          "$ref": "#/$defs/ObjectId"
+        },
+        "altura": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "#/$defs/Double"
+            }
+          ]
+        },
+        "comprimento": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "#/$defs/Double"
+            }
+          ]
+        },
+        "largura": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "#/$defs/Double"
+            }
+          ]
+        }
+      }
+    },
+    "etapas": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/ObjectId"
+      }
+    },
+    "nome": {
+      "type": "string"
+    },
+    "precoMontagem": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "$ref": "#/$defs/Double"
+        }
+      ]
+    },
+    "precoVenda": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "$ref": "#/$defs/Double"
+        }
+      ]
+    },
+    "quantidade": {
+      "type": "integer"
+    }
+  },
+  "$defs": {
+    "ObjectId": {
+      "type": "object",
+      "properties": {
+        "$oid": {
+          "type": "string",
+          "pattern": "^[0-9a-fA-F]{24}$"
+        }
+      },
+      "required": [
+        "$oid"
+      ],
+      "additionalProperties": false
+    },
+    "Double": {
+      "oneOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "$numberDouble": {
+              "enum": [
+                "Infinity",
+                "-Infinity",
+                "NaN"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "Date": {
+      "type": "object",
+      "properties": {
+        "$date": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "$date"
+      ],
+      "additionalProperties": false
+    }
+  }
+}
