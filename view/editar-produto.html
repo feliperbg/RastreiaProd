@@ -160,8 +160,8 @@
           document.getElementById('codigo').value = p.codigo || '';
           document.getElementById('descricao').value = p.descricao || '';
           document.getElementById('componentesNecessarios').value = p.componentes || '';
-          document.getElementById('dataEntrada').value = p.dataEntrada ? p.dataEntrada.substring(0, 10) : '';
-          document.getElementById('dataValidade').value = p.dataValidade ? p.dataValidade.substring(0, 10) : '';
+          document.getElementById('dataEntrada').value = p.dataEntrada ? p.dataEntrada.setHours(12, 0, 0, 0).substring(0, 10) : '';
+          document.getElementById('dataValidade').value = p.dataValidade ? p.dataValidade.setHours(12, 0, 0, 0).substring(0, 10) : '';
           document.getElementById('precoMontagem').value = p.precoMontagem || '';
           document.getElementById('precoVenda').value = p.precoVenda || '';
           document.getElementById('quantidade').value = p.quantidade || '';

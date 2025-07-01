@@ -8,24 +8,23 @@ Este projeto tem como objetivo desenvolver um sistema para o controle das etapas
 - Monitorar o tempo de cada etapa do processo de produção.
 - Rastrear os componentes utilizados em cada etapa.
 - Implementar uma interface web para interação com o sistema.
-- Utilizar um microcontrolador ESP32 e tecnologia RFID para identificação dos componentes.
+- Utilizar de tecnologia QRCODE e CÓDIGO DE BARRAS para identificação dos componentes e produtos na linha de produção.
 
 ## 🔍 Tecnologias Utilizadas
 ### 🔹 Front-end
 - **JavaScript**
 - **HTML/CSS**
+- **EJS (Embedded JavaScript)**
 
 ### 🔹 Back-end
 - **JavaScript (Node.js)**
 - **Express.js**
+- **QR-CODE**
+- **CÓDIGO DE BARRAS**
 
 ### 🔹 Banco de Dados
 - **MongoDB**
 
-### 🔹 Hardware
-- **ESP32**
-- **RFID**
-- **PROTOCOLO MQTT**
 
 ## 📖 Justificativa
 Atualmente, há poucos sistemas que conseguem monitorar e identificar, com precisão, o tempo de cada etapa do processo de produção e os componentes utilizados de maneira rastreável. Nosso projeto visa preencher essa lacuna, proporcionando um sistema eficiente e acessível.
