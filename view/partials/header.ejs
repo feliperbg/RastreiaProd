@@ -99,7 +99,7 @@
           localStorage.removeItem('userImage');
           localStorage.removeItem('rememberPassword');
           exibirMensagem("Logout bem-sucedido! Redirecionando...", "sucesso");
-          window.location.href = '/';
+          window.location.href = '/login';
         } else {
           exibirMensagem(dados.msg || "Credencial ou senha incorretos!", "erro");
         }
