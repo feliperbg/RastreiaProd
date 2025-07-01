@@ -146,8 +146,8 @@
                     document.getElementById('nome').value = c.nome || '';
                     document.getElementById('codigo').value = c.codigo || '';
                     document.getElementById('descricao').value = c.descricao || '';
-                    document.getElementById('dataEntrada').value = c.dataEntrada ? c.dataEntrada.substring(0, 10) : '';
-                    document.getElementById('dataValidade').value = c.dataValidade ? c.dataValidade.substring(0, 10) : '';
+                    document.getElementById('dataEntrada').value = c.dataEntrada ? c.dataEntrada.setHours(12, 0, 0, 0).substring(0, 10) : '';
+                    document.getElementById('dataValidade').value = c.dataValidade ? c.dataValidade.setHours(12, 0, 0, 0).substring(0, 10) : '';
                     document.getElementById('quantidade').value = c.quantidade || '';
                     document.getElementById('precoPagoLote').value = c.precoPagoLote || '';
                     document.getElementById('precoUnidade').value = c.precoUnidade || '';
