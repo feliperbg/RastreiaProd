@@ -8,7 +8,7 @@ class TokenJWT {
         this._iss = 'http://localhost'; // Emissor do token
         this._aud = 'http://localhost'; // Destinatário do token
         this._sub = "acesso_sistema"; // Assunto do token
-        this._duracaoToken = 3600 * 24 * 30; // Duração do token (30 dias)
+        this._duracaoToken = 3600 * 24* 30; // Duração do token (30 dias)
     }
 
     gerarToken(parametroClaims) {

@@ -7,6 +7,11 @@ document.addEventListener("DOMContentLoaded", function () {
   const divResposta = document.getElementById("divResposta");
   const token = localStorage.getItem("authToken");
   const rememberPassword = JSON.parse(localStorage.getItem('rememberPassword'));
+  const msg = localStorage.getItem("mensagemErro");
+  if (msg) {
+    exibirMensagem(msg, "erro");
+    localStorage.removeItem("mensagemErro");
+  }
   if (token && rememberPassword) {
     fetch("/verifica-login", {
       method: "GET",
@@ -19,12 +24,15 @@ document.addEventListener("DOMContentLoaded", function () {
         window.location.href = "/painel";
       } else {
         // Token inválido, redireciona para a tela de login
+        localStorage.clear();
+        localStorage.setItem("mensagemErro", "Sessão expirada, faça login novamente!");
         window.location.href = "/";
-        exibirMensagem("Sessão expirada, faça login novamnete!", "erro");
       }
     })
     .catch(err => {
       // Se houver erro na requisição, redireciona para a tela de login
+      localStorage.clear();
+      localStorage.setItem("mensagemErro", "Sessão expirada, faça login novamente!");
       window.location.href = "/";
     });
   }else {
