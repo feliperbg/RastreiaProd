@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de ordem-producaos</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="/css/adminlte.css">
+    <style>
+        /* Estilos para centralizar o conteúdo da tabela */
+        .table td, .table th {
+            text-align: center;
+            vertical-align: middle;
+        }
+        
+        /* Ajuste para a coluna de ações */
+        .table td[data-label="Ações"] {
+            white-space: nowrap;
+        }
+        
+        /* Estilos responsivos */
+        @media (max-width: 768px) {
+            .table-responsive {
+                border: 0;
+            }
+            
+            .table-responsive thead {
+                display: none;
+            }
+            
+            .table-responsive tr {
+                display: block;
+                margin-bottom: 1rem;
+                border: 1px solid #dee2e6;
+            }
+            
+            .table-responsive td {
+                display: block;
+                text-align: right;
+                border-bottom: 1px solid #dee2e6;
+            }
+            
+            .table-responsive td::before {
+                content: attr(data-label);
+                float: left;
+                font-weight: bold;
+            }
+            
+            .table-responsive td:last-child {
+                border-bottom: 0;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+  <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
+    <div class="app-wrapper">
+        <%- include('partials/header.ejs') %>
+        <%- include('partials/sidebar.ejs') %>
+            <main class="app-main">
+                <div class="app-content">
+                    <div class="container-fluid">
+                <h1 class="mb-4 text-center">Ordem de Produções</h1>    
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <input type="text" id="filtro" class="form-control" placeholder="Pesquisar ordem de produção...">
+                            </div>
+                            <div class="col-md-6 text-end">
+                                <button class="btn btn-primary" onclick="window.location.href='/ordem-producao/adicionar-ordem-producao'">
+                                    <i class="bi bi-plus-circle"></i> Adicionar Ordem de Produção
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover table-bordered">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Status</th>
+                                <th>Produto</th>
+                                <th>Etapa</th>
+                                <th>Funcionário Ativo</th>
+                                <th>Horário Inicial</th>
+                                <th>Horário Final</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-ordem-producaos">
+                            <tr>
+                                <td colspan="7">Carregando dados...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+        <!-- Container de Toasts -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+      <div id="meuToast" class="toast align-items-center border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+          <div id="toast-body" class="toast-body"></div>
+          <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/js/adminlte.js"></script>
+    <script src ="/js/toast.js"></script>
+
+    <script>
+        // Função para formatar os componentes de conclusão
+        async function formatarComponentes(componentes) {
+            if (!Array.isArray(componentes)) return '';
+            const nomes = await Promise.all(componentes.map(async (id) => {
+                const nome = await nomesComponentes(id);
+                return `<span class="badge bg-secondary">${nome}</span>`;
+            }));
+            return nomes.join('<br>');
+        }
+
+        // Função para formatar os funcionários responsáveis
+        async function formatarFuncionarios(funcionarios) {
+            if (!Array.isArray(funcionarios)) return '';
+            const nomes = await Promise.all(funcionarios.map(async (id) => {
+                const nome = await nomeFuncionario(id);
+                return `<span class="badge bg-secondary">${nome}</span>`;
+            }));
+            return nomes.join('<br>');
+        }
+        // Função para mostrar loading
+        function showLoading() {
+            Swal.fire({
+                title: 'Carregando...',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading()
+                }
+            });
+        }
+        
+        // Função para fechar loading
+        function hideLoading() {
+            Swal.close();
+        }
+        
+        async function carregarTabela() {
+            try {
+                showLoading();
+            
+                const response = await fetch('/ordem-producao/readALL', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                    },
+                });
+            
+                if (!response.ok) {
+                    throw new Error(`Erro HTTP: ${response.status}`);
+                }
+            
+                const resultado = await response.json();
+                const tabela = document.getElementById("tabela-ordem-producaos");
+                console.log('Dados recebidos:', resultado);
+
+                const ordemProducoes = Array.isArray(resultado) ? resultado : resultado.ordemProducoes;
+
+                if (!Array.isArray(ordemProducoes)) {
+                    throw new Error("Resposta da API não é uma lista de ordem de produções.");
+                }
+                if (ordemProducoes.length === 0) {
+                    tabela.innerHTML = `<tr><td colspan="7">Nenhuma ordem de produção encontrada.</td></tr>`;
+                    return;
+                }
+                tabela.innerHTML = ""; // Limpa tabela após carregamento
+
+                ordemProducoes.forEach(ordemProducao => {
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+                        <td data-label="Status">${ordemProducao.status ? "Em Andamento" : "Finalizada"}</td>
+                        <td data-label="Sequências">
+                            <button class="btn btn-outline-secondary btn-sm" title="Ver Sequências"
+                                onclick='mostrarModalArray("Sequências", ${JSON.stringify(ordemProducao.sequencias)})'>
+                                <i class="bi bi-diagram-3"></i>
+                            </button>
+                        </td>
+                        <td data-label="Departamento Responsável">${ordemProducao.departamentoResponsavel}</td>
+                        <td data-label="Procedimentos">
+                            <button class="btn btn-outline-info btn-sm" title="Ver Procedimentos"
+                                onclick='mostrarModalArray("Procedimentos", ${JSON.stringify(ordemProducao.procedimentos)})'>
+                                <i class="bi bi-list-check"></i>
+                            </button>
+                        </td>
+                        <td data-label="Componente Conclusão"><span class="componentes-loading">Carregando...</span></td>
+                        <td data-label="Funcionários Responsáveis"><span class="funcionarios-loading">Carregando...</span></td>
+                        <td data-label="Ações">
+                            <button class="btn btn-sm btn-primary mb-1" onclick="editarordemProducao('${ordemProducao._id}')">
+                                <i class="bi bi-pencil"></i> Editar
+                            </button>
+                            <button class="btn btn-sm btn-danger mb-1" onclick="deletarordemProducao('${ordemProducao._id}')">
+                                <i class="bi bi-trash"></i> Deletar
+                            </button>
+                        </td>
+                    `;
+                    tabela.appendChild(tr);
+
+                    // Funcionários e componentes continuam assíncronos
+                    // Para componentes:
+                    formatarArrayAssincrono(ordemProducao.componenteConclusao, id => buscarNomePorId(id, 'componente', 'componente')).then(html => {
+                        tr.querySelector('.componentes-loading').innerHTML = html;
+                    });
+
+                    // Para funcionários:
+                    formatarArrayAssincrono(ordemProducao.funcionariosResponsaveis, id => buscarNomePorId(id, 'funcionario', 'funcionario')).then(html => {
+                        tr.querySelector('.funcionarios-loading').innerHTML = html;
+                    });
+                });
+            
+            } catch (error) {
+                console.error('Falha ao buscar ordemProducoes:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro ao carregar',
+                    text: 'Ocorreu um erro ao carregar as ordemProducoes. Por favor, tente novamente.',
+                    confirmButtonText: 'Ok'
+                });
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function editarOrdemProducoes(id) {
+            Swal.fire({
+                title: 'Editar ordem de produção',
+                text: `Você deseja editar a ordem de produção com ID: ${id}?`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Sim, editar',
+                cancelButtonText: 'Cancelar'
+            }).then(result => {
+                if (result.isConfirmed) {
+                    window.location.href = `/ordem-producao/editar-ordem-producao/${id}`;
+                }
+            });
+            }
+
+        async function deletarOrdemProducoes(id) {
+            const { isConfirmed } = await Swal.fire({
+                title: 'Tem certeza?',
+                text: "Você não poderá reverter isso!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sim, deletar!',
+                cancelButtonText: 'Cancelar'
+            });
+            
+            if (isConfirmed) {
+                try {
+                    showLoading();
+                    const response = await fetch(`/ordem-producao/${id}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                        }
+                    });
+            
+                    if (response.ok) {
+                        await Swal.fire(
+                            'Deletado!',
+                            'A ordem-producao foi deletada com sucesso.',
+                            'success'
+                        );
+                        carregarTabela(); // Recarrega a tabela após exclusão
+                    } else {
+                        throw new Error("Falha ao excluir ordem-producao");
+                    }
+                } catch (error) {
+                    console.error("Erro ao excluir ordem-producao:", error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Erro ao deletar',
+                        text: 'Ocorreu um erro ao tentar deletar a ordem-producao. Por favor, tente novamente.',
+                        confirmButtonText: 'Ok'
+                    });
+                } finally {
+                    hideLoading();
+                }
+            }
+        }
+
+        // Carregar a tabela ao carregar a página
+        document.addEventListener("DOMContentLoaded", function() {
+            carregarTabela();
+        });
+
+        // Filtro de busca por nome
+        document.getElementById("filtro").addEventListener("input", function() {
+            const filtro = this.value.toLowerCase();
+            const linhas = document.querySelectorAll("#tabela-ordem-producaos tr");
+            linhas.forEach(linha => {
+                const nome = linha.cells[0]?.innerText.toLowerCase();
+                if (nome && nome.includes(filtro)) {
+                    linha.style.display = "";
+                } else {
+                    linha.style.display = "none";
+                }
+            });
+        });
+
+        function mostrarModalArray(titulo, arr) {
+            Swal.fire({
+                title: titulo,
+                html: Array.isArray(arr) && arr.length > 0
+                    ? `<ul style="text-align:left">${arr.map(item => `<li>${item}</li>`).join('')}</ul>`
+                    : '<i>Nenhum item encontrado.</i>',
+                confirmButtonText: 'Fechar'
+            });
+        }
+
+        function formatarArray(arr) {
+            if (!Array.isArray(arr)) return '';
+            return arr.join(', ');
+        }
+
+        async function formatarArrayAssincrono(arr, fetchNomeFn) {
+            if (!Array.isArray(arr)) return '';
+            const nomes = await Promise.all(arr.map(async (id) => {
+                const nome = await fetchNomeFn(id);
+                return `<span class="badge bg-secondary">${nome}</span>`;
+            }));
+            return nomes.join('<br>');
+        }
+
+        async function buscarNomePorId(id, urlBase, atributo) {
+            try {
+                const response = await fetch(`/${urlBase}/${id}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                    },
+                });
+                if (!response.ok) {
+                    throw new Error(`Erro HTTP: ${response.status}`);
+                }
+                const resposta = await response.json();
+                return resposta[atributo]?.nome || 'Desconhecido';
+            } catch (error) {
+                console.error(`Erro ao buscar ${atributo}:`, error);
+                return 'Desconhecido';
+            }
+        }
+    </script>
+</html>
