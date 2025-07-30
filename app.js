@@ -44,8 +44,8 @@ app.get('/painel', (req, res) => {
 });
 
 app.get('/verifica-login', jwt.validate, (req, res) => {
-    // Verifica se o token existe na requisição
-    return res.status(200).json({ status: true, msg: "Usuário autenticado" });
+  // Só chega aqui se o token for válido
+  return res.status(200).json({ status: true, msg: "Usuário autenticado" });
 });
 
 //-------------------------ROUTERS--------------------------------------

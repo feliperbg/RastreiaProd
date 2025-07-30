@@ -187,7 +187,7 @@
           document.getElementById('email').value = funcionario.email || '';
           document.getElementById('telefone').value = funcionario.telefone || '';
           document.getElementById('turno').value = funcionario.turno || '';
-          document.getElementById('dataNascimento').value = funcionario.dataNascimento ? funcionario.dataNascimento.setHours(12, 0, 0, 0).substring(0, 10) : '';
+          document.getElementById('dataNascimento').value = funcionario.dataNascimento.substring(0, 10) || '';
           if (funcionario.permissoes) {
             funcionario.permissoes.forEach(permissao => {
               const checkbox = document.querySelector(`input[name="permissoes"][value="${permissao}"]`);
@@ -207,15 +207,21 @@
       event.preventDefault();
 
       const permissoes = Array.from(document.querySelectorAll('input[name="permissoes"]:checked')).map(checkbox => checkbox.value);
+      const dataNascimentoInput = document.getElementById('dataNascimento').value;
+      console.log(dataNascimento);
+      const dataNascimento = new Date(dataNascimentoInput);
+      dataNascimento.setHours(12, 0, 0, 0); // Define um horário fixo para evitar problemas de fuso
+
+
       const dadosAtualizados = {
         nome: document.getElementById('nome').value,
         email: document.getElementById('email').value,
         telefone: document.getElementById('telefone').value,
         turno: document.getElementById('turno').value,
-        dataNascimento: document.getElementById('dataNascimento').value,
+        dataNascimento: dataNascimento,
         permissoes: permissoes,
       };
-
+      console.log(dadosAtualizados);
       try {
         const resposta = await fetch(`/funcionario/${id}`, {
           method: 'PUT',
@@ -233,7 +239,7 @@
         }
 
         exibirMensagem('Funcionário atualizado com sucesso!', 'sucesso');
-        window.location.href = '/funcionario';
+        //window.location.href = '/funcionario';
       } catch (error) {
         console.error('Erro ao atualizar funcionário:', error);
         exibirMensagem('Erro interno ao tentar atualizar.', 'erro');
