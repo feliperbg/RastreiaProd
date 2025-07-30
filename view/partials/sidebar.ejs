@@ -13,7 +13,7 @@
             <p>Dashboard</p>
           </a>
         </li>
-        <li class="nav-item" id="menu-funcionarios" display="none">
+        <li class="nav-item" id="menu-funcionarios">
           <a href="/funcionario" class="nav-link">
             <i class="nav-icon bi bi-person-lines-fill"></i>
             <p>Funcionários</p>
@@ -57,5 +57,24 @@
       // Adiciona 'active' ao link clicado
       this.classList.add('active');
     });
+  });
+
+  document.addEventListener('DOMContentLoaded', function() {
+    // --- Verificar permissões para mostrar ou remover o menu Funcionários
+    const userDataJSON = localStorage.getItem("userData");
+    if (userDataJSON) {
+      try {
+        const authData = JSON.parse(userDataJSON);
+        // Verifica se existe o campo permissoes e se inclui "Administrador"
+        if (!authData.permissoes || !authData.permissoes.includes("administrador")) {
+          const menuFuncionarios = document.getElementById("menu-funcionarios");
+          if (menuFuncionarios) {
+            menuFuncionarios.remove(); // Remove o <li> do DOM
+          }
+        }
+      } catch (e) {   
+        console.error("Erro ao ler authData:", e);
+      }
+    }
   });
 </script>

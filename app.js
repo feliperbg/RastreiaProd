@@ -29,9 +29,14 @@ app.set('views', path.join(__dirname, 'view')); // Define o diretório de views 
 app.use(express.static(path.join(__dirname, 'public')));  // Para assets (CSS, JS, imagens)
 
 //-----------------------RENDERS---------------------------------------
-app.get('/', (req, res) => {
+app.get('/login', (req, res) => {
     // Verifica se o token existe na requisição
     res.sendFile(path.join(__dirname, 'view', 'login.html')); // Caminho absoluto
+});
+
+app.get('/', (req, res) => {
+    // Renderiza a página inicial
+    res.redirect('/login');
 });
 
 app.get('/painel', (req, res) => {
@@ -58,3 +63,4 @@ app.listen(portaServico, '0.0.0.0', () => {
     console.log(`API rodando no endereço: http://localhost:${portaServico}/`);
     Banco.getConexao();
 });
+
