@@ -199,7 +199,7 @@
           document.getElementById('email').value = funcionario.email || '';
           document.getElementById('telefone').value = funcionario.telefone || '';
           document.getElementById('turno').value = funcionario.turno || '';
-          document.getElementById('dataNascimento').value = funcionario.dataNascimento.substring(0, 10) || '';
+          document.getElementById('dataNascimento').value = funcionario.dataNascimento?.substring(0, 10) || '';
           if (funcionario.permissoes) {
             funcionario.permissoes.forEach(permissao => {
               const checkbox = document.querySelector(`input[name="permissoes"][value="${permissao}"]`);
