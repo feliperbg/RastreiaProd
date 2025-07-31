@@ -151,8 +151,19 @@
                 // Função para formatar a data no formato dd/mm/yyyy
                 function formatarData(data) {
                     if (!data) return '';
-                    const date = new Date(data);
-                    return date.toLocaleDateString('pt-BR');
+                    // Se for Date, converte para string
+                    if (data instanceof Date) {
+                        const dia = String(data.getDate()).padStart(2, '0');
+                        const mes = String(data.getMonth() + 1).padStart(2, '0');
+                        const ano = data.getFullYear();
+                        return `${dia}/${mes}/${ano}`;
+                    }
+                    // Se for string no formato YYYY-MM-DD
+                    if (typeof data === 'string' && /^\d{4}-\d{2}-\d{2}/.test(data)) {
+                        const [ano, mes, dia] = data.split('T')[0].split('-');
+                        return `${dia}/${mes}/${ano}`;
+                    }
+                    return '';
                 }
 
                 // Função para formatar o CPF
