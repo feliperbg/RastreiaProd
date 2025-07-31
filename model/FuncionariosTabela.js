@@ -10,7 +10,7 @@ const FuncionariosTabela = new Schema({
 	email: { type: String, required: true },
 	telefone: { type: String, required: true },
 	credencial: { type: Number, unique: true },
-	dataNascimento: { type: Date, required: true },
+	dataNascimento: { type: String, required: true },
 	permissoes: [{ type: String, required: true }],
 	role: { type: String, required: true, default: 'funcionario' },
 	imagemFuncionario: { type: String, default: '/imagens/funcionario/default.png' }
