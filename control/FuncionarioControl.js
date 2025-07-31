@@ -217,15 +217,12 @@ module.exports = class FuncionarioControl {
 
             const funcionario = new Funcionario();
             await funcionario.readByID(id);
-            // Preserva a credencial original
-            console.log(funcionario);
             const credencialOriginal = funcionario.credencial;
-            console.log('Credencial original:', credencialOriginal);
 
             // Campos permitidos para atualização
             const camposPermitidos = [
                 'nome', 'turno', 'senha', 'email',
-                'telefone', 'dataNascimento', 'permissoes', 'role'
+                'telefone', 'permissoes', 'dataNascimento', 'role'
             ];
            
 
@@ -235,8 +232,6 @@ module.exports = class FuncionarioControl {
                     funcionario[campo] = dadosAtualizacao[campo];
                 }
             });
-
-            // Restaura a credencial original
             funcionario.credencial = credencialOriginal;
 
             const atualizado = await funcionario.update();
