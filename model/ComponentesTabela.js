@@ -16,11 +16,11 @@ const ComponentesTabela = new Schema({
 		required: true,
 	},
 	dataEntrada: {
-		type: Date,
+		type: String,
 		required: true,
 	},
 	dataValidade: {
-		type: Date,
+		type: String,
 		required: true,
 	},
 	quantidade: {
