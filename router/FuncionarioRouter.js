@@ -38,14 +38,14 @@ module.exports = class FuncionarioRouter {
         this.router.get('/adicionar-funcionario',
             (req, res) => {
                 console.log('GET /funcionario/adicionar-funcionario foi chamado');
-                res.sendFile(path.join(__dirname, '..', 'view', 'adicionar-funcionario.html'));
+                res.sendFile(path.join(__dirname, '..', 'view', 'add', 'adicionar-funcionario.html'));
             }
         );
 
        this.router.get('/editar-funcionario/:id',
             (req, res) => {
                 console.log('GET /funcionario/editar-funcionario foi chamado');
-                res.sendFile(path.join(__dirname, '..', 'view', 'editar-funcionario.html'));
+                res.sendFile(path.join(__dirname, '..', 'view', 'edit' , 'editar-funcionario.html'));
             }
         );
 

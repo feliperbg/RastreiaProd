@@ -1,4 +1,4 @@
-const OrdemProducao = require('../model/OrdemProducao');
+const OrdemProducao = require('../model/OrdemProducao.js');
 
 module.exports = class OrdemProducaoControl {
     /**
@@ -54,11 +54,11 @@ module.exports = class OrdemProducaoControl {
     async readAll(request, response) {
         try {
             const ordem = new OrdemProducao();
-            const ordens = await ordem.readAll();
+            const ordensProducao = await ordem.readAll();
 
             return response.status(200).send({
                 status: true,
-                ordens: ordens,
+                ordensProducao: ordensProducao,
             });
         } catch (error) {
             console.error('Erro ao listar ordens de produção:', error);

@@ -19,11 +19,11 @@ module.exports = class OrdemProducaoRouter {
 
         this.router.get('/editar-ordem/:id', (req, res) => {
             // Verifica se o token existe na requisição
-            res.sendFile(path.join(__dirname, '..', 'view', 'editar-ordem.html')); // Caminho absoluto
+            res.sendFile(path.join(__dirname, '..', 'view', 'edit', 'editar-ordem-producao.html')); // Caminho absoluto
         });
 
         this.router.get('/adicionar-ordem', (req, res) => {
-            res.sendFile(path.join(__dirname, '..', 'view', 'adicionar-ordem.html'));
+            res.sendFile(path.join(__dirname, '..', 'view', 'add', 'adicionar-ordem-producao.html'));
         });
 
         // Rotas protegidas por JWT (forma correta)

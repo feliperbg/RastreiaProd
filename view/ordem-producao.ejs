@@ -175,9 +175,10 @@
             
                 const resultado = await response.json();
                 const tabela = document.getElementById("tabela-ordem-producaos");
-                console.log('Dados recebidos:', resultado);
-
-                const ordemProducoes = Array.isArray(resultado) ? resultado : resultado.ordemProducoes;
+                if(resultado.status !== true) {
+                    throw new Error("Erro ao carregar ordens de produção");
+                }   
+                const ordemProducoes = Array.isArray(resultado) ? resultado : resultado.ordensProducao || resultado['ordensProducao'];
 
                 if (!Array.isArray(ordemProducoes)) {
                     throw new Error("Resposta da API não é uma lista de ordem de produções.");

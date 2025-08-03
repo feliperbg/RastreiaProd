@@ -105,8 +105,8 @@
       const quantidade = parseInt(document.getElementById('quantidade').value, 10);
       const precoPagoLote = parseFloat(document.getElementById('precoPagoLote').value);
       const precoUnidade = parseFloat(document.getElementById('precoUnidade').value);
-      const dataEntrada = document.getElementById('dataEntrada').setHours(12,0,0,0,0).value;
-      const dataValidade = document.getElementById('dataValidade').setHours(12,0,0,0,0).value;
+      const dataEntrada = document.getElementById('dataEntrada').value?.substring(0, 10) || '';
+      const dataValidade = document.getElementById('dataValidade').value;
 
       if (!nome || !codigo) {
         exibirMensagem('Por favor, preencha os campos obrigatórios: Nome e Código.', 'erro');

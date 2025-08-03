@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Editar Componente</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    
     <style>
         body {
             background-color: #f8f9fa;
@@ -75,39 +76,39 @@
             </div>
 
             <div class="mb-3">
-                <label for="quantidade" class="form-label">Quantidade</label>
-                <input type="number" id="quantidade" name="quantidade" class="form-control" />
+                <label for="quantidade" class="form-label">Valores</label>
+                <input placeholder="Quantidade" type="number" id="quantidade" name="quantidade" class="form-control" />
             </div>
 
             <div class="mb-3">
-                <label for="precoPagoLote" class="form-label">Preço Pago por Lote</label>
+                <input placeholder="Preço unid. (R$)" type="text" id="precoUnidade" name="precoUnidade" class="form-control" />
+            </div>
+
+            <input type="text" id="precoTotal" class="form-control" placeholder="Total pago" readonly />
+
+            <div class="mb-3">
+                <label for="precoPagoLote" class="form-label">Preço Pago no Lote</label>
                 <input type="text" id="precoPagoLote" name="precoPagoLote" class="form-control" />
             </div>
 
-            <div class="mb-3">
-                <label for="precoUnidade" class="form-label">Preço por Unidade</label>
-                <input type="text" id="precoUnidade" name="precoUnidade" class="form-control" />
-            </div>
 
             <div class="mb-3">
                 <label class="form-label">Dimensões</label>
                 <div class="row">
                     <div class="col-md-4 mb-2">
-                        <label for="altura" class="form-label">Altura</label>
-                        <input type="number" id="altura" name="altura" class="form-control" />
+                        <input placeholder="Altura" type="number" id="altura" name="altura" class="form-control" />
                     </div>
                     <div class="col-md-4 mb-2">
-                        <label for="comprimento" class="form-label">Comprimento</label>
-                        <input type="number" id="comprimento" name="comprimento" class="form-control" />
+                        <input placeholder="Comprimento" type="number" id="comprimento" name="comprimento" class="form-control" />
                     </div>
                     <div class="col-md-4 mb-2">
-                        <label for="largura" class="form-label">Largura</label>
-                        <input type="number" id="largura" name="largura" class="form-control" />
+                         <input placeholder="Largura" type="number" id="largura" name="largura" class="form-control" />
                     </div>
                 </div>
             </div>
 
             <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+            <button type="button" class="btn btn-danger" onclick="window.location.href='/componente'">Cancelar</button>
         </form>
     </div>
       <!-- Container de Toasts -->
@@ -120,14 +121,17 @@
       </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/inputmask@5.0.6/dist/inputmask.min.js"></script>
     <script src="/js/toast.js"></script>
     <script>
         const pathParts = window.location.pathname.split('/');
         const id = pathParts[pathParts.length - 1];
+        const regexBR = /^(\d{1,3}(\.\d{3})*|\d+)(\,\d{2})?$/;
         if (!id) {
             exibirMensagem('ID do componente não encontrado!', 'erro');
             window.location.href = '/painel';
         }
+
 
         async function carregarComponente() {
             try {
@@ -142,15 +146,23 @@
 
                 if (dados.status && dados.componente) {
                     const c = dados.componente;
-                    console.log(c);
+                    const precoUnidade = c.precoUnidade ? c.precoUnidade.toLocaleString('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL'
+                    }) : '';
+
+                    const precoPagoLote = c.precoPagoLote ? c.precoPagoLote.toLocaleString('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL'
+                    }) : '';
                     document.getElementById('nome').value = c.nome || '';
                     document.getElementById('codigo').value = c.codigo || '';
                     document.getElementById('descricao').value = c.descricao || '';
-                    document.getElementById('dataEntrada').value = c.dataEntrada ? c.dataEntrada.setHours(12, 0, 0, 0).substring(0, 10) : '';
-                    document.getElementById('dataValidade').value = c.dataValidade ? c.dataValidade.setHours(12, 0, 0, 0).substring(0, 10) : '';
+                    document.getElementById('dataEntrada').value = c.dataEntrada ? c.dataEntrada.substring(0, 10) : '';
+                    document.getElementById('dataValidade').value = c.dataValidade ? c.dataValidade.substring(0, 10) : '';
                     document.getElementById('quantidade').value = c.quantidade || '';
                     document.getElementById('precoPagoLote').value = c.precoPagoLote || '';
-                    document.getElementById('precoUnidade').value = c.precoUnidade || '';
+                    document.getElementById('precoUnidade').value = precoUnidade || '';
                     if (c.dimensoes) {
                         document.getElementById('altura').value = c.dimensoes.altura || '';
                         document.getElementById('comprimento').value = c.dimensoes.comprimento || '';
@@ -165,79 +177,72 @@
             }
         }
 
-    async function atualizarComponente(event) {
-        event.preventDefault();
+        async function atualizarComponente(event) {
+            event.preventDefault();
 
-        const dadosAtualizados = {
-            Componente: {
-                nome: document.getElementById('nome').value,
-                codigo: document.getElementById('codigo').value,
-                descricao: document.getElementById('descricao').value,
-                dataEntrada: document.getElementById('dataEntrada').value,
-                dataValidade: document.getElementById('dataValidade').value,
-                quantidade: document.getElementById('quantidade').value,
-                precoPagoLote: document.getElementById('precoPagoLote').value,
-                precoUnidade: document.getElementById('precoUnidade').value,
-                dimensoes: {
-                    altura: document.getElementById('altura').value,
-                    comprimento: document.getElementById('comprimento').value,
-                    largura: document.getElementById('largura').value
+            const dadosAtualizados = {
+                Componente: {
+                    nome: document.getElementById('nome').value,
+                    codigo: document.getElementById('codigo').value,
+                    descricao: document.getElementById('descricao').value,
+                    dataEntrada: document.getElementById('dataEntrada').value,
+                    dataValidade: document.getElementById('dataValidade').value,
+                    quantidade: document.getElementById('quantidade').value,
+                    precoPagoLote: document.getElementById('precoPagoLote').value,
+                    precoUnidade: document.getElementById('precoUnidade').value,
+                    dimensoes: {
+                        altura: document.getElementById('altura').value,
+                        comprimento: document.getElementById('comprimento').value,
+                        largura: document.getElementById('largura').value
+                    }
                 }
-            }
-        };
-
-        fetch(`/componente/${id}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-            },
-            body: JSON.stringify(dadosAtualizados)
-        })
-        .then(resposta => {
-            if (!resposta.ok) {
-                return resposta.json().then(erro => {
-                    exibirMensagem(erro.msg || 'Erro ao atualizar componente.', 'erro');
-                    throw new Error('Erro na requisição');
-                });
-            }
-            return resposta.json(); // Se a resposta for ok, podemos parsear o JSON aqui (opcional, dependendo do backend)
-        })
-        .then(dados => {
-            exibirMensagem('Componente atualizado com sucesso!', 'sucesso');
-            window.location.href = '/componente';
-        })
-        .catch(error => {
-            console.error('Erro ao atualizar componente:', error);
-            exibirMensagem('Erro interno ao tentar atualizar.', 'erro');
-        });
-    }
-        document.addEventListener('DOMContentLoaded', function() {
-            const precoUnidadeInput = document.getElementById('precoUnidade');
-
-            precoUnidadeInput.addEventListener('input', function(event) {
-                // Remove qualquer caractere que não seja número ou ponto decimal
-                this.value = this.value.replace(/[^0-9.]/g, '');
-
-                // Garante que haja apenas um ponto decimal
-                const parts = this.value.split('.');
-                if (parts.length > 2) {
-                    this.value = parts[0] + '.' + parts.slice(1).join('');
+            };
+            fetch(`/componente/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                },
+                body: JSON.stringify(dadosAtualizados)
+            })
+            .then(resposta => {
+                if (!resposta.ok) {
+                    return resposta.json().then(erro => {
+                        exibirMensagem(erro.msg || 'Erro ao atualizar componente.', 'erro');
+                        throw new Error('Erro na requisição');
+                    });
                 }
+                return resposta.json(); // Se a resposta for ok, podemos parsear o JSON aqui (opcional, dependendo do backend)
+            })
+            .then(dados => {
+                exibirMensagem('Componente atualizado com sucesso!', 'sucesso');
+                window.location.href = '/componente';
+            })
+            .catch(error => {
+                console.error('Erro ao atualizar componente:', error);
+                exibirMensagem('Erro interno ao tentar atualizar.', 'erro');
             });
-            const precoLoteInput = document.getElementById('precoPagoLote');
+        }
+        function atualizarPrecoTotal() {
+            const qtd = parseFloat(document.getElementById('quantidade').value || '0');
+            const precoStr = document.getElementById('precoUnidade').value.replace(',', '.').replace('R$', '').trim();
+            const precoUnitario = parseFloat(precoStr || '0');
 
-            precoLoteInput.addEventListener('input', function(event) {
-                // Remove qualquer caractere que não seja número ou ponto decimal
-                this.value = this.value.replace(/[^0-9.]/g, '');
-
-                // Garante que haja apenas um ponto decimal
-                const parts = this.value.split('.');
-                if (parts.length > 2) {
-                    this.value = parts[0] + '.' + parts.slice(1).join('');
-                }
+            const total = qtd * precoUnitario;
+            document.getElementById('precoTotal').value = total.toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
             });
-        });
+            document.getElementById('precoUnidade').value = precoUnitario.toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            });
+        }
+
+        // Executa quando digita ou altera os campos
+        document.getElementById('quantidade').addEventListener('input', atualizarPrecoTotal);
+        document.getElementById('precoUnidade').addEventListener('input', atualizarPrecoTotal);
+
         document.getElementById('form-editar').addEventListener('submit', atualizarComponente);
         carregarComponente();
     </script>

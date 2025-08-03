@@ -12984,7 +12984,7 @@ textarea.form-control-lg {
   --lte-sidebar-header-color: #31373d;
   z-index: 1038;
   grid-area: lte-app-sidebar;
-  min-width: var(--lte-sidebar-width);
+  min-width: 100px;
   max-width: var(--lte-sidebar-width);
   transition: min-width 0.3s ease-in-out, max-width 0.3s ease-in-out, margin-left 0.3s ease-in-out, margin-right 0.3s ease-in-out;
 }
