@@ -19,7 +19,7 @@ module.exports = class EtapaRouter {
 
         // Rota para editar uma etapa, que renderiza a página de edição
         this.router.get('/editar-etapa/:id', (req, res) => {
-            res.sendFile(path.join(__dirname, '..', 'view', 'editar-etapa.html')); // Caminho para o arquivo HTML de edição
+            res.sendFile(path.join(__dirname, '..', 'view', 'edit', 'editar-etapa.html')); // Caminho para o arquivo HTML de edição
         });
 
         // Rota para criar uma nova etapa, protegida por JWT
@@ -32,6 +32,11 @@ module.exports = class EtapaRouter {
             (req, res, next) => this.jwtMiddleware.validate(req, res, next), // Valida o JWT
             (req, res) => this.etapaControl.readAll(req, res) // Chama o método readAll no controlador de etapas
         );
+        
+        // Rota para cadastrar uma nova etapa, que renderiza a página de cadastro
+        this.router.get('/cadastro-etapa', (req, res) => {
+            res.sendFile(path.join(__dirname, '..', 'view', 'add', 'adicionar-etapa.html')); // Caminho para o arquivo HTML de cadastro
+        });
 
         // Rota para ler uma etapa específica, protegida por JWT
         this.router.get('/:id', 
@@ -54,11 +59,6 @@ module.exports = class EtapaRouter {
         // Rota para retornar um JSON com todas as etapas
         this.router.get('/json', async (req, res) => {
             (req, res) => this.etapaControl.readAllJSON(req, res); // Chama o método readAllJSON no controlador de etapas
-        });
-
-        // Rota para cadastrar uma nova etapa, que renderiza a página de cadastro
-        this.router.get('/cadastro-etapa', (req, res) => {
-            res.sendFile(path.join(__dirname, '..', 'view', 'adicionarEtapa.html')); // Caminho para o arquivo HTML de cadastro
         });
 
         return this.router;

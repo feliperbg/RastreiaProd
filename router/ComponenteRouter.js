@@ -19,11 +19,11 @@ module.exports = class ComponenteRouter {
 
         this.router.get('/adicionar-componente',(req, res) => {
             console.log('GET /componente/adicionar-componente foi chamado');
-            res.sendFile(path.join(__dirname, '..', 'view', 'adicionar-componente.html'));
+            res.sendFile(path.join(__dirname, '..', 'view', 'add', 'adicionar-componente.html'));
         });
 
         this.router.get('/editar-componente/:id', (req, res) => {
-            res.sendFile(path.join(__dirname, "..", "view", 'editar-componente.html'));
+            res.sendFile(path.join(__dirname, "..", "view", 'edit', 'editar-componente.html'));
         });
 
 

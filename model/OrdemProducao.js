@@ -86,9 +86,7 @@ class OrdemProducao {
      */
     async readAll() {
         try {
-            const ordens = await OrdensProducao.find()
-                .populate('produto')
-                .sort({ 'timestampProducao.inicio': -1 });
+            const ordens = await OrdensProducao.find().populate('produto').sort({ 'timestampProducao.inicio': 1 });
             return ordens;
         } catch (error) {
             console.error('Erro ao buscar ordens de produção:', error);
