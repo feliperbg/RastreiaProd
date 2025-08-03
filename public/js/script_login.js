@@ -22,6 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
       if (dados.status) {
         // Token válido, redireciona para o painel
         window.location.href = "/painel";
+        localStorage.setItem("loginAutomatico", true);
       } else {
         // Token inválido, redireciona para a tela de login
         localStorage.clear();
