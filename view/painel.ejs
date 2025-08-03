@@ -22,6 +22,26 @@
         <div class="app-content">
           <div class="container-fluid">
             <div class="row">
+              <!-- Produtos: Pizza -->
+              <div class="col-md-5 mb-4">
+                <div class="card">
+                  <div class="card-header bg-success text-white">Distribuição de Produtos por Categoria</div>
+                  <div class="card-body">
+                    <canvas id="graficoProdutos"></canvas>
+                  </div>
+                </div>
+              </div>
+              <!--Espaçamento-->
+              <div class="col-md-2 mb-3"> </div>
+              <!-- Linha de Produção: Donut -->
+              <div class="col-md-5 mb-4">
+                <div class="card">
+                  <div class="card-header bg-danger text-white">Ocupação das Linhas de Produção</div>
+                  <div class="card-body">
+                    <canvas id="graficoLinhas"></canvas>
+                  </div>
+                </div>
+                </div>
               <!-- Funcionários: Barras -->
               <div class="col-md-4 mb-3">
                 <div class="card">
@@ -50,33 +70,12 @@
                   </div>
                 </div>
               </div>
-              <!-- Produtos: Pizza -->
-              <div class="col-md-5 mb-4">
-                <div class="card">
-                  <div class="card-header bg-success text-white">Distribuição de Produtos por Categoria</div>
-                  <div class="card-body">
-                    <canvas id="graficoProdutos"></canvas>
-                  </div>
-                </div>
-              </div>
-              <!--Espaçamento-->
-              <div class="col-md-2 mb-3"> </div>
-              <!-- Linha de Produção: Donut -->
-              <div class="col-md-5 mb-4">
-                <div class="card">
-                  <div class="card-header bg-danger text-white">Ocupação das Linhas de Produção</div>
-                  <div class="card-body">
-                    <canvas id="graficoLinhas"></canvas>
-                  </div>
-                </div>
-              </div>
-            </div>
-
+            </div>  
               <!-- Adicione mais cards aqui -->
-            </div>
           </div>
         </div>
       </main>
+    </div>
 
       <!-- Rodapé -->
       <footer class="app-footer text-center py-3">
@@ -206,6 +205,8 @@
         },
         plugins: [ChartDataLabels]
         });
+
+
     </script>
     
   </body>
