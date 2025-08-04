@@ -23,11 +23,10 @@ app.use(express.json());
  
 // Configurações do EJS
 app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'view')); // Define o diretório de views para o EJS
+app.set('views', path.join(__dirname, 'view')); // Define o diretório de views para o EJS 
 
 // Arquivos estáticos (CSS, JS, imagens, etc.)
 app.use(express.static(path.join(__dirname, 'public')));  // Para assets (CSS, JS, imagens)
-
 //-----------------------RENDERS---------------------------------------
 app.get('/login', (req, res) => {
     // Verifica se o token existe na requisição
