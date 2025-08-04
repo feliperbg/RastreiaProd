@@ -56,42 +56,49 @@
                 border-bottom: 0;
                 text-align: center;
             }
-        }
-            @media (min-width: 769px) {
 
-            .table th:nth-child(2),
-            .table td:nth-child(2) {
-                min-width: 110px;
-                max-width: 220px;
-                width: 1%;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-
-            .table th:nth-child(4),
-            .table td:nth-child(4) {
-                min-width: 150px;
-            }
-
-            .table th:nth-child(6),
-            .table td:nth-child(6) {
-                min-width: 150px;
+            .app-main{
+                margin-left: 0;
             }
         }
-            .table th:nth-child(2),
-            .table td:nth-child(2) {
-                min-width: 150px;
-            } 
+        .app-main {
+            transition: margin-left 0.3s ease-in-out;
+            width: 100%; /* largura restante quando a sidebar estiver aberta */
+        }
+
+        body.sidebar-closed .app-main {
+        width: 100%;
+        }
+
+        @media (max-width: 768px) {
+        .app-main {
+            width: 100% !important;
+        }
+        }
+        .app-wrapper {
+            display: flex;
+        }
+
+        .app-main {
+            flex: 1;
+            min-width: 0; /* necessário para evitar overflow com conteúdo longo como tabelas */
+        }
+
+
+
+
+
+
+
     </style>
 </head>
-<body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
+<body class="layout-fluid sidebar-expand-lg bg-body-tertiary">
     <div class="app-wrapper">
         <%- include('partials/header.ejs') %>
         <%- include('partials/sidebar.ejs') %>
             <main class="app-main">
                 <div class="app-content">
-                    <div class="container-fixed">
+                    <div class="container-fluid">
                         <div class="col">
                             <h1 class="mb-4 text-center">Funcionários</h1>
                             <div class="card mb-4">
@@ -141,287 +148,11 @@
         </div>
     </div>
 </body>
-            <!-- Bootstrap JS Bundle with Popper -->
-            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-            <!-- SweetAlert2 JS -->
-            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-            <script src="/js/adminlte.js"></script>
-
-            <script>
-                // Função para formatar a data no formato dd/mm/yyyy
-                function formatarData(data) {
-                    if (!data) return '';
-                    // Se for Date, converte para string
-                    if (data instanceof Date) {
-                        const dia = String(data.getDate()).padStart(2, '0');
-                        const mes = String(data.getMonth() + 1).padStart(2, '0');
-                        const ano = data.getFullYear();
-                        return `${dia}/${mes}/${ano}`;
-                    }
-                    // Se for string no formato YYYY-MM-DD
-                    if (typeof data === 'string' && /^\d{4}-\d{2}-\d{2}/.test(data)) {
-                        const [ano, mes, dia] = data.split('T')[0].split('-');
-                        return `${dia}/${mes}/${ano}`;
-                    }
-                    return '';
-                }
-
-                // Função para formatar o CPF
-                function formatarCPF(cpf) {
-                    if (!cpf || cpf.length !== 11) return cpf;
-                    return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
-                }
-
-                // Função para formatar o telefone
-                function formatarTelefone(telefone) {
-                    if (!telefone || telefone.length !== 11) return telefone;
-                    // Formato (XX) XXXXX-XXXX
-                    return telefone.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
-                }
-
-                // Função para formatar as permissões
-                function formatarPermissoes(permissoes) {
-                    if (!Array.isArray(permissoes)) return '';
-                    if (permissoes.length === 0) return '';
-
-                    return permissoes.map(p => {
-                        // Se já estiver formatado, mantém
-                        if (p.includes(' ')) return p;
-
-                        // mantendo os acentos originais
-                        const palavras = p.split('_');
-                        return palavras.map(palavra => {
-                            return palavra.length > 0
-                                ? palavra.charAt(0).toUpperCase() + palavra.slice(1)
-                                : palavra;
-                        }).join(' ');
-                    }).join(', ');
-                }
-
-                // Função para mostrar loading
-                function showLoading() {
-                    Swal.fire({
-                        title: 'Carregando...',
-                        allowOutsideClick: false,
-                        didOpen: () => {
-                            Swal.showLoading()
-                        }
-                    });
-                }
-
-                // Função para fechar loading
-                function hideLoading() {
-                    Swal.close();
-                }
-
-                // Função para mostrar o modal de permissões
-                function mostrarPermissoesModal(permissoesStr) {
-                    let permissoes;
-                    try {
-                        permissoes = JSON.parse(decodeURIComponent(permissoesStr));
-                    } catch {
-                        permissoes = [];
-                    }
-                    const conteudo = formatarPermissoes(permissoes) || 'Nenhuma permissão atribuída.';
-                    Swal.fire({
-                        title: 'Permissões do Funcionário',
-                        html: `<div style="text-align:center">${conteudo}</div>`,
-                        icon: 'info',
-                        confirmButtonText: 'Fechar'
-                    });
-                }
-
-                function mostrarCPFModal(cpf) {
-                    Swal.fire({
-                        title: 'CPF do Funcionário',
-                        html: `<div style="font-size:1.2em">${cpf || 'CPF não informado.'}</div>`,
-                        icon: 'info',
-                        confirmButtonText: 'Fechar'
-                    });
-                }
-
-                function mostrarNomeModal(nome) {
-                    Swal.fire({
-                        title: 'Nome Completo',
-                        html: `<div style="font-size:1.2em;word-break:break-word">${nome}</div>`,
-                        icon: 'info',
-                        confirmButtonText: 'Fechar'
-                    });
-                }
-
-                async function carregarTabela() {
-                    try {
-                        showLoading();
-
-                        const response = await fetch('/funcionario/readALL', {
-                            method: 'GET',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-                            },
-                        });
-
-                        if (!response.ok) {
-                            throw new Error(`Erro HTTP: ${response.status}`);
-                        }
-
-                        const resultado = await response.json();
-                        const tabela = document.getElementById("tabela-funcionarios");
-
-                        const funcionarios = Array.isArray(resultado) ? resultado : resultado.funcionarios;
-
-                        if (!Array.isArray(funcionarios)) {
-                            throw new Error("Resposta da API não é uma lista de funcionários.");
-                        }
-                        if (funcionarios.length === 0) {
-                            tabela.innerHTML = `<tr><td colspan="12">Nenhum funcionário encontrado.</td></tr>`;
-                            return;
-                        }
-                        tabela.innerHTML = ""; // Limpa tabela após carregamento
-
-                        funcionarios.forEach(func => {
-                            const tr = document.createElement("tr");
-                            const nomeCompleto = func.nome || '';
-                            let nomeHtml = '';
-
-                            if (nomeCompleto.length > 25) {
-                                nomeHtml = `
-                                    <span title="${nomeCompleto.replace(/"/g, '&quot;')}"></span>
-                                    <button class="btn btn-link btn-sm p-0 ms-1" onclick="mostrarNomeModal('${nomeCompleto.replace(/'/g, "\\'").replace(/"/g, '&quot;')}')">
-                                        <i class="bi bi-eye fs-4"></i>
-                                    </button>
-                                `;
-                            } else {
-                                nomeHtml = `<span>${nomeCompleto}</span>`;
-                            }
-
-                            tr.innerHTML = `
-                                <td data-label="Credencial">${func.credencial}</td>
-                                <td data-label="Nome">${nomeHtml}</td>
-                                <td data-label="Turno">${func.turno}</td>
-                                <td data-label="CPF">
-                                    <button class="btn btn-sm btn-secondary" onclick="mostrarCPFModal('${formatarCPF(func.CPF)}')">
-                                        <i class="bi bi-card-text"></i> Ver CPF
-                                    </button>
-                                </td>
-                                <td data-label="Email">${func.email}</td>
-                                <td data-label="Telefone">${formatarTelefone(func.telefone)}</td>
-                                <td data-label="Data Nasc.">${formatarData(func.dataNascimento)}</td>
-                                <td data-label="Permissões">
-                                    <button class="btn btn-sm  btn-warning" onclick="mostrarPermissoesModal('${encodeURIComponent(JSON.stringify(func.permissoes))}')">
-                                        <i class="bi bi-shield-lock"></i> Ver Permissões
-                                    </button>
-                                </td>
-                                <td data-label="Ações">
-                                    <button class="btn btn-sm btn-primary mb-1" onclick="editarFuncionario('${func._id}', '${func.credencial}')">
-                                        <i class="bi bi-pencil"></i> Editar
-                                    </button>
-                                    <button class="btn btn-sm btn-danger mb-1" onclick="deletarFuncionario('${func._id}')">
-                                        <i class="bi bi-trash"></i> Deletar
-                                    </button>
-                                </td>
-                            `;
-                            tabela.appendChild(tr);
-                        });
-
-                    } catch (error) {
-                        console.error('Falha ao buscar funcionários:', error);
-                        if (error.message.includes('401')) {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Sessão expirada',
-                                text: 'Sua sessão expirou. Por favor, faça login novamente.',
-                                confirmButtonText: 'Ir para login'
-                            }).then(() => {
-                                window.location.href = '/';
-                            });
-                        } else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Erro ao carregar',
-                                text: 'Ocorreu um erro ao carregar os funcionários. Por favor, tente novamente.',
-                                confirmButtonText: 'Ok'
-                            });
-                        }
-                    } finally {
-                        hideLoading();
-                    }
-                }
-
-                function editarFuncionario(id, credencial) {
-                    Swal.fire({
-                        title: 'Editar Funcionário',
-                        text: `Você deseja editar o funcionário com a credencial: ${credencial}?`,
-                        icon: 'question',
-                        showCancelButton: true,
-                        confirmButtonText: 'Sim, editar',
-                        cancelButtonText: 'Cancelar'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            window.location.href = `/funcionario/editar-funcionario/${id}`;
-                        }
-                    });
-                }
-
-                // Função para deletar funcionário
-                async function deletarFuncionario(id) {
-                    const { isConfirmed } = await Swal.fire({
-                        title: 'Tem certeza?',
-                        text: "Você não poderá reverter isso!",
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#d33',
-                        cancelButtonColor: '#3085d6',
-                        confirmButtonText: 'Sim, deletar!',
-                        cancelButtonText: 'Cancelar'
-                    });
-
-                    if (isConfirmed) {
-                        try {
-                            showLoading();
-                            const response = await fetch(`/funcionario/${id}`, {
-                                method: 'DELETE',
-                                headers: {
-                                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-                                }
-                            });
-
-                            if (response.ok) {
-                                await Swal.fire(
-                                    'Deletado!',
-                                    'O funcionário foi deletado com sucesso.',
-                                    'success'
-                                );
-                                carregarTabela(); // Recarrega a tabela após exclusão
-                            } else {
-                                throw new Error("Falha ao excluir funcionário");
-                            }
-                        } catch (error) {
-                            console.error("Erro ao excluir funcionário:", error);
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Erro ao deletar',
-                                text: 'Ocorreu um erro ao tentar deletar o funcionário.',
-                                confirmButtonText: 'Ok'
-                            });
-                        } finally {
-                            hideLoading();
-                        }
-                    }
-                }
-
-                // Filtro de busca
-                document.getElementById("filtro").addEventListener("input", function () {
-                    const termo = this.value.toLowerCase();
-                    const linhas = document.querySelectorAll("#tabela-funcionarios tr");
-
-                    linhas.forEach(tr => {
-                        const texto = tr.innerText.toLowerCase();
-                        tr.style.display = texto.includes(termo) ? "" : "none";
-                    });
-                });
-
-                // Carrega os dados quando a página é carregada
-                document.addEventListener('DOMContentLoaded', carregarTabela);
-            </script>
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/js/adminlte.js"></script>
+    <script src="/js/tabela.js"></script>
+    <script src="/js/funcionario.js"></script>
 </html>

@@ -116,7 +116,7 @@
       const nome = document.getElementById('nome').value.trim();
       const codigo = document.getElementById('codigo').value.trim();
       const componentes = document.getElementById('componentes').value.trim();
-      const dataValidade = document.getElementById('dataValidade').setHours(12, 0, 0, 0).value;
+      const dataValidade = document.getElementById('dataValidade').value;
       const precoMontagem = parseFloat(document.getElementById('precoMontagem').value);
       const precoVenda = parseFloat(document.getElementById('precoVenda').value);
       const quantidade = parseInt(document.getElementById('quantidade').value, 10);
@@ -138,7 +138,7 @@
       }
 
       const novoProduto = {
-        Produto:{
+        produto:{
           nome,
           codigo,
           descricao: document.getElementById('descricao').value.trim(),
