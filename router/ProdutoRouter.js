@@ -8,58 +8,55 @@ module.exports = class ProdutoRouter {
         this.router = express.Router();
         this.produtoControl = new ProdutoControl();
         this.jwtMiddleware = new JWTMiddleware();
+        this.viewPath = path.join(__dirname, '..', 'view');
         this.createRoutes();
     }
 
     createRoutes() {
-        // Rota estática
+        // Páginas estáticas
         this.router.get('/', (req, res) => {
             res.render('produto');
         });
 
         this.router.get('/editar-produto/:id', (req, res) => {
-            // Verifica se o token existe na requisição
-            res.sendFile(path.join(__dirname, '..', 'view', 'edit', 'editar-produto.html')); // Caminho absoluto
+            res.sendFile(path.join(this.viewPath, 'edit', 'editar-produto.html'));
         });
 
         this.router.get('/adicionar-produto', (req, res) => {
-            res.sendFile(path.join(__dirname, '..', 'view', 'add', 'adicionar-produto.html'));
+            res.sendFile(path.join(this.viewPath, 'add', 'adicionar-produto.html'));
         });
 
-        // Rotas protegidas por JWT (forma correta)
+        // Rotas de API protegidas
         this.router.post('/',
             (req, res) => this.produtoControl.create(req, res)
         );
 
         this.router.get('/readALL',
-            (req, res, next) => this.jwtMiddleware.validate(req, res, next),
+            this.jwtMiddleware.validate.bind(this.jwtMiddleware),
             (req, res) => this.produtoControl.readAll(req, res)
         );
 
         this.router.get('/:id',
-            (req, res, next) => this.jwtMiddleware.validate(req, res, next),
+            this.jwtMiddleware.validate.bind(this.jwtMiddleware),
             (req, res) => this.produtoControl.readByID(req, res)
         );
 
         this.router.delete('/:id',
-            (req, res, next) => this.jwtMiddleware.validate(req, res, next),
+            this.jwtMiddleware.validate.bind(this.jwtMiddleware),
             (req, res) => this.produtoControl.delete(req, res)
         );
 
         this.router.put('/:id',
-            (req, res, next) => this.jwtMiddleware.validate(req, res, next),
+            this.jwtMiddleware.validate.bind(this.jwtMiddleware),
             (req, res) => this.produtoControl.update(req, res)
         );
 
-        // routes/produtos.js
-        this.router.get('/json', async (req, res) => {
-            (req, res) => this.produtoControl.update(req, res),
+        // Retorna todos em JSON
+        this.router.get('/json',
+            this.jwtMiddleware.validate.bind(this.jwtMiddleware), // Se precisar proteger
             (req, res) => this.produtoControl.readAllJSON(req, res)
-            
-        });
-
-  
+        );
 
         return this.router;
     }
-}
+};

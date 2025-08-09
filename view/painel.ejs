@@ -12,6 +12,31 @@
 
   <!-- jKanban -->
   <link rel="stylesheet" href="js/jkanban.min.css">
+
+  <style>
+    /* Kanban - Aparência Profissional */
+    .kanban-board {
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .kanban-title-board {
+      font-weight: bold;
+      font-size: 1.05rem;
+      color: #fff;
+      padding: 8px;
+    }
+    [data-id="_todo"] .kanban-title-board { background: #6c757d; }
+    [data-id="_doing"] .kanban-title-board { background: #ffc107; }
+    [data-id="_review"] .kanban-title-board { background: #0dcaf0; }
+    [data-id="_done"] .kanban-title-board { background: #198754; }
+    .kanban-item {
+      border-radius: 6px;
+      padding: 6px 8px;
+      font-size: 0.9rem;
+      background-color: #f8f9fa;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+  </style>
 </head>
 <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
 <div class="app-wrapper">
@@ -26,7 +51,7 @@
       <div class="container-fluid">
         <div class="row">
 
-          <!-- Kanban das Linhas de Produção -->
+          <!-- Kanban -->
           <div class="col-12 mb-4">
             <div class="card">
               <div class="card-header bg-dark text-white">📌 Quadro Kanban - Linhas de Produção</div>
@@ -36,7 +61,7 @@
             </div>
           </div>
 
-          <!-- Gráfico 1: Etapas Finalizadas por Dia -->
+          <!-- Gráficos -->
           <div class="col-md-6 mb-3">
             <div class="card">
               <div class="card-header bg-info text-white">📈 Etapas Finalizadas por Dia</div>
@@ -46,7 +71,6 @@
             </div>
           </div>
 
-          <!-- Gráfico 2: Tempo Médio por Etapa -->
           <div class="col-md-6 mb-3">
             <div class="card">
               <div class="card-header bg-warning text-white">⏱ Tempo Médio por Etapa</div>
@@ -56,7 +80,6 @@
             </div>
           </div>
 
-          <!-- Gráfico 3: Ordens no Prazo x Atrasadas -->
           <div class="col-md-6 mb-3">
             <div class="card">
               <div class="card-header bg-danger text-white">⚠ Status das Ordens</div>
@@ -83,62 +106,77 @@
 <script src="js/jkanban.min.js"></script>
 
 <script>
-  // Kanban
-  var KanbanBoard = new jKanban({
-    element: '#myKanban',
-    boards: [
-      { id: '_todo', title: 'A Fazer', class: 'bg-light', item: [{ title: 'OP-001 - Produto X' }, { title: 'OP-005 - Produto Z' }] },
-      { id: '_doing', title: 'Em Produção', class: 'bg-warning', item: [{ title: 'OP-002 - Produto Y' }] },
-      { id: '_review', title: 'Inspeção', class: 'bg-info', item: [{ title: 'OP-003 - Produto W' }] },
-      { id: '_done', title: 'Finalizado', class: 'bg-success', item: [{ title: 'OP-004 - Produto V' }] }
-    ],
-    dragBoards: false,
-    dragItems: true
-  });
+  // ======= KANBAN =======
+  fetch('/api/painel/kanban')
+    .then(res => res.json())
+    .then(data => {
+      new jKanban({
+        element: '#myKanban',
+        boards: data,
+        dragBoards: false,
+        dragItems: false
+      });
+    })
+    .catch(err => console.error('Erro ao carregar Kanban:', err));
 
-  // Gráfico - Etapas Finalizadas
-  new Chart(document.getElementById('graficoEtapas'), {
-    type: 'line',
-    data: {
-      labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex'],
-      datasets: [{
-        label: 'Etapas Finalizadas',
-        data: [5, 9, 7, 6, 10],
-        borderColor: '#0dcaf0',
-        backgroundColor: 'rgba(13,202,240,0.2)',
-        fill: true,
-        tension: 0.4
-      }]
-    },
-    options: { responsive: true }
-  });
+  // ======= GRÁFICO ETAPAS FINALIZADAS =======
+  fetch('/api/painel/etapas')
+    .then(res => res.json())
+    .then(dados => {
+      new Chart(document.getElementById('graficoEtapas'), {
+        type: 'line',
+        data: {
+          labels: dados.map(d => d.dia),
+          datasets: [{
+            label: 'Etapas Finalizadas',
+            data: dados.map(d => d.total),
+            borderColor: '#0dcaf0',
+            backgroundColor: 'rgba(13,202,240,0.2)',
+            fill: true,
+            tension: 0.4
+          }]
+        },
+        options: { responsive: true }
+      });
+    })
+    .catch(err => console.error('Erro ao carregar gráfico etapas:', err));
 
-  // Gráfico - Tempo Médio por Etapa
-  new Chart(document.getElementById('graficoTempo'), {
-    type: 'bar',
-    data: {
-      labels: ['Corte', 'Montagem', 'Inspeção', 'Embalagem'],
-      datasets: [{
-        label: 'Tempo Médio (min)',
-        data: [30, 45, 20, 15],
-        backgroundColor: '#ffc107'
-      }]
-    },
-    options: { responsive: true }
-  });
+  // ======= GRÁFICO TEMPO MÉDIO POR ETAPA =======
+  fetch('/api/painel/tempo-etapas')
+    .then(res => res.json())
+    .then(dados => {
+      new Chart(document.getElementById('graficoTempo'), {
+        type: 'bar',
+        data: {
+          labels: dados.map(d => d.etapa),
+          datasets: [{
+            label: 'Tempo Médio (min)',
+            data: dados.map(d => d.tempoMedio),
+            backgroundColor: '#ffc107'
+          }]
+        },
+        options: { responsive: true }
+      });
+    })
+    .catch(err => console.error('Erro ao carregar gráfico tempo etapas:', err));
 
-  // Gráfico - Status das Ordens
-  new Chart(document.getElementById('graficoStatus'), {
-    type: 'doughnut',
-    data: {
-      labels: ['No Prazo', 'Atrasadas'],
-      datasets: [{
-        data: [85, 15],
-        backgroundColor: ['#198754', '#dc3545']
-      }]
-    },
-    options: { responsive: true }
-  });
+  // ======= GRÁFICO STATUS DAS ORDENS =======
+  fetch('/api/painel/status-ordens')
+    .then(res => res.json())
+    .then(dados => {
+      new Chart(document.getElementById('graficoStatus'), {
+        type: 'doughnut',
+        data: {
+          labels: ['No Prazo', 'Atrasadas'],
+          datasets: [{
+            data: [dados.noPrazo, dados.atrasadas],
+            backgroundColor: ['#198754', '#dc3545']
+          }]
+        },
+        options: { responsive: true }
+      });
+    })
+    .catch(err => console.error('Erro ao carregar gráfico status ordens:', err));
 </script>
 </body>
 </html>

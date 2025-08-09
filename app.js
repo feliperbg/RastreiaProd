@@ -7,11 +7,13 @@ const ProdutosRouter = require('./router/ProdutoRouter');
 const EtapasRouter = require('./router/EtapaRouter');
 const OrdensProducaoRouter = require('./router/OrdemProducaoRouter');
 const JWTMiddleware = require('./middleware/TokenJWTMiddleware');
+const PainelRouter = require('./router/PainelRouter');
 
 
 const app = express();
 const Banco = new BancoMongoose();
 
+const Painel = new PainelRouter();
 const FuncionarioRouter = new FuncionariosRouter();
 const ComponenteRouter = new ComponentesRouter();
 const ProdutoRouter = new ProdutosRouter();
@@ -57,6 +59,8 @@ app.use('/produto', ProdutoRouter.createRoutes());
 app.use('/etapa', EtapaRouter.createRoutes());
 
 app.use('/ordem-producao', OrdemProducaoRouter.createRoutes());
+
+app.use('/painel', Painel.createRoutes());
 
 app.listen(portaServico, '0.0.0.0', () => {
     console.log(`API rodando no endereço: http://localhost:${portaServico}/`);
