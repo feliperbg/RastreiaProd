@@ -285,8 +285,8 @@
 
   async function carregarListas() {
     const [comp, etapas] = await Promise.all([
-      fetch('/componente/readALL', {headers: {'Authorization': `Bearer ${localStorage.getItem('authToken')}`}}).then(r => r.json()),
-      fetch('/etapa/readALL', {headers: {'Authorization': `Bearer ${localStorage.getItem('authToken')}`}}).then(r => r.json())
+      fetch('/componente/getALL', {headers: {'Authorization': `Bearer ${localStorage.getItem('authToken')}`}}).then(r => r.json()),
+      fetch('/etapa/getALL', {headers: {'Authorization': `Bearer ${localStorage.getItem('authToken')}`}}).then(r => r.json())
     ]);
     listaComponentes = Array.isArray(comp) ? comp : comp.componentes || [];
     listaEtapas = Array.isArray(etapas) ? etapas : etapas.etapas || [];

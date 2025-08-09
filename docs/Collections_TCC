@@ -57,7 +57,7 @@ collection:
             send: true
             store: true
           rebuildPath: true
-      - url: localhost:8081/produto/readALL
+      - url: localhost:8081/produto/getALL
         name: Listar Todas
         meta:
           id: req_c79ce8614d684c69a5822bef9793d6c4
@@ -198,7 +198,7 @@ collection:
             send: true
             store: true
           rebuildPath: true
-      - url: localhost:8081/funcionario/readALL
+      - url: localhost:8081/funcionario/getALL
         name: Listar Todas
         meta:
           id: req_9ed651aa0e7242a990f89d303fb8008e
@@ -339,7 +339,7 @@ collection:
             send: true
             store: true
           rebuildPath: true
-      - url: localhost:8081/etapa/readALL
+      - url: localhost:8081/etapa/getALL
         name: Listar Todas
         meta:
           id: req_d928b6d191914ba1bfa09a88d7178c5d
@@ -480,7 +480,7 @@ collection:
             send: true
             store: true
           rebuildPath: true
-      - url: localhost:8081/ordem-producao/readALL
+      - url: localhost:8081/ordem-producao/getALL
         name: Listar Todas
         meta:
           id: req_e6a404d9d5e549528b299f330f719951

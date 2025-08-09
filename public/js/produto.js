@@ -1,6 +1,6 @@
   async function carregarTabelaProdutos() {
     try {
-      const resposta = await fetch('/produto/readALL', {
+      const resposta = await fetch('/produto/getALL', {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('authToken')}`

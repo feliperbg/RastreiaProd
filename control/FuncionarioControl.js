@@ -1,296 +1,134 @@
-const mongoose = require('mongoose');
 const Funcionario = require('../model/Funcionario');
+const Funcionarios = require('../model/FuncionariosTabela'); // IMPORTADO PARA OPERAÇÕES CRUD
 const TokenJWT = require('../model/TokenJWT');
 
 module.exports = class FuncionarioControl {
-    /**
-     * Realiza o login de um funcionário
-     * @param {Object} request - Objeto de requisição HTTP
-     * @param {Object} response - Objeto de resposta HTTP
-     */
-
-    async login(request, response) {
-        const funcionario = new Funcionario();
-        funcionario.credencial = request.body.Funcionario.credencial;
-        funcionario.senha = request.body.Funcionario.senha;
-        
-        const logou = await funcionario.login();
-
-        if (logou) {
-            // Busca os dados completos do funcionário
-            const funcionarioCompleto = await funcionario.readByID(funcionario.idFuncionario);
-            const payloadToken = {
-                credencialFuncionario: funcionario.credencial,
-                idFuncionario: funcionario._id,
-                permissoes: funcionarioCompleto.permissoes
-            };
-
-            const jwt = new TokenJWT();
-            const token_string = jwt.gerarToken(payloadToken);
-
-            const objResposta = {
-                status: true,
-                msg: 'Logado com sucesso',
-                funcionario: {
-                    id: funcionario.idFuncionario,
-                    nome: funcionarioCompleto.nome,
-                    credencial: funcionario.credencial,
-                    role: funcionarioCompleto.role,
-                    permissoes: funcionarioCompleto.permissoes,
-                    imagem: funcionarioCompleto.imagemFuncionario,
-                },
-                token: token_string
-            };
-            return response.status(200).send(objResposta);
-
-        } else {
-            return response.status(401).send({
-                status: false,
-                msg: 'Credencial ou senha inválidos',
-            });
+    async logout(req, res, next) {
+        try {
+            res.status(200).json({ status: true, msg: "Logout realizado com sucesso." });
+        } catch (error) {
+            console.error("Erro ao realizar logout:", error);
+            error.statusCode = 500;
+            next(error);
         }
     }
 
-    /**
-     * Realiza o logout do sistema
-     * @param {Object} request - Objeto de requisição HTTP
-     * @param {Object} response - Objeto de resposta HTTP
-     */
-    async logout(req, res) {
-        return res.status(200).json({
-            status: true,
-            message: "Logout realizado com sucesso.",
-        });
-    }
-    
-
-    /**
-     * Cria um novo funcionário
-     * @param {Object} request - Objeto de requisição HTTP
-     * @param {Object} response - Objeto de resposta HTTP
-     */
-    async create(request, response) {
+    async login(req, res, next) {
         try {
-            const {
-                nome,
-                turno,
-                senha,
-                CPF,
-                email,
-                telefone,
-                dataNascimento,
-                permissoes,
-                role
-            } = request.body;
+            const { credencial, senha } = req.body.Funcionario;
 
-            // Verificação básica de campos obrigatórios
-            if (!nome || !turno || !senha || !CPF || !email || !telefone || !dataNascimento) {
-                return response.status(400).send({
-                    status: false,
-                    msg: 'Campos obrigatórios não preenchidos'
-                });
+            if (!credencial || !senha) {
+                const error = new Error('Credencial e senha são obrigatórios.');
+                error.statusCode = 400;
+                return next(error);
             }
 
-            // Instancia um novo funcionário
-            const novoFuncionario = new Funcionario(
-                nome,
-                turno,
-                senha,
-                CPF,
-                email,
-                telefone,
-                dataNascimento,
-                permissoes || [],
-                role || 'funcionario',
-                request.file?.path // ou request.body.imagemFuncionario, dependendo de como você está enviando a imagem
+            // Usa o método estático para autenticar
+            const funcionario = await Funcionario.autenticar(credencial, senha);
+
+            if (!funcionario) {
+                const error = new Error('Credenciais inválidas.');
+                error.statusCode = 401;
+                return next(error);
+            }
+
+            // Gera o token com os dados do funcionário retornado
+            const token = new TokenJWT().gerarToken(
+                funcionario._id.toString(), // Garante que o ID seja uma string
+                funcionario.nome,
+                funcionario.credencialaaaaaaaaaaaaaaaaaaaaaaaaaasaaaaa
             );
-            
 
-            // Tenta criar o funcionário no banco de dados
-            const criado = await novoFuncionario.create();
-
-            if (criado) {
-                return response.status(201).send({
-                    status: true,
-                    msg: 'Funcionário criado com sucesso',
-                    funcionario: {
-                        nome: novoFuncionario.nome,
-                        credencial: novoFuncionario.credencial,
-                        role: novoFuncionario.role
-                    }
-                });
-            } else {
-                return response.status(500).send({
-                    status: false,
-                    msg: 'Erro ao criar funcionário'
-                });
-            }
-
-        } catch (error) {
-            console.error('Erro ao criar funcionário:', error);
-            return response.status(500).send({
-                status: false,
-                msg: 'Erro interno ao criar funcionário'
-            });
-        }
-    }
-
-    /**
-     * Lista todos os funcionários
-     * @param {Object} request - Objeto de requisição HTTP
-     * @param {Object} response - Objeto de resposta HTTP
-     */
-    async readAll(request, response) {
-        try {
-            const funcionario = new Funcionario();
-            const funcionarios = await funcionario.readAll();
-            return response.status(200).send({
+            res.status(200).json({
                 status: true,
-                funcionarios: funcionarios
-            });
-        } catch (error) {
-            console.error('Erro ao listar funcionários:', error);
-            return response.status(500).send({
-                status: false,
-                msg: 'Erro ao listar funcionários'
-            });
-        }
-    }
-
-    /**
-     * Obtém um funcionário específico por ID
-     * @param {Object} request - Objeto de requisição HTTP
-     * @param {Object} response - Objeto de resposta HTTP
-     */
-    async readByID(request, response) {
-        try {
-            const id = request.params.id;
-            console.log('ID do funcionário a ser buscado:', id);
-            if (!mongoose.Types.ObjectId.isValid(id)) {
-                return response.status(400).json({ erro: 'ID inválido' });
-            }
-            const funcionario = new Funcionario();
-            const encontrado = await funcionario.readByID(id);
-            
-            if (encontrado) {
-                // Remove informações sensíveis antes de retornar
-                const funcionarioSanitizado = {
-                    id: encontrado._id,
-                    nome: encontrado.nome,
-                    email: encontrado.email,
-                    turno: encontrado.turno,
-                    role: encontrado.role,
-                    credencial: encontrado.credencial,
-                    permissoes: encontrado.permissoes,
-                    dataNascimento: encontrado.dataNascimento,
-                    telefone: encontrado.telefone
-                };
-                
-                return response.status(200).send({
-                    status: true,
-                    funcionario: funcionarioSanitizado
-                });
-            } else {
-                return response.status(404).send({
-                    status: false,
-                    msg: 'Funcionário não encontrado'
-                });
-            }
-        } catch (error) {
-            console.error('Erro ao buscar funcionário:', error);
-            return response.status(500).send({
-                status: false,
-                msg: 'Erro ao buscar funcionário'
-            });
-        }
-    }
-
-    /**
-     * Atualiza um funcionário existente
-     * @param {Object} request - Objeto de requisição HTTP
-     * @param {Object} response - Objeto de resposta HTTP
-     */
-    async update(request, response) {
-        try {
-            const id = request.params.id;
-            const dadosAtualizacao = request.body;
-
-            const funcionario = new Funcionario();
-            await funcionario.readByID(id);
-            const credencialOriginal = funcionario.credencial;
-
-            // Campos permitidos para atualização
-            const camposPermitidos = [
-                'nome', 'turno', 'senha', 'email',
-                'telefone', 'permissoes', 'dataNascimento', 'role'
-            ];
-           
-
-            // Atualiza apenas os campos permitidos
-            camposPermitidos.forEach(campo => {
-                if (dadosAtualizacao[campo]) {
-                    funcionario[campo] = dadosAtualizacao[campo];
+                token,
+                funcionario: {
+                    id: funcionario._id.toString(), // Garante que o ID seja uma string
+                    nome: funcionario.nome,
+                    role: funcionario.role,
+                    permissoes: funcionario.permissoes
                 }
             });
-            funcionario.credencial = credencialOriginal;
 
-            const atualizado = await funcionario.update();
-
-            if (atualizado) {
-                return response.status(200).send({
-                    status: true,
-                    msg: 'Funcionário atualizado com sucesso'
-                });
-            } else {
-                return response.status(500).send({
-                    status: false,
-                    msg: 'Erro ao atualizar funcionário'
-                });
-            }
         } catch (error) {
-            console.error('Erro ao atualizar funcionário:', error);
-            return response.status(500).send({
-                status: false,
-                msg: 'Erro interno ao atualizar funcionário'
-            });
+            console.error('Erro no login:', error);
+            // Se o autenticar() lançar um erro, ele será capturado aqui
+            if (!error.statusCode) {
+                error.statusCode = 500;
+            }
+            next(error);
         }
     }
 
-
-    /**
-     * Remove um funcionário
-     * @param {Object} request - Objeto de requisição HTTP
-     * @param {Object} response - Objeto de resposta HTTP
-     */
-    async delete(request, response) {
+    async add(req, res, next) {
         try {
-            const id = request.params.id;
-            console.log('ID do funcionário a ser removido:', id);
-            if (!mongoose.Types.ObjectId.isValid(id)) {
-                return response.status(400).json({ erro: 'ID inválido' });
-            }
-            const funcionario = new Funcionario();
-            funcionario.idFuncionario = id;
-            
-            const deletado = await funcionario.delete();
-            
-            if (deletado) {
-                return response.status(200).send({
-                    status: true,
-                    msg: 'Funcionário removido com sucesso'
-                });
-            } else {
-                return response.status(404).send({
-                    status: false,
-                    msg: 'Funcionário não encontrado'
-                });
-            }
+            // CORRIGIDO: Usa o modelo do Mongoose 'Funcionarios' diretamente
+            const novoFuncionario = await Funcionarios.create(req.body);
+            res.status(201).json({ status: true, funcionario: novoFuncionario });
         } catch (error) {
-            console.error('Erro ao remover funcionário:', error);
-            return response.status(500).send({
-                status: false,
-                msg: 'Erro ao remover funcionário'
-            });
+            if (error.name === 'ValidationError' || error.code === 11000) {
+                error.statusCode = 400;
+            }
+            next(error);
+        }
+    }
+
+    async update(req, res, next) {
+        try {
+            // CORRIGIDO: Usa o modelo do Mongoose 'Funcionarios' diretamente
+            const funcionario = await Funcionarios.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+            if (!funcionario) {
+                const error = new Error('Funcionário não encontrado.');
+                error.statusCode = 404;
+                return next(error);
+            }
+            res.status(200).json({ status: true, funcionario });
+        } catch (error) {
+            if (error.name === 'ValidationError') {
+                error.statusCode = 400;
+            }
+            next(error);
+        }
+    }
+
+    async getById(req, res, next) {
+        try {
+            // CORRIGIDO: Usa o modelo do Mongoose 'Funcionarios' diretamente
+            const funcionario = await Funcionarios.findById(req.params.id);
+            if (!funcionario) {
+                const error = new Error('Funcionário não encontrado.');
+                error.statusCode = 404;
+                return next(error);
+            }
+            res.status(200).json({ status: true, funcionario });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async getAll(req, res, next) {
+        try {
+            // CORRIGIDO: Usa o modelo do Mongoose 'Funcionarios' diretamente
+            const funcionarios = await Funcionarios.find({});
+            res.status(200).json({ funcionarios, status: true });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async delete(req, res, next) {
+        try {
+            // CORRIGIDO: Usa o modelo do Mongoose 'Funcionarios' diretamente
+            const funcionario = await Funcionarios.findByIdAndDelete(req.params.id);
+            if (!funcionario) {
+                const error = new Error('Funcionário não encontrado.');
+                error.statusCode = 404;
+                return next(error);
+            }
+            // A lógica de apagar a imagem pode ser adicionada aqui, se necessário
+            res.status(200).json({ status: true, msg: "Funcionário removido." });
+        } catch (error) {
+            next(error);
         }
     }
 };

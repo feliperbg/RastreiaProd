@@ -182,25 +182,25 @@ class Funcionario {
 
     /**
      * Realiza o login de um funcionário com credencial e senha.
-     * @returns {Promise<Boolean>} - Retorna true se login for bem-sucedido.
+     * @param {string} credencial - A credencial do funcionário.
+     * @param {string} senha - A senha em texto puro.
+     * @returns {Promise<Object|null>} - Retorna o objeto do funcionário se o login for bem-sucedido, senão null.
      */
-    async login() {
+    static async autenticar(credencial, senha) {
         try {
-            const funcionario = await Funcionarios.findOne({ credencial: this._credencial });
+            const funcionario = await Funcionarios.findOne({ credencial });
             if (funcionario) {
-                const senhaConfere = await bcrypt.compare(this._senha, funcionario.senha);
+                const senhaConfere = await bcrypt.compare(senha, funcionario.senha);
                 if (senhaConfere) {
-                    this._id = funcionario._id;
-                    this._nome = funcionario.nome;
-                    this._role = funcionario.role;
-                    this._permissoes = funcionario.permissoes;
-                    return true;
+                    // Retorna o documento do Mongoose. O ID será convertido para string no controlador.
+                    return funcionario;
                 }
             }
-            return false;
+            return null;
         } catch (error) {
             console.error('Erro ao realizar login:', error);
-            return false;
+            // Lançar o erro permite que o bloco catch do controlador o capture
+            throw error;
         }
     }
 
@@ -228,7 +228,7 @@ class Funcionario {
      * Retorna todos os funcionários cadastrados, ordenados por nome.
      * @returns {Promise<Array>} - Lista de funcionários.
      */
-    async readAll() {
+    async getAll() {
         try {
             return await Funcionarios.find({}, '-senha').sort('nome');
         } catch (error) {
@@ -242,7 +242,7 @@ class Funcionario {
      * @param {String} idFuncionario - ID do funcionário a ser buscado.
      * @returns {Promise<Object|null>} - Objeto do funcionário ou null.
      */
-    async readByID(idFuncionario) {
+    async getByID(idFuncionario) {
         try {
             const funcionario = await Funcionarios.findById(idFuncionario);
             if (funcionario) {

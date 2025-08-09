@@ -2,7 +2,7 @@
         try {
             showLoading();
             
-            const response = await fetch('/componente/readALL', {
+            const response = await fetch('/componente/getALL', {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${localStorage.getItem('authToken')}`

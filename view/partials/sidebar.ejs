@@ -50,31 +50,67 @@
 
 <script>
   // Seleciona todos os links do menu lateral
-  document.querySelectorAll('.sidebar-menu .nav-link').forEach(link => {
-    link.addEventListener('click', function () {
-      // Remove 'active' de todos os links
-      document.querySelectorAll('.sidebar-menu .nav-link').forEach(l => l.classList.remove('active'));
-      // Adiciona 'active' ao link clicado
-      this.classList.add('active');
-    });
-  });
-
   document.addEventListener('DOMContentLoaded', function() {
-    // --- Verificar permissões para mostrar ou remover o menu Funcionários
-    const userDataJSON = localStorage.getItem("userData");
-    if (userDataJSON) {
-      try {
-        const authData = JSON.parse(userDataJSON);
-        // Verifica se existe o campo permissoes e se inclui "Administrador"
-        if (!authData.permissoes || !authData.permissoes.includes("administrador")) {
-          const menuFuncionarios = document.getElementById("menu-funcionarios");
-          if (menuFuncionarios) {
-            menuFuncionarios.remove(); // Remove o <li> do DOM
-          }
-        }
-      } catch (e) {   
-        console.error("Erro ao ler authData:", e);
+    const currentPath = window.location.pathname;
+    document.querySelectorAll('.sidebar-menu .nav-link').forEach(link => {
+      if (link.href.includes(currentPath)) {
+          link.classList.add('active');
       }
-    }
+      link.addEventListener('click', (event) => {
+        // 1. Previne o navegador de seguir o link imediatamente
+        event.preventDefault(); 
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            // Se não houver token, redireciona para a página de login
+            alert('Sessão expirada. Faça o login novamente.');
+            window.location.href = '/login'; 
+            return;
+        }
+        fetch(link.pathname, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}` // Formato padrão de envio de token
+          }
+        })
+        .then(response => {
+            // Se a resposta for 401 (Não Autorizado) ou 403 (Proibido), o token é inválido
+            if (response.status === 401 || response.status === 403) {
+                alert('Sessão inválida ou expirada. Faça login novamente.');
+                window.location.href = '/login';
+            }  
+            else if (response.ok) {
+                window.location.href = link.href; // Redireciona para a página
+            } else {
+                console.error('Ocorreu um erro ao acessar a página.');
+            }
+        })
+        .catch(error => {
+            console.error('Erro de rede ou na requisição:', error);
+            alert('Não foi possível conectar ao servidor.');
+        });
+      });
+      link.addEventListener('click', function () {
+        // Remove 'active' de todos os links
+        document.querySelectorAll('.sidebar-menu .nav-link').forEach(l => l.classList.remove('active'));
+        // Adiciona 'active' ao link clicado
+        this.classList.add('active');
+      });
+      // Verificar permissões para mostrar ou remover o menu Funcionários
+      const userDataJSON = localStorage.getItem("userData");
+      if (userDataJSON) {
+        try {
+          const authData = JSON.parse(userDataJSON);
+          // Verifica se existe o campo permissoes e se inclui "Administrador"
+          if (!authData.permissoes || !authData.permissoes.includes("administrador")) {
+            const menuFuncionarios = document.getElementById("menu-funcionarios");
+            if (menuFuncionarios) {
+              menuFuncionarios.remove(); // Remove o <li> do DOM
+            }
+          }
+        } catch (e) {   
+          console.error("Erro ao ler authData:", e);
+        }
+      }
+    });
   });
 </script>

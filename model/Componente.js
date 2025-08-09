@@ -119,7 +119,7 @@ class Componente {
      * @returns {Array} Retorna um array contendo todos os componentes cadastrados
      *                  ou um array vazio em caso de erro.
      */
-    async readAll() {
+    async getAll() {
         try {
             // Tenta buscar todos os componentes e ordená-los pelo nome
             const componentes = await Componentes.find().sort('nome');
@@ -136,7 +136,7 @@ class Componente {
      * @param {string} idComponente O ID do componente a ser buscado.
      * @returns {Object|null} Retorna o componente encontrado ou `null` caso não encontrado.
      */
-    async readByID(idComponente) {
+    async getByID(idComponente) {
         this._idComponente = idComponente;
 
         try {

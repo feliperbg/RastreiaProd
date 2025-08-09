@@ -2,7 +2,7 @@
         try {
             showLoading();
         
-            const response = await fetch('/etapa/readALL', {
+            const response = await fetch('/etapa/getALL', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',

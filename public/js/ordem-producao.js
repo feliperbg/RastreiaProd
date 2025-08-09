@@ -2,7 +2,7 @@
         try {
             showLoading();
         
-            const response = await fetch('/ordem-producao/readALL', {
+            const response = await fetch('/ordem-producao/getALL', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',

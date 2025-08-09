@@ -84,7 +84,7 @@ class OrdemProducao {
     /**
      * Busca todas as ordens de produção no banco de dados.
      */
-    async readAll() {
+    async getAll() {
         try {
             const ordens = await OrdensProducao.find().populate('produto').sort({ 'timestampProducao.inicio': 1 });
             return ordens;
@@ -99,7 +99,7 @@ class OrdemProducao {
      * 
      * @param {string} idOrdem - ID da ordem de produção.
      */
-    async readByID(idOrdem) {
+    async getByID(idOrdem) {
         this._idOrdem = idOrdem;
         try {
             const ordem = await OrdensProducao.findById(this._idOrdem)

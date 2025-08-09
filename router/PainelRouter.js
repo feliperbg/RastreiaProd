@@ -14,33 +14,25 @@ module.exports = class PainelRouter {
     }
 
     createRoutes() {
-        // Página principal do painel (se houver)
-        this.router.get('/',
-            this.jwtMiddleware.validate.bind(this.jwtMiddleware),
-            (req, res) => {
-                render('painel.ejs');
-            }
-        );
-
         // Rotas de API do painel
         this.router.get('/kanban',
             this.jwtMiddleware.validate.bind(this.jwtMiddleware),
-            (req, res) => this.painelController.getKanban(req, res)
+            (req, res, next) => this.painelController.getKanban(req, res, next)
         );
 
         this.router.get('/etapas',
             this.jwtMiddleware.validate.bind(this.jwtMiddleware),
-            (req, res) => this.painelController.getEtapasFinalizadas(req, res)
+            (req, res, next) => this.painelController.getEtapasFinalizadas(req, res, next)
         );
 
         this.router.get('/tempo-etapas',
             this.jwtMiddleware.validate.bind(this.jwtMiddleware),
-            (req, res) => this.painelController.getTempoEtapas(req, res)
+            (req, res, next) => this.painelController.getTempoEtapas(req, res, next)
         );
 
         this.router.get('/status-ordens',
             this.jwtMiddleware.validate.bind(this.jwtMiddleware),
-            (req, res) => this.painelController.getStatusOrdens(req, res)
+            (req, res, next) => this.painelController.getStatusOrdens(req, res, next)
         );
 
         return this.router;

@@ -1,57 +1,20 @@
 const express = require('express');
-const path = require('path');
 const ComponenteControl = require('../control/ComponenteControl');
 const JWTMiddleware = require('../middleware/TokenJWTMiddleware');
 
 module.exports = class ComponenteRouter {
     constructor() {
         this.router = express.Router();
-        this.componenteControl = new ComponenteControl();
+        this.componenteController = new ComponenteControl();
         this.jwtMiddleware = new JWTMiddleware();
-        this.createRoutes();
     }
 
     createRoutes() {
-        // Rota estática
-        this.router.get('/', (req, res) => {
-            res.render('componente');
-        });
-
-        this.router.get('/adicionar-componente',(req, res) => {
-            console.log('GET /componente/adicionar-componente foi chamado');
-            res.sendFile(path.join(__dirname, '..', 'view', 'add', 'adicionar-componente.html'));
-        });
-
-        this.router.get('/editar-componente/:id', (req, res) => {
-            res.sendFile(path.join(__dirname, "..", "view", 'edit', 'editar-componente.html'));
-        });
-
-
-        // Rotas protegidas por JWT (forma correta)
-        this.router.post('/',
-            (req, res, next) => this.jwtMiddleware.validate(req, res, next),
-            (req, res) => this.componenteControl.create(req, res)
-        );
-
-        this.router.get('/readALL',
-            (req, res, next) => this.jwtMiddleware.validate(req, res, next),
-            (req, res) => this.componenteControl.readAll(req, res)
-        );
-
-        this.router.get('/:id',
-            (req, res, next) => this.jwtMiddleware.validate(req, res, next),
-            (req, res) => this.componenteControl.readByID(req, res)
-        );
-
-        this.router.delete('/:id',
-            (req, res, next) => this.jwtMiddleware.validate(req, res, next),
-            (req, res) => this.componenteControl.delete(req, res)
-        );
-
-        this.router.put('/:id',
-            (req, res, next) => this.jwtMiddleware.validate(req, res, next),
-            (req, res) => this.componenteControl.update(req, res)
-        );
+        this.router.post('/', this.jwtMiddleware.validate.bind(this.jwtMiddleware), (req, res, next) => this.componenteController.add(req, res, next));
+        this.router.put('/:id', this.jwtMiddleware.validate.bind(this.jwtMiddleware), (req, res, next) => this.componenteController.update(req, res, next));
+        this.router.get('/:id', this.jwtMiddleware.validate.bind(this.jwtMiddleware), (req, res, next) => this.componenteController.getById(req, res, next));
+        this.router.get('/', this.jwtMiddleware.validate.bind(this.jwtMiddleware), (req, res, next) => this.componenteController.getAll(req, res, next));
+        this.router.delete('/:id', this.jwtMiddleware.validate.bind(this.jwtMiddleware), (req, res, next) => this.componenteController.delete(req, res, next));
         return this.router;
     }
-}
+};

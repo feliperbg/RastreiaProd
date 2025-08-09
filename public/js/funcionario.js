@@ -1,8 +1,8 @@
-    async function carregarTabela() {
+async function carregarTabela() {
         try {
             showLoading();
 
-            const response = await fetch('/funcionario/readALL', {
+            const response = await fetch('/funcionario/lista', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -13,10 +13,8 @@
             if (!response.ok) {
                 throw new Error(`Erro HTTP: ${response.status}`);
             }
-
             const resultado = await response.json();
             const tabela = document.getElementById("tabela-funcionarios");
-
             const funcionarios = Array.isArray(resultado) ? resultado : resultado.funcionarios;
 
             if (!Array.isArray(funcionarios)) {
@@ -118,7 +116,8 @@
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
-                window.location.href = `/funcionario/editar-funcionario/${id}`;
+                // Redireciona diretamente para a página de edição
+                window.location.href = `/funcionario/editar/${id}`;
             }
         });
     }
@@ -139,7 +138,7 @@
         if (isConfirmed) {
             try {
                 showLoading();
-                const response = await fetch(`/funcionario/${id}`, {
+                const response = await fetch(`/funcionario/remover/${id}`, { // Alterado
                     method: 'DELETE',
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('authToken')}`

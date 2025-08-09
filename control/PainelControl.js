@@ -1,13 +1,12 @@
-// controllers/PainelControl.js
-const OrdemProducao = require('../model/OrdemProducao');
+const OrdemProducao = require('../model/OrdemProducaoTabela');
 
 module.exports = class PainelControl {
     /**
      * Retorna dados para o Kanban
      */
-    async getKanban(req, res) {
+    async getKanban(req, res, next) {
         try {
-            const ordens = await OrdemProducao.find({}, 'numero produto statusGeral etapas').lean();
+            const ordens = await OrdemProducao.find({}, '_id numero produto statusGeral etapas').lean();
 
             const boards = {
                 _todo: { id: '_todo', title: 'A Fazer', item: [] },
@@ -17,18 +16,20 @@ module.exports = class PainelControl {
             };
 
             ordens.forEach(o => {
-                let boardKey = '_todo';
+                let boardKey = '_todo'; // Padrão
                 if (o.statusGeral === 'concluida') {
                     boardKey = '_done';
-                } else {
-                    const etapaEmProducao = (o.etapas || []).find(e => e.status === 'em_producao');
-                    if (etapaEmProducao) {
-                        boardKey = '_doing';
-                    } else if ((o.etapas || []).some(e => e.status === 'inspecao')) {
+                } else if (o.statusGeral === 'em_producao') {
+                    if ((o.etapas || []).some(e => e.status === 'inspecao')) {
                         boardKey = '_review';
+                    } else {
+                        boardKey = '_doing';
                     }
                 }
-                boards[boardKey].item.push({ title: `${o.numero} - ${o.produto}` });
+                boards[boardKey].item.push({ 
+                    id: o._id.toString(), // Adiciona o ID para futuras interações
+                    title: `${o.numero} - ${o.produto}` 
+                });
             });
 
             return res.status(200).send({
@@ -36,18 +37,14 @@ module.exports = class PainelControl {
                 boards: Object.values(boards)
             });
         } catch (error) {
-            console.error('Erro ao buscar dados do kanban:', error);
-            return res.status(500).send({
-                status: false,
-                msg: 'Erro ao buscar dados do kanban'
-            });
+            next(error);
         }
     }
 
     /**
      * Retorna total de etapas finalizadas por dia
      */
-    async getEtapasFinalizadas(req, res) {
+    async getEtapasFinalizadas(req, res, next) {
         try {
             const dias = parseInt(req.query.dias || '7', 10);
 
@@ -74,18 +71,14 @@ module.exports = class PainelControl {
                 etapasFinalizadas: dados
             });
         } catch (error) {
-            console.error('Erro ao calcular etapas finalizadas:', error);
-            return res.status(500).send({
-                status: false,
-                msg: 'Erro ao calcular etapas finalizadas'
-            });
+            next(error);
         }
     }
 
     /**
      * Retorna tempo médio por etapa
      */
-    async getTempoEtapas(req, res) {
+    async getTempoEtapas(req, res, next) {
         try {
             const pipeline = [
                 { $unwind: '$etapas' },
@@ -113,43 +106,32 @@ module.exports = class PainelControl {
                 tempoEtapas: result
             });
         } catch (error) {
-            console.error('Erro ao calcular tempo médio por etapa:', error);
-            return res.status(500).send({
-                status: false,
-                msg: 'Erro ao calcular tempo médio por etapa'
-            });
+            next(error);
         }
     }
 
     /**
      * Retorna status das ordens (prazo x atrasadas)
      */
-    async getStatusOrdens(req, res) {
+    async getStatusOrdens(req, res, next) {
         try {
             const hoje = new Date();
-            const total = await OrdemProducao.countDocuments();
+            const total = await OrdemProducao.countDocuments({ statusGeral: { $ne: 'concluida' } });
             const atrasadas = await OrdemProducao.countDocuments({
                 dataPrazo: { $exists: true, $lt: hoje },
                 statusGeral: { $ne: 'concluida' }
             });
-
-            const noPrazoCount = total - atrasadas;
-            const noPrazoPct = total === 0 ? 0 : Math.round((noPrazoCount / total) * 100);
-            const atrasadasPct = total === 0 ? 0 : Math.round((atrasadas / total) * 100);
+            const noPrazo = total - atrasadas;
 
             return res.status(200).send({
                 status: true,
-                noPrazo: noPrazoPct,
-                atrasadas: atrasadasPct,
-                total,
-                atrasadasCount: atrasadas
+                statusOrdens: {
+                    noPrazo,
+                    atrasadas
+                }
             });
         } catch (error) {
-            console.error('Erro ao calcular status das ordens:', error);
-            return res.status(500).send({
-                status: false,
-                msg: 'Erro ao calcular status das ordens'
-            });
+            next(error);
         }
     }
 };

@@ -37,7 +37,7 @@ async function criarComponente() {
 // Função para consultar todos os componentes
 async function consultarComponentes() {
     const componente = new Componente();
-    const componentes = await componente.readAll();
+    const componentes = await componente.getAll();
     console.log('📦 Componentes encontrados:', componentes);
 }
 
@@ -49,7 +49,7 @@ async function consultarComponentePeloID() {
     }
 
     const componente = new Componente();
-    const resultado = await componente.readByID(idCriado);
+    const resultado = await componente.getByID(idCriado);
     console.log('🔍 Componente encontrado:', resultado);
 }
 

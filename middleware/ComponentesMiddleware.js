@@ -39,7 +39,7 @@ module.exports = class ComponenteMiddleware {
         const objComponente = new Componente();
         objComponente.codigo = codigo;
 
-        const componentes = await objComponente.readAll();
+        const componentes = await objComponente.getAll();
         const existe = componentes.some(c => c.codigo === codigo);
 
         if (existe) {

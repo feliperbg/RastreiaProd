@@ -1,133 +1,65 @@
-const Produto = require('../model/Produto');
+const Produto = require('../model/ProdutosTabela');
 
 module.exports = class ProdutoControl {
-  async create(request, response) {
-    console.log(request.body);
-    try {
-      const {
-        nome,
-        codigo,
-        descricao,
-        componentesNecessarios,
-        dataValidade,
-        precoMontagem,
-        precoVenda,
-        quantidade,
-        etapas,
-        dimensoes
-      } = request.body.produto;
-
-      const novoProduto = new Produto(
-        nome,
-        codigo,
-        descricao,
-        componentesNecessarios || [],
-        //dataEntrada ? new Date(dataEntrada) : Date.now(),
-        dataValidade ? new Date(dataValidade) : Date.now() + 24 * 60 * 60 * 1000, // Um dia após a data de entrada
-        precoMontagem,
-        precoVenda,
-        quantidade || 0,
-        etapas || [],
-        dimensoes || {},
-      );
-
-      const criado = await novoProduto.create();
-
-      if (criado) {
-        return response.status(201).json({ status: true, msg: 'Produto criado' });
-      } else {
-        return response.status(500).json({ status: false, msg: 'Erro ao criar' });
-      }
-    } catch (error) {
-      console.error(error);
-      return response.status(500).json({ status: false, msg: 'Erro interno' });
+    async add(req, res, next) {
+        try {
+            const novoProduto = await Produto.create(req.body);
+            res.status(201).json({ status: true, produto: novoProduto });
+        } catch (error) {
+            if (error.name === 'ValidationError') error.statusCode = 400;
+            next(error);
+        }
     }
-  }
 
-  async readAll(request, response) {
-    try {
-      const produto = new Produto();
-      const produtos = await produto.readAll();
-      return response.status(200).json({ status: true, produtos });
-    } catch (error) {
-      console.error(error);
-      return response.status(500).json({ status: false, msg: 'Erro ao listar' });
+    async update(req, res, next) {
+        try {
+            const produto = await Produto.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+            if (!produto) {
+                const error = new Error('Produto não encontrado.');
+                error.statusCode = 404;
+                return next(error);
+            }
+            res.status(200).json({ status: true, produto });
+        } catch (error) {
+            if (error.name === 'ValidationError') error.statusCode = 400;
+            next(error);
+        }
     }
-  }
 
-  async readByID(request, response) {
-    try {
-      const { id } = request.params;
-      const produto = new Produto();
-      const encontrado = await produto.readByID(id);
-
-      if (encontrado) {
-        return response.status(200).json({ status: true, produto: encontrado });
-      } else {
-        return response.status(404).json({ status: false, msg: 'Produto não encontrado' });
-      }
-    } catch (error) {
-      console.error(error);
-      return response.status(500).json({ status: false, msg: 'Erro ao buscar' });
+    async getById(req, res, next) {
+        try {
+            const produto = await Produto.findById(req.params.id).populate('componentes.componente').populate('etapas.etapa');
+            if (!produto) {
+                const error = new Error('Produto não encontrado.');
+                error.statusCode = 404;
+                return next(error);
+            }
+            res.status(200).json({ status: true, produto });
+        } catch (error) {
+            next(error);
+        }
     }
-  }
 
-  async update(request, response) {
-    try {
-      const { id } = request.params;
-      const dadosAtualizacao = request.body;
-
-      if (!id) {
-        return response.status(400).json({ status: false, msg: 'ID do produto não fornecido' });
-      }
-
-      // Cria instância do produto com dados atualizados
-      const produto = new Produto(
-        dadosAtualizacao.nome,
-        dadosAtualizacao.codigo,
-        dadosAtualizacao.descricao,
-        dadosAtualizacao.dataEntrada ? new Date(dadosAtualizacao.dataEntrada) : undefined,
-        dadosAtualizacao.dataValidade ? new Date(dadosAtualizacao.dataValidade) : undefined,
-        dadosAtualizacao.componentesNecessarios || [],
-        dadosAtualizacao.precoMontagem,
-        dadosAtualizacao.precoVenda,
-        dadosAtualizacao.dimensoes || {},
-        dadosAtualizacao.quantidade || 1,
-        dadosAtualizacao.etapas || []
-      );
-
-      produto._idProduto = id;
-
-      const atualizado = await produto.update();
-
-      if (atualizado) {
-        return response.status(200).json({ status: true, msg: 'Atualizado com sucesso', produto: produto });
-      } else {
-        return response.status(404).json({ status: false, msg: 'Produto não encontrado ou erro ao atualizar' });
-      }
-    } catch (error) {
-      console.error(error);
-      return response.status(500).json({ status: false, msg: 'Erro interno' });
+    async getAll(req, res, next) {
+        try {
+            const produtos = await Produto.find({});
+            res.status(200).json({ status: true, produtos });
+        } catch (error) {
+            next(error);
+        }
     }
-  }
 
-
-  async delete(request, response) {
-    try {
-      const { id } = request.params;
-      const produto = new Produto();
-      produto._idProduto = id;
-
-      const deletado = await produto.delete();
-
-      if (deletado) {
-        return response.status(200).json({ status: true, msg: 'Produto removido' });
-      } else {
-        return response.status(404).json({ status: false, msg: 'Produto não encontrado' });
-      }
-    } catch (error) {
-      console.error(error);
-      return response.status(500).json({ status: false, msg: 'Erro ao remover' });
+    async delete(req, res, next) {
+        try {
+            const produto = await Produto.findByIdAndDelete(req.params.id);
+            if (!produto) {
+                const error = new Error('Produto não encontrado.');
+                error.statusCode = 404;
+                return next(error);
+            }
+            res.status(200).json({ status: true, msg: "Produto removido." });
+        } catch (error) {
+            next(error);
+        }
     }
-  }
 };

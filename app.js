@@ -8,6 +8,7 @@ const EtapasRouter = require('./router/EtapaRouter');
 const OrdensProducaoRouter = require('./router/OrdemProducaoRouter');
 const JWTMiddleware = require('./middleware/TokenJWTMiddleware');
 const PainelRouter = require('./router/PainelRouter');
+const errorHandler = require('./middleware/errorHandler'); // 1. Importe o middleware
 
 
 const app = express();
@@ -62,8 +63,11 @@ app.use('/ordem-producao', OrdemProducaoRouter.createRoutes());
 
 app.use('/painel', Painel.createRoutes());
 
+// 2. Adicione o middleware de erro NO FINAL
+app.use(errorHandler);
+
 app.listen(portaServico, '0.0.0.0', () => {
     console.log(`API rodando no endereço: http://localhost:${portaServico}/`);
-    Banco.getConexao();
+    Banco.getConexao(); // Inicia a conexão com o banco de dados
 });
 

@@ -53,7 +53,16 @@
       </div>
     </div>
   </div>
-
+        <!-- Container de Toasts -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+      <div id="meuToast" class="toast align-items-center border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+          <div id="toast-body" class="toast-body"></div>
+          <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
+        </div>
+      </div>
+    </div>
+  <script src="/js/toast.js"></script>
   <script>
     // Exemplo de como definir o nome do funcionário no cabeçalho
     document.addEventListener('DOMContentLoaded', function() {
@@ -82,8 +91,10 @@
     function fazerLogout() {
       fetch("/funcionario/logout", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token: localStorage.getItem("authToken") }),
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem('authToken')}`  
+        },
       })
       .then(res => {
         if (!res.ok){
@@ -92,12 +103,12 @@
         return res.json();
       })
       .then(dados => {
-        console.log("Dados do servidor:", dados);
         if (dados.status) {
           localStorage.removeItem('userData');
           localStorage.removeItem('authToken');
           localStorage.removeItem('userImage');
           localStorage.removeItem('rememberPassword');
+          lolcalStorage.removeItem('loginAutomatico');
           exibirMensagem("Logout bem-sucedido! Redirecionando...", "sucesso");
           window.location.href = '/login';
         } else {

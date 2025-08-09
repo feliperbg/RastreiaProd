@@ -6,7 +6,7 @@ const JWTMiddleware = require('../middleware/TokenJWTMiddleware'); // Middleware
 module.exports = class EtapaRouter {
     constructor() {
         this.router = express.Router();
-        this.etapaControl = new EtapaControl(); // Instancia o controller de etapas
+        this.etapaController = new EtapaControl(); // Instancia o controller de etapas
         this.jwtMiddleware = new JWTMiddleware(); // Instancia o middleware JWT
         this.createRoutes();
     }
@@ -24,13 +24,14 @@ module.exports = class EtapaRouter {
 
         // Rota para criar uma nova etapa, protegida por JWT
         this.router.post('/', 
-            (req, res) => this.etapaControl.create(req, res) // Chama o método create no controlador de etapas
+            (req, res, next) => this.jwtMiddleware.validate(req, res, next), // Valida o JWT
+            (req, res, next) => this.etapaController.add(req, res, next) // Chama o método add no controlador de etapas
         );
 
         // Rota para ler todas as etapas, protegida por JWT
-        this.router.get('/readALL', 
+        this.router.get('/getALL', 
             (req, res, next) => this.jwtMiddleware.validate(req, res, next), // Valida o JWT
-            (req, res) => this.etapaControl.readAll(req, res) // Chama o método readAll no controlador de etapas
+            (req, res) => this.etapaController.getAll(req, res, next) // Chama o método getAll no controlador de etapas
         );
         
         // Rota para cadastrar uma nova etapa, que renderiza a página de cadastro
@@ -41,24 +42,24 @@ module.exports = class EtapaRouter {
         // Rota para ler uma etapa específica, protegida por JWT
         this.router.get('/:id', 
             (req, res, next) => this.jwtMiddleware.validate(req, res, next), // Valida o JWT
-            (req, res) => this.etapaControl.readByID(req, res) // Chama o método readByID no controlador de etapas
+            (req, res, next) => this.etapaController.getById(req, res, next) // Chama o método getById no controlador de etapas
         );
 
         // Rota para deletar uma etapa, protegida por JWT
         this.router.delete('/:id', 
             (req, res, next) => this.jwtMiddleware.validate(req, res, next), // Valida o JWT
-            (req, res) => this.etapaControl.delete(req, res) // Chama o método delete no controlador de etapas
+            (req, res, next) => this.etapaController.delete(req, res, next) // Chama o método delete no controlador de etapas
         );
 
         // Rota para atualizar uma etapa, protegida por JWT
         this.router.put('/:id', 
             (req, res, next) => this.jwtMiddleware.validate(req, res, next), // Valida o JWT
-            (req, res) => this.etapaControl.update(req, res) // Chama o método update no controlador de etapas
+            (req, res, next) => this.etapaController.update(req, res, next) // Chama o método update no controlador de etapas
         );
 
         // Rota para retornar um JSON com todas as etapas
         this.router.get('/json', async (req, res) => {
-            (req, res) => this.etapaControl.readAllJSON(req, res); // Chama o método readAllJSON no controlador de etapas
+            (req, res) => this.etapaController.getAllJSON(req, res); // Chama o método getAllJSON no controlador de etapas
         });
 
         return this.router;

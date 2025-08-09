@@ -5,12 +5,12 @@ class BancoMongoose {
     this.server = '127.0.0.1:27017';
     this.database = 'TCC';
     this.connection = null;
-    this.getConexao();
   }
 
   getConexao() {
     mongoose.connect(`mongodb://${this.server}/${this.database}`)
       .then(() => {
+        
         console.log('Conexão com o Banco com sucesso');
         this.connection = mongoose.connection; 
       })

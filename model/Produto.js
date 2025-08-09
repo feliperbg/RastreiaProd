@@ -98,7 +98,7 @@ class Produto {
     /**
      * Retorna todos os produtos cadastrados.
      */
-    async readAll() {
+    async getAll() {
         try {
             const produtos = await Produtos.find().sort('nome');
             return produtos;
@@ -111,7 +111,7 @@ class Produto {
     /**
      * Busca um produto específico pelo ID.
      */
-    async readByID(idProduto) {
+    async getByID(idProduto) {
         this._idProduto = idProduto;
 
         try {

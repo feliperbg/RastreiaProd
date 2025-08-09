@@ -83,7 +83,7 @@ class Etapa {
     /**
      * Retorna todas as etapas cadastradas.
      */
-    async readAll() {
+    async getAll() {
         try {
             const etapas = await Etapas.find().sort('nome');
             return etapas;
@@ -96,7 +96,7 @@ class Etapa {
     /**
      * Busca uma etapa específica pelo ID.
      */
-    async readByID(idEtapa) {
+    async getByID(idEtapa) {
         this._idEtapa = idEtapa;
 
         try {

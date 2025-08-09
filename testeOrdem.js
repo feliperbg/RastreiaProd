@@ -26,7 +26,7 @@ async function testarAPI() {
     const ordemId = criar.data.ordem.id;
 
     // 2. Listar todas as ordens
-    const listar = await axios.get(`${API_URL}/readALL`, {
+    const listar = await axios.get(`${API_URL}/getALL`, {
       headers: { Authorization: `Bearer ${AUTH_TOKEN}` }
     });
     console.log('Lista:', listar.data);
