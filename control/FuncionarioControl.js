@@ -36,7 +36,7 @@ module.exports = class FuncionarioControl {
             const token = new TokenJWT().gerarToken(
                 funcionario._id.toString(), // Garante que o ID seja uma string
                 funcionario.nome,
-                funcionario.credencialaaaaaaaaaaaaaaaaaaaaaaaaaasaaaaa
+                funcionario.credencial
             );
 
             res.status(200).json({
