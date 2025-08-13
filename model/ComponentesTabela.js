@@ -27,8 +27,8 @@ const ComponentesTabela = new Schema({
 		type: Number,
 		required: true,
 	},
-	precoPagoLote: {
-		type: Number,
+	Lote: {
+		type: String,
 		required: true,
 	},
 	precoUnidade:{
