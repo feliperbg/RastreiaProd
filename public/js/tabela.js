@@ -24,8 +24,9 @@
             }
         });
     }
-        // Função para fechar loading
-        function hideLoading() {
+
+    // Função para fechar loading
+    function hideLoading() {
         Swal.close();
     }
     
@@ -65,6 +66,7 @@
                 throw new Error(`Erro HTTP: ${response.status}`);
             }
             const resposta = await response.json();
+            Console.log(`Resposta de ${urlBase}/${id}:`, resposta);
             return resposta[atributo]?.nome || 'Desconhecido';
         } catch (error) {
             console.error(`Erro ao buscar ${atributo}:`, error);
@@ -81,7 +83,7 @@
     }
 
     // Função para formatar os funcionários responsáveis
-    async function formatarFuncionarios(funcionarios) {
+    async function formatarFzuncionarios(funcionarios) {
         if (!Array.isArray(funcionarios)) return '';
         const nomes = await Promise.all(funcionarios.map(async (id) => {
             const nome = await nomeFuncionario(id);

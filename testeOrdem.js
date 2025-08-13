@@ -46,10 +46,10 @@ async function testarAPI() {
     console.log('Atualizada:', atualizar.data);
 
     // 5. Deletar ordem
-    const deletar = await axios.delete(`${API_URL}/${ordemId}`, {
-      headers: { Authorization: `Bearer ${AUTH_TOKEN}` }
-    });
-    console.log('Deletada:', deletar.data);
+    // const deletar = await axios.delete(`${API_URL}/${ordemId}`, {
+    //   headers: { Authorization: `Bearer ${AUTH_TOKEN}` }
+    // });
+    // console.log('Deletada:', deletar.data);
 
   } catch (err) {
     if (err.response) {
