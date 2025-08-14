@@ -96,10 +96,8 @@
         return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
     }
 
-    // Função para formatar o telefone
     function formatarTelefone(telefone) {
-        if (!telefone || telefone.length !== 11) return telefone;
-        // Formato (XX) XXXXX-XXXX
+        if (!telefone || telefone.length < 10) return telefone;
         return telefone.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
     }
 
@@ -121,6 +119,7 @@
             }).join(' ');
         }).join(', ');
     }
+
     function formatarTexto(texto) {
         return String(texto)
             .replace(/_/g, ' ')
@@ -129,63 +128,7 @@
     }
 
 
-    function mostrarModal(titulo, conteudo) {
-        let html = '';
-        console.log('Conteúdo recebido:', conteudo);
-        console.log('Tipo do conteúdo:', typeof conteudo);
-        // Tenta converter de string JSON se necessário
-        if (typeof conteudo === 'string') {
-            try {
-                const parsed = JSON.parse(conteudo);
-                conteudo = parsed;
-            } catch (e) {
-                // mantém como string
-            }
-        }
-
-        switch (true) {
-            case Array.isArray(conteudo):
-                html = conteudo.length > 0
-                    ? conteudo.map(item => `<div>${formatarTexto(item)}</div>`).join('')
-                    : '<i>Nenhum item encontrado.</i>';
-                break;
-
-            case typeof conteudo === 'object' && conteudo !== null:
-                html = Object.entries(conteudo).length > 0
-                    ? Object.entries(conteudo).map(([chave, valor]) =>
-                        `<div><strong>${formatarPermissoes(chave)}:</strong> ${formatarTexto(valor)}</div>`
-                    ).join('')
-                    : '<i>Nenhuma informação disponível.</i>';
-                break;
-
-            default:
-                html = `<div style="font-size:1.2em; word-break: break-word">${formatarTexto(conteudo) || 'Informação não informada.'}</div>`;
-        }
-
-        Swal.fire({
-            title: titulo,
-            html: html,
-            icon: 'info',
-            confirmButtonText: 'Fechar'
-        });
-    }
-
-
-
-
-    function formatarArray(arr) {
-        if (!Array.isArray(arr)) return '';
-        return arr.join(', ');
-    }
-
-    async function formatarArrayAssincrono(arr, fetchNomeFn) {
-        if (!Array.isArray(arr)) return '';
-        const nomes = await Promise.all(arr.map(async (id) => {
-            const nome = await fetchNomeFn(id);
-            return `<span class="badge bg-secondary">${nome}</span>`;
-        }));
-        return nomes.join('<br>');
-    }
+    
 
     async function buscarNomePorId(id, urlBase, atributo) {
         try {
@@ -233,24 +176,7 @@
         confirmButtonText: 'Fechar'
       });
     }
-
-    // Função para mostrar o modal de permissões
-    function mostrarPermissoesModal(permissoesStr) {
-        let permissoes;
-        try {
-            permissoes = JSON.parse(decodeURIComponent(permissoesStr));
-        } catch {
-            permissoes = [];
-        }
-        const conteudo = formatarPermissoes(permissoes) || 'Nenhuma permissão atribuída.';
-        Swal.fire({
-            title: 'Permissões do Funcionário',
-            html: `<div style="text-align:center">${conteudo}</div>`,
-            icon: 'info',
-            confirmButtonText: 'Fechar'
-        });
-    }
-
+    
     function verPrecos(precoMontagem, precoVenda) {
       Swal.fire({
         title: 'Preços',
@@ -270,4 +196,66 @@
           : '<i>Sem componentes.</i>',
         confirmButtonText: 'Fechar'
       });
+    }
+
+    // Função para mostrar o modal de permissões
+    function mostrarPermissoesModal(permissoesObjeto) {
+        let permissoes;
+        try {   
+            permissoes = JSON.parse((permissoesObjeto));
+            console.log('Permissões decodificadas:', permissoes);
+        } catch (e) {
+            console.error('Erro ao decodificar permissões:', e);
+            permissoes = [];
+        }finally {
+            permissoes = [];
+        }
+        const conteudo = formatarPermissoes(permissoes) || 'Nenhuma permissão atribuída.';
+        Swal.fire({
+            title: 'Permissões do Funcionário',
+            html: `<div style="text-align:center">${conteudo}</div>`,
+            icon: 'info',
+            confirmButtonText: 'Fechar'
+        });
+    }
+
+    function mostrarModal(titulo, conteudo) {
+        let html = '';
+        console.log('Conteúdo recebido:', conteudo);
+        console.log('Tipo do conteúdo:', typeof conteudo);
+        // Tenta converter de string JSON se necessário
+        if (typeof conteudo === 'string') {
+            try {
+                const parsed = JSON.parse(conteudo);
+                conteudo = parsed;
+            } catch (e) {
+                // mantém como string
+            }
+        }
+
+        switch (true) {
+            case Array.isArray(conteudo):
+                html = conteudo.length > 0
+                    ? conteudo.map(item => `<div>${formatarTexto(item)}</div>`).join('')
+                    : '<i>Nenhum item encontrado.</i>';
+                break;
+
+            case typeof conteudo === 'object' && conteudo !== null:
+                html = Object.entries(conteudo).length > 0
+                    ? Object.entries(conteudo).map(([chave, valor]) =>
+                        `<div><strong>${formatarPermissoes(chave)}:</strong> ${formatarTexto(valor)}</div>`
+                    ).join('')
+                    : '<i>Nenhuma informação disponível.</i>';
+                break;
+
+            default:
+                html = `<div style="font-size:1.2em; word-break: break-word">${formatarTexto(conteudo) || 'Informação não informada.'}</div>`;
+        }
+
+        Swal.fire({
+            title: titulo,
+            html: html,
+            icon: 'info',
+            confirmButtonText: 'Fechar'
+        });
     }

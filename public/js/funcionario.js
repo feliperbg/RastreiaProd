@@ -1,4 +1,5 @@
-    async function carregarTabela() {
+// public/js/funcionario.js
+   async function carregarTabela() {
         try {
             showLoading();
 
@@ -65,10 +66,10 @@
                         </button>
                     </td>
                     <td data-label="Email">${emailHtml}</td>
-                    <td data-label="Telefone">${formatarTelefone(func.telefone)}</td>
+                    <td data-label="Telefone">${func.telefone}</td>
                     <td data-label="Data Nasc.">${formatarData(func.dataNascimento)}</td>
                     <td data-label="Permissões">
-                        <button class="btn btn-sm  btn-warning" onclick="mostrarModal('Permissões', '${func.permissoes}')">
+                        <button class="btn btn-sm  btn-warning" onclick="mostrarModal('Permissões',${JSON.stringify(func.permissoes)})">
                             <i class="bi bi-shield-lock"></i> Ver Permissões
                         </button>
                     </td>
@@ -171,15 +172,108 @@
     }
 
     // Filtro de busca
-    document.getElementById("filtro").addEventListener("input", function () {
-        const termo = this.value.toLowerCase();
-        const linhas = document.querySelectorAll("#tabela-funcionarios tr");
+    if (document.getElementById("filtro")) {
+        document.getElementById("filtro").addEventListener("input", function () {
+            const termo = this.value.toLowerCase();
+            const linhas = document.querySelectorAll("#tabela-funcionarios tr");
 
-        linhas.forEach(tr => {
-            const texto = tr.innerText.toLowerCase();
-            tr.style.display = texto.includes(termo) ? "" : "none";
+            linhas.forEach(tr => {
+                const texto = tr.innerText.toLowerCase();
+                tr.style.display = texto.includes(termo) ? "" : "none";
+            });
         });
-    });
+    }
 
-    // Carrega os dados quando a página é carregada
-    document.addEventListener('DOMContentLoaded', carregarTabela);
+
+    //Função para adicionar funcionário
+    async function adicionarFuncionario(event) {
+      event.preventDefault();
+
+      const permissoes = Array.from(document.querySelectorAll('input[name="permissoes"]:checked')).map(checkbox => checkbox.value);
+      const Funcionario = {
+        nome: document.getElementById('nome').value,
+        senha: document.getElementById('senha').value,
+        email: document.getElementById('email').value,
+        CPF: document.getElementById('cpf').value,
+        telefone: document.getElementById('telefone').value,
+        turno: document.getElementById('turno').value,
+        dataNascimento: document.getElementById('dataNascimento').value,
+        permissoes: permissoes,
+        role: document.getElementById('role').value
+      };
+      try {
+        const resposta = await fetch(`/funcionario`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+          },
+          body: JSON.stringify(Funcionario)
+        });
+
+        if (!resposta.ok) {
+          const erro = await resposta.json();
+          exibirMensagem(erro.msg || 'Erro ao adicionar funcionário.', 'erro');
+          return;
+        }
+
+        exibirMensagem('Funcionário adicionado com sucesso!', 'sucesso');
+        setTimeout(() => {
+          window.location.href = '/funcionario';
+        }, 2000);
+      } catch (error) {
+        exibirMensagem('Erro interno ao tentar adicionar funcionário.', 'erro');
+      }
+    }
+
+    // Função para carregar os dados do funcionário
+    async function carregarFuncionario() {
+      try {
+        console.log('Carregando funcionário com ID:', id);
+        const response = await fetch(`/funcionario/${id}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`Erro na requisição: ${response.status}`);
+        }
+
+        const dados = await response.json();
+        
+        if (dados.status && dados.funcionario) {
+            const funcionario = dados.funcionario;
+            document.getElementById('nome').value = funcionario.nome || '';
+            document.getElementById('email').value = funcionario.email || '';
+            document.getElementById('telefone').value = funcionario.telefone || '';
+            document.getElementById('turno').value = funcionario.turno || '';
+            document.getElementById('dataNascimento').value = funcionario.dataNascimento?.substring(0, 10) || '';
+            if (funcionario.permissoes) {
+            funcionario.permissoes.forEach(permissao => {
+                const checkbox = document.querySelector(`input[name="permissoes"][value="${permissao}"]`);
+                if (checkbox) checkbox.checked = true;
+            });
+            }
+            if (funcionario.telefone) {
+                iti.setNumber(funcionario.telefone);
+            }   
+        } else {
+          exibirMensagem('Funcionário não encontrado!', 'erro');
+        }
+      } catch (error) {
+        console.error('Erro ao carregar funcionário:', error);
+        exibirMensagem('Erro ao carregar informações do funcionário.', 'erro');
+      }
+    }
+    
+    if(document.getElementById("tabela-funcionarios")) {
+        document.addEventListener("DOMContentLoaded", carregarTabela);
+    }else if(document.getElementById("form-adicionar")) {
+        document.getElementById("form-adicionar").addEventListener("submit", adicionarFuncionario);
+    }else if(document.getElementById("form-editar")) {
+        document.getElementById("form-editar").addEventListener("submit", atualizarFuncionario);
+        carregarFuncionario();
+    }

@@ -36,14 +36,14 @@
                     <td data-label="Status">${ordemProducao.status ? "Em Andamento" : "Finalizada"}</td>
                     <td data-label="Sequências">
                         <button class="btn btn-outline-secondary btn-sm" title="Ver Sequências"
-                            onclick='mostrarModalArray("Sequências", ${JSON.stringify(ordemProducao.sequencias)})'>
+                            onclick='mostrarModal("Sequências", ${JSON.stringify(ordemProducao.sequencias)})'>
                             <i class="bi bi-diagram-3"></i>
                         </button>
                     </td>
                     <td data-label="Departamento Responsável">${ordemProducao.departamentoResponsavel}</td>
                     <td data-label="Procedimentos">
                         <button class="btn btn-outline-info btn-sm" title="Ver Procedimentos"
-                            onclick='mostrarModalArray("Procedimentos", ${JSON.stringify(ordemProducao.procedimentos)})'>
+                            onclick='mostrarModal("Procedimentos", ${JSON.stringify(ordemProducao.procedimentos)})'>
                             <i class="bi bi-list-check"></i>
                         </button>
                     </td>

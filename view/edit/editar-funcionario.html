@@ -4,9 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Editar Funcionário</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- intl-tel-input CSS -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.15/build/css/intlTelInput.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.15/build/css/intlTelInput.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.15/build/js/intlTelInput.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/inputmask@5.0.6/dist/inputmask.min.js"></script>
+    <script src="/js/toast.js"></script>
+    <script src="/js/funcionario.js"></script>
 </head>
 <style>
   body {
@@ -31,15 +35,9 @@
     box-shadow: 0 0 0 0.25rem rgba(38, 143, 255, 0.25);
   }
   .btn-primary {
-    background-color: #007bff;
-    border-color: #007bff;
     border-radius: 5px;
     padding: 0.6rem 1.5rem;
     font-weight: bold;
-  }
-  .btn-primary:hover {
-    background-color: #0056b3;
-    border-color: #0056b3;
   }
     .btn-secondary {
     background-color: #ff0000;
@@ -123,106 +121,64 @@
     </form>
   </div>
       <!-- Container de Toasts -->
-    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
-      <div id="meuToast" class="toast align-items-center border-0" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="d-flex">
-          <div id="toast-body" class="toast-body"></div>
-          <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
-        </div>
+  <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+    <div id="meuToast" class="toast align-items-center border-0" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="d-flex">
+        <div id="toast-body" class="toast-body"></div>
+        <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
       </div>
     </div>
+  </div>
+<script>
+    const pathParts = window.location.pathname.split('/');
+    const id = pathParts[pathParts.length - 1]; 
+    document.getElementById('form-editar').addEventListener('submit', atualizarFuncionario);
+    let iti; // Variável global para a instância
 
-  <script src="/js/toast.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.15/build/js/intlTelInput.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/inputmask@5.0.6/dist/inputmask.min.js"></script>
-  
-  <script>
-  const pathParts = window.location.pathname.split('/');
-  const id = pathParts[pathParts.length - 1]; 
-  document.addEventListener("DOMContentLoaded", function () {
-    const phoneInput = document.getElementById('telefone');
-    
-    // Inicializa a biblioteca intl-tel-input
-    const iti = window.intlTelInput(phoneInput, {
-      initialCountry: "br",
-      preferredCountries: ["br", "us", "gb"],
-      utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.15/build/js/utils.js",
+    document.addEventListener("DOMContentLoaded", function () {
+      const phoneInput = document.getElementById('telefone');
+      iti = window.intlTelInput(phoneInput, {
+        initialCountry: "br",
+        preferredCountries: ["br", "us", "gb"],
+        utilsScript: `https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.15/build/js/utils.js`,
+      });
+      phoneInput.addEventListener('countrychange', atualizarMascara);
+      carregarFuncionario();
+
+      if (!id || id === 'undefined') {
+        exibirMensagem('ID do funcionário não encontrado!', 'erro');
+        return;
+      }
     });
 
     function atualizarMascara() {
-      const countryData = iti.getSelectedCountryData();
-      const dialCode = countryData.dialCode;
-      let mask;
-      if (dialCode === "55") {
-        mask = "(99) 99999-9999";
-      } else if (dialCode === "1") {
-        mask = "(999) 999-9999";
-      } else {
-        mask = "(99) 9999-9999";
-      }
-      Inputmask(mask).mask(phoneInput);
-    }
+        const phoneInput = document.getElementById('telefone');
+        const countryData = iti.getSelectedCountryData();
+        let mask;
+        // Remove a máscara antiga antes de aplicar uma nova
+        Inputmask.remove(phoneInput); 
 
-    iti.setCountry(iti.getSelectedCountryData().iso2);
-    phoneInput.addEventListener('countrychange', atualizarMascara);
-    atualizarMascara();
-
-    if (!id || id === 'undefined') {
-      exibirMensagem('ID do funcionário não encontrado!', 'erro');
-      return;
-    }
-
-    carregarFuncionario();
-  });
-  
-    async function carregarFuncionario() {
-      try {
-        console.log('Carregando funcionário com ID:', id);
-        const response = await fetch(`/funcionario/${id}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error(`Erro na requisição: ${response.status}`);
-        }
-
-        const dados = await response.json();
-        
-        if (dados.status && dados.funcionario) {
-          const funcionario = dados.funcionario;
-          document.getElementById('nome').value = funcionario.nome || '';
-          document.getElementById('email').value = funcionario.email || '';
-          document.getElementById('telefone').value = funcionario.telefone || '';
-          document.getElementById('turno').value = funcionario.turno || '';
-          document.getElementById('dataNascimento').value = funcionario.dataNascimento?.substring(0, 10) || '';
-          if (funcionario.permissoes) {
-            funcionario.permissoes.forEach(permissao => {
-              const checkbox = document.querySelector(`input[name="permissoes"][value="${permissao}"]`);
-              if (checkbox) checkbox.checked = true;
-            });
-          }
+        if (countryData.dialCode === "55") {
+          mask = "(99) 99999-9999";
+        } else if (countryData.dialCode === "1") {
+          mask = "(999) 999-9999";
         } else {
-          exibirMensagem('Funcionário não encontrado!', 'erro');
+          // Uma máscara genérica para outros países, pode ser ajustada
+          mask = "999999999999999"; 
         }
-      } catch (error) {
-        console.error('Erro ao carregar funcionário:', error);
-        exibirMensagem('Erro ao carregar informações do funcionário.', 'erro');
-      }
+        Inputmask(mask).mask(phoneInput);
     }
-
+    
+    // Função para atualizar funcionário (seu código original, sem alterações necessárias aqui)
     async function atualizarFuncionario(event) {
       event.preventDefault();
-
-      const permissoes = Array.from(document.querySelectorAll('input[name="permissoes"]:checked')).map(checkbox => checkbox.value);
+      const phoneInput = document.getElementById('telefone');
+      const permissoes = Array.from(document.querySelectorAll('input[name="permissoes"]:checked'))
+                               .map(checkbox => checkbox.value);
       const dadosAtualizados = {
         nome: document.getElementById('nome').value,
         email: document.getElementById('email').value,
-        telefone: document.getElementById('telefone').value,
+        telefone: iti.getNumber(),
         turno: document.getElementById('turno').value,
         dataNascimento: document.getElementById('dataNascimento').value,
         permissoes: permissoes,
@@ -252,10 +208,6 @@
         exibirMensagem('Erro interno ao tentar atualizar.', 'erro');
       }
     }
-
-
-    document.getElementById('form-editar').addEventListener('submit', atualizarFuncionario);
-    carregarFuncionario();
   </script>
 </body>
 </html>
