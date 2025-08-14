@@ -35,14 +35,14 @@
                     <td data-label="Nome">${etapa.nome}</td>
                     <td data-label="Sequências">
                         <button class="btn btn-outline-secondary btn-sm" title="Ver Sequências"
-                            onclick='mostrarModalArray("Sequências", ${JSON.stringify(etapa.sequencias)})'>
+                            onclick='mostrarModal("Sequências", ${JSON.stringify(etapa.sequencias)})'>
                             <i class="bi bi-diagram-3"></i>
                         </button>
                     </td>
                     <td data-label="Departamento Responsável">${etapa.departamentoResponsavel}</td>
                     <td data-label="Procedimentos">
                         <button class="btn btn-outline-info btn-sm" title="Ver Procedimentos"
-                            onclick='mostrarModalArray("Procedimentos", ${JSON.stringify(etapa.procedimentos)})'>
+                            onclick='mostrarModal("Procedimentos", ${JSON.stringify(etapa.procedimentos)})'>
                             <i class="bi bi-list-check"></i>
                         </button>
                     </td>

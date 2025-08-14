@@ -1,5 +1,5 @@
 // controllers/PainelControl.js
-const OrdemProducao = require('../model/OrdemProducao');
+const OrdemProducao = require('../model/OrdemProducaoTabela.js');
 
 module.exports = class PainelControl {
     /**
@@ -8,7 +8,7 @@ module.exports = class PainelControl {
     async getKanban(req, res) {
         try {
             const ordens = await OrdemProducao.find({}, 'numero produto statusGeral etapas').lean();
-
+            console.log('Ordens encontradas:', ordens.length);
             const boards = {
                 _todo: { id: '_todo', title: 'A Fazer', item: [] },
                 _doing: { id: '_doing', title: 'Em Produção', item: [] },
