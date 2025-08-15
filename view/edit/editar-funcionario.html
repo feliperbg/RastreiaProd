@@ -163,24 +163,29 @@
       }
     });
 
-    function atualizarMascara() {
-        const phoneInput = document.getElementById('telefone');
-        const countryData = iti.getSelectedCountryData();
-        
-        let mask;
-        // Remove a máscara antiga antes de aplicar uma nova
-        Inputmask.remove(phoneInput); 
+function atualizarMascara() {
+    const phoneInput = document.getElementById('telefone');
+    const countryData = iti.getSelectedCountryData();
+    let mask;
 
-        if (countryData.dialCode === "55") {
-          mask = "(99) 99999-9999";
-        } else if (countryData.dialCode === "1") {
-          mask = "(999) 999-9999";
-        } else {
-          // Uma máscara genérica para outros países, pode ser ajustada
-          mask = "(999) 9999999"; 
-        }
-        Inputmask(mask).mask(phoneInput);
+    Inputmask.remove(phoneInput); // Sempre remove a máscara antiga primeiro
+
+    if (countryData.dialCode === "55") { // Brasil
+      mask = ['(99) 9999-9999', '(99) 99999-9999'];
+    } else if (countryData.dialCode === "1") { // EUA/Canadá
+      mask = "(999) 999-9999";
+    } else if (countryData.dialCode === "351") { // Portugal
+      mask = "999 999 999";
+    } else if (countryData.dialCode === "44") { // Reino Unido
+      mask = "99999 999999";
+    } else {
+      // Para todos os outros países, não aplique nenhuma máscara.
+      return; 
     }
+
+    Inputmask({ mask: mask, keepStatic: true }).mask(phoneInput);
+}
+
     
     // Função para atualizar funcionário (seu código original, sem alterações necessárias aqui)
     async function atualizarFuncionario(event) {
