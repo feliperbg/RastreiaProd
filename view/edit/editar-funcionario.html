@@ -155,6 +155,7 @@
         utilsScript: `https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.15/build/js/utils.js`,
       });
       phoneInput.addEventListener('countrychange', atualizarMascara);
+      atualizarMascara();
       carregarFuncionario();
 
       if (!id || id === 'undefined') {
