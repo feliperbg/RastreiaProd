@@ -101,16 +101,24 @@
         return telefone.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
     }
 
-    // Função para formatar as permissões
+    /**
+     * Formata um array de strings de permissão para um formato legível.
+     * Exemplo: 'gerenciar_usuarios' se torna 'Gerenciar Usuários'.
+     * @param {Array<string>} permissoes - O array de permissões.
+     * @returns {string} Uma única string com as permissões formatadas e separadas por vírgula.
+     */
     function formatarPermissoes(permissoes) {
-        if (!Array.isArray(permissoes)) return '';
-        if (permissoes.length === 0) return '';
+        if (!Array.isArray(permissoes) || permissoes.length === 0) {
+            return '';
+        }
 
         return permissoes.map(p => {
-            // Se já estiver formatado, mantém
-            if (p.includes(' ')) return p;
+            // Se a permissão já contém espaços, assume-se que já está formatada.
+            if (p.includes(' ')) {
+                return p;
+            }
 
-            // mantendo os acentos originais
+            // Divide a string pelo caractere '_' e capitaliza a primeira letra de cada palavra.
             const palavras = p.split('_');
             return palavras.map(palavra => {
                 return palavra.length > 0
@@ -120,15 +128,12 @@
         }).join(', ');
     }
 
-    function formatarTexto(texto) {
+    function formatarTextoPermissao(texto) {
         return String(texto)
             .replace(/_/g, ' ')
             .toLowerCase()
             .replace(/\b\w/g, l => l.toUpperCase());
     }
-
-
-    
 
     async function buscarNomePorId(id, urlBase, atributo) {
         try {
@@ -181,9 +186,9 @@
       Swal.fire({
         title: 'Preços',
         html: `<ul style="text-align:left">
-      <li><strong>Preço de Montagem:</strong> R$ ${precoMontagem}</li>
-      <li><strong>Preço de Venda:</strong> R$ ${precoVenda}</li>
-    </ul>`,
+        <li><strong>Preço de Montagem:</strong> R$ ${precoMontagem}</li>
+        <li><strong>Preço de Venda:</strong> R$ ${precoVenda}</li>
+        </ul>`,
         confirmButtonText: 'Fechar'
       });
     }
@@ -198,22 +203,55 @@
       });
     }
 
-    // Função para mostrar o modal de permissões
+    function verFuncionarios(funcionariosHtml) {
+        Swal.fire({
+            title: 'Funcionários Responsáveis',
+            html: funcionariosHtml
+            ? `<ul style="text-align:left">${funcionariosHtml.split('<br>').map(e => `<li>${e}</li>`).join('')}</ul>`
+            : '<i>Sem funcionários atribuídos.</i>',
+            confirmButtonText: 'Fechar'
+        });
+    }
+    
+    function verPermissoes(permissoesHtml) {
+      Swal.fire({
+        title: 'Permissões',
+        html: permissoesHtml
+          ? `<ul style="text-align:left">${permissoesHtml.split(', ').map(e => `<li>${e}</li>`).join('')}</ul>`
+          : '<i>Sem permissões atribuídas.</i>',
+        confirmButtonText: 'Fechar'
+      });
+    }
+
+    /**
+     * Exibe um modal utilizando SweetAlert2 para mostrar as permissões formatadas.
+     * @param {Array<string>} permissoesObjeto - Um array de strings com as permissões.
+     */
     function mostrarPermissoesModal(permissoesObjeto) {
-        let permissoes;
-        try {   
-            permissoes = JSON.parse((permissoesObjeto));
-            console.log('Permissões decodificadas:', permissoes);
+        let permissoes = []; // Inicia como um array vazio por padrão
+
+        try {
+            // Garante que o objeto recebido é um array antes de prosseguir.
+            if (Array.isArray(permissoesObjeto)) {
+                permissoes = permissoesObjeto;
+            }
         } catch (e) {
-            console.error('Erro ao decodificar permissões:', e);
-            permissoes = [];
-        }finally {
-            permissoes = [];
+            console.error('Ocorreu um erro ao processar as permissões:', e);
+            permissoes = []; // Garante que 'permissoes' seja um array vazio em caso de erro.
         }
-        const conteudo = formatarPermissoes(permissoes) || 'Nenhuma permissão atribuída.';
+
+        // Usa a função auxiliar para formatar o array de permissões.
+        const conteudoFormatado = formatarPermissoes(permissoes);
+
+        // Cria uma lista HTML para uma visualização mais organizada.
+        const htmlConteudo = conteudoFormatado
+            ? `<ul style="text-align:center;">${conteudoFormatado.split(', ').map(e => `<li>${e}</li>`).join('')}</ul>`
+            : '<i>Nenhuma permissão atribuída.</i>';
+
+        // Exibe o modal.
         Swal.fire({
             title: 'Permissões do Funcionário',
-            html: `<div style="text-align:center">${conteudo}</div>`,
+            html: htmlConteudo,
             icon: 'info',
             confirmButtonText: 'Fechar'
         });
@@ -232,26 +270,15 @@
                 // mantém como string
             }
         }
-
         switch (true) {
             case Array.isArray(conteudo):
                 html = conteudo.length > 0
-                    ? conteudo.map(item => `<div>${formatarTexto(item)}</div>`).join('')
+                    ? conteudo.map(item => `<div>${item}</div>`).join('')
                     : '<i>Nenhum item encontrado.</i>';
                 break;
-
-            case typeof conteudo === 'object' && conteudo !== null:
-                html = Object.entries(conteudo).length > 0
-                    ? Object.entries(conteudo).map(([chave, valor]) =>
-                        `<div><strong>${formatarPermissoes(chave)}:</strong> ${formatarTexto(valor)}</div>`
-                    ).join('')
-                    : '<i>Nenhuma informação disponível.</i>';
-                break;
-
             default:
-                html = `<div style="font-size:1.2em; word-break: break-word">${formatarTexto(conteudo) || 'Informação não informada.'}</div>`;
+                html = `<div style="font-size:1.2em; word-break: break-word">${conteudo || 'Informação não informada.'}</div>`;
         }
-
         Swal.fire({
             title: titulo,
             html: html,
