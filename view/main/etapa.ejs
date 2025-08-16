@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de ordem-producaos</title>
+    <title>Etapas</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
@@ -58,23 +58,23 @@
         }
     </style>
 </head>
-  <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
+<body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
     <div class="app-wrapper">
-        <%- include('partials/header.ejs') %>
-        <%- include('partials/sidebar.ejs') %>
+        <%- include('../partials/header.ejs') %>
+        <%- include('../partials/sidebar.ejs') %>
             <main class="app-main">
                 <div class="app-content">
                     <div class="container-fluid">
-                <h1 class="mb-4 text-center">Ordem de Produções</h1>    
+                <h1 class="mb-4 text-center">Etapas</h1>    
                 <div class="card mb-4">
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-6">
-                                <input type="text" id="filtro" class="form-control" placeholder="Pesquisar ordem de produção...">
+                                <input type="text" id="filtro" class="form-control" placeholder="Pesquisar etapa...">
                             </div>
                             <div class="col-md-6 text-end">
-                                <button class="btn btn-primary" onclick="window.location.href='/ordem-producao/adicionar-ordem-producao'">
-                                    <i class="bi bi-plus-circle"></i> Adicionar Ordem de Produção
+                                <button class="btn btn-primary" onclick="window.location.href='/etapa/adicionar-etapa'">
+                                    <i class="bi bi-plus-circle"></i> Adicionar Etapa
                                 </button>
                             </div>
                         </div>
@@ -85,17 +85,18 @@
                     <table class="table table-striped table-hover table-bordered">
                         <thead class="table-dark">
                             <tr>
-                                <th>Status</th>
-                                <th>Produto</th>
-                                <th>Etapa</th>
-                                <th>Funcionário Ativo</th>
-                                <th>Horário Inicial</th>
-                                <th>Horário Final</th>
+                                <th>Nome</th>
+                                <th>Sequências</th>
+                                <th>Departamento Responsável</th>
+                                <th>Procedimentos</th>
+                                <th>Componente Conclusão</th>
+                                <th>Funcionários Responsáveis</th>
+                                <th>Ações</th>
                             </tr>
                         </thead>
-                        <tbody id="tabela-ordem-producaos">
+                        <tbody id="tabela-etapas">
                             <tr>
-                                <td colspan="7">Carregando dados...</td>
+                                <td colspan="12">Carregando dados...</td>
                             </tr>
                         </tbody>
                     </table>
@@ -103,23 +104,13 @@
             </div>
         </main>
     </div>
-        <!-- Container de Toasts -->
-    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
-      <div id="meuToast" class="toast align-items-center border-0" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="d-flex">
-          <div id="toast-body" class="toast-body"></div>
-          <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
-        </div>
-      </div>
-    </div>
-
+</body>
 
     <!-- Bootstrap JS Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- SweetAlert2 JS -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="/js/adminlte.min.js"></script>
-    <script src ="/js/toast.js"></script>
-    <script src="/js/ordem-producao.js"></script>
+    <script src="/js/etapa.js"></script>
     <script src="/js/tabela.js"></script>
 </html>

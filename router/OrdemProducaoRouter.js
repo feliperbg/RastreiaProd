@@ -14,7 +14,7 @@ module.exports = class OrdemProducaoRouter {
     createRoutes() {
         // Rota estática
         this.router.get('/', (req, res) => {
-            res.render('ordem-producao.ejs');
+            res.render('main/ordem-producao');
         });
 
         this.router.get('/editar-ordem/:id', (req, res) => {
