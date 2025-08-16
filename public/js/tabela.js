@@ -83,7 +83,7 @@
     }
 
     // Função para formatar os funcionários responsáveis
-    async function formatarFzuncionarios(funcionarios) {
+    async function formatarFuncionarios(funcionarios) {
         if (!Array.isArray(funcionarios)) return '';
         const nomes = await Promise.all(funcionarios.map(async (id) => {
             const nome = await nomeFuncionario(id);
@@ -212,15 +212,14 @@
             confirmButtonText: 'Fechar'
         });
     }
-    
-    function verPermissoes(permissoesHtml) {
-      Swal.fire({
-        title: 'Permissões',
-        html: permissoesHtml
-          ? `<ul style="text-align:left">${permissoesHtml.split(', ').map(e => `<li>${e}</li>`).join('')}</ul>`
-          : '<i>Sem permissões atribuídas.</i>',
-        confirmButtonText: 'Fechar'
-      });
+
+    function verDescricao(descricaoHtml){
+        Swal.fire({
+            title: "Descrição do Componente",
+            html: descricaoHtml 
+            ? `<ul style="text-align:left">${descricaoHtml}</ul>`
+            : '<i>Sem Descrição atribuídos.</i>',
+        });
     }
 
     /**

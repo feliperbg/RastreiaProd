@@ -10,7 +10,6 @@ let idCriado = null;
 
 // Função para criar um novo componente
 async function criarComponente() {
-    const dimensoes = { comprimento: 2, largura: 1, altura: 1 };
     const componente = new Componente(
         null,
         "Resistor 222Ω",
@@ -21,7 +20,6 @@ async function criarComponente() {
         1000,
         150.00,
         0.15,
-        dimensoes
     )
 
     const criado = await componente.create();

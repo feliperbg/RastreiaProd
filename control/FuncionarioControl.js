@@ -75,7 +75,7 @@ module.exports = class FuncionarioControl {
                 nome,
                 senha,
                 email,
-                cpf,
+                CPF,
                 telefone,
                 turno,
                 dataNascimento,
@@ -84,7 +84,7 @@ module.exports = class FuncionarioControl {
             } = request.body;
 
             // Verificação básica de campos obrigatórios
-            if (!nome || !turno || !senha || !cpf || !email || !telefone || !dataNascimento) {
+            if (!nome || !turno || !senha || !CPF || !email || !telefone || !dataNascimento) {
                 return response.status(400).send({
                     status: false,
                     msg: 'Campos obrigatórios não preenchidos'
@@ -96,7 +96,7 @@ module.exports = class FuncionarioControl {
                 nome,
                 turno,
                 senha,
-                cpf,
+                CPF,
                 email,
                 telefone,
                 dataNascimento,
@@ -175,8 +175,8 @@ module.exports = class FuncionarioControl {
             if (encontrado) {
                 // Remove informações sensíveis antes de retornar
                 const funcionarioSanitizado = {
-                    id: encontrado._id,
                     nome: encontrado.nome,
+                    CPF: encontrado.CPF,
                     email: encontrado.email,
                     turno: encontrado.turno,
                     role: encontrado.role,
@@ -221,7 +221,7 @@ module.exports = class FuncionarioControl {
 
             // Campos permitidos para atualização
             const camposPermitidos = [
-                'nome', 'email', 'cpf', 'telefone', 'turno',
+                'nome', 'email', 'CPF', 'telefone', 'turno',
                 'dataNascimento', 'permissoes', 'role'
             ];
            

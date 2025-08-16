@@ -16,9 +16,8 @@ module.exports = class ComponenteControl {
             dados.dataEntrada,
             dados.dataValidade,
             dados.quantidade,
-            dados.precoPagoLote,
+            dados.Lote,
             dados.precoUnidade,
-            dados.dimensoes
         );
 
         // Chama o método create() da classe modelo
@@ -45,9 +44,8 @@ module.exports = class ComponenteControl {
             dados.dataEntrada,
             dados.dataValidade,
             dados.quantidade,
-            dados.precoPagoLote,
+            dados.Lote,
             dados.precoUnidade,
-            dados.dimensoes
         );
 
         componente.idComponente = idComponente; // Define o ID do componente a ser atualizado

@@ -44,7 +44,7 @@
                 if(email.length > 35) {
                     emailHtml = `
                         <span title="${email.replace(/"/g, '&quot;')}"></span>
-                        <button class="btn btn-secondary" onclick="mostrarModal('Email', '${email.replace(/'/g, "\\'").replace(/"/g, '&quot;')}')">
+                        <button class="btn  btn-sm btn-secondary" onclick="mostrarModal('Email', '${email.replace(/'/g, "\\'").replace(/"/g, '&quot;')}')">
                             <i class="bi bi-eye"></i>
                         </button>
                     `;
@@ -67,7 +67,7 @@
                     <td data-label="Data Nasc.">${formatarData(func.dataNascimento)}</td>
                     <td data-label="Permissões">
                         <button class="btn btn-sm btn-warning" onclick='mostrarPermissoesModal(${JSON.stringify(func.permissoes)})'>
-                            <i class="bi bi-shield-lock"></i> Ver Permissões
+                            <i class="bi bi-shield-lock"></i>
                         </button>
                     </td>
                     <td data-label="Ações">
@@ -190,7 +190,7 @@
         nome: document.getElementById('nome').value,
         senha: document.getElementById('senha').value,
         email: document.getElementById('email').value,
-        cpf: document.getElementById('cpf').value,
+        CPF: document.getElementById('CPF').value,
         telefone: document.getElementById('telefone').value,
         turno: document.getElementById('turno').value,
         dataNascimento: document.getElementById('dataNascimento').value,
@@ -221,48 +221,42 @@
         exibirMensagem('Erro interno ao tentar adicionar funcionário.', 'erro');
       }
     }
-
-    // Função para carregar os dados do funcionário
-    async function carregarFuncionario() {
-      try {
-        console.log('Carregando funcionário com ID:', id);
-        const response = await fetch(`/funcionario/${id}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error(`Erro na requisição: ${response.status}`);
-        }
-
-        const dados = await response.json();
-        
-        if (dados.status && dados.funcionario) {
-            const funcionario = dados.funcionario;
-            document.getElementById('nome').value = funcionario.nome || '';
-            document.getElementById('email').value = funcionario.email || '';
-            document.getElementById('telefone').value = funcionario.telefone || '';
-            document.getElementById('turno').value = funcionario.turno || '';
-            document.getElementById('dataNascimento').value = funcionario.dataNascimento?.substring(0, 10) || '';
-            if (funcionario.permissoes) {
-            funcionario.permissoes.forEach(permissao => {
-                const checkbox = document.querySelector(`input[name="permissoes"][value="${permissao}"]`);
-                if (checkbox) checkbox.checked = true;
+    async function atualizarFuncionario(event) {
+        event.preventDefault();
+        const permissoes = Array.from(document.querySelectorAll('input[name="permissoes"]:checked'))
+                                .map(checkbox => checkbox.value);
+        const dadosAtualizados = {
+            nome: document.getElementById('nome').value,
+            email: document.getElementById('email').value,
+            CPF: document.getElementById('CPF').value,
+            telefone: document.getElementById('telefone').value,
+            turno: document.getElementById('turno').value,
+            dataNascimento: document.getElementById('dataNascimento').value,
+            permissoes: permissoes,
+            role: document.getElementById('role').value
+        };
+        try {
+            const resposta = await fetch(`/funcionario/${id}`, {
+                method: 'PUT',
+                headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                },
+                body: JSON.stringify(dadosAtualizados)
             });
+            if (!resposta.ok) {
+                const erro = await resposta.json();
+                exibirMensagem(erro.msg || 'Erro ao atualizar funcionário.', 'erro');
+                return;
             }
-            if (funcionario.telefone) {
-                iti.setNumber(funcionario.telefone);
-            }   
-        } else {
-          exibirMensagem('Funcionário não encontrado!', 'erro');
+            exibirMensagem('Funcionário atualizado com sucesso!', 'sucesso');
+            setTimeout(() => {
+                window.location.href = '/funcionario';
+            }, 2000);
+        } catch (error) {
+            console.error('Erro ao atualizar funcionário:', error);
+            exibirMensagem('Erro interno ao tentar atualizar.', 'erro');
         }
-      } catch (error) {
-        console.error('Erro ao carregar funcionário:', error);
-        exibirMensagem('Erro ao carregar informações do funcionário.', 'erro');
-      }
     }
     
     if(document.getElementById("tabela-funcionarios")) {
@@ -271,5 +265,4 @@
         document.getElementById("form-adicionar").addEventListener("submit", adicionarFuncionario);
     }else if(document.getElementById("form-editar")) {
         document.getElementById("form-editar").addEventListener("submit", atualizarFuncionario);
-        carregarFuncionario();
     }

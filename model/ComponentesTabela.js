@@ -34,21 +34,7 @@ const ComponentesTabela = new Schema({
 	precoUnidade:{
 		type: Number,
 		required: true,
-	}, 
-	dimensoes:{
-        comprimento: {
-			type: Number,
-			required: true,
-		},
-        largura: {
-			type: Number,
-			required: true,
-		}, 
-		altura: {
-			type: Number,
-			required: true,
-		},        
-	}
+	},
 });
 
 const Componentes = model('Componentes', ComponentesTabela);

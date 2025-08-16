@@ -31,14 +31,14 @@
                     <td data-label="Nome">${comp.nome}</td>
                     <td data-label="Código">${comp.codigo}</td>
                     <td data-label="Descrição">
-                        <button class="btn btn-sm btn-outline-primary" onclick="verDescricao('${escapeHtml(comp.descricao || '')}')" title="Ver descrição">
+                        <button class="btn btn-sm btn-outline-primary" onclick="verDescricao('${escapeHtml(comp.descricao || '')}')">
                             <i class="bi bi-file-earmark-text"></i>
                         </button>
                     </td>
                     <td data-label="Data Entrada">${formatarData(comp.dataEntrada)}</td>
                     <td data-label="Validade">${formatarData(comp.dataValidade)}</td>
                     <td data-label="Quantidade">${comp.quantidade}</td>
-                    <td data-label="Preço Lote">R$ ${comp.precoPagoLote.toFixed(2)}</td>
+                    <td data-label="Lote">${comp.Lote}</td>
                     <td data-label="Preço Unidade">R$ ${comp.precoUnidade.toFixed(2)}</td>
                     <td data-label="Ações">
                             <button class="btn btn-sm btn-primary mb-1" onclick="editarComponente('${comp._id}', '${comp.codigo}')">
