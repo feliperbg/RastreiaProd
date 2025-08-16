@@ -1,62 +1,64 @@
+// Arquivo: router/ProdutoRouter.js
+
 const express = require('express');
-const path = require('path');
-const ProdutoControl = require('../control/ProdutoControl');
-const JWTMiddleware = require('../middleware/TokenJWTMiddleware');
+const router = express.Router(); // Usamos diretamente o Router do Express
 
-module.exports = class ProdutoRouter {
-    constructor() {
-        this.router = express.Router();
-        this.produtoControl = new ProdutoControl();
-        this.jwtMiddleware = new JWTMiddleware();
-        this.viewPath = path.join(__dirname, '..', 'view');
-        this.createRoutes();
-    }
+// Importa o Controller e os Middlewares
+const ProdutoController = require('../control/ProdutoControl');
+const TokenJWTMiddleware = require('../middleware/TokenJWTMiddleware');
+const MongoIdMiddleware = require('../middleware/MongoIdMiddleware');
+const ProdutoMiddleware = require('../middleware/ProdutoMiddleware');
 
-    createRoutes() {
-        // Páginas estáticas
-        this.router.get('/', (req, res) => {
-            res.render('main/produto');
-        });
+// Instancia apenas o middleware de JWT se ele guardar algum estado, senão pode ser estático também
+const jwtMiddleware = new TokenJWTMiddleware();
 
-        this.router.get('/editar-produto/:id', (req, res) => {
-            res.sendFile(path.join(this.viewPath, 'edit', 'editar-produto.html'));
-        });
+// --- ROTAS DA API ---
 
-        this.router.get('/adicionar-produto', (req, res) => {
-            res.sendFile(path.join(this.viewPath, 'add', 'adicionar-produto.html'));
-        });
+// Rota para renderizar a página principal de produtos
+router.get('/', (req, res) => {
+    // Aqui você pode adicionar lógica se precisar buscar dados antes de renderizar
+    res.render('main/produto'); 
+});
 
-        // Rotas de API protegidas
-        this.router.post('/',
-            (req, res) => this.produtoControl.create(req, res)
-        );
+// Criar um Produto
+router.post(
+    '/',
+    jwtMiddleware.validate.bind(jwtMiddleware), // Protege a rota
+    ProdutoMiddleware.validateCreate, // Valida os campos obrigatórios
+    ProdutoController.create
+);
 
-        this.router.get('/readALL',
-            this.jwtMiddleware.validate.bind(this.jwtMiddleware),
-            (req, res) => this.produtoControl.readAll(req, res)
-        );
+// Ler todos os Produtos
+router.get(
+    '/readAll', // Mantive sua rota original
+    jwtMiddleware.validate.bind(jwtMiddleware),
+    ProdutoController.readAll
+);
 
-        this.router.get('/:id',
-            this.jwtMiddleware.validate.bind(this.jwtMiddleware),
-            (req, res) => this.produtoControl.readByID(req, res)
-        );
+// Ler um Produto pelo ID
+router.get(
+    '/:id',
+    jwtMiddleware.validate.bind(jwtMiddleware),
+    MongoIdMiddleware.validate, // Valida se o ID tem formato válido
+    ProdutoController.readByID
+);
 
-        this.router.delete('/:id',
-            this.jwtMiddleware.validate.bind(this.jwtMiddleware),
-            (req, res) => this.produtoControl.delete(req, res)
-        );
+// Atualizar um Produto
+router.put(
+    '/:id',
+    jwtMiddleware.validate.bind(jwtMiddleware),
+    MongoIdMiddleware.validate, // Valida o ID
+    ProdutoController.update
+);
 
-        this.router.put('/:id',
-            this.jwtMiddleware.validate.bind(this.jwtMiddleware),
-            (req, res) => this.produtoControl.update(req, res)
-        );
+// Deletar um Produto
+router.delete(
+    '/:id',
+    jwtMiddleware.validate.bind(jwtMiddleware),
+    MongoIdMiddleware.validate, // Valida o ID
+    ProdutoController.delete
+);
 
-        // Retorna todos em JSON
-        this.router.get('/json',
-            this.jwtMiddleware.validate.bind(this.jwtMiddleware), // Se precisar proteger
-            (req, res) => this.produtoControl.readAllJSON(req, res)
-        );
 
-        return this.router;
-    }
-};
+// Exporta apenas o router configurado
+module.exports = router;

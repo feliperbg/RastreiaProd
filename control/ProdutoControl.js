@@ -1,130 +1,93 @@
+// Arquivo: control/ProdutoControl.js
+
+// Importa o modelo Mongoose refatorado
 const Produto = require('../model/Produto');
 
-module.exports = class ProdutoControl {
-  async create(request, response) {
+// Usamos uma classe com métodos estáticos, não precisando instanciar o controller no router
+module.exports = class ProdutoController {
+  
+  static async create(request, response) {
     try {
-      const {
-        nome,
-        codigo,
-        descricao,
-        dataEntrada,
-        dataValidade,
-        componentesNecessarios,
-        precoMontagem,
-        precoVenda,
-        quantidade,
-        etapas,
-      } = request.body.produto;
+      // O corpo da requisição já contém os dados validados pelo middleware
+      const produtoCriado = await Produto.create(request.body);
 
-      const novoProduto = new Produto(
-        nome,
-        codigo,
-        descricao,
-        dataEntrada,
-        dataValidade || null,
-        componentesNecessarios || [],
-        precoMontagem,
-        precoVenda,
-        quantidade || 1,
-        etapas || [],
-      );
+      return response.status(201).json({
+        status: true,
+        msg: 'Produto criado com sucesso!',
+        produto: produtoCriado,
+      });
 
-      const criado = await novoProduto.create();
-
-      if (criado) {
-        return response.status(201).json({ status: true, msg: 'Produto criado' });
-      } else {
-        return response.status(500).json({ status: false, msg: 'Erro ao criar' });
-      }
     } catch (error) {
-      console.error(error);
-      return response.status(500).json({ status: false, msg: 'Erro interno' });
+      // Erros de validação do Mongoose (ex: código duplicado) serão capturados aqui
+      return response.status(400).json({ status: false, msg: error.message });
     }
   }
 
-  async readAll(request, response) {
+  static async readAll(request, response) {
     try {
-      const produto = new Produto();
-      const produtos = await produto.readAll();
+      const produtos = await Produto.find().sort('nome');
       return response.status(200).json({ status: true, produtos });
     } catch (error) {
-      console.error(error);
-      return response.status(500).json({ status: false, msg: 'Erro ao listar' });
+      return response.status(500).json({ status: false, msg: 'Erro ao listar produtos.' });
     }
   }
 
-  async readByID(request, response) {
+  static async readByID(request, response) {
     try {
       const { id } = request.params;
-      const produto = new Produto();
-      const encontrado = await produto.readByID(id);
+      
+      // Usa .populate para carregar os dados dos componentes e etapas, não apenas os IDs
+      const produto = await Produto.findById(id)
+        .populate('componentesNecessarios.componente', 'nome codigo') // Popula nome e código do componente
+        .populate('etapas', 'nome'); // Popula o nome da etapa
 
-      if (encontrado) {
-        return response.status(200).json({ status: true, produto: encontrado });
-      } else {
-        return response.status(404).json({ status: false, msg: 'Produto não encontrado' });
+      if (!produto) {
+        return response.status(404).json({ status: false, msg: 'Produto não encontrado.' });
       }
+
+      return response.status(200).json({ status: true, produto });
     } catch (error) {
-      console.error(error);
-      return response.status(500).json({ status: false, msg: 'Erro ao buscar' });
+      return response.status(500).json({ status: false, msg: 'Erro ao buscar produto.' });
     }
   }
 
-  async update(request, response) {
+  static async update(request, response) {
     try {
       const { id } = request.params;
       const dadosAtualizacao = request.body;
 
-      if (!id) {
-        return response.status(400).json({ status: false, msg: 'ID do produto não fornecido' });
+      // Encontra e atualiza. { new: true } retorna o documento já atualizado.
+      const produtoAtualizado = await Produto.findByIdAndUpdate(id, dadosAtualizacao, {
+        new: true, // Retorna o documento modificado
+        runValidators: true, // Força a execução das validações do schema na atualização
+      });
+
+      if (!produtoAtualizado) {
+        return response.status(404).json({ status: false, msg: 'Produto não encontrado.' });
       }
 
-      // Cria instância do produto com dados atualizados
-      const produto = new Produto(
-        dadosAtualizacao.nome,
-        dadosAtualizacao.codigo,
-        dadosAtualizacao.descricao,
-        dadosAtualizacao.dataEntrada,
-        dadosAtualizacao.dataValidade ? dadosAtualizacao.dataValidade : null,
-        dadosAtualizacao.componentesNecessarios || [],
-        dadosAtualizacao.precoMontagem,
-        dadosAtualizacao.precoVenda,
-        dadosAtualizacao.quantidade || 1,
-        dadosAtualizacao.etapas || []
-      );
-
-      produto._idProduto = id;
-
-      const atualizado = await produto.update();
-
-      if (atualizado) {
-        return response.status(200).json({ status: true, msg: 'Atualizado com sucesso', produto: produto });
-      } else {
-        return response.status(404).json({ status: false, msg: 'Produto não encontrado ou erro ao atualizar' });
-      }
+      return response.status(200).json({
+        status: true,
+        msg: 'Produto atualizado com sucesso!',
+        produto: produtoAtualizado,
+      });
     } catch (error) {
-      console.error(error);
-      return response.status(500).json({ status: false, msg: 'Erro interno' });
+      return response.status(400).json({ status: false, msg: error.message });
     }
   }
 
-
-  async delete(request, response) {
+  static async delete(request, response) {
     try {
       const { id } = request.params;
-      const produto = new Produto();
-      produto._idProduto = id;
+      const produtoDeletado = await Produto.findByIdAndDelete(id);
 
-      const deletado = await produto.delete();
-
-      if (deletado) {
-        return response.status(200).json({ status: true, msg: 'Produto removido' });
-      } else {
-        return response.status(404).json({ status: false, msg: 'Produto não encontrado' });
+      if (!produtoDeletado) {
+        return response.status(404).json({ status: false, msg: 'Produto não encontrado.' });
       }
+
+      return response.status(200).json({ status: true, msg: 'Produto removido com sucesso!' });
     } catch (error) {
-      console.error(error);
-      return response.status(500).json({ status: false, msg: 'Erro ao remover' });
+      return response.status(500).json({ status: false, msg: 'Erro ao remover produto.' });
     }
   }
 };

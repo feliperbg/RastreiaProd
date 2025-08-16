@@ -9,6 +9,7 @@
   "author": "Felipe Goncalves, Jose Gadioli, Joao Nogueira",
   "license": "ISC",
   "dependencies": {
+    "axios": "^1.11.0",
     "bcrypt": "^5.1.1",
     "ejs": "^3.1.10",
     "express": "^4.21.2",

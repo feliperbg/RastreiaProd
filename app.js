@@ -3,7 +3,7 @@ const path = require('path');
 const BancoMongoose = require("./model/BancoMongoose");
 const FuncionariosRouter = require('./router/FuncionarioRouter');
 const ComponentesRouter = require('./router/ComponenteRouter');
-const ProdutosRouter = require('./router/ProdutoRouter');
+const ProdutoRouter = require('./router/ProdutoRouter');
 const EtapasRouter = require('./router/EtapaRouter');
 const OrdensProducaoRouter = require('./router/OrdemProducaoRouter');
 const JWTMiddleware = require('./middleware/TokenJWTMiddleware');
@@ -16,7 +16,6 @@ const Banco = new BancoMongoose();
 const Painel = new PainelRouter();
 const FuncionarioRouter = new FuncionariosRouter();
 const ComponenteRouter = new ComponentesRouter();
-const ProdutoRouter = new ProdutosRouter();
 const EtapaRouter = new EtapasRouter();
 const OrdemProducaoRouter = new OrdensProducaoRouter();
 const jwt = new JWTMiddleware();
@@ -54,7 +53,7 @@ app.use('/funcionario', FuncionarioRouter.createRoutes());
 
 app.use('/componente', ComponenteRouter.createRoutes());
 
-app.use('/produto', ProdutoRouter.createRoutes());
+app.use('/produto', ProdutoRouter);
 
 app.use('/etapa', EtapaRouter.createRoutes());
 
