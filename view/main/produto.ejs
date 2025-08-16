@@ -10,52 +10,7 @@
     <!-- SweetAlert2 CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <link rel="stylesheet" href="css/adminlte.min.css" />
-    <style>
-        /* Estilos para centralizar o conteúdo da tabela */
-        .table td, .table th {
-            text-align: center;
-            vertical-align: middle;
-        }
-        
-        /* Ajuste para a coluna de ações */
-        .table td[data-label="Ações"] {
-            white-space: nowrap;
-        }
-        
-        /* Estilos responsivos */
-        @media (max-width: 768px) {
-            .table-responsive {
-                border: 0;
-            }
-            
-            .table-responsive thead {
-                display: none;
-            }
-            
-            .table-responsive tr {
-                display: block;
-                margin-bottom: 1rem;
-                border: 1px solid #dee2e6;
-            }
-            
-            .table-responsive td {
-                display: block;
-                text-align: right;
-                border-bottom: 1px solid #dee2e6;
-            }
-            
-            .table-responsive td::before {
-                content: attr(data-label);
-                float: left;
-                font-weight: bold;
-            }
-            
-            .table-responsive td:last-child {
-                border-bottom: 0;
-                text-align: center;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="css/tabela.css">
 </head>
 <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
     <div class="app-wrapper">
