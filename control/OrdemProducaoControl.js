@@ -1,171 +1,80 @@
-const OrdemProducao = require('../model/OrdemProducao.js');
+const OrdemProducao = require('../model/OrdemProducao');
+const Produto = require('../model/Produto');
 
-module.exports = class OrdemProducaoControl {
-    /**
-     * Cria uma nova ordem de produção
-     */
-    async create(request, response) {
+module.exports = class OrdemProducaoController {
+    static async create(req, res) {
         try {
-            const {
-                status,
-                produto,
-                etapa,
-                funcionarioAtivo,
-                timestampProducao
-            } = request.body;
+            const { produtoId, quantidade } = req.body;
 
-            const novaOrdem = new OrdemProducao(
-                status,
-                produto,
-                etapa || [],
-                funcionarioAtivo || [],
-                timestampProducao || {}
-            );
+            // Lógica para verificar se há componentes suficientes pode ser adicionada aqui
+            // Ex: buscar o produto, seus componentes necessários vs. estoque de componentes
 
-            const criada = await novaOrdem.create();
+            const novaOrdem = await OrdemProducao.create({ produto: produtoId, quantidade });
+            return res.status(201).json({ status: true, msg: 'Ordem de produção criada!', ordem: novaOrdem });
+        } catch (error) {
+            return res.status(400).json({ status: false, msg: error.message });
+        }
+    }
 
-            if (criada) {
-                return response.status(201).send({
-                    status: true,
-                    msg: 'Ordem de produção criada com sucesso',
-                    ordem: {
-                        id: novaOrdem.idOrdem,
-                        produto: novaOrdem.produto
-                    }
-                });
-            } else {
-                return response.status(500).send({
-                    status: false,
-                    msg: 'Erro ao criar ordem de produção'
-                });
+    static async readAll(req, res) {
+        try {
+            const ordens = await OrdemProducao.find()
+                .populate('produto', 'nome codigo')
+                .populate('etapaAtual', 'nome')
+                .sort('-createdAt');
+            return res.status(200).json({ status: true, ordens });
+        } catch (error) {
+            return res.status(500).json({ status: false, msg: 'Erro ao listar ordens de produção.' });
+        }
+    }
+
+    static async readByID(req, res) {
+        try {
+            const { id } = req.params;
+            const ordem = await OrdemProducao.findById(id)
+                .populate('produto')
+                .populate('etapaAtual');
+
+            if (!ordem) {
+                return res.status(404).json({ status: false, msg: 'Ordem de produção não encontrada.' });
             }
+
+            return res.status(200).json({ status: true, ordem });
         } catch (error) {
-            console.error('Erro ao criar ordem de produção:', error);
-            return response.status(500).send({
-                status: false,
-                msg: 'Erro interno ao criar ordem de produção'
-            });
+            return res.status(500).json({ status: false, msg: 'Erro ao buscar ordem de produção.' });
         }
     }
 
-    /**
-     * Lista todas as ordens de produção
-     */
-    async readAll(request, response) {
+    static async update(req, res) {
         try {
-            const ordem = new OrdemProducao();
-            const ordensProducao = await ordem.readAll();
+            const { id } = req.params;
+            const dadosAtualizacao = req.body;
 
-            return response.status(200).send({
-                status: true,
-                ordensProducao: ordensProducao,
-            });
-        } catch (error) {
-            console.error('Erro ao listar ordens de produção:', error);
-            return response.status(500).send({
-                status: false,
-                msg: 'Erro ao listar ordens de produção'
-            });
-        }
-    }
+            const ordemAtualizada = await OrdemProducao.findByIdAndUpdate(id, dadosAtualizacao, { new: true, runValidators: true });
 
-    /**
-     * Obtém uma ordem de produção específica por ID
-     */
-    async readByID(request, response) {
-        try {
-            const { id } = request.params;
-            const ordem = new OrdemProducao();
-            const encontrada = await ordem.readByID(id);
-
-            if (encontrada) {
-                return response.status(200).send({
-                    status: true,
-                    ordem: encontrada
-                });
-            } else {
-                return response.status(404).send({
-                    status: false,
-                    msg: 'Ordem de produção não encontrada'
-                });
+            if (!ordemAtualizada) {
+                return res.status(404).json({ status: false, msg: 'Ordem de produção não encontrada.' });
             }
+
+            return res.status(200).json({ status: true, msg: 'Ordem atualizada!', ordem: ordemAtualizada });
         } catch (error) {
-            console.error('Erro ao buscar ordem de produção:', error);
-            return response.status(500).send({
-                status: false,
-                msg: 'Erro ao buscar ordem de produção'
-            });
+            return res.status(400).json({ status: false, msg: error.message });
         }
     }
 
-    /**
-     * Atualiza uma ordem de produção existente
-     */
-    async update(request, response) {
+    static async delete(req, res) {
         try {
-            const { id } = request.params;
-            const dadosAtualizacao = request.body;
+            const { id } = req.params;
+            // Em um sistema real, talvez seja melhor "cancelar" do que deletar
+            const ordemDeletada = await OrdemProducao.findByIdAndDelete(id);
 
-            const ordem = new OrdemProducao();
-            await ordem.readByID(id);
-
-            // Atualiza apenas os campos permitidos
-            if (dadosAtualizacao.status !== undefined) ordem.status = dadosAtualizacao.status;
-            if (dadosAtualizacao.produto) ordem.produto = dadosAtualizacao.produto;
-            if (dadosAtualizacao.etapa) ordem.etapa = dadosAtualizacao.etapa;
-            if (dadosAtualizacao.funcionarioAtivo) ordem.funcionarioAtivo = dadosAtualizacao.funcionarioAtivo;
-            if (dadosAtualizacao.timestampProducao) ordem.timestampProducao = dadosAtualizacao.timestampProducao;
-
-            const atualizado = await ordem.update();
-
-            if (atualizado) {
-                return response.status(200).send({
-                    status: true,
-                    msg: 'Ordem de produção atualizada com sucesso'
-                });
-            } else {
-                return response.status(500).send({
-                    status: false,
-                    msg: 'Erro ao atualizar ordem de produção'
-                });
+            if (!ordemDeletada) {
+                return res.status(404).json({ status: false, msg: 'Ordem de produção não encontrada.' });
             }
+
+            return res.status(200).json({ status: true, msg: 'Ordem removida!' });
         } catch (error) {
-            console.error('Erro ao atualizar ordem de produção:', error);
-            return response.status(500).send({
-                status: false,
-                msg: 'Erro interno ao atualizar ordem de produção'
-            });
+            return res.status(500).json({ status: false, msg: 'Erro ao remover ordem de produção.' });
         }
     }
-
-    /**
-     * Remove uma ordem de produção
-     */
-    async delete(request, response) {
-        try {
-            const { id } = request.params;
-            const ordem = new OrdemProducao();
-            ordem.idOrdem = id;
-
-            const deletada = await ordem.delete();
-
-            if (deletada) {
-                return response.status(200).send({
-                    status: true,
-                    msg: 'Ordem de produção removida com sucesso'
-                });
-            } else {
-                return response.status(404).send({
-                    status: false,
-                    msg: 'Ordem de produção não encontrada'
-                });
-            }
-        } catch (error) {
-            console.error('Erro ao remover ordem de produção:', error);
-            return response.status(500).send({
-                status: false,
-                msg: 'Erro ao remover ordem de produção'
-            });
-        }
-    }
-};
+}

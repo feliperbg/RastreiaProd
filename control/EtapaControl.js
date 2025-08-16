@@ -1,80 +1,68 @@
-const Etapa = require('../model/Etapa'); // Importa a classe do modelo Etapa
+const Etapa = require('../model/Etapa');
 
-class EtapaControl {
-    // Criação de uma nova etapa
-    async create(req, res) {
+module.exports = class EtapaController {
+    static async create(req, res) {
         try {
-            const { nome, sequencias, departamentoResponsavel, procedimentos, componenteConclusao, funcionariosResponsaveis } = req.body;
-
-            // Cria uma instância do modelo Etapa
-            const novaEtapa = new Etapa(null, nome, sequencias, departamentoResponsavel, procedimentos, componenteConclusao, funcionariosResponsaveis);
-            
-            // Chama o método 'create' do modelo para salvar no banco de dados
-            const sucesso = await novaEtapa.create();
-            if (sucesso) {
-                res.status(201).json({ mensagem: 'Etapa criada com sucesso!', etapa: novaEtapa });
-            } else {
-                res.status(500).json({ mensagem: 'Erro ao criar etapa' });
-            }
-        } catch (err) {
-            res.status(500).json({ mensagem: 'Erro ao criar etapa', erro: err.message });
+            const novaEtapa = await Etapa.create(req.body);
+            return res.status(201).json({ status: true, msg: 'Etapa criada com sucesso!', etapa: novaEtapa });
+        } catch (error) {
+            return res.status(400).json({ status: false, msg: error.message });
         }
     }
 
-    // Retorna todas as etapas
-    async readAll(req, res) {
+    static async readAll(req, res) {
         try {
-            const etapaModel = new Etapa();  // Instância do modelo
-            const etapas = await etapaModel.readAll();
-            res.status(200).json(etapas);
-        } catch (err) {
-            res.status(500).json({ mensagem: 'Erro ao listar etapas', erro: err.message });
+            const etapas = await Etapa.find().sort('ordem');
+            return res.status(200).json({ status: true, etapas });
+        } catch (error) {
+            return res.status(500).json({ status: false, msg: 'Erro ao listar etapas.' });
         }
     }
 
-    // Retorna uma etapa específica pelo ID
-    async readByID(req, res) {
+    static async readByID(req, res) {
         try {
-            const etapaModel = new Etapa();  // Instância do modelo
-            const etapa = await etapaModel.readByID(req.params.id);
+            const { id } = req.params;
+            const etapa = await Etapa.findById(id);
+
             if (!etapa) {
-                return res.status(404).json({ mensagem: 'Etapa não encontrada' });
+                return res.status(404).json({ status: false, msg: 'Etapa não encontrada.' });
             }
-            res.status(200).json(etapa);
-        } catch (err) {
-            res.status(500).json({ mensagem: 'Erro ao buscar etapa', erro: err.message });
+
+            return res.status(200).json({ status: true, etapa });
+        } catch (error) {
+            return res.status(500).json({ status: false, msg: 'Erro ao buscar etapa.' });
         }
     }
 
-    // Deleta uma etapa pelo ID
-    async delete(req, res) {
+    static async update(req, res) {
         try {
-            const etapaModel = new Etapa(req.params.id);  // Instância do modelo
-            const sucesso = await etapaModel.delete();
-            if (!sucesso) {
-                return res.status(404).json({ mensagem: 'Etapa não encontrada' });
+            const { id } = req.params;
+            const dadosAtualizacao = req.body;
+
+            const etapaAtualizada = await Etapa.findByIdAndUpdate(id, dadosAtualizacao, { new: true, runValidators: true });
+
+            if (!etapaAtualizada) {
+                return res.status(404).json({ status: false, msg: 'Etapa não encontrada.' });
             }
-            res.status(200).json({ mensagem: 'Etapa excluída com sucesso' });
-        } catch (err) {
-            res.status(500).json({ mensagem: 'Erro ao deletar etapa', erro: err.message });
+
+            return res.status(200).json({ status: true, msg: 'Etapa atualizada!', etapa: etapaAtualizada });
+        } catch (error) {
+            return res.status(400).json({ status: false, msg: error.message });
         }
     }
 
-    // Atualiza os dados de uma etapa
-    async update(req, res) {
+    static async delete(req, res) {
         try {
-            const { nome, sequencias, departamentoResponsavel, procedimentos, componenteConclusao, funcionariosResponsaveis } = req.body;
-            const etapaModel = new Etapa(req.params.id, nome, sequencias, departamentoResponsavel, procedimentos, componenteConclusao, funcionariosResponsaveis);  // Instância do modelo
+            const { id } = req.params;
+            const etapaDeletada = await Etapa.findByIdAndDelete(id);
 
-            const sucesso = await etapaModel.update();
-            if (!sucesso) {
-                return res.status(404).json({ mensagem: 'Etapa não encontrada' });
+            if (!etapaDeletada) {
+                return res.status(404).json({ status: false, msg: 'Etapa não encontrada.' });
             }
-            res.status(200).json({ mensagem: 'Etapa atualizada com sucesso', etapa: etapaModel });
-        } catch (err) {
-            res.status(500).json({ mensagem: 'Erro ao atualizar etapa', erro: err.message });
+
+            return res.status(200).json({ status: true, msg: 'Etapa removida!' });
+        } catch (error) {
+            return res.status(500).json({ status: false, msg: 'Erro ao remover etapa.' });
         }
     }
 }
-
-module.exports = EtapaControl;
