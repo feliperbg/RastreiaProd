@@ -1,5 +1,5 @@
-const Produto = require('./model/Produto'); // Sua classe com o método create()
-const BancoMongoose = require('./model/BancoMongoose');
+const Produto = require('../model/Produto'); // Sua classe com o método create()
+const BancoMongoose = require('../model/BancoMongoose');
 
 Banco = new BancoMongoose;
 
