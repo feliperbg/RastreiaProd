@@ -1,0 +1,14 @@
+codigo do modal em editar-produto.html tem duas tag script
+    Modal das etapas(fetch) e colocar em sequencia numerica inves da bolinha
+    Modal de componentesNecessarios (fetch) colocar quantidade
+    Arrumar Edit produtos, como colocar o modal ja marcado dos que está usando
+
+Adicionar produtos -> colocar css e modal com checkbox pra selcionar os componentesNecessarios e talvez qtd 
+Verificar back-end de ordem de producao e fazer tela de adicionar-os e arrumar editar-os
+Fazer os fetch corretamente do gráficos/ criar as rotas que geram e ja ver se necessario o posterior, arrumar fetch do kanban quando
+arrumar os e etapas (ver o que mostrar no kanban)
+
+
+
+-----------------POSTERIOR-----------------
+Mudar gráfico de status para algo haver com componentes e colocalo ao meio dos dois talvez

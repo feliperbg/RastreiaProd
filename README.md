@@ -44,3 +44,7 @@ Atualmente, há poucos sistemas que conseguem monitorar e identificar, com preci
 
 ## 🏆 Status do Projeto
 🚧 Em desenvolvimento...
+
+
+## Bibliotecas
+- **npm install bcrypt ejs express jsonwebtoken mongodb mongoose mongoose-sequence**
