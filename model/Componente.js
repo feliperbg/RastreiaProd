@@ -13,11 +13,10 @@ class Componente {
      * @param {Date} dataEntrada - Data de entrada do componente.
      * @param {Date} dataValidade - Data de validade do componente.
      * @param {number} quantidade - Quantidade do componente.
-     * @param {number} precoPagoLote - Preço pago pelo lote do componente.
+     * @param {String} Lote - Lote do componente.
      * @param {number} precoUnidade - Preço por unidade do componente.
-     * @param {Object} dimensoes - Dimensões do componente (comprimento, largura, altura).
      */
-    constructor(nome, codigo, descricao, dataEntrada, dataValidade, quantidade, precoPagoLote, precoUnidade, dimensoes) {
+    constructor(nome, codigo, descricao, dataEntrada, dataValidade, quantidade, Lote, precoUnidade) {
         this._idComponente = null;
         this._nome = nome;
         this._codigo = codigo;
@@ -25,9 +24,8 @@ class Componente {
         this._dataEntrada = dataEntrada;
         this._dataValidade = dataValidade;
         this._quantidade = quantidade;
-        this._precoPagoLote = precoPagoLote;
+        this._Lote = Lote;
         this._precoUnidade =  precoUnidade;
-        this._dimensoes = dimensoes;
     }
 
     /**
@@ -46,9 +44,8 @@ class Componente {
                 dataEntrada: this._dataEntrada,
                 dataValidade: this._dataValidade,
                 quantidade: this._quantidade,
-                precoPagoLote: this._precoPagoLote,
+                Lote: this._Lote,
                 precoUnidade: this._precoUnidade,
-                dimensoes: this._dimensoes
             });
 
             // Salva o componente no banco de dados e aguarda o retorno.
@@ -99,9 +96,8 @@ class Componente {
                     dataEntrada: this._dataEntrada,
                     dataValidade: this._dataValidade,
                     quantidade: this._quantidade,
-                    precoPagoLote: this._precoPagoLote,
+                    Lote: this._Lote,
                     precoUnidade: this._precoUnidade,
-                    dimensoes: this._dimensoes
                 },
                 { new: true } // Retorna o documento atualizado
             );
@@ -150,9 +146,8 @@ class Componente {
                 this._dataEntrada = componente.dataEntrada;
                 this._dataValidade = componente.dataValidade;
                 this._quantidade = componente.quantidade;
-                this._precoPagoLote = componente.precoPagoLote;
+                this._Lote = componente.Lote;
                 this._precoUnidade = componente.precoUnidade;
-                this._dimensoes = componente.dimensoes;
             }
             return componente; // Retorna o componente encontrado
         } catch (error) {
@@ -212,11 +207,11 @@ class Componente {
         this._quantidade = quantidade;
     }
 
-    get precoPagoLote() {
-        return this._precoPagoLote;
+    get Lote() {
+        return this._Lote;
     }
-    set precoPagoLote(precoPagoLote) {
-        this._precoPagoLote = precoPagoLote;
+    set Lote(Lote) {
+        this._Lote = Lote;
     }
 
     get precoUnidade() {
@@ -224,13 +219,6 @@ class Componente {
     }
     set precoUnidade(precoUnidade) {
         this._precoUnidade = precoUnidade;
-    }
-
-    get dimensoes() {
-        return this._dimensoes;
-    }
-    set dimensoes(dimensoes) {
-        this._dimensoes = dimensoes;
     }
 }
 

@@ -87,24 +87,6 @@
       </div>
 
       <div class="mb-3">
-        <label class="form-label">Dimensões</label>
-        <div class="row">
-            <div class="col-md-4 mb-2">
-                <label for="altura" class="form-label">Altura</label>
-                <input type="number" id="altura" name="altura" class="form-control" />
-            </div>
-            <div class="col-md-4 mb-2">
-                <label for="comprimento" class="form-label">Comprimento</label>
-                <input type="number" id="comprimento" name="comprimento" class="form-control" />
-            </div>
-            <div class="col-md-4 mb-2">
-                <label for="largura" class="form-label">Largura</label>
-                <input type="number" id="largura" name="largura" class="form-control" />
-            </div>
-        </div>
-    </div>
-
-      <div class="mb-3">
         <label for="quantidade" class="form-label">Quantidade</label>
         <input type="number" id="quantidade" name="quantidade" class="form-control" />
       </div>
@@ -166,11 +148,6 @@
           document.getElementById('precoVenda').value = p.precoVenda || '';
           document.getElementById('quantidade').value = p.quantidade || '';
           document.getElementById('etapas').value = p.etapas || '';
-          if (p.dimensoes) {
-            document.getElementById('altura').value = p.dimensoes.altura || '';
-            document.getElementById('comprimento').value = p.dimensoes.comprimento || '';
-            document.getElementById('largura').value = p.dimensoes.largura || '';
-          }
           document.title = `Editar Produto - ${p.nome}`;
         } else {
           exibirMensagem('Produto não encontrado!', 'erro');
@@ -190,11 +167,6 @@
           componentesNecessarios: document.getElementById('componentesNecessarios').value.split(',').map(s => s.trim()).filter(Boolean),
           dataEntrada: document.getElementById('dataEntrada').value,
           dataValidade: document.getElementById('dataValidade').value,
-          dimensoes: {
-            altura: document.getElementById('altura').value,
-            comprimento: document.getElementById('comprimento').value,
-            largura: document.getElementById('largura').value
-          },
           precoMontagem: parseFloat(document.getElementById('precoMontagem').value),
           precoVenda: parseFloat(document.getElementById('precoVenda').value),
           quantidade: parseInt(document.getElementById('quantidade').value),
@@ -349,11 +321,6 @@
         document.getElementById('precoMontagem').value = p.precoMontagem || '';
         document.getElementById('precoVenda').value = p.precoVenda || '';
         document.getElementById('quantidade').value = p.quantidade || '';
-        if (p.dimensoes) {
-          document.getElementById('altura').value = p.dimensoes.altura || '';
-          document.getElementById('comprimento').value = p.dimensoes.comprimento || '';
-          document.getElementById('largura').value = p.dimensoes.largura || '';
-        }
         document.title = `Editar Produto - ${p.nome}`;
       } else {
         exibirMensagem('Produto não encontrado!', 'erro');
@@ -380,11 +347,6 @@
         precoVenda: parseFloat(document.getElementById('precoVenda').value),
         quantidade: parseInt(document.getElementById('quantidade').value),
         etapas: etapasIds,
-        dimensoes: {
-          altura: Number(document.getElementById('altura').value),
-          comprimento: Number(document.getElementById('comprimento').value),
-          largura: Number(document.getElementById('largura').value)
-        }
       }
     };
 
