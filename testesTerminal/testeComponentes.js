@@ -1,6 +1,6 @@
 
-const Componente = require('./model/Componente'); // Sua classe que implementa os métodos
-const BancoMongoose = require('./model/BancoMongoose')
+const Componente = require('../model/Componente'); // Sua classe que implementa os métodos
+const BancoMongoose = require('../model/BancoMongoose')
 
 Banco = new BancoMongoose;
 

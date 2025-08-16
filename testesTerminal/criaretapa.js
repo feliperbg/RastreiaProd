@@ -1,5 +1,5 @@
-const BancoMongoose = require('./model/BancoMongoose');
-const Etapa = require("./model/Etapa");
+const BancoMongoose = require('../model/BancoMongoose');
+const Etapa = require("../model/Etapa");
 
 // Conecta ao banco de dados MongoDB
 const Banco = new BancoMongoose();
