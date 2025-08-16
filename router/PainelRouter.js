@@ -15,12 +15,9 @@ module.exports = class PainelRouter {
 
     createRoutes() {
         // Página principal do painel (se houver)
-        this.router.get('/',
-            this.jwtMiddleware.validate.bind(this.jwtMiddleware),
-            (req, res) => {
-                render('painel.ejs');
-            }
-        );
+        // this.router.get('/', (req, res) => {
+        //     res.render('painel');
+        // });
 
         // Rotas de API do painel
         this.router.get('/kanban',

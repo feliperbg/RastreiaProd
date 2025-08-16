@@ -14,7 +14,7 @@ module.exports = class ComponenteRouter {
     createRoutes() {
         // Rota estática
         this.router.get('/', (req, res) => {
-            res.render('componente');
+            res.render('main/componente');
         });
 
         this.router.get('/adicionar-componente',(req, res) => {

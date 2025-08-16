@@ -14,7 +14,7 @@ module.exports = class EtapaRouter {
     createRoutes() {
         // Rota estática para mostrar a página de etapas
         this.router.get('/', (req, res) => {
-            res.render('etapa.ejs');
+            res.render('main/etapa');
         });
 
         // Rota para editar uma etapa, que renderiza a página de edição

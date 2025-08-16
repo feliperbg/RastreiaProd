@@ -14,7 +14,7 @@ module.exports = class FuncionarioRouter {
     createRoutes() {
         // Rota estática
         this.router.get('/', (req, res) => {
-            res.render('funcionario');
+            res.render('main/funcionario');
         });
 
         // Login (sem autenticação)

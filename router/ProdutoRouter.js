@@ -15,7 +15,7 @@ module.exports = class ProdutoRouter {
     createRoutes() {
         // Páginas estáticas
         this.router.get('/', (req, res) => {
-            res.render('produto');
+            res.render('main/produto');
         });
 
         this.router.get('/editar-produto/:id', (req, res) => {
