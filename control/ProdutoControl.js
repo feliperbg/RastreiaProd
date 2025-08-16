@@ -2,33 +2,31 @@ const Produto = require('../model/Produto');
 
 module.exports = class ProdutoControl {
   async create(request, response) {
-    console.log(request.body);
     try {
       const {
         nome,
         codigo,
         descricao,
-        componentesNecessarios,
+        dataEntrada,
         dataValidade,
+        componentesNecessarios,
         precoMontagem,
         precoVenda,
         quantidade,
         etapas,
-        dimensoes
       } = request.body.produto;
 
       const novoProduto = new Produto(
         nome,
         codigo,
         descricao,
+        dataEntrada,
+        dataValidade || null,
         componentesNecessarios || [],
-        //dataEntrada ? new Date(dataEntrada) : Date.now(),
-        dataValidade ? new Date(dataValidade) : Date.now() + 24 * 60 * 60 * 1000, // Um dia após a data de entrada
         precoMontagem,
         precoVenda,
-        quantidade || 0,
+        quantidade || 1,
         etapas || [],
-        dimensoes || {},
       );
 
       const criado = await novoProduto.create();
@@ -86,12 +84,11 @@ module.exports = class ProdutoControl {
         dadosAtualizacao.nome,
         dadosAtualizacao.codigo,
         dadosAtualizacao.descricao,
-        dadosAtualizacao.dataEntrada ? new Date(dadosAtualizacao.dataEntrada) : undefined,
-        dadosAtualizacao.dataValidade ? new Date(dadosAtualizacao.dataValidade) : undefined,
+        dadosAtualizacao.dataEntrada,
+        dadosAtualizacao.dataValidade ? dadosAtualizacao.dataValidade : null,
         dadosAtualizacao.componentesNecessarios || [],
         dadosAtualizacao.precoMontagem,
         dadosAtualizacao.precoVenda,
-        dadosAtualizacao.dimensoes || {},
         dadosAtualizacao.quantidade || 1,
         dadosAtualizacao.etapas || []
       );

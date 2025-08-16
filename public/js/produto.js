@@ -27,25 +27,19 @@
         const nomesComponentes = await Promise.all(
           (prod.componentesNecessarios || []).map(obterNomeComponente)
         );
-      
-        const modalIdDesc = `modal-desc-${prod._id}`;
-        const modalIdDim = `modal-dim-${prod._id}`;
-        const modalIdEtapas = `modal-etapas-${prod._id}`;
-
+        console.log(nomesComponentes)
         const componentesInfo = (prod.componentesNecessarios || [])
           .map((comp, idx) => {
             // Se nomesComponentes[idx] não existir, mostra "Desconhecido"
-            return `${nomesComponentes[idx] || "Desconhecido"} - <${comp}>`;
+            return `Código: ${nomesComponentes[idx].codigo || "Desconhecido"} - Lote: ${nomesComponentes[idx].Lote} - Qtd Disponível em estoque: ${nomesComponentes[idx].quantidade}`;
           })
           .join("<br>");
-        console.log(`Componentes para o produto ${prod.nome}:`, componentesInfo);
-        console.log(prod);
         const tr = document.createElement("tr");
         tr.innerHTML = `
           <td data-label="Nome">${prod.nome}</td>
           <td data-label="Código">${prod.codigo}</td>
           <td data-label="Descrição">
-            <button class="btn btn-sm btn-outline-primary" onclick="verDescricao('${escapeHtml(prod.descricao || '')}')" title="Ver descrição">
+            <button class="btn btn-sm btn-outline-primary" onclick="verDescricao('Descrição do Produto','${escapeHtml(prod.descricao)}')">
               <i class="bi bi-file-earmark-text"></i>
             </button>
           </td>
@@ -61,11 +55,6 @@
               <i class="bi bi-currency-dollar"></i>
             </button>
           </td>
-          <td data-label="Dimensões">
-            <button class="btn btn-sm btn-outline-warning" onclick="verDimensoes('${prod.dimensoes.comprimento}','${prod.dimensoes.largura}','${prod.dimensoes.altura}')" title="Ver dimensões">
-              <i class="bi bi-rulers"></i>
-            </button>
-          </td>
           <td data-label="Quantidade">${prod.quantidade}</td>
           <td data-label="Etapas">
             <button class="btn btn-sm btn-outline-info" onclick="verEtapas('${escapeHtml((prod.etapas || []).join('<br>'))}')" title="Ver etapas">
@@ -74,10 +63,10 @@
           </td>
           <td data-label="Ações">
             <button class="btn btn-sm btn-primary mb-1" onclick="editarProduto('${prod._id}', '${prod.codigo}')">
-              <i class="bi bi-pencil"></i>
+              <i class="bi bi-pencil"></i> Editar
             </button>
             <button class="btn btn-sm btn-danger mb-1" onclick="deletarProduto('${prod._id}')">
-              <i class="bi bi-trash"></i>
+              <i class="bi bi-trash"></i> Deletar
             </button>
           </td>
         `;
@@ -135,17 +124,6 @@
           }
       }
   }
-    function verDimensoes(comprimento, largura, altura) {
-      Swal.fire({
-        title: 'Dimensões',
-        html: `<ul style="text-align:left">
-      <li><strong>Comprimento:</strong> ${comprimento}</li>
-      <li><strong>Largura:</strong> ${largura}</li>
-      <li><strong>Altura:</strong> ${altura}</li>
-    </ul>`,
-        confirmButtonText: 'Fechar'
-      });
-    }
     // Filtro dinâmico
     document.getElementById("filtro").addEventListener("input", function () {
       const termo = this.value.toLowerCase();

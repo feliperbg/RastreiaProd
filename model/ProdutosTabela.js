@@ -16,18 +16,25 @@ const ProdutoTabela = new Schema({
     required: true,
   },
   dataEntrada: {
-    type: Date,
-    default: Date.now, // Não precisa de required: true porque tem default
+    type: String,
+    required: true,
   },
   dataValidade: {
-    type: Date,
-    required: true,
+    type: String,
   },
   componentesNecessarios: [
     {
-      type: Schema.Types.ObjectId,
-      ref: 'Componentes',
-      required: true,
+      componente: { // O campo que armazena a referência
+        type: Schema.Types.ObjectId,
+        ref: 'Componentes',
+        required: true,
+      },
+      quantidade: { // O campo que armazena a quantidade
+        type: Number,
+        required: true,
+        min: [1, 'A quantidade mínima deve ser 1.'], // Garante que a quantidade seja sempre positiva
+        default: 1 // Define um valor padrão
+      }
     }
   ],
   precoMontagem: {
@@ -36,23 +43,6 @@ const ProdutoTabela = new Schema({
   },
   precoVenda: {
     type: Number,
-    required: true,
-  },
-  dimensoes: {
-    type: {
-      comprimento: {
-        type: Number,
-        required: true,
-      },
-      largura: {
-        type: Number,
-        required: true,
-      },
-      altura: {
-        type: Number,
-        required: true,
-      },
-    },
     required: true,
   },
   quantidade: {

@@ -165,10 +165,10 @@
 
         if (!resposta.ok) throw new Error('Erro ao buscar componente');
         const dados = await resposta.json();
-        return dados.componente.codigo || "Desconhecido";
+        return dados.componente || "Desconhecido";
         } catch (e) {
-        console.error(`Erro ao buscar componente ${id}:`, e);
-        return "Erro";
+            console.error(`Erro ao buscar componente ${id}:`, e);
+            return "Erro";
         }
     }
     
@@ -193,14 +193,28 @@
       });
     }
 
-    function verComponentes(componentesHtml) {
-      Swal.fire({
-        title: 'Componentes Necessários',
-        html: componentesHtml
-          ? `<ul style="text-align:left">${componentesHtml.split('<br>').map(e => `<li>${e}</li>`).join('')}</ul>`
-          : '<i>Sem componentes.</i>',
-        confirmButtonText: 'Fechar'
-      });
+    function verComponentes(componentes) {
+        let listaItens = [];
+        if (Array.isArray(componentes)) {
+            listaItens = componentes;
+        } else if (typeof componentes === 'string' && componentes) {
+            listaItens = componentes.split('<br>');
+        }
+
+        Swal.fire({
+            title: 'Componentes Necessários',
+            customClass: {
+            popup: 'swal-largo'
+            },
+            html: listaItens.length > 0
+            ? `<ul style="text-align: left; list-style-position: inside;">
+                ${listaItens.map(item => 
+                    `<li style="white-space: nowrap;">${item}</li>`
+                ).join('')}
+                </ul>`
+            : '<i>Sem componentes.</i>',
+            confirmButtonText: 'Fechar'
+        });
     }
 
     function verFuncionarios(funcionariosHtml) {
@@ -213,12 +227,12 @@
         });
     }
 
-    function verDescricao(descricaoHtml){
+    function verDescricao(titulo, descricaoHtml){
         Swal.fire({
-            title: "Descrição do Componente",
+            title: titulo,
             html: descricaoHtml 
             ? `<ul style="text-align:left">${descricaoHtml}</ul>`
-            : '<i>Sem Descrição atribuídos.</i>',
+            : '<i>Sem Descrição atribuída.</i>',
         });
     }
 
@@ -258,8 +272,6 @@
 
     function mostrarModal(titulo, conteudo) {
         let html = '';
-        console.log('Conteúdo recebido:', conteudo);
-        console.log('Tipo do conteúdo:', typeof conteudo);
         // Tenta converter de string JSON se necessário
         if (typeof conteudo === 'string') {
             try {

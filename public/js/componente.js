@@ -31,7 +31,7 @@
                     <td data-label="Nome">${comp.nome}</td>
                     <td data-label="Código">${comp.codigo}</td>
                     <td data-label="Descrição">
-                        <button class="btn btn-sm btn-outline-primary" onclick="verDescricao('${escapeHtml(comp.descricao || '')}')">
+                        <button class="btn btn-sm btn-outline-primary" onclick="verDescricao('Descrição do Componente', '${escapeHtml(comp.descricao || '')}')">
                             <i class="bi bi-file-earmark-text"></i>
                         </button>
                     </td>

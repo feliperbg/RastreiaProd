@@ -43,3 +43,7 @@
         text-align: center;
     }
 }
+
+.swal-largo {
+  width: 650px !important; /* Ajuste a largura conforme sua necessidade */
+}

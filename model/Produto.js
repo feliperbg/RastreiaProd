@@ -8,7 +8,7 @@ class Produto {
     /**
      * Construtor para inicializar os dados de um produto.
      */
-    constructor(nome, codigo, descricao, dataEntrada, dataValidade, componentesNecessarios, precoMontagem, precoVenda, dimensoes, quantidade, etapas) {
+    constructor(nome, codigo, descricao, dataEntrada, dataValidade, componentesNecessarios, precoMontagem, precoVenda, quantidade, etapas) {
         this._idProduto = null;
         this._nome = nome;
         this._codigo = codigo;
@@ -18,7 +18,6 @@ class Produto {
         this._componentesNecessarios = componentesNecessarios || [];
         this._precoMontagem = precoMontagem;
         this._precoVenda = precoVenda;
-        this._dimensoes = dimensoes || {};
         this._quantidade = quantidade;
         this._etapas = etapas || [];
     }
@@ -37,7 +36,6 @@ class Produto {
                 componentesNecessarios: this._componentesNecessarios,
                 precoMontagem: this._precoMontagem,
                 precoVenda: this._precoVenda,
-                dimensoes: this._dimensoes,
                 quantidade: this._quantidade,
                 etapas: this._etapas
             });
@@ -81,7 +79,6 @@ class Produto {
                     quantidade: this._quantidade,
                     precoMontagem: this._precoMontagem,
                     precoVenda: this._precoVenda,
-                    dimensoes: this._dimensoes,
                     componentesNecessarios: this._componentesNecessarios,
                     etapas: this._etapas
                 },
@@ -122,11 +119,10 @@ class Produto {
                 this._descricao = produto.descricao;
                 this._dataEntrada = produto.dataEntrada;
                 this._dataValidade = produto.dataValidade;
+                this._componentesNecessarios = produto.componentesNecessarios;
                 this._quantidade = produto.quantidade;
                 this._precoMontagem = produto.precoMontagem;
                 this._precoVenda = produto.precoVenda;
-                this._dimensoes = produto.dimensoes;
-                this._componentesNecessarios = produto.componentesNecessarios;
                 this._etapas = produto.etapas;
             }
             return produto;
@@ -196,13 +192,6 @@ class Produto {
     }
     set precoVenda(precoVenda) {
         this._precoVenda = precoVenda;
-    }
-
-    get dimensoes() {
-        return this._dimensoes;
-    }
-    set dimensoes(dimensoes) {
-        this._dimensoes = dimensoes;
     }
 
     get componentesNecessarios() {
