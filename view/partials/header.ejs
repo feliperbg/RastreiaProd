@@ -65,11 +65,16 @@
         fotoFuncionario.src = localStorage.getItem("userImage");
 
         if (userDataJSON) {
-        const userData = JSON.parse(userDataJSON);
-        fotoFuncionario.src = userData.imagem;
-        nomeFuncionario.textContent = userData.nome || "Funcionário";
+          const userData = JSON.parse(userDataJSON);
+          if(userData.imagem){
+            fotoFuncionario.src = userData.imagem;
+          }else{
+            fotoFuncionario.src = "imagens/funcionario/default.png";
+          }
+          
+          nomeFuncionario.textContent = userData.nome || "Funcionário";
         } else {
-        nomeFuncionario.textContent = "Funcionário";
+          nomeFuncionario.textContent = "Funcionário";
         }
 
     });
@@ -92,7 +97,6 @@
         return res.json();
       })
       .then(dados => {
-        console.log("Dados do servidor:", dados);
         if (dados.status) {
           localStorage.removeItem('userData');
           localStorage.removeItem('authToken');

@@ -1,55 +1,52 @@
+// Arquivo: app.js
 const express = require('express');
 const path = require('path');
-const BancoMongoose = require("./model/BancoMongoose");
-const JWTMiddleware = require('./middleware/TokenJWTMiddleware');
+const BancoMongoose = require('./model/BancoMongoose');
+const TokenJWTMiddleware = require('./middleware/TokenJWTMiddleware');
 
-// --- IMPORTAÇÃO DAS ROTAS ---
-const funcionarioRouter = require('./router/FuncionarioRouter');
-const componenteRouter = require('./router/ComponenteRouter');
 const produtoRouter = require('./router/ProdutoRouter');
+const componenteRouter = require('./router/ComponenteRouter');
 const etapaRouter = require('./router/EtapaRouter');
+const funcionarioRouter = require('./router/FuncionarioRouter');
 const ordemProducaoRouter = require('./router/OrdemProducaoRouter');
 const painelRouter = require('./router/PainelRouter');
 
 const app = express();
-const Banco = new BancoMongoose();
-const jwt = new JWTMiddleware();
-const portaServico = 8081;
+const port = 8081;
 
-app.use(express.json());
-
-// --- CONFIGURAÇÕES DE VIEW E ARQUIVOS ESTÁTICOS ---
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'view'));
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-//----------------------- RENDERIZAÇÃO DE PÁGINAS ESTÁTICAS -----------------------
+// Conexão com o banco de dados
+const Banco = new BancoMongoose();
+
+const jwtMiddleware = new TokenJWTMiddleware();
+// Rotas
 app.get('/login', (req, res) => {
-    res.sendFile(path.join(__dirname, 'view', 'login.html'));
+  res.sendFile(path.join(__dirname, 'view', 'login.html'));
 });
-
 app.get('/', (req, res) => {
-    res.redirect('/login');
+  res.redirect('/login');
 });
-
 app.get('/painel', (req, res) => {
     res.render('painel');
 });
-
-app.get('/verifica-login', jwt.validate.bind(jwt), (req, res) => {
+app.get('/verifica-login', jwtMiddleware.validate.bind(jwtMiddleware), (req, res) => {
   return res.status(200).json({ status: true, msg: "Usuário autenticado" });
 });
 
-//------------------------- REGISTRO DAS ROTAS NA APLICAÇÃO -------------------------
-app.use('/funcionario', funcionarioRouter);
-app.use('/componente', componenteRouter);
 app.use('/produto', produtoRouter);
+app.use('/componente', componenteRouter);
 app.use('/etapa', etapaRouter);
+app.use('/funcionario', funcionarioRouter);
 app.use('/ordem-producao', ordemProducaoRouter);
 app.use('/painel', painelRouter);
 
-// --- INICIALIZAÇÃO DO SERVIDOR ---
-app.listen(portaServico, '0.0.0.0', () => {
-    console.log(`API rodando no endereço: http://localhost:${portaServico}/`);
+app.listen(port, '0.0.0.0', () => {
+    console.log(`API rodando no endereço: http://localhost:${port}/`);
     Banco.getConexao();
 });

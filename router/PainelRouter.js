@@ -33,5 +33,18 @@ router.get(
     PainelController.getRecentOrdens
 );
 
+router.get(
+    '/etapas-finalizadas-chart',
+    jwtMiddleware.validate.bind(jwtMiddleware),
+    PainelController.getEtapasFinalizadasChart
+);
+
+router.get(
+    '/tempo-medio-etapas-chart',
+    jwtMiddleware.validate.bind(jwtMiddleware),
+    PainelController.getTempoMedioEtapasChart
+);
+
+
 
 module.exports = router;

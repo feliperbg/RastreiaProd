@@ -1,3 +1,4 @@
+// Arquivo: middleware/ProdutoMiddleware.js
 module.exports = class ProdutoMiddleware {
   static validateCreate(req, res, next) {
     const { nome, codigo, quantidade, precoMontagem, precoVenda } = req.body;

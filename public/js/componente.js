@@ -15,16 +15,15 @@
             const dados = await response.json();
             const tabela = document.getElementById("tabela-componentes");
             
-            const componentes = Array.isArray(dados) ? dados : dados.componentes || [];
+            const componentes = Array.isArray(dados) ? dados : dados.componente || [];
             if (!Array.isArray(componentes)) {
                 throw new Error("Resposta da API não é uma lista de componentes.");
             }
             if (componentes.length === 0) {
-                tabela.innerHTML = `<tr><td colspan="7">Nenhum componente encontrado.</td></tr>`;
+                tabela.innerHTML = `<tr><td colspan="12">Nenhum componente encontrado.</td></tr>`;
                 return;
             }
             tabela.innerHTML = "";
-            console.log(componentes);
             componentes.forEach(comp => {
                 const tr = document.createElement("tr");
                 tr.innerHTML = `
@@ -36,16 +35,16 @@
                         </button>
                     </td>
                     <td data-label="Data Entrada">${formatarData(comp.dataEntrada)}</td>
-                    <td data-label="Validade">${formatarData(comp.dataValidade)}</td>
+                    <td data-label="Data Validade">${formatarData(comp.dataValidade)}</td>
                     <td data-label="Quantidade">${comp.quantidade}</td>
                     <td data-label="Lote">${comp.Lote}</td>
                     <td data-label="Preço Unidade">R$ ${comp.precoUnidade.toFixed(2)}</td>
                     <td data-label="Ações">
                             <button class="btn btn-sm btn-primary mb-1" onclick="editarComponente('${comp._id}', '${comp.codigo}')">
-                                <i class="bi bi-pencil"></i> Editar
+                                <i class="bi bi-pencil"></i>
                             </button>
                             <button class="btn btn-sm btn-danger mb-1" onclick="deletarComponente('${comp._id}')">
-                                <i class="bi bi-trash"></i> Deletar
+                                <i class="bi bi-trash"></i>
                             </button>
                     </td>
                 `;

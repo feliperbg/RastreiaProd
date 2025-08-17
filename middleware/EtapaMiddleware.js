@@ -1,16 +1,15 @@
 // Arquivo: middleware/EtapaMiddleware.js
-
 module.exports = class EtapaMiddleware {
     static validateCreate(req, res, next) {
-        const { nome, ordem } = req.body;
+        const { nome, sequencias } = req.body;
 
-        if (nome && ordem != null) {
+        if (nome && sequencias != null) {
             return next();
         }
 
         let camposFaltando = [];
         if (!nome) camposFaltando.push('nome');
-        if (ordem == null) camposFaltando.push('ordem');
+        if (sequencias == null) camposFaltando.push('sequencias');
 
         return res.status(400).json({
             status: false,

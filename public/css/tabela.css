@@ -44,6 +44,13 @@
     }
 }
 
-.swal-largo {
-  width: 650px !important; /* Ajuste a largura conforme sua necessidade */
+.swal-componentes {
+  width: 800px !important; /* Ajuste a largura conforme sua necessidade */
+}
+
+.swal-etapas {
+  width: 1000px !important; /* Ajuste a largura conforme sua necessidade */
+}
+.swal-selecionar {
+  width: 700px !important; /* Ajuste a largura conforme sua necessidade */
 }

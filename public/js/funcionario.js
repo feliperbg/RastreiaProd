@@ -26,6 +26,7 @@
             tabela.innerHTML = ""; // Limpa tabela após carregamento
 
             funcionarios.forEach(func => {
+                console.log(func);
                 const tr = document.createElement("tr");
                 const nomeCompleto = func.nome || '';
                 const email = func.email || '';
@@ -41,7 +42,7 @@
                 } else {
                     nomeHtml = `<span>${nomeCompleto}</span>`;
                 }
-                if(email.length > 35) {
+                if(email.length >= 35) {
                     emailHtml = `
                         <span title="${email.replace(/"/g, '&quot;')}"></span>
                         <button class="btn  btn-sm btn-secondary" onclick="mostrarModal('Email', '${email.replace(/'/g, "\\'").replace(/"/g, '&quot;')}')">
@@ -51,8 +52,6 @@
                 } else {
                     emailHtml = `<span>${email}</span>`;
                 }
-                console.log(func.permissoes);
-                console.log(typeof func.permissoes);
                 tr.innerHTML = `
                     <td data-label="Credencial">${func.credencial}</td>
                     <td data-label="Nome">${nomeHtml}</td>
@@ -72,10 +71,10 @@
                     </td>
                     <td data-label="Ações">
                         <button class="btn btn-sm btn-primary mb-1" onclick="editarFuncionario('${func._id}', '${func.credencial}')">
-                            <i class="bi bi-pencil"></i> Editar
+                            <i class="bi bi-pencil"></i>
                         </button>
                         <button class="btn btn-sm btn-danger mb-1" onclick="deletarFuncionario('${func._id}')">
-                            <i class="bi bi-trash"></i> Deletar
+                            <i class="bi bi-trash"></i>
                         </button>
                     </td>
                 `;

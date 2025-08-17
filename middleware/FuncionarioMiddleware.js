@@ -1,10 +1,9 @@
 // Arquivo: middleware/FuncionarioMiddleware.js
-
 module.exports = class FuncionarioMiddleware {
     static validateCreate(req, res, next) {
-        const { nome, email, senha, cargo } = req.body;
+        const { nome, email, senha } = req.body;
 
-        if (nome && email && senha && cargo) {
+        if (nome && email && senha) {
             return next();
         }
 
@@ -12,7 +11,6 @@ module.exports = class FuncionarioMiddleware {
         if (!nome) camposFaltando.push('nome');
         if (!email) camposFaltando.push('email');
         if (!senha) camposFaltando.push('senha');
-        if (!cargo) camposFaltando.push('cargo');
         
         return res.status(400).json({
             status: false,
