@@ -47,4 +47,4 @@ Atualmente, há poucos sistemas que conseguem monitorar e identificar, com preci
 
 
 ## Bibliotecas
-- **npm install bcrypt ejs express jsonwebtoken mongodb mongoose mongoose-sequence**
+- **npm install bcrypt ejs express jsonwebtoken mongodb mongoose mongoose-sequence axios**
