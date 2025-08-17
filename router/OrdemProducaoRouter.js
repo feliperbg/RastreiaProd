@@ -1,23 +1,47 @@
+// Arquivo: router/OrdemProducaoRouter.js
 const express = require('express');
 const router = express.Router();
+const path = require('path');
 
 const OrdemProducaoController = require('../control/OrdemProducaoControl');
 const TokenJWTMiddleware = require('../middleware/TokenJWTMiddleware');
 const MongoIdMiddleware = require('../middleware/MongoIdMiddleware');
-const OrdemProducaoMiddleware = require('../middleware/OrdemProducaoMiddleware'); // <-- IMPORTAR
+const OrdemProducaoMiddleware = require('../middleware/OrdemProducaoMiddleware');
 
 const jwtMiddleware = new TokenJWTMiddleware();
+const viewPath = path.join(__dirname, '..', 'view');
 
-// Rota de Renderização
+// --- ROTAS DE RENDERIZAÇÃO ---
 router.get('/', (req, res) => res.render('main/ordem-producao'));
+router.get('/editar-ordem-producao/:id', (req, res) => { res.sendFile(path.join(viewPath, 'edit', 'editar-ordem-producao.html')); });
+router.get('/adicionar-ordem-producao', (req, res) => { res.sendFile(path.join(viewPath, 'add', 'adicionar-ordem-producao.html')); });
+
+// ROTA NOVA: Para renderizar a tela de gestão da OP
+router.get('/gestao-op/:id', (req, res) => { res.sendFile(path.join(viewPath,'main', 'gestao-op.html')); });
+
 
 // --- ROTAS DA API ---
-// ADICIONADO MIDDLEWARE DE VALIDAÇÃO NA ROTA POST
 router.post('/', jwtMiddleware.validate.bind(jwtMiddleware), OrdemProducaoMiddleware.validateCreate, OrdemProducaoController.create);
-
 router.get('/readAll', jwtMiddleware.validate.bind(jwtMiddleware), OrdemProducaoController.readAll);
-router.get('/:id', jwtMiddleware.validate.bind(jwtMiddleware), MongoIdMiddleware.validate, OrdemProducaoController.readByID);
-router.put('/:id', jwtMiddleware.validate.bind(jwtMiddleware), MongoIdMiddleware.validate, OrdemProducaoController.update);
-router.delete('/:id', jwtMiddleware.validate.bind(jwtMiddleware), MongoIdMiddleware.validate, OrdemProducaoController.delete);
+router.get('/:id', jwtMiddleware.validate.bind(jwtMiddleware),MongoIdMiddleware.validateParam('id'), OrdemProducaoController.readByID);
+router.put('/:id', jwtMiddleware.validate.bind(jwtMiddleware),MongoIdMiddleware.validateParam('id'), OrdemProducaoController.update);
+router.delete('/:id', jwtMiddleware.validate.bind(jwtMiddleware),MongoIdMiddleware.validateParam('id'), OrdemProducaoController.delete);
+
+// ROTAS NOVAS: Para iniciar e finalizar uma etapa
+// Valida os parâmetros 'id' E 'etapaId'
+router.post(
+    '/:id/etapa/:etapaId/iniciar',
+    jwtMiddleware.validate.bind(jwtMiddleware),
+    MongoIdMiddleware.validateParams(['id', 'etapaId']), // <-- MUDOU AQUI
+    OrdemProducaoController.iniciarEtapa
+);
+
+// Valida os parâmetros 'id' E 'etapaId'
+router.post(
+    '/:id/etapa/:etapaId/finalizar',
+    jwtMiddleware.validate.bind(jwtMiddleware),
+    MongoIdMiddleware.validateParams(['id', 'etapaId']), // <-- MUDOU AQUI
+    OrdemProducaoController.finalizarEtapa
+);
 
 module.exports = router;

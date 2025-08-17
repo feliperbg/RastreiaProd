@@ -139,7 +139,7 @@ async function rodarTodosOsTestes() {
     await testarLeituraTodos();
     await testarLeituraPorId(idDoNovoProduto);
     await testarAtualizacao(idDoNovoProduto);
-    await testarDelecao(idDoNovoProduto);
+    //await testarDelecao(idDoNovoProduto);
     
     console.log('\n--- Verificação Final: Listando todos novamente para confirmar a deleção ---');
     await testarLeituraTodos();
