@@ -1,296 +1,141 @@
-const mongoose = require('mongoose');
+// Arquivo: control/FuncionarioControl.js
 const Funcionario = require('../model/Funcionario');
 const TokenJWT = require('../model/TokenJWT');
+const bcrypt = require('bcrypt');
+module.exports = class FuncionarioController {
+    static async create(req, res) {
+        try {
+            // A senhaFuncionario já é criptografada pelo middleware do Schema
+            const novoFuncionario = await Funcionario.create(req.body);
+            
+            // Não retornar a senhaFuncionario na resposta
+            const funcionarioRetorno = novoFuncionario.toObject();
+            delete funcionarioRetorno.senhaFuncionario;
 
-module.exports = class FuncionarioControl {
-    /**
-     * Realiza o login de um funcionário
-     * @param {Object} request - Objeto de requisição HTTP
-     * @param {Object} response - Objeto de resposta HTTP
-     */
+            return res.status(201).json({
+                status: true,
+                msg: 'Funcionário criado com sucesso!',
+                funcionario: funcionarioRetorno
+            });
+        } catch (error) {
+            return res.status(400).json({ status: false, msg: error.message });
+        }
+    }
 
-    async login(request, response) {
-        const funcionario = new Funcionario();
-        funcionario.credencial = request.body.Funcionario.credencial;
-        funcionario.senha = request.body.Funcionario.senha;
-        
-        const logou = await funcionario.login();
+    static async login(req, res) {
+        try {
+            
+            const { emailFuncionario, senhaFuncionario } = req.body;
 
-        if (logou) {
-            // Busca os dados completos do funcionário
-            const funcionarioCompleto = await funcionario.readByID(funcionario.idFuncionario);
-            const payloadToken = {
-                credencialFuncionario: funcionario.credencial,
-                idFuncionario: funcionario._id,
-                permissoes: funcionarioCompleto.permissoes
-            };
+            // 2. Verifique se os campos foram enviados
+            if (!emailFuncionario || !senhaFuncionario) {
+                return res.status(400).json({ status: false, msg: 'Email e senha são obrigatórios.' });
+            }
+
+            // 3. Busque o funcionário pelo email (garanta que o campo no Schema é 'email')
+            const funcionario = await Funcionario.findOne({ email: emailFuncionario }).select('+senha');
+            if (!funcionario) {
+                // Use uma mensagem genérica para não informar se o email existe ou não
+                return res.status(401).json({ status: false, msg: 'Credenciais inválidas.' });
+            }
+            
+            // 4. Compare a senha enviada com a senha armazenada no banco (que deve estar hasheada)
+            const senhaCorreta = await bcrypt.compare(senhaFuncionario, funcionario.senha);
+            if (!senhaCorreta) {
+                return res.status(401).json({ status: false, msg: 'Credenciais inválidas.' });
+            }
 
             const jwt = new TokenJWT();
-            const token_string = jwt.gerarToken(payloadToken);
+            const token = jwt.gerarToken(funcionario);
 
-            const objResposta = {
+            // Para não retornar a senha na resposta
+            funcionario.senha = undefined;
+
+            // 6. Envie a resposta de sucesso com o token e os dados do usuário
+            return res.status(200).json({ 
+                status: true, 
+                msg: 'Login bem-sucedido!', 
+                token, 
+                funcionario: funcionario
+            });
+
+        } catch (error) {
+            console.error(error); // Logue o erro no console para debug
+            return res.status(500).json({ status: false, msg: 'Erro interno no servidor.' });
+        }
+    }
+
+    static async logout(req, res) {
+        try {
+            return res.status(200).json({
                 status: true,
-                msg: 'Logado com sucesso',
-                funcionario: {
-                    id: funcionario.idFuncionario,
-                    nome: funcionarioCompleto.nome,
-                    credencial: funcionario.credencial,
-                    role: funcionarioCompleto.role,
-                    permissoes: funcionarioCompleto.permissoes,
-                    imagem: funcionarioCompleto.imagemFuncionario,
-                },
-                token: token_string
-            };
-            return response.status(200).send(objResposta);
-
-        } else {
-            return response.status(401).send({
-                status: false,
-                msg: 'Credencial ou senha inválidos',
+                message: "Logout realizado com sucesso.",
             });
+        }catch(e){
+            return res.status(500).json({
+                status: false,
+                message: 'Logout não foi realizado com sucesso.',
+                error: e
+            })
+        } 
+    }
+
+    static async readAll(req, res) {
+        try {
+            const funcionarios = await Funcionario.find().sort('nome');
+            return res.status(200).json({ status: true, funcionarios });
+        } catch (error) {
+            return res.status(500).json({ status: false, msg: 'Erro ao listar funcionários.' });
         }
     }
 
-    /**
-     * Realiza o logout do sistema
-     * @param {Object} request - Objeto de requisição HTTP
-     * @param {Object} response - Objeto de resposta HTTP
-     */
-    async logout(req, res) {
-        return res.status(200).json({
-            status: true,
-            message: "Logout realizado com sucesso.",
-        });
-    }
-    
-
-    /**
-     * Cria um novo funcionário
-     * @param {Object} request - Objeto de requisição HTTP
-     * @param {Object} response - Objeto de resposta HTTP
-     */
-    async create(request, response) {
+    static async readByID(req, res) {
         try {
-            const {
-                nome,
-                senha,
-                email,
-                CPF,
-                telefone,
-                turno,
-                dataNascimento,
-                permissoes,
-                role
-            } = request.body;
+            const { id } = req.params;
+            const funcionario = await Funcionario.findById(id);
 
-            // Verificação básica de campos obrigatórios
-            if (!nome || !turno || !senha || !CPF || !email || !telefone || !dataNascimento) {
-                return response.status(400).send({
-                    status: false,
-                    msg: 'Campos obrigatórios não preenchidos'
-                });
+            if (!funcionario) {
+                return res.status(404).json({ status: false, msg: 'Funcionário não encontrado.' });
             }
 
-            // Instancia um novo funcionário
-            const novoFuncionario = new Funcionario(
-                nome,
-                turno,
-                senha,
-                CPF,
-                email,
-                telefone,
-                dataNascimento,
-                permissoes || [],
-                role || 'funcionario',
-                request.file?.path // ou request.body.imagemFuncionario, dependendo de como você está enviando a imagem
-            );
+            return res.status(200).json({ status: true, funcionario });
+        } catch (error) {
+            return res.status(500).json({ status: false, msg: 'Erro ao buscar funcionário.' });
+        }
+    }
+
+    static async update(req, res) {
+        try {
+            const { id } = req.params;
+            const dadosAtualizacao = req.body;
             
+            // Impede que a senhaFuncionario seja atualizada diretamente por esta rota
+            delete dadosAtualizacao.senhaFuncionario;
 
-            // Tenta criar o funcionário no banco de dados
-            const criado = await novoFuncionario.create();
+            const funcionarioAtualizado = await Funcionario.findByIdAndUpdate(id, dadosAtualizacao, { new: true, runValidators: true });
 
-            if (criado) {
-                return response.status(201).send({
-                    status: true,
-                    msg: 'Funcionário criado com sucesso',
-                    funcionario: {
-                        nome: novoFuncionario.nome,
-                        credencial: novoFuncionario.credencial,
-                        role: novoFuncionario.role
-                    }
-                });
-            } else {
-                return response.status(500).send({
-                    status: false,
-                    msg: 'Erro ao criar funcionário'
-                });
+            if (!funcionarioAtualizado) {
+                return res.status(404).json({ status: false, msg: 'Funcionário não encontrado.' });
             }
 
+            return res.status(200).json({ status: true, msg: 'Funcionário atualizado!', funcionario: funcionarioAtualizado });
         } catch (error) {
-            console.error('Erro ao criar funcionário:', error);
-            return response.status(500).send({
-                status: false,
-                msg: 'Erro interno ao criar funcionário'
-            });
+            return res.status(400).json({ status: false, msg: error.message });
         }
     }
 
-    /**
-     * Lista todos os funcionários
-     * @param {Object} request - Objeto de requisição HTTP
-     * @param {Object} response - Objeto de resposta HTTP
-     */
-    async readAll(request, response) {
+    static async delete(req, res) {
         try {
-            const funcionario = new Funcionario();
-            const funcionarios = await funcionario.readAll();
-            return response.status(200).send({
-                status: true,
-                funcionarios: funcionarios
-            });
+            const { id } = req.params;
+            const funcionarioDeletado = await Funcionario.findByIdAndDelete(id);
+
+            if (!funcionarioDeletado) {
+                return res.status(404).json({ status: false, msg: 'Funcionário não encontrado.' });
+            }
+
+            return res.status(200).json({ status: true, msg: 'Funcionário removido!' });
         } catch (error) {
-            console.error('Erro ao listar funcionários:', error);
-            return response.status(500).send({
-                status: false,
-                msg: 'Erro ao listar funcionários'
-            });
+            return res.status(500).json({ status: false, msg: 'Erro ao remover funcionário.' });
         }
     }
-
-    /**
-     * Obtém um funcionário específico por ID
-     * @param {Object} request - Objeto de requisição HTTP
-     * @param {Object} response - Objeto de resposta HTTP
-     */
-    async readByID(request, response) {
-        try {
-            const id = request.params.id;
-            console.log('ID do funcionário a ser buscado:', id);
-            if (!mongoose.Types.ObjectId.isValid(id)) {
-                return response.status(400).json({ erro: 'ID inválido' });
-            }
-            const funcionario = new Funcionario();
-            const encontrado = await funcionario.readByID(id);
-            
-            if (encontrado) {
-                // Remove informações sensíveis antes de retornar
-                const funcionarioSanitizado = {
-                    nome: encontrado.nome,
-                    CPF: encontrado.CPF,
-                    email: encontrado.email,
-                    turno: encontrado.turno,
-                    role: encontrado.role,
-                    credencial: encontrado.credencial,
-                    permissoes: encontrado.permissoes,
-                    dataNascimento: encontrado.dataNascimento,
-                    telefone: encontrado.telefone
-                };
-                
-                return response.status(200).send({
-                    status: true,
-                    funcionario: funcionarioSanitizado
-                });
-            } else {
-                return response.status(404).send({
-                    status: false,
-                    msg: 'Funcionário não encontrado'
-                });
-            }
-        } catch (error) {
-            console.error('Erro ao buscar funcionário:', error);
-            return response.status(500).send({
-                status: false,
-                msg: 'Erro ao buscar funcionário'
-            });
-        }
-    }
-
-    /**
-     * Atualiza um funcionário existente
-     * @param {Object} request - Objeto de requisição HTTP
-     * @param {Object} response - Objeto de resposta HTTP
-     */
-    async update(request, response) {
-        try {
-            const id = request.params.id;
-            const dadosAtualizacao = request.body;
-
-            const funcionario = new Funcionario();
-            await funcionario.readByID(id);
-            const credencialOriginal = funcionario.credencial;
-
-            // Campos permitidos para atualização
-            const camposPermitidos = [
-                'nome', 'email', 'CPF', 'telefone', 'turno',
-                'dataNascimento', 'permissoes', 'role'
-            ];
-           
-
-            // Atualiza apenas os campos permitidos
-            camposPermitidos.forEach(campo => {
-                if (dadosAtualizacao[campo]) {
-                    funcionario[campo] = dadosAtualizacao[campo];
-                }
-            });
-            funcionario.credencial = credencialOriginal;
-
-            const atualizado = await funcionario.update();
-
-            if (atualizado) {
-                return response.status(200).send({
-                    status: true,
-                    msg: 'Funcionário atualizado com sucesso'
-                });
-            } else {
-                return response.status(500).send({
-                    status: false,
-                    msg: 'Erro ao atualizar funcionário'
-                });
-            }
-        } catch (error) {
-            console.error('Erro ao atualizar funcionário:', error);
-            return response.status(500).send({
-                status: false,
-                msg: 'Erro interno ao atualizar funcionário'
-            });
-        }
-    }
-
-
-    /**
-     * Remove um funcionário
-     * @param {Object} request - Objeto de requisição HTTP
-     * @param {Object} response - Objeto de resposta HTTP
-     */
-    async delete(request, response) {
-        try {
-            const id = request.params.id;
-            console.log('ID do funcionário a ser removido:', id);
-            if (!mongoose.Types.ObjectId.isValid(id)) {
-                return response.status(400).json({ erro: 'ID inválido' });
-            }
-            const funcionario = new Funcionario();
-            funcionario.idFuncionario = id;
-            
-            const deletado = await funcionario.delete();
-            
-            if (deletado) {
-                return response.status(200).send({
-                    status: true,
-                    msg: 'Funcionário removido com sucesso'
-                });
-            } else {
-                return response.status(404).send({
-                    status: false,
-                    msg: 'Funcionário não encontrado'
-                });
-            }
-        } catch (error) {
-            console.error('Erro ao remover funcionário:', error);
-            return response.status(500).send({
-                status: false,
-                msg: 'Erro ao remover funcionário'
-            });
-        }
-    }
-};
+}

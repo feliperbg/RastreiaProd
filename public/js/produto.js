@@ -24,16 +24,26 @@
       }
 
       for (const prod of produtos) {
-        const nomesComponentes = await Promise.all(
-          (prod.componentesNecessarios || []).map(obterNomeComponente)
-        );
-        console.log(nomesComponentes)
+        // Os dados dos componentes já estão aqui! Não precisa de Promise.all
         const componentesInfo = (prod.componentesNecessarios || [])
-          .map((comp, idx) => {
-            // Se nomesComponentes[idx] não existir, mostra "Desconhecido"
-            return `Código: ${nomesComponentes[idx].codigo || "Desconhecido"} - Lote: ${nomesComponentes[idx].Lote} - Qtd Disponível em estoque: ${nomesComponentes[idx].quantidade}`;
-          })
-          .join("<br>");
+        .map(comp => {
+            // O 'comp.componente' agora é um objeto completo
+            if (!comp.componente) {
+                return 'Componente não encontrado ou inválido.';
+            }
+            const { codigo, Lote } = comp.componente;
+            const quantidadeNecessaria = comp.quantidade;
+            return `Código: ${codigo || "Desconhecido"} - Lote: ${Lote || "N/A"} - Qtd Necessária: ${quantidadeNecessaria}`;
+        })
+        .join("<br>");
+        const etapasInfo = (prod.etapas || [])
+        .map(etapa => {
+            if (!etapa.nome) {
+                return 'Etapa não encontrado ou inválido.';
+            }
+            return `Nome: ${etapa.nome || "Desconhecido"} - Departamneto Responsável: ${etapa.departamentoResponsavel || "N/A"} - Sequências: ${etapa.sequencias}`;
+        })
+        .join("<br>");
         const tr = document.createElement("tr");
         tr.innerHTML = `
           <td data-label="Nome">${prod.nome}</td>
@@ -57,16 +67,16 @@
           </td>
           <td data-label="Quantidade">${prod.quantidade}</td>
           <td data-label="Etapas">
-            <button class="btn btn-sm btn-outline-info" onclick="verEtapas('${escapeHtml((prod.etapas || []).join('<br>'))}')" title="Ver etapas">
+            <button class="btn btn-sm btn-outline-info" onclick="verEtapas(\`${etapasInfo}\`)" title="Ver etapas">
               <i class="bi bi-list-check"></i>
             </button>
           </td>
           <td data-label="Ações">
             <button class="btn btn-sm btn-primary mb-1" onclick="editarProduto('${prod._id}', '${prod.codigo}')">
-              <i class="bi bi-pencil"></i> Editar
+              <i class="bi bi-pencil"></i>
             </button>
             <button class="btn btn-sm btn-danger mb-1" onclick="deletarProduto('${prod._id}')">
-              <i class="bi bi-trash"></i> Deletar
+              <i class="bi bi-trash"></i>
             </button>
           </td>
         `;
@@ -77,6 +87,19 @@
       Swal.fire('Erro!', 'Não foi possível carregar os produtos.', 'error');
     }
   }
+
+    async function obterNomeComponente(componenteId) {
+      try {
+          // Busca o componente pelo ID. Use .lean() para um objeto JS simples e mais rápido
+          const componenteDoc = await Componente.findById(componenteId).lean();
+          return componenteDoc; // Retorna o documento encontrado (ex: { _id, codigo, Lote, ... })
+      } catch (error) {
+          console.error(`Erro ao buscar componente com ID ${componenteId}:`, error);
+          return null; // Retorne null em caso de erro para tratamento posterior
+      }
+    }
+    
+
   function editarProduto(id, codigo) {
     Swal.fire({
         title: 'Editar Produto',

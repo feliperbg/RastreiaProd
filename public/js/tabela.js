@@ -44,9 +44,17 @@
         return arr.join(', ');
     }
 
-    async function formatarArrayAssincrono(arr, fetchNomeFn) {
-        if (!Array.isArray(arr)) return '';
-        const nomes = await Promise.all(arr.map(async (id) => {
+    // Altere a sua função original para esta versão mais robusta
+    async function formatarArrayAssincrono(dados, fetchNomeFn) {
+        let idsParaProcessar = [];
+        if (Array.isArray(dados)) {
+            idsParaProcessar = dados;
+        } else if (typeof dados === 'string' && dados) {
+            idsParaProcessar = [dados];
+        } else {
+            return '';
+        }
+        const nomes = await Promise.all(idsParaProcessar.map(async (id) => {
             const nome = await fetchNomeFn(id);
             return `<span class="badge bg-secondary">${nome}</span>`;
         }));
@@ -66,8 +74,7 @@
                 throw new Error(`Erro HTTP: ${response.status}`);
             }
             const resposta = await response.json();
-            Console.log(`Resposta de ${urlBase}/${id}:`, resposta);
-            return resposta[atributo]?.nome || 'Desconhecido';
+            return resposta[atributo].nome || 'Desconhecido';
         } catch (error) {
             console.error(`Erro ao buscar ${atributo}:`, error);
             return 'Desconhecido';
@@ -154,32 +161,29 @@
             return 'Desconhecido';
         }
     }
-    async function obterNomeComponente(id) {
-        try {
-        const resposta = await fetch(`/componente/${id}`, {
-            headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-            }
-        });
 
-        if (!resposta.ok) throw new Error('Erro ao buscar componente');
-        const dados = await resposta.json();
-        return dados.componente || "Desconhecido";
-        } catch (e) {
-            console.error(`Erro ao buscar componente ${id}:`, e);
-            return "Erro";
+
+    function verEtapas(etapas) {
+        let listaItens = [];
+        if (Array.isArray(etapas)) {
+            listaItens = etapas;
+        } else if (typeof etapas === 'string' && etapas) {
+            listaItens = etapas.split('<br>');
         }
-    }
-    
-    function verEtapas(etapasHtml) {
-      Swal.fire({
-        title: 'Etapas',
-        html: etapasHtml
-          ? `<ul style="text-align:left">${etapasHtml.split('<br>').map(e => `<li>${e}</li>`).join('')}</ul>`
-          : '<i>Sem etapas.</i>',
-        confirmButtonText: 'Fechar'
-      });
+        Swal.fire({
+            title: 'Etapas',
+            customClass: {
+            popup: 'swal-etapas'
+            },
+            html: listaItens.length > 0
+            ? `<ol style="text-align: left; list-style-position: inside;">
+                ${listaItens.map(item => 
+                    `<li style="white-space: nowrap;">${item}</li>`
+                ).join('')}
+                </ol>`
+            : '<i>Sem etapas.</i>',
+            confirmButtonText: 'Fechar'
+        });
     }
     
     function verPrecos(precoMontagem, precoVenda) {
@@ -204,14 +208,14 @@
         Swal.fire({
             title: 'Componentes Necessários',
             customClass: {
-            popup: 'swal-largo'
+            popup: 'swal-componentes'
             },
             html: listaItens.length > 0
-            ? `<ul style="text-align: left; list-style-position: inside;">
+            ? `<ol style="text-align: left; list-style-position: inside;">
                 ${listaItens.map(item => 
                     `<li style="white-space: nowrap;">${item}</li>`
                 ).join('')}
-                </ul>`
+                </ol>`
             : '<i>Sem componentes.</i>',
             confirmButtonText: 'Fechar'
         });
@@ -288,7 +292,7 @@
                     : '<i>Nenhum item encontrado.</i>';
                 break;
             default:
-                html = `<div style="font-size:1.2em; word-break: break-word">${conteudo || 'Informação não informada.'}</div>`;
+                html = `<div style="font-size:1.2em; wetapa.departamentoResponsavel-break: break-word">${conteudo || 'Informação não informada.'}</div>`;
         }
         Swal.fire({
             title: titulo,

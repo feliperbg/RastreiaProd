@@ -16,7 +16,6 @@
         
             const resultado = await response.json();
             const tabela = document.getElementById("tabela-etapas");
-            console.log('Dados recebidos:', resultado);
             
             const etapas = Array.isArray(resultado) ? resultado : resultado.etapas;
             
@@ -49,19 +48,18 @@
                     <td data-label="Componente Conclusão"><span class="componentes-loading">Carregando...</span></td>
                     <td data-label="Funcionários Responsáveis"><span class="funcionarios-loading">Carregando...</span></td>
                     <td data-label="Ações">
-                        <button class="btn btn-sm btn-primary mb-1" onclick="editarEtapa('${etapa._id}')">
-                            <i class="bi bi-pencil"></i> Editar
+                        <button class="btn btn-sm btn-primary mb-1" onclick="editarEtapa('${etapa.nome}','${etapa._id}')">
+                            <i class="bi bi-pencil"></i>
                         </button>
                         <button class="btn btn-sm btn-danger mb-1" onclick="deletarEtapa('${etapa._id}')">
-                            <i class="bi bi-trash"></i> Deletar
+                            <i class="bi bi-trash"></i>
                         </button>
                     </td>
                 `;
                 tabela.appendChild(tr);
 
-                // Funcionários e componentes continuam assíncronos
-                // Para componentes:
                 formatarArrayAssincrono(etapa.componenteConclusao, id => buscarNomePorId(id, 'componente', 'componente')).then(html => {
+                    console.log(html);
                     tr.querySelector('.componentes-loading').innerHTML = html;
                 });
 
@@ -84,10 +82,10 @@
         }
     }
     
-    function editarEtapa(id) {
+    function editarEtapa(nome, id) {
         Swal.fire({
             title: 'Editar Etapa',
-            text: `Você deseja editar a etapa com ID: ${id}?`,
+            text: `Você deseja editar a etapa: ${nome}?`,
             icon: 'question',
             showCancelButton: true,
             confirmButtonText: 'Sim, editar',

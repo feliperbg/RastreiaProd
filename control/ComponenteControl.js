@@ -1,110 +1,72 @@
-// Importa a classe de modelo Componente
+// Arquivo: control/ComponenteControl.js
 const Componente = require('../model/Componente');
 
-// Exporta a classe controladora de componentes
-module.exports = class ComponenteControl {
-    
-    // Método para criar um novo componente
-    async create(request, response) {
-        const dados = request.body.Componente;
-
-        // Cria uma nova instância da classe Componente
-        const componente = new Componente(
-            dados.nome,
-            dados.codigo,
-            dados.descricao,
-            dados.dataEntrada,
-            dados.dataValidade,
-            dados.quantidade,
-            dados.Lote,
-            dados.precoUnidade,
-        );
-
-        // Chama o método create() da classe modelo
-        const isCreated = await componente.create();
-
-        // Retorna a resposta para o cliente
-        response.status(200).send({
-            cod: 1,
-            status: isCreated,
-            msg: isCreated ? 'Componente criado com sucesso!' : 'Erro ao criar componente'
-        });
+module.exports = class ComponenteController {
+    static async create(req, res) {
+        try {
+            const novoComponente = await Componente.create(req.body);
+            return res.status(201).json({
+                status: true,
+                msg: 'Componente criado com sucesso!',
+                componente: novoComponente,
+            });
+        } catch (error) {
+            return res.status(400).json({ status: false, msg: error.message });
+        }
     }
 
-    // Método para atualizar um componente existente
-    async update(request, response) {
-        const idComponente = request.params.id;
-        const dados = request.body.Componente;
-
-        // Cria uma nova instância da classe Componente
-        const componente = new Componente(
-            dados.nome,
-            dados.codigo,
-            dados.descricao,
-            dados.dataEntrada,
-            dados.dataValidade,
-            dados.quantidade,
-            dados.Lote,
-            dados.precoUnidade,
-        );
-
-        componente.idComponente = idComponente; // Define o ID do componente a ser atualizado
-
-        // Chama o método update()
-        const isUpdated = await componente.update();
-
-        // Envia a resposta com o resultado
-        response.status(200).send({
-            cod: 1,
-            status: isUpdated,
-            msg: isUpdated ? 'Componente atualizado com sucesso!' : 'Erro ao atualizar componente'
-        });
+    static async readAll(req, res) {
+        try {
+            const componentes = await Componente.find().sort('nome');
+            return res.status(200).json({ status: true, componente: componentes });
+        } catch (error) {
+            return res.status(500).json({ status: false, msg: 'Erro ao listar componentes.' });
+        }
     }
 
-    // Método para deletar um componente pelo ID
-    async delete(request, response) {
-        const idComponente = request.params.id;
-
-        // Cria uma nova instância de Componente
-        const componente = new Componente();
-        componente.idComponente = idComponente;
-
-        const isDeleted = await componente.delete();
-
-        response.status(200).send({
-            cod: 1,
-            status: isDeleted,
-            msg: isDeleted ? 'Componente excluído com sucesso!' : 'Erro ao excluir componente'
-        });
+    static async readByID(req, res) {
+        try {
+            const { id } = req.params;
+            const componente = await Componente.findById(id);
+            if (!componente) {
+                return res.status(404).json({ status: false, msg: 'Componente não encontrado.' });
+            }
+            return res.status(200).json({ status: true, componente });
+        } catch (error) {
+            return res.status(500).json({ status: false, msg: 'Erro ao buscar componente.' });
+        }
     }
 
-    // Método para buscar todos os componentes
-    async readAll(request, response) {
-        const componente = new Componente();
-
-        const lista = await componente.readAll();
-
-        response.status(200).send({
-            cod: 1,
-            status: true,
-            msg: 'Consulta de componentes realizada com sucesso!',
-            componentes: lista
-        });
+    static async update(req, res) {
+        try {
+            const { id } = req.params;
+            const componenteAtualizado = await Componente.findByIdAndUpdate(id, req.body, {
+                new: true,
+                runValidators: true,
+            });
+            if (!componenteAtualizado) {
+                return res.status(404).json({ status: false, msg: 'Componente não encontrado.' });
+            }
+            return res.status(200).json({
+                status: true,
+                msg: 'Componente atualizado com sucesso!',
+                componente: componenteAtualizado,
+            });
+        } catch (error) {
+            return res.status(400).json({ status: false, msg: error.message });
+        }
     }
 
-    // Método para buscar um componente pelo ID
-    async readByID(request, response) {
-        const idComponente = request.params.id;
-
-        const componente = new Componente();
-        const resultado = await componente.readByID(idComponente);
-
-        response.status(200).send({
-            cod: 1,
-            status: !!resultado,
-            msg: resultado ? 'Componente encontrado' : 'Componente não encontrado',
-            componente: resultado
-        });
+    static async delete(req, res) {
+        try {
+            const { id } = req.params;
+            const componenteDeletado = await Componente.findByIdAndDelete(id);
+            if (!componenteDeletado) {
+                return res.status(404).json({ status: false, msg: 'Componente não encontrado.' });
+            }
+            return res.status(200).json({ status: true, msg: 'Componente removido com sucesso!' });
+        } catch (error) {
+            return res.status(500).json({ status: false, msg: 'Erro ao remover componente.' });
+        }
     }
-}
-
+};

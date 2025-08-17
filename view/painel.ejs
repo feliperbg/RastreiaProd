@@ -4,40 +4,47 @@
   <meta charset="utf-8" />
   <title>Painel de Produção</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
   <!-- Bootstrap e AdminLTE -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-  <!-- Os caminhos para os arquivos locais devem ser ajustados conforme a estrutura do seu projeto -->
   <link rel="stylesheet" href="/css/adminlte.min.css" />
 
-
-    <!-- Scripts -->
+  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- O caminho para o adminlte.js deve ser ajustado -->
   <script src="/js/adminlte.min.js"></script>
   <script src="/js/toast.js"></script>
+  <script src="/js/painel.js"></script>
 
   <style>
-    /* Estilos para o novo Kanban com Bootstrap */
-    .kanban-column .card {
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
     .kanban-column .card:hover {
       box-shadow: 0 2px 6px rgba(0,0,0,0.15);
       cursor: pointer;
     }
     .kanban-column {
-      min-height: 300px; /* Garante que a coluna tenha uma altura mínima */
+      min-height: 300px;
       background-color: #f1f3f5;
       border-radius: 0 0 0.375rem 0.375rem;
+    }
+    .small-box {
+        color: #fff !important;
+    }
+    .small-box .icon {
+        color: rgba(0,0,0,.15);
+        z-index: 0;
+    }
+    .small-box .icon>i {
+        font-size: 70px;
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        transition: all .3s linear;
     }
   </style>
 </head>
 <body class="layout-fluid sidebar-expand-lg bg-body-tertiary">
   <div class="app-wrapper">
-    <!-- Header e Sidebar (assumindo que estão em partials/header.ejs e partials/sidebar.ejs) -->
+    <!-- Header e Sidebar -->
     <%- include('partials/header.ejs') %>
     <%- include('partials/sidebar.ejs') %>
 
@@ -45,13 +52,53 @@
     <main class="app-main">
       <div class="app-content">
         <div class="container-fluid">
+
+          <!-- ADICIONADO: Seção de Cards de Estatísticas -->
+          <div class="row">
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-info">
+                    <div class="inner">
+                        <h3 id="card-produtos-count">0</h3>
+                        <p>Produtos Cadastrados</p>
+                    </div>
+                    <div class="icon"><i class="bi bi-box-seam"></i></div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-success">
+                    <div class="inner">
+                        <h3 id="card-componentes-count">0</h3>
+                        <p>Componentes</p>
+                    </div>
+                    <div class="icon"><i class="bi bi-cpu"></i></div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-warning">
+                    <div class="inner">
+                        <h3 id="card-ordens-pendentes-count">0</h3>
+                        <p>Ordens Pendentes</p>
+                    </div>
+                    <div class="icon"><i class="bi bi-pause-circle"></i></div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-danger">
+                    <div class="inner">
+                        <h3 id="card-ordens-andamento-count">0</h3>
+                        <p>Ordens em Andamento</p>
+                    </div>
+                    <div class="icon"><i class="bi bi-play-circle"></i></div>
+                </div>
+            </div>
+          </div>
+
           <!-- Kanban com Bootstrap -->
           <div class="card mb-3">
             <div class="card-header bg-dark text-white">
               <h5 class="card-title mb-0">📌 Quadro Kanban - Linhas de Produção</h5>
             </div>
             <div class="card-body">
-              <!-- O container do Kanban será preenchido via JavaScript -->
               <div id="kanban-container" class="row g-3"></div>
             </div>
           </div>
@@ -60,28 +107,20 @@
           <div class="row">
             <div class="col-lg-4">
               <div class="card h-100">
-                <div class="card-header bg-info text-white">📈 Etapas Finalizadas por Dia</div>
-                <div class="card-body">
-                  <canvas id="graficoEtapas"></canvas>
-                </div>
+                <div class="card-header bg-primary text-white">📈 Ordens Finalizadas (Últimos 7 dias)</div>
+                <div class="card-body"><canvas id="graficoEtapas"></canvas></div>
               </div>
             </div>
-
             <div class="col-lg-4">
               <div class="card h-100">
-                <div class="card-header bg-warning text-white">⏱ Tempo Médio por Etapa</div>
-                <div class="card-body">
-                  <canvas id="graficoTempo"></canvas>
-                </div>
+                <div class="card-header bg-secondary text-white">⏱ Tempo Médio por Etapa (min)</div>
+                <div class="card-body"><canvas id="graficoTempo"></canvas></div>
               </div>
             </div>
-
             <div class="col-lg-4">
               <div class="card h-100">
-                <div class="card-header bg-danger text-white">⚠ Status das Ordens</div>
-                <div class="card-body">
-                  <canvas id="graficoStatus"></canvas>
-                </div>
+                <div class="card-header bg-dark text-white">📊 Status Geral das Ordens</div>
+                <div class="card-body"><canvas id="graficoStatusOrdens"></canvas></div>
               </div>
             </div>
           </div>
@@ -104,186 +143,5 @@
       <strong>&copy; 2025 Sistema de Produção.</strong> Todos os direitos reservados.
     </footer>
   </div>
-
-
-
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    // --- DADOS DE EXEMPLO ---
-    // Substitua esta seção pelos seus fetches reais da API
-    const mockKanbanData = [
-      { id: '_todo', title: 'A Fazer', class: 'bg-info', items: [{ title: 'OP-001 - Produto X' /*, link:*/ }, { title: 'OP-005 - Produto Z' }] },
-      { id: '_doing', title: 'Em Produção', class: 'bg-warning', items: [{ title: 'OP-002 - Produto Y' }] },
-      { id: '_review', title: 'Em Revisão', class: 'bg-primary', items: [{ title: 'OP-003 - Produto W' }] },
-      { id: '_done', title: 'Finalizado', class: 'bg-success', items: [{ title: 'OP-004 - Produto V' }] }
-    ];
-    const mockEtapasData = { labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex'], data: [5, 9, 7, 6, 10] };
-    const mockTempoData = { labels: ['Corte', 'Montagem', 'Inspeção', 'Embalagem'], data: [30, 45, 20, 15] };
-    const mockStatusData = { noPrazo: 85, atrasadas: 15 };
-
-    // Função para renderizar o Kanban com Bootstrap
-    function renderKanban(boards) {
-      const container = document.getElementById('kanban-container');
-      if (!container) return;
-      container.innerHTML = ''; // Limpa o container
-
-      boards.forEach(board => {
-        // Cria a coluna do grid
-        const columnWrapper = document.createElement('div');
-        columnWrapper.className = 'col-12 col-md-6 col-lg-3';
-
-        // Cria o card principal da coluna
-        const columnCard = document.createElement('div');
-        columnCard.className = 'card h-100';
-        
-        // Cria o cabeçalho da coluna
-        const header = document.createElement('div');
-        header.className = `card-header text-white ${board.class}`;
-        header.textContent = board.title;
-
-        // Cria o corpo da coluna que conterá os cards de tarefas
-        const body = document.createElement('div');
-        body.className = 'card-body kanban-column p-2';
-        body.id = `kanban-col-${board.id}`;
-
-        // Adiciona os cards de tarefas
-        if (board.items && board.items.length > 0) {
-          board.items.forEach(item => {
-            const taskCard = document.createElement('div');
-            taskCard.className = 'card mb-2';
-            taskCard.innerHTML = `<div class="card-body p-2">${item.title}</div>`;
-            taskCard.addEventListener('click', function() {
-              // Redireciona para o link da tarefa, se existir
-              if (item.link) {
-                window.location.href = item.link;
-              } else {
-                exibirMensagem('Tarefa sem link definido.', "error");
-              }
-            });
-            body.appendChild(taskCard);
-          });
-        } else {
-            body.innerHTML = '<p class="text-muted small text-center mt-2">Nenhuma tarefa aqui.</p>';
-        }
-
-        // Monta a estrutura
-        columnCard.appendChild(header);
-        columnCard.appendChild(body);
-        columnWrapper.appendChild(columnCard);
-        container.appendChild(columnWrapper);
-      });
-    }
-
-    // Função para renderizar o gráfico de Linha
-    function renderLineChart(elementId, label, labels, data) {
-      const ctx = document.getElementById(elementId);
-      if (!ctx) return;
-      new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: labels,
-          datasets: [{
-            label: label,
-            data: data,
-            borderColor: '#0dcaf0',
-            backgroundColor: 'rgba(13,202,240,0.2)',
-            fill: true,
-            tension: 0.4
-          }]
-        },
-        options: { responsive: true, maintainAspectRatio: false }
-      });
-    }
-
-    // Função para renderizar o gráfico de Barras
-    function renderBarChart(elementId, label, labels, data) {
-      const ctx = document.getElementById(elementId);
-      if (!ctx) return;
-      new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: labels,
-          datasets: [{
-            label: label,
-            data: data,
-            backgroundColor: '#ffc107'
-          }]
-        },
-        options: { responsive: true, maintainAspectRatio: false }
-      });
-    }
-
-    // Função para renderizar o gráfico de Doughnut
-    function renderDoughnutChart(elementId, labels, data) {
-      const ctx = document.getElementById(elementId);
-      if (!ctx) return;
-      new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-          labels: labels,
-          datasets: [{
-            data: data,
-            backgroundColor: ['#198754', '#dc3545']
-          }]
-        },
-        options: { responsive: true, maintainAspectRatio: false }
-      });
-    }
-    
-    // --- INICIALIZAÇÃO ---
-    // Renderiza todos os componentes com os dados de exemplo
-    renderKanban(mockKanbanData);
-    renderLineChart('graficoEtapas', 'Etapas Finalizadas', mockEtapasData.labels, mockEtapasData.data);
-    renderBarChart('graficoTempo', 'Tempo Médio (min)', mockTempoData.labels, mockTempoData.data);
-    renderDoughnutChart('graficoStatus', ['No Prazo', 'Atrasadas'], [mockStatusData.noPrazo, mockStatusData.atrasadas]);
-    
-    /*
-    // --- CÓDIGO PARA CARREGAR DADOS DA API (FETCH) ---
-    // Descomente esta seção e remova os dados de exemplo acima para usar sua API
-    
-    async function loadAllData() {
-      try {
-        const kanbanRes = await fetch('/api/painel/kanban');
-        const kanbanData = await kanbanRes.json();
-        // A API precisa retornar um array com a propriedade 'items' em vez de 'item'
-        renderKanban(kanbanData);
-      } catch (err) {
-        console.error('Erro ao carregar Kanban:', err);
-      }
-
-      try {
-        const etapasRes = await fetch('/api/painel/etapas');
-        const etapasData = await etapasRes.json();
-        const labels = etapasData.map(d => d.dia);
-        const data = etapasData.map(d => d.total);
-        renderLineChart('graficoEtapas', 'Etapas Finalizadas', labels, data);
-      } catch (err) {
-        console.error('Erro ao carregar gráfico de etapas:', err);
-      }
-      
-      try {
-        const tempoRes = await fetch('/api/painel/tempo-etapas');
-        const tempoData = await tempoRes.json();
-        const labels = tempoData.map(d => d.etapa);
-        const data = tempoData.map(d => d.tempoMedio);
-        renderBarChart('graficoTempo', 'Tempo Médio (min)', labels, data);
-      } catch (err) {
-        console.error('Erro ao carregar gráfico de tempo:', err);
-      }
-
-      try {
-        const statusRes = await fetch('/api/painel/status-ordens');
-        const statusData = await statusRes.json();
-        renderDoughnutChart('graficoStatus', ['No Prazo', 'Atrasadas'], [statusData.noPrazo, statusData.atrasadas]);
-      } catch (err) {
-        console.error('Erro ao carregar gráfico de status:', err);
-      }
-    }
-
-    loadAllData();
-    */
-
-  });
-</script>
 </body>
 </html>
