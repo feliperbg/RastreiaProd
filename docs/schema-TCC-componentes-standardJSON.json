@@ -8,9 +8,8 @@
     "dataEntrada",
     "dataValidade",
     "descricao",
-    "dimensoes",
     "nome",
-    "precoPagoLote",
+    "Lote",
     "precoUnidade",
     "quantidade"
   ],
@@ -33,29 +32,10 @@
     "descricao": {
       "type": "string"
     },
-    "dimensoes": {
-      "type": "object",
-      "required": [
-        "altura",
-        "comprimento",
-        "largura"
-      ],
-      "properties": {
-        "altura": {
-          "type": "integer"
-        },
-        "comprimento": {
-          "type": "integer"
-        },
-        "largura": {
-          "type": "integer"
-        }
-      }
-    },
     "nome": {
       "type": "string"
     },
-    "precoPagoLote": {
+    "Lote": {
       "$ref": "#/$defs/Double"
     },
     "precoUnidade": {

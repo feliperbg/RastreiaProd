@@ -9,7 +9,6 @@
     "dataEntrada",
     "dataValidade",
     "descricao",
-    "dimensoes",
     "etapas",
     "nome",
     "precoMontagem",
@@ -40,50 +39,6 @@
     },
     "descricao": {
       "type": "string"
-    },
-    "dimensoes": {
-      "type": "object",
-      "required": [
-        "_id",
-        "altura",
-        "comprimento",
-        "largura"
-      ],
-      "properties": {
-        "_id": {
-          "$ref": "#/$defs/ObjectId"
-        },
-        "altura": {
-          "anyOf": [
-            {
-              "type": "integer"
-            },
-            {
-              "$ref": "#/$defs/Double"
-            }
-          ]
-        },
-        "comprimento": {
-          "anyOf": [
-            {
-              "type": "integer"
-            },
-            {
-              "$ref": "#/$defs/Double"
-            }
-          ]
-        },
-        "largura": {
-          "anyOf": [
-            {
-              "type": "integer"
-            },
-            {
-              "$ref": "#/$defs/Double"
-            }
-          ]
-        }
-      }
     },
     "etapas": {
       "type": "array",

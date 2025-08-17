@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Gestão de Ordem de Produção</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        body { background-color: #f4f6f9; }
+        .etapa-card {
+            position: relative;
+            padding-left: 2.5rem;
+            border-left: 3px solid #dee2e6;
+            margin-left: 1rem;
+        }
+        .etapa-card::before {
+            content: '';
+            position: absolute;
+            left: -11px;
+            top: 0;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #dee2e6;
+            border: 3px solid #fff;
+        }
+        .etapa-pendente { border-left-color: #6c757d; }
+        .etapa-pendente::before { background-color: #6c757d; }
+
+        .etapa-andamento { border-left-color: #0d6efd; }
+        .etapa-andamento::before { background-color: #0d6efd; animation: pulse 2s infinite; }
+
+        .etapa-concluida { border-left-color: #198754; }
+        .etapa-concluida::before { background-color: #198754; }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(13, 110, 253, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(13, 110, 253, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(13, 110, 253, 0); }
+        }
+    </style>
+</head>
+<body class="p-3">
+    <div class="container-fluid">
+        <div id="loading-spinner" class="d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Carregando...</span>
+            </div>
+        </div>
+
+        <div id="conteudo-pagina" class="d-none">
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0" id="op-titulo"></h4>
+                    <button class="btn btn-outline-secondary" onclick="window.print()">
+                        <i class="bi bi-printer"></i> Imprimir
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4"><strong>Produto:</strong> <span id="op-produto"></span></div>
+                        <div class="col-md-4"><strong>Quantidade:</strong> <span id="op-quantidade"></span></div>
+                        <div class="col-md-4"><strong>Status Geral:</strong> <span id="op-status"></span></div>
+                    </div>
+                </div>
+            </div>
+
+            <h3>Linha de Produção</h3>
+            <div id="etapas-container" class="mt-4">
+                </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/js/toast.js"></script>
+    <script src="/js/gestao-op.js"></script>
+</body>
+</html>
