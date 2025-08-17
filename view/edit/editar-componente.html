@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Editar Componente</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 500px;
+            margin-top: 50px;
+        }
+        .form-label {
+            font-weight: 600;
+            color: #495057;
+        }
+        .form-control, .form-select {
+            border-radius: 5px;
+            box-shadow: none;
+            padding: 0.8rem 1rem;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.25rem rgba(38, 143, 255, 0.25);
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            border-radius: 5px;
+            padding: 0.6rem 1.5rem;
+            font-weight: bold;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+        .mb-3 {
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body class="p-3">
+
+    <div class="container">
+        <h1>Editar Componente</h1>
+
+        <form id="form-editar">
+            <div class="mb-3">
+                <label for="nome" class="form-label">Nome</label>
+                <input type="text" id="nome" name="nome" class="form-control" required />
+            </div>
+
+            <div class="mb-3">
+                <label for="codigo" class="form-label">Código</label>
+                <input type="text" id="codigo" name="codigo" class="form-control" required />
+            </div>
+
+            <div class="mb-3">
+                <label for="descricao" class="form-label">Descrição</label>
+                <textarea type="text" id="descricao" name="descricao" class="form-control" rows="3"></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label for="dataEntrada" class="form-label">Data de Entrada</label>
+                <input type="date" id="dataEntrada" name="dataEntrada" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label for="dataValidade" class="form-label">Data de Validade</label>
+                <input type="date" id="dataValidade" name="dataValidade" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label for="quantidade" class="form-label">Valores</label>
+                <input placeholder="Quantidade" type="number" id="quantidade" name="quantidade" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <input placeholder="Preço unid. (R$)" type="text" id="precoUnidade" name="precoUnidade" class="form-control" />
+            </div>
+
+            <input type="text" id="precoTotal" class="form-control" placeholder="Total pago" readonly />
+
+            <div class="mb-3">
+                <label for="Lote" class="form-label">Lote</label>
+                <input type="text" id="Lote" name="Lote" class="form-control" />
+            </div>
+
+            <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+            <button type="button" class="btn btn-danger" onclick="window.location.href='/componente'">Cancelar</button>
+        </form>
+    </div>
+      <!-- Container de Toasts -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+      <div id="meuToast" class="toast align-items-center border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+          <div id="toast-body" class="toast-body"></div>
+          <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
+        </div>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/toast.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        const pathParts = window.location.pathname.split('/');
+        const id = pathParts[pathParts.length - 1];
+        const regexBR = /^(\d{1,3}(\.\d{3})*|\d+)(\,\d{2})?$/;
+
+        async function carregarComponente() {
+            try {
+                const response = await fetch(`/componente/${id}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                    },
+                });
+                const dados = await response.json();
+                if (dados.status && dados.componente) {
+                    const c = dados.componente;
+
+                    document.getElementById('nome').value = c.nome || '';
+                    document.getElementById('codigo').value = c.codigo || '';
+                    document.getElementById('descricao').value = c.descricao || '';
+                    document.getElementById('dataEntrada').value = c.dataEntrada ? c.dataEntrada.substring(0, 10) : '';
+                    document.getElementById('dataValidade').value = c.dataValidade ? c.dataValidade.substring(0, 10) : '';
+                    document.getElementById('quantidade').value = c.quantidade || '';
+                    document.getElementById('Lote').value = c.Lote || '';
+                    document.getElementById('precoUnidade').value = c.precoUnidade || '';
+                } else {
+                    exibirMensagem('Componente não encontrado!', 'erro');
+                }
+            } catch (error) {
+                console.error('Erro ao carregar componente:', error);
+                exibirMensagem('Erro ao carregar informações do componente.', 'erro');
+            }
+        }
+
+        async function atualizarComponente(event) {
+            event.preventDefault();
+
+            const dadosAtualizados = {
+                    nome: document.getElementById('nome').value,
+                    codigo: document.getElementById('codigo').value,
+                    descricao: document.getElementById('descricao').value,
+                    dataEntrada: document.getElementById('dataEntrada').value,
+                    dataValidade: document.getElementById('dataValidade').value,
+                    quantidade: document.getElementById('quantidade').value,
+                    Lote: document.getElementById('Lote').value,
+                    precoUnidade: document.getElementById('precoUnidade').value,
+            };
+            fetch(`/componente/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                },
+                body: JSON.stringify(dadosAtualizados)
+            })
+            .then(resposta => {
+                if (!resposta.ok) {
+                    return resposta.json().then(erro => {
+                        exibirMensagem(erro.msg || 'Erro ao atualizar componente.', 'erro');
+                        throw new Error('Erro na requisição');
+                    });
+                }
+                return resposta.json(); // Se a resposta for ok, podemos parsear o JSON aqui (opcional, dependendo do backend)
+            })
+            .then(dados => {
+                exibirMensagem('Componente atualizado com sucesso!', 'sucesso');
+                window.location.href = '/componente';
+            })
+            .catch(error => {
+                console.error('Erro ao atualizar componente:', error);
+                exibirMensagem('Erro interno ao tentar atualizar.', 'erro');
+            });
+        }
+        function atualizarPrecoTotal() {
+            const qtd = parseFloat(document.getElementById('quantidade').value || '0');
+            const precoUnitario = parseFloat(document.getElementById('precoUnidade').value || '0');
+
+            const total = qtd * precoUnitario;
+            document.getElementById('precoTotal').value = total.toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            });
+        }
+
+        // Executa quando digita ou altera os campos
+        document.getElementById('quantidade').addEventListener('input', atualizarPrecoTotal);
+        document.getElementById('precoUnidade').addEventListener('input', atualizarPrecoTotal);
+
+        document.getElementById('form-editar').addEventListener('submit', atualizarComponente);
+        carregarComponente();
+    </script>
+</body>
+</html>
