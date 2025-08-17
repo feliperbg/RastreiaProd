@@ -1,0 +1,56 @@
+/* Estilos para centralizar o conteúdo da tabela */
+.table td,
+.table th {
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* Ajuste para a coluna de ações */
+.table td[data-label="Ações"] {
+    white-space: nowrap;
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+    .table-responsive {
+        border: 0;
+    }
+
+    .table-responsive thead {
+        display: none;
+    }
+
+    .table-responsive tr {
+        display: block;
+        margin-bottom: 1rem;
+        border: 1px solid #dee2e6;
+    }
+
+    .table-responsive td {
+        display: block;
+        text-align: right;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .table-responsive td::before {
+        content: attr(data-label);
+        float: left;
+        font-weight: bold;
+    }
+
+    .table-responsive td:last-child {
+        border-bottom: 0;
+        text-align: center;
+    }
+}
+
+.swal-componentes {
+  width: 800px !important; /* Ajuste a largura conforme sua necessidade */
+}
+
+.swal-etapas {
+  width: 1000px !important; /* Ajuste a largura conforme sua necessidade */
+}
+.swal-selecionar {
+  width: 700px !important; /* Ajuste a largura conforme sua necessidade */
+}

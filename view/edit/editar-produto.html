@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-bs-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Editar Produto</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<style>
+  body {
+    background-color: #f8f9fa;
+    font-family: Arial, sans-serif;
+  }
+  .container {
+    max-width: 600px;
+    margin-top: 50px;
+  }
+  .form-label {
+    font-weight: 600;
+    color: #495057;
+  }
+  .form-control, .form-select {
+    border-radius: 5px;
+    box-shadow: none;
+    padding: 0.8rem 1rem;
+  }
+  .form-control:focus, .form-select:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.25rem rgba(38, 143, 255, 0.25);
+  }
+  .btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    border-radius: 5px;
+    padding: 0.6rem 1.5rem;
+    font-weight: bold;
+  }
+  .btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+  }
+  
+</style>
+<body class="p-3">
+  <div class="container">
+    <h1>Editar Produto</h1>
+
+    <form id="form-editar">
+      <div class="mb-3">
+        <label for="nome" class="form-label">Nome</label>
+        <input type="text" id="nome" name="nome" class="form-control" required />
+      </div>
+
+      <div class="mb-3">
+        <label for="codigo" class="form-label">Código</label>
+        <input type="text" id="codigo" name="codigo" class="form-control" required />
+      </div>
+
+      <div class="mb-3">
+        <label for="descricao" class="form-label">Descrição</label>
+        <textarea type="text" id="descricao" name="descricao" class="form-control" rows="3"></textarea>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Componentes Necessários</label>
+        <div class="input-group">
+          <input type="text" id="componentesNecessarios" name="componentesNecessarios" class="form-control" readonly data-ids="" />
+          <button type="button" class="btn btn-outline-secondary" id="btnSelecionarComponentes">Selecionar</button>
+        </div>
+      </div>
+      <div class="mb-3">
+        <label for="dataEntrada" class="form-label">Data de Entrada</label>
+        <input type="date" id="dataEntrada" name="dataEntrada" class="form-control" />
+      </div>
+      <div class="mb-3">
+        <label for="dataValidade" class="form-label">Data de Validade</label>
+        <input type="date" id="dataValidade" name="dataValidade" class="form-control" />
+      </div>
+
+      <div class="mb-3">
+        <label for="precoMontagem" class="form-label">Preço de Montagem</label>
+        <input type="text" id="precoMontagem" name="precoMontagem" class="form-control" />
+      </div>
+
+      <div class="mb-3">
+        <label for="precoVenda" class="form-label">Preço de Venda</label>
+        <input type="text" id="precoVenda" name="precoVenda" class="form-control" />
+      </div>
+
+      <div class="mb-3">
+        <label for="quantidade" class="form-label">Quantidade</label>
+        <input type="number" id="quantidade" name="quantidade" class="form-control" />
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Etapas de Montagem</label>
+        <div class="input-group">
+          <input type="text" id="etapas" name="etapas" class="form-control" readonly data-ids="" />
+          <button type="button" class="btn btn-outline-secondary" id="btnSelecionarEtapas">Selecionar</button>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+      <button type="button" class="btn btn-danger" onclick="window.location.href='/produto'">Cancelar</button>
+    </form>
+  </div>
+  <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+    <div id="meuToast" class="toast align-items-center border-0" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="d-flex">
+        <div id="toast-body" class="toast-body"></div>
+        <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
+      </div>
+    </div>
+  </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/toast.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+
+      const pathParts = window.location.pathname.split('/');
+      const id = pathParts[pathParts.length - 1];
+
+      if (!id) {
+          exibirMensagem('ID do produto não encontrado na URL!', 'erro');
+          return;
+      }
+
+      // Variáveis para armazenar as listas completas, carregadas sob demanda
+      let componentesSelecionados = [];
+      let listaCompletaComponentes = [];
+      let listaCompletaEtapas = [];
+
+    /**
+     * Atualiza o campo de input visual com base nos dados armazenados.
+     */
+    function atualizarDisplayComponentes() {
+        const input = document.getElementById('componentesNecessarios');
+        if (componentesSelecionados.length === 0) {
+            input.value = '';
+            input.dataset.ids = '';
+            return;
+        }
+        // Encontra os nomes dos componentes selecionados
+        const nomes = componentesSelecionados.map(sel => {
+            const comp = listaCompletaComponentes.find(c => c._id === sel.componente);
+            // Mostra o nome e a quantidade
+            return `${comp ? comp.nome : 'Desconhecido'} (Qtd: ${sel.quantidade})`;
+        });
+        const ids = componentesSelecionados.map(sel => sel.componente);
+
+        input.value = nomes.join(', ');
+        input.dataset.ids = ids.join(',');
+    }
+      async function carregarProduto() {
+          try {
+              const response = await fetch(`/produto/${id}`, {
+                  headers: {
+                      'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                  }
+              });
+
+              const dados = await response.json();
+
+              if (dados.status && dados.produto) {
+                  const p = dados.produto;
+                  document.getElementById('nome').value = p.nome || '';
+                  document.getElementById('codigo').value = p.codigo || '';
+                  document.getElementById('descricao').value = p.descricao || '';
+                  document.getElementById('precoMontagem').value = p.precoMontagem || '';
+                  document.getElementById('precoVenda').value = p.precoVenda || '';
+                  document.getElementById('quantidade').value = p.quantidade || '';
+                  const formatarDataParaInput = (data) => data ? new Date(data).toISOString().substring(0, 10) : '';
+                  document.getElementById('dataEntrada').value = formatarDataParaInput(p.dataEntrada);
+                  document.getElementById('dataValidade').value = formatarDataParaInput(p.dataValidade);
+                  if (Array.isArray(p.componentesNecessarios)) {
+                    listaCompletaComponentes = p.componentesNecessarios.map(c => c.componente);
+                    console.log(p.componentesNecessarios);
+                    componentesSelecionados = p.componentesNecessarios.map(c => ({
+                        componente: c.componente._id,
+                        quantidade: c.quantidade
+                    }));
+                    atualizarDisplayComponentes();
+                  }
+
+                  if (Array.isArray(p.etapas)) {
+                      const nomes = p.etapas.map(e => e.nome).join(', ');
+                      const ids = p.etapas.map(e => e._id).join(',');
+                      document.getElementById('etapas').value = nomes;
+                      document.getElementById('etapas').dataset.ids = ids;
+                  }
+              } else {
+                  exibirMensagem(dados.msg || 'Produto não encontrado!', 'erro');
+              }
+          } catch (error) {
+              console.error('Erro ao carregar produto:', error);
+              exibirMensagem('Erro ao carregar informações do produto.', 'erro');
+          }
+      }
+
+      /**
+       * Carrega as listas completas de componentes e etapas sob demanda (lazy loading).
+       * Só é chamada quando o usuário clica nos botões "Selecionar".
+       */
+      async function carregarListasCompletas() {
+          try {
+              const [compRes, etapasRes] = await Promise.all([
+                  fetch('/componente/readALL', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } }),
+                  fetch('/etapa/readALL', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } })
+              ]);
+              const compJson = await compRes.json();
+              const etapasJson = await etapasRes.json();
+              listaCompletaComponentes = compJson.componentes || [];
+              listaCompletaEtapas = etapasJson.etapas || [];
+          } catch (error) {
+              console.error("Erro ao carregar listas completas:", error);
+              exibirMensagem("Não foi possível carregar as opções de seleção.", "erro");
+          }
+      }
+
+      // --- EVENT LISTENERS ---
+
+      document.getElementById('btnSelecionarComponentes').addEventListener('click', async function () {
+          // Carrega a lista completa de componentes se ainda não foi carregada
+          if (listaCompletaComponentes.length === 0) {
+              await carregarListasCompletas(); 
+          }
+          const idsAtuais = componentesSelecionados.map(c => c.componente);
+          const selecaoResult = await selecionarMultiplos('Selecionar Componentes', listaCompletaComponentes, idsAtuais);
+          if (selecaoResult.isConfirmed) {
+              const novosIdsSelecionados = selecaoResult.value;
+              const novosComponentesInfo = []; // Array temporário para guardar os novos resultados
+              let processoCancelado = false;
+              for (const id of novosIdsSelecionados) {
+                  const componente = listaCompletaComponentes.find(c => c._id === id);
+                  if (!componente) continue; // Pula se o componente não for encontrado
+                  const componenteExistente = componentesSelecionados.find(c => c.componente === id);
+                  const quantidadeSugerida = componenteExistente ? componenteExistente.quantidade : 1;
+                  const quantidadeResult = await Swal.fire({
+                      title: `Quantidade para ${componente.nome}`,
+                      input: 'number',
+                      inputValue: quantidadeSugerida,
+                      inputAttributes: { min: 1 },
+                      showCancelButton: true,
+                      confirmButtonText: 'Próximo &rarr;',
+                      cancelButtonText: 'Cancelar processo',
+                      inputValidator: (value) => {
+                          if (!value || parseInt(value, 10) < 1) {
+                              return 'Por favor, insira uma quantidade válida (mínimo 1)';
+                          }
+                      }
+                  });
+                  if (quantidadeResult.isConfirmed && quantidadeResult.value) {
+                      novosComponentesInfo.push({
+                          componente: id,
+                          quantidade: parseInt(quantidadeResult.value, 10)
+                      });
+                  } else {
+                      processoCancelado = true;
+                      break; // Interrompe o loop
+                  }
+              }
+              if (!processoCancelado) {
+                  componentesSelecionados = novosComponentesInfo;
+                  atualizarDisplayComponentes();
+                  exibirMensagem('Componentes atualizados!', 'sucesso');
+              }
+          }
+      });
+    
+
+      document.getElementById('btnSelecionarEtapas').addEventListener('click', async function () {
+          if (listaCompletaEtapas.length === 0) {
+              await carregarListasCompletas();
+          }
+          const idsAtuais = (document.getElementById('etapas').dataset.ids || '').split(',').filter(Boolean);
+          const result = await selecionarMultiplos('Selecionar Etapas', listaCompletaEtapas, idsAtuais);
+
+          if (result.isConfirmed) {
+              const nomesSelecionados = listaCompletaEtapas
+                  .filter(item => result.value.includes(item._id))
+                  .map(item => item.nome);
+              document.getElementById('etapas').value = nomesSelecionados.join(', ');
+              document.getElementById('etapas').dataset.ids = result.value.join(',');
+          }
+      });
+
+      async function atualizarProduto(event) {
+          event.preventDefault();
+          const dadosAtualizados = {
+              nome: document.getElementById('nome').value,
+              codigo: document.getElementById('codigo').value,
+              descricao: document.getElementById('descricao').value,
+              componentesNecessarios: componentesSelecionados,
+              dataEntrada: document.getElementById('dataEntrada').value,
+              dataValidade: document.getElementById('dataValidade').value,
+              precoMontagem: parseFloat(document.getElementById('precoMontagem').value),
+              precoVenda: parseFloat(document.getElementById('precoVenda').value),
+              quantidade: parseInt(document.getElementById('quantidade').value),
+              etapas: (document.getElementById('etapas').dataset.ids || '').split(',').filter(Boolean),
+          };
+          // Validação simples
+          if (!dadosAtualizados.nome || !dadosAtualizados.codigo) {
+            exibirMensagem('Nome e código são obrigatórios.', 'erro');
+            return;
+          }
+          if (isNaN(dadosAtualizados.precoMontagem) || isNaN(dadosAtualizados.precoVenda)) {
+            exibirMensagem('Preços devem ser números válidos.', 'erro');
+            return;
+          }
+          if (isNaN(dadosAtualizados.quantidade)) {
+            exibirMensagem('Quantidade deve ser um número válido.', 'erro');
+            return;
+          }
+          try {
+              const response = await fetch(`/produto/${id}`, {
+                  method: 'PUT',
+                  headers: {
+                      'Content-Type': 'application/json',
+                      'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                  },
+                  body: JSON.stringify(dadosAtualizados)
+              });
+              const result = await response.json();
+              if (!response.ok) throw new Error(result.msg || "Erro ao salvar");
+              exibirMensagem('Produto atualizado com sucesso!', 'sucesso');
+              window.location.href='/produto';
+          } catch (error) {
+              exibirMensagem(error.message, 'erro');
+          }
+      }
+
+      document.getElementById('form-editar').addEventListener('submit', atualizarProduto);
+
+      // Função para o modal de seleção (SweetAlert2) - sem alterações
+      async function selecionarMultiplos(titulo, lista, selecionados) {
+        return Swal.fire({
+          title: titulo,
+
+          html: `
+
+          <input type="text" id="swal-filtro" class="form-control mb-2" placeholder="Filtrar...">
+          <div id="swal-lista" style="max-height:300px;overflow:auto;text-align:left">
+            ${lista.map(item => `
+              <div>
+                <input type="checkbox" id="swal-${item._id}" value="${item._id}" ${selecionados.includes(item._id) ? 'checked' : ''}>
+                <label for="swal-${item._id}">${item.nome}</label>
+              </div>
+              `).join('')}
+          </div>`,
+          showCancelButton: true,
+          confirmButtonText: 'Selecionar',
+          cancelButtonText: 'Cancelar',
+          preConfirm: () => {
+            const checked = Array.from(document.querySelectorAll('#swal-lista input[type=checkbox]:checked')).map(cb => cb.value);
+            return checked;
+          },
+          didOpen: () => {
+            const filtro = document.getElementById('swal-filtro');
+            filtro.addEventListener('input', function() {
+              const val = this.value.toLowerCase();
+              document.querySelectorAll('#swal-lista label').forEach(label => {
+                label.parentElement.style.display = label.textContent.toLowerCase().includes(val) ? '' : 'none';
+              });
+            });
+          }
+        });
+      }
+      // Inicia o carregamento dos dados do produto assim que a página estiver pronta
+      carregarProduto();
+  });
+</script>
+</body>
+</html>
