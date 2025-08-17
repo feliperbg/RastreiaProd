@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         try {
             // Busca os dados da OP e do usuário em paralelo para mais performance
-            const [opResponse, userResponse] = await Promise.all([
+            const opResponse = await Promise.all([
                 fetch(`/ordem-producao/${opId}`, { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } }),
             ]);
 
