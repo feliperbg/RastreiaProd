@@ -5,7 +5,6 @@ class BancoMongoose {
     this.server = '127.0.0.1:27017';
     this.database = 'TCC';
     this.connection = null;
-    this.getConexao();
   }
 
   getConexao() {

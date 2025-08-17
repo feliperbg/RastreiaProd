@@ -1,6 +1,4 @@
-@import url("https://fonts.googleapis.com/css?family=Poppins:400,500&display=swap");
-@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css");
-
+/* --- Variáveis Globais (Cores e Tamanhos do 1º Código) --- */
 :root {
   --cor-primaria: #1a00af;
   --cor-primaria-hover: #0026ff;
@@ -9,168 +7,178 @@
   --cor-fundo: #fff;
   --cor-borda: #ccc;
   --cor-borda-ativa: #1a00af;
-  --cor-icone: #1a00af;
+  --cor-icone: #888; /* Um cinza suave para os ícones */
   --cor-icone-hover: #000;
 
-  --tamanho-icone: 18px;
-  --tamanho-texto: 16px;
   --tamanho-texto-pequeno: 12px;
-  --tamanho-texto-label: 14px;
-
-  --espacamento-pequeno: 5px;
-  --espacamento-medio: 10px;
-  --espacamento-grande: 20px;
-
-  --borda-radius: 10px;
-  --borda-espessura: 1px;
-
-  --transicao-rapida: 0.3s;
-  --transicao-media: 0.5s;
 }
 
+/* --- Reset Básico e Estilo Padrão --- */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Poppins", sans-serif;
+  font-family: 'Poppins', sans-serif;
 }
 
+/* --- Layout Principal Fluido e Centralizado --- */
 body {
-  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #f5f5f5;
+  min-height: 100vh;
+  background-color: #f5f5f5; /* Fundo mais neutro do 1º código */
+  padding: 1rem;
 }
 
-.container {
+main.container-fluid {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+/* --- Caixa de Login (Estilo do 2º, Cores do 1º) --- */
+.login-box {
+  background: var(--cor-fundo);
+  padding: 2.5rem 2rem;
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 400px;
-  padding: var(--espacamento-grande);
-}
-
-.login-box {
-  background-color: var(--cor-fundo);
-  padding: var(--espacamento-grande);
-  border-radius: var(--borda-radius);
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
 }
 
 .login-box h1 {
+  font-size: 2rem;
+  font-weight: 600;
   color: var(--cor-primaria);
-  text-align: center;
-  font-size: 24px;
-  margin-bottom: var(--espacamento-pequeno);
+  margin-bottom: 0.5rem;
 }
 
 .login-box h2 {
-  font-size: 14px;
+  font-size: 0.9rem;
   color: var(--cor-texto-secundario);
-  text-align: center;
-  margin-bottom: var(--espacamento-grande);
+  margin-bottom: 2rem;
+  font-weight: 400;
 }
 
+/* --- Campos de Formulário e Ícones --- */
 .user-box {
-  position: relative;
-  margin-bottom: 25px;
+  margin-bottom: 1.5rem;
+  text-align: left;
 }
 
 .user-box label {
-  font-size: var(--tamanho-texto-label);
-  color: var(--cor-primaria);
-  margin-bottom: 5px;
   display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--cor-texto-secundario);
 }
 
-.user-box .input-icon {
-  display: flex;
-  align-items: center;
-  border-bottom: 1px solid var(--cor-borda);
-  padding: 5px 0;
+.input-icon {
+  position: relative;
 }
 
-.user-box .input-icon i {
+/* Ícone dentro do input (usuário e cadeado) */
+.input-icon > .fas {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
   color: var(--cor-icone);
-  margin-right: 10px;
-  font-size: var(--tamanho-icone);
+  transition: color 0.3s;
 }
 
-.user-box input {
-  border: none;
+.input-icon input {
+  width: 100%;
+  padding: 0.8rem 2.5rem; /* Espaço para ícones nos dois lados */
+  border: 1px solid var(--cor-borda);
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.input-icon input:focus {
   outline: none;
-  flex: 1;
-  font-size: var(--tamanho-texto);
-  background-color: transparent;
-  padding: 8px 0;
+  border-color: var(--cor-borda-ativa);
+  box-shadow: 0 0 0 3px rgba(26, 0, 175, 0.2);
 }
 
+/* Foco no input muda a cor do ícone */
+.input-icon input:focus + .fas, 
+.input-icon input:focus ~ .fas {
+    color: var(--cor-primaria);
+}
+
+/* Ícone de olho (Posição corrigida) */
+.password-toggle-icon {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: var(--cor-icone);
+  transition: color 0.3s;
+}
+
+.password-toggle-icon:hover {
+  color: var(--cor-icone-hover);
+}
+
+/* --- Opções de Lembrar/Esquecer Senha (Tamanho corrigido) --- */
 .lembrar-senha {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: var(--tamanho-texto-pequeno);
-  margin-bottom: var(--espacamento-grande);
+  margin-bottom: 1.5rem;
+  font-size: var(--tamanho-texto-pequeno); /* AJUSTE FEITO AQUI */
 }
 
 .lembrar-senha label {
   display: flex;
   align-items: center;
-  gap: 5px;
+  color: var(--cor-texto-secundario);
   cursor: pointer;
+}
+
+.lembrar-senha input[type="checkbox"] {
+  margin-right: 0.5rem;
 }
 
 .lembrar-senha a {
-  color: var(--cor-texto-secundario);
+  color: var(--cor-primaria);
   text-decoration: none;
-  font-size: var(--tamanho-texto-pequeno);
+  transition: text-decoration 0.3s;
 }
 
-button {
+.lembrar-senha a:hover {
+  text-decoration: underline;
+}
+
+/* --- Botão Principal --- */
+button#btnLogin {
+  width: 100%;
+  padding: 0.9rem;
+  border: none;
+  border-radius: 8px;
   background-color: var(--cor-primaria);
   color: var(--cor-fundo);
-  width: 100%;
-  padding: 12px;
-  font-size: var(--tamanho-texto);
+  font-size: 1rem;
   font-weight: 600;
-  border-radius: var(--borda-radius);
-  border: none;
   cursor: pointer;
-  transition: background-color var(--transicao-rapida);
+  transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
+  margin-bottom: 1rem;
 }
 
-button:hover {
+button#btnLogin:hover {
   background-color: var(--cor-primaria-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
-.esqueceuSenha {
-  text-align: center;
-  font-size: var(--tamanho-texto-pequeno);
-  color: var(--cor-texto-secundario);
-  margin-bottom: var(--espacamento-medio);
-}
-
-.logo-login {
-  width: 100%;
-  height: 60px;
-  object-fit: contain;
-  margin-bottom: var(--espacamento-grande);
-}
-.password-toggle-icon {
-  cursor: pointer;
-}
-
-.password-toggle-icon i {
-  font-size: var(--tamanho-icone);
-  line-height: 1;
-  color: var(--cor-icone);
-  transition: color var(--transicao-rapida) ease-in-out;
-}
-
-.password-toggle-icon i:hover {
-  color: var(--cor-icone-hover);
-}
-
-.divResposta{
-  text-align: center;
-  display: flex;
+/* --- Div de Resposta --- */
+.divResposta {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  font-weight: 500;
 }

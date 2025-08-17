@@ -1,69 +1,52 @@
+// Arquivo: app.js
 const express = require('express');
 const path = require('path');
-const BancoMongoose = require("./model/BancoMongoose");
-const FuncionariosRouter = require('./router/FuncionarioRouter');
-const ComponentesRouter = require('./router/ComponenteRouter');
-const ProdutosRouter = require('./router/ProdutoRouter');
-const EtapasRouter = require('./router/EtapaRouter');
-const OrdensProducaoRouter = require('./router/OrdemProducaoRouter');
-const JWTMiddleware = require('./middleware/TokenJWTMiddleware');
-const PainelRouter = require('./router/PainelRouter');
+const BancoMongoose = require('./model/BancoMongoose');
+const TokenJWTMiddleware = require('./middleware/TokenJWTMiddleware');
 
+const produtoRouter = require('./router/ProdutoRouter');
+const componenteRouter = require('./router/ComponenteRouter');
+const etapaRouter = require('./router/EtapaRouter');
+const funcionarioRouter = require('./router/FuncionarioRouter');
+const ordemProducaoRouter = require('./router/OrdemProducaoRouter');
+const painelRouter = require('./router/PainelRouter');
 
 const app = express();
+const port = 8081;
+
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'view'));
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Conexão com o banco de dados
 const Banco = new BancoMongoose();
 
-const Painel = new PainelRouter();
-const FuncionarioRouter = new FuncionariosRouter();
-const ComponenteRouter = new ComponentesRouter();
-const ProdutoRouter = new ProdutosRouter();
-const EtapaRouter = new EtapasRouter();
-const OrdemProducaoRouter = new OrdensProducaoRouter();
-const jwt = new JWTMiddleware();
-const portaServico = 8081;
-app.use(express.json());
- 
-// Configurações do EJS
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'view')); // Define o diretório de views para o EJS 
-
-// Arquivos estáticos (CSS, JS, imagens, etc.)
-app.use(express.static(path.join(__dirname, 'public')));  // Para assets (CSS, JS, imagens)
-//-----------------------RENDERS---------------------------------------
+const jwtMiddleware = new TokenJWTMiddleware();
+// Rotas
 app.get('/login', (req, res) => {
-    // Verifica se o token existe na requisição
-    res.sendFile(path.join(__dirname, 'view', 'login.html')); // Caminho absoluto
+  res.sendFile(path.join(__dirname, 'view', 'login.html'));
 });
-
 app.get('/', (req, res) => {
-    // Renderiza a página inicial
-    res.redirect('/login');
+  res.redirect('/login');
 });
-
 app.get('/painel', (req, res) => {
     res.render('painel');
 });
-
-app.get('/verifica-login', jwt.validate, (req, res) => {
-  // Só chega aqui se o token for válido
+app.get('/verifica-login', jwtMiddleware.validate.bind(jwtMiddleware), (req, res) => {
   return res.status(200).json({ status: true, msg: "Usuário autenticado" });
 });
 
-//-------------------------ROUTERS--------------------------------------
-app.use('/funcionario', FuncionarioRouter.createRoutes());
+app.use('/produto', produtoRouter);
+app.use('/componente', componenteRouter);
+app.use('/etapa', etapaRouter);
+app.use('/funcionario', funcionarioRouter);
+app.use('/ordem-producao', ordemProducaoRouter);
+app.use('/painel', painelRouter);
 
-app.use('/componente', ComponenteRouter.createRoutes());
-
-app.use('/produto', ProdutoRouter.createRoutes());
-
-app.use('/etapa', EtapaRouter.createRoutes());
-
-app.use('/ordem-producao', OrdemProducaoRouter.createRoutes());
-
-app.use('/painel', Painel.createRoutes());
-
-app.listen(portaServico, '0.0.0.0', () => {
-    console.log(`API rodando no endereço: http://localhost:${portaServico}/`);
+app.listen(port, '0.0.0.0', () => {
+    console.log(`API rodando no endereço: http://localhost:${port}/`);
     Banco.getConexao();
 });
-

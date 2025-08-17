@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
   const btnLogin = document.getElementById("btnLogin");
-  const txtCredencial = document.getElementById("txtCredencial");
+  const txtEmail = document.getElementById("txtEmail");
   const passwordField = document.getElementById("password");
   const togglePassword = document.getElementById("togglePassword");
   const lembrarSenha = document.getElementById("lembrarSenha");
@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }else {
     document.body.style.display = "flex";
     // Se não houver token, continua com a lógica normal do login
-    if (!btnLogin || !txtCredencial || !passwordField || !togglePassword || !lembrarSenha || !divResposta) {
+    if (!btnLogin || !txtEmail || !passwordField || !togglePassword || !lembrarSenha || !divResposta) {
       console.error("Erro: Elementos HTML não encontrados!");
       return;
     }
@@ -65,10 +65,10 @@ document.addEventListener("DOMContentLoaded", function () {
   
   // Função para fazer login
   function fazerLogin(lembrarSenhaChecked) {
-    const credencialFuncionario = txtCredencial.value.trim();
+    const emailFuncionario = txtEmail.value.trim();
     const senhaFuncionario = passwordField.value.trim();
   
-    if (!credencialFuncionario || !senhaFuncionario) {
+    if (!emailFuncionario || !senhaFuncionario) {
       exibirMensagem("Preencha todos os campos!", "erro");
       return;
     }
@@ -76,7 +76,7 @@ document.addEventListener("DOMContentLoaded", function () {
     fetch("/funcionario/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ Funcionario: { credencial: credencialFuncionario, senha: senhaFuncionario } })
+      body: JSON.stringify({emailFuncionario, senhaFuncionario })
     })
       .then(res => res.json())
       .then(dados => {
@@ -86,14 +86,14 @@ document.addEventListener("DOMContentLoaded", function () {
           } else {
             localStorage.setItem('rememberPassword', JSON.stringify(false));
           }
-          
+          console.log(dados);
           localStorage.setItem('userData', JSON.stringify(dados.funcionario));
           localStorage.setItem('authToken', dados.token);
           localStorage.setItem('userImage', dados.funcionario.imagem || "imagens/funcionario/default.png");
           exibirMensagem("Login bem-sucedido! Redirecionando...", "sucesso");
           window.location.href = "/painel";
         } else {
-          exibirMensagem(dados.msg || "Credencial ou senha incorretos!", "erro");
+          exibirMensagem(dados.msg || "Email ou senha incorretos!", "erro");
         }
       })
       .catch(error => {

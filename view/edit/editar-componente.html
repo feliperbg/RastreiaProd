@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Editar Componente</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+
     
     <style>
         body {
@@ -62,7 +63,7 @@
 
             <div class="mb-3">
                 <label for="descricao" class="form-label">Descrição</label>
-                <input type="text" id="descricao" name="descricao" class="form-control" />
+                <textarea type="text" id="descricao" name="descricao" class="form-control" rows="3"></textarea>
             </div>
 
             <div class="mb-3">
@@ -87,24 +88,8 @@
             <input type="text" id="precoTotal" class="form-control" placeholder="Total pago" readonly />
 
             <div class="mb-3">
-                <label for="precoPagoLote" class="form-label">Preço Pago no Lote</label>
-                <input type="text" id="precoPagoLote" name="precoPagoLote" class="form-control" />
-            </div>
-
-
-            <div class="mb-3">
-                <label class="form-label">Dimensões</label>
-                <div class="row">
-                    <div class="col-md-4 mb-2">
-                        <input placeholder="Altura" type="number" id="altura" name="altura" class="form-control" />
-                    </div>
-                    <div class="col-md-4 mb-2">
-                        <input placeholder="Comprimento" type="number" id="comprimento" name="comprimento" class="form-control" />
-                    </div>
-                    <div class="col-md-4 mb-2">
-                         <input placeholder="Largura" type="number" id="largura" name="largura" class="form-control" />
-                    </div>
-                </div>
+                <label for="Lote" class="form-label">Lote</label>
+                <input type="text" id="Lote" name="Lote" class="form-control" />
             </div>
 
             <button type="submit" class="btn btn-primary">Salvar Alterações</button>
@@ -121,17 +106,12 @@
       </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/inputmask@5.0.6/dist/inputmask.min.js"></script>
     <script src="/js/toast.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         const pathParts = window.location.pathname.split('/');
         const id = pathParts[pathParts.length - 1];
         const regexBR = /^(\d{1,3}(\.\d{3})*|\d+)(\,\d{2})?$/;
-        if (!id) {
-            exibirMensagem('ID do componente não encontrado!', 'erro');
-            window.location.href = '/painel';
-        }
-
 
         async function carregarComponente() {
             try {
@@ -143,31 +123,17 @@
                     },
                 });
                 const dados = await response.json();
-
                 if (dados.status && dados.componente) {
                     const c = dados.componente;
-                    const precoUnidade = c.precoUnidade ? c.precoUnidade.toLocaleString('pt-BR', {
-                        style: 'currency',
-                        currency: 'BRL'
-                    }) : '';
 
-                    const precoPagoLote = c.precoPagoLote ? c.precoPagoLote.toLocaleString('pt-BR', {
-                        style: 'currency',
-                        currency: 'BRL'
-                    }) : '';
                     document.getElementById('nome').value = c.nome || '';
                     document.getElementById('codigo').value = c.codigo || '';
                     document.getElementById('descricao').value = c.descricao || '';
                     document.getElementById('dataEntrada').value = c.dataEntrada ? c.dataEntrada.substring(0, 10) : '';
                     document.getElementById('dataValidade').value = c.dataValidade ? c.dataValidade.substring(0, 10) : '';
                     document.getElementById('quantidade').value = c.quantidade || '';
-                    document.getElementById('precoPagoLote').value = c.precoPagoLote || '';
-                    document.getElementById('precoUnidade').value = precoUnidade || '';
-                    if (c.dimensoes) {
-                        document.getElementById('altura').value = c.dimensoes.altura || '';
-                        document.getElementById('comprimento').value = c.dimensoes.comprimento || '';
-                        document.getElementById('largura').value = c.dimensoes.largura || '';
-                    }
+                    document.getElementById('Lote').value = c.Lote || '';
+                    document.getElementById('precoUnidade').value = c.precoUnidade || '';
                 } else {
                     exibirMensagem('Componente não encontrado!', 'erro');
                 }
@@ -181,21 +147,14 @@
             event.preventDefault();
 
             const dadosAtualizados = {
-                Componente: {
                     nome: document.getElementById('nome').value,
                     codigo: document.getElementById('codigo').value,
                     descricao: document.getElementById('descricao').value,
                     dataEntrada: document.getElementById('dataEntrada').value,
                     dataValidade: document.getElementById('dataValidade').value,
                     quantidade: document.getElementById('quantidade').value,
-                    precoPagoLote: document.getElementById('precoPagoLote').value,
+                    Lote: document.getElementById('Lote').value,
                     precoUnidade: document.getElementById('precoUnidade').value,
-                    dimensoes: {
-                        altura: document.getElementById('altura').value,
-                        comprimento: document.getElementById('comprimento').value,
-                        largura: document.getElementById('largura').value
-                    }
-                }
             };
             fetch(`/componente/${id}`, {
                 method: 'PUT',
@@ -225,15 +184,10 @@
         }
         function atualizarPrecoTotal() {
             const qtd = parseFloat(document.getElementById('quantidade').value || '0');
-            const precoStr = document.getElementById('precoUnidade').value.replace(',', '.').replace('R$', '').trim();
-            const precoUnitario = parseFloat(precoStr || '0');
+            const precoUnitario = parseFloat(document.getElementById('precoUnidade').value || '0');
 
             const total = qtd * precoUnitario;
             document.getElementById('precoTotal').value = total.toLocaleString('pt-BR', {
-                style: 'currency',
-                currency: 'BRL'
-            });
-            document.getElementById('precoUnidade').value = precoUnitario.toLocaleString('pt-BR', {
                 style: 'currency',
                 currency: 'BRL'
             });

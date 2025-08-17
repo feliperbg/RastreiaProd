@@ -1,62 +1,47 @@
+// Arquivo: router/OrdemProducaoRouter.js
 const express = require('express');
+const router = express.Router();
 const path = require('path');
-const OrdemControl = require('../control/OrdemProducaoControl');
-const JWTMiddleware = require('../middleware/TokenJWTMiddleware');
 
-module.exports = class OrdemProducaoRouter {
-    constructor() {
-        this.router = express.Router();
-        this.ordemControl = new OrdemControl();
-        this.jwtMiddleware = new JWTMiddleware();
-        this.createRoutes();
-    }
+const OrdemProducaoController = require('../control/OrdemProducaoControl');
+const TokenJWTMiddleware = require('../middleware/TokenJWTMiddleware');
+const MongoIdMiddleware = require('../middleware/MongoIdMiddleware');
+const OrdemProducaoMiddleware = require('../middleware/OrdemProducaoMiddleware');
 
-    createRoutes() {
-        // Rota estática
-        this.router.get('/', (req, res) => {
-            res.render('ordem-producao.ejs');
-        });
+const jwtMiddleware = new TokenJWTMiddleware();
+const viewPath = path.join(__dirname, '..', 'view');
 
-        this.router.get('/editar-ordem/:id', (req, res) => {
-            // Verifica se o token existe na requisição
-            res.sendFile(path.join(__dirname, '..', 'view', 'edit', 'editar-ordem-producao.html')); // Caminho absoluto
-        });
+// --- ROTAS DE RENDERIZAÇÃO ---
+router.get('/', (req, res) => res.render('main/ordem-producao'));
+router.get('/editar-ordem-producao/:id', (req, res) => { res.sendFile(path.join(viewPath, 'edit', 'editar-ordem-producao.html')); });
+router.get('/adicionar-ordem-producao', (req, res) => { res.sendFile(path.join(viewPath, 'add', 'adicionar-ordem-producao.html')); });
 
-        this.router.get('/adicionar-ordem', (req, res) => {
-            res.sendFile(path.join(__dirname, '..', 'view', 'add', 'adicionar-ordem-producao.html'));
-        });
+// ROTA NOVA: Para renderizar a tela de gestão da OP
+router.get('/gestao-op/:id', (req, res) => { res.sendFile(path.join(viewPath,'main', 'gestao-op.html')); });
 
-        // Rotas protegidas por JWT (forma correta)
-        this.router.post('/',
-            (req, res) => this.ordemControl.create(req, res)
-        );
 
-        this.router.get('/readALL',
-            (req, res, next) => this.jwtMiddleware.validate(req, res, next),
-            (req, res) => this.ordemControl.readAll(req, res)
-        );
+// --- ROTAS DA API ---
+router.post('/', jwtMiddleware.validate.bind(jwtMiddleware), OrdemProducaoMiddleware.validateCreate, OrdemProducaoController.create);
+router.get('/readAll', jwtMiddleware.validate.bind(jwtMiddleware), OrdemProducaoController.readAll);
+router.get('/:id', jwtMiddleware.validate.bind(jwtMiddleware),MongoIdMiddleware.validateParam('id'), OrdemProducaoController.readByID);
+router.put('/:id', jwtMiddleware.validate.bind(jwtMiddleware),MongoIdMiddleware.validateParam('id'), OrdemProducaoController.update);
+router.delete('/:id', jwtMiddleware.validate.bind(jwtMiddleware),MongoIdMiddleware.validateParam('id'), OrdemProducaoController.delete);
 
-        this.router.get('/:id',
-            (req, res, next) => this.jwtMiddleware.validate(req, res, next),
-            (req, res) => this.ordemControl.readByID(req, res)
-        );
+// ROTAS NOVAS: Para iniciar e finalizar uma etapa
+// Valida os parâmetros 'id' E 'etapaId'
+router.post(
+    '/:id/etapa/:etapaId/iniciar',
+    jwtMiddleware.validate.bind(jwtMiddleware),
+    MongoIdMiddleware.validateParams(['id', 'etapaId']), // <-- MUDOU AQUI
+    OrdemProducaoController.iniciarEtapa
+);
 
-        this.router.delete('/:id',
-            (req, res, next) => this.jwtMiddleware.validate(req, res, next),
-            (req, res) => this.ordemControl.delete(req, res)
-        );
+// Valida os parâmetros 'id' E 'etapaId'
+router.post(
+    '/:id/etapa/:etapaId/finalizar',
+    jwtMiddleware.validate.bind(jwtMiddleware),
+    MongoIdMiddleware.validateParams(['id', 'etapaId']), // <-- MUDOU AQUI
+    OrdemProducaoController.finalizarEtapa
+);
 
-        this.router.put('/:id',
-            (req, res, next) => this.jwtMiddleware.validate(req, res, next),
-            (req, res) => this.ordemControl.update(req, res)
-        );
-
-        // routes/ordens.js
-        this.router.get('/json', async (req, res) => {
-            (req, res) => this.ordemControl.update(req, res),
-            (req, res) => this.ordemControl.readAllJSON(req, res)
-        });
-
-        return this.router;
-    }
-}
+module.exports = router;

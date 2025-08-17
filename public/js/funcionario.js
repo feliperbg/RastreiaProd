@@ -1,7 +1,7 @@
-    async function carregarTabela() {
+// public/js/funcionario.js
+   async function carregarTabela() {
         try {
             showLoading();
-
             const response = await fetch('/funcionario/readALL', {
                 method: 'GET',
                 headers: {
@@ -9,14 +9,11 @@
                     'Authorization': `Bearer ${localStorage.getItem('authToken')}`
                 },
             });
-
             if (!response.ok) {
                 throw new Error(`Erro HTTP: ${response.status}`);
             }
-
             const resultado = await response.json();
             const tabela = document.getElementById("tabela-funcionarios");
-
             const funcionarios = Array.isArray(resultado) ? resultado : resultado.funcionarios;
 
             if (!Array.isArray(funcionarios)) {
@@ -29,6 +26,7 @@
             tabela.innerHTML = ""; // Limpa tabela após carregamento
 
             funcionarios.forEach(func => {
+                console.log(func);
                 const tr = document.createElement("tr");
                 const nomeCompleto = func.nome || '';
                 const email = func.email || '';
@@ -36,54 +34,52 @@
                 let nomeHtml = '';
                 if (nomeCompleto.length > 25) {
                     nomeHtml = `
-                        <span title="${nomeCompleto.replace(/"/g, '&quot;')}"></span>
+                        <span title="${nomeCompleto}"></span>
                         <button class="btn btn-sm btn-secondary" onclick="mostrarModal('Nome Completo', '${nomeCompleto.replace(/'/g, "\\'").replace(/"/g, '&quot;')}')">
-                            <i class="bi bi-eye fs-4"></i>
+                            <i class="bi bi-eye"></i>
                         </button>
                     `;
                 } else {
                     nomeHtml = `<span>${nomeCompleto}</span>`;
                 }
-                if(func.email && func.email.length > 35) {
+                if(email.length >= 35) {
                     emailHtml = `
                         <span title="${email.replace(/"/g, '&quot;')}"></span>
-                        <button class="btn btn-secondary" onclick="mostrarModal('Email', '${email.replace(/'/g, "\\'").replace(/"/g, '&quot;')}')">
-                            <i class="bi bi-eye"></i> Ver Email
+                        <button class="btn  btn-sm btn-secondary" onclick="mostrarModal('Email', '${email.replace(/'/g, "\\'").replace(/"/g, '&quot;')}')">
+                            <i class="bi bi-eye"></i>
                         </button>
                     `;
                 } else {
                     emailHtml = `<span>${email}</span>`;
                 }
-
                 tr.innerHTML = `
                     <td data-label="Credencial">${func.credencial}</td>
                     <td data-label="Nome">${nomeHtml}</td>
                     <td data-label="Turno">${func.turno}</td>
                     <td data-label="CPF">
                         <button class="btn btn-sm btn-secondary" onclick="mostrarModal('CPF', '${formatarCPF(func.CPF)}')">
-                            <i class="bi bi-card-text"></i> Ver CPF
+                            <i class="bi bi-card-text"></i>
                         </button>
                     </td>
                     <td data-label="Email">${emailHtml}</td>
-                    <td data-label="Telefone">${formatarTelefone(func.telefone)}</td>
+                    <td data-label="Telefone">${func.telefone}</td>
                     <td data-label="Data Nasc.">${formatarData(func.dataNascimento)}</td>
                     <td data-label="Permissões">
-                        <button class="btn btn-sm  btn-warning" onclick="mostrarModal('Permissões', '${func.permissoes}')">
-                            <i class="bi bi-shield-lock"></i> Ver Permissões
+                        <button class="btn btn-sm btn-warning" onclick='mostrarPermissoesModal(${JSON.stringify(func.permissoes)})'>
+                            <i class="bi bi-shield-lock"></i>
                         </button>
                     </td>
                     <td data-label="Ações">
                         <button class="btn btn-sm btn-primary mb-1" onclick="editarFuncionario('${func._id}', '${func.credencial}')">
-                            <i class="bi bi-pencil"></i> Editar
+                            <i class="bi bi-pencil"></i>
                         </button>
                         <button class="btn btn-sm btn-danger mb-1" onclick="deletarFuncionario('${func._id}')">
-                            <i class="bi bi-trash"></i> Deletar
+                            <i class="bi bi-trash"></i>
                         </button>
                     </td>
                 `;
                 tabela.appendChild(tr);
             });
-
         } catch (error) {
             console.error('Falha ao buscar funcionários:', error);
             if (error.message.includes('401')) {
@@ -171,15 +167,101 @@
     }
 
     // Filtro de busca
-    document.getElementById("filtro").addEventListener("input", function () {
-        const termo = this.value.toLowerCase();
-        const linhas = document.querySelectorAll("#tabela-funcionarios tr");
+    if (document.getElementById("filtro")) {
+        document.getElementById("filtro").addEventListener("input", function () {
+            const termo = this.value.toLowerCase();
+            const linhas = document.querySelectorAll("#tabela-funcionarios tr");
 
-        linhas.forEach(tr => {
-            const texto = tr.innerText.toLowerCase();
-            tr.style.display = texto.includes(termo) ? "" : "none";
+            linhas.forEach(tr => {
+                const texto = tr.innerText.toLowerCase();
+                tr.style.display = texto.includes(termo) ? "" : "none";
+            });
         });
-    });
+    }
 
-    // Carrega os dados quando a página é carregada
-    document.addEventListener('DOMContentLoaded', carregarTabela);
+
+    //Função para adicionar funcionário
+    async function adicionarFuncionario(event) {
+      event.preventDefault();
+
+      const permissoes = Array.from(document.querySelectorAll('input[name="permissoes"]:checked')).map(checkbox => checkbox.value);
+      const Funcionario = {
+        nome: document.getElementById('nome').value,
+        senha: document.getElementById('senha').value,
+        email: document.getElementById('email').value,
+        CPF: document.getElementById('CPF').value,
+        telefone: document.getElementById('telefone').value,
+        turno: document.getElementById('turno').value,
+        dataNascimento: document.getElementById('dataNascimento').value,
+        permissoes: permissoes,
+        role: document.getElementById('role').value
+      };
+      try {
+        const resposta = await fetch(`/funcionario`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+          },
+          body: JSON.stringify(Funcionario)
+        });
+
+        if (!resposta.ok) {
+          const erro = await resposta.json();
+          exibirMensagem(erro.msg || 'Erro ao adicionar funcionário.', 'erro');
+          return;
+        }
+
+        exibirMensagem('Funcionário adicionado com sucesso!', 'sucesso');
+        setTimeout(() => {
+          window.location.href = '/funcionario';
+        }, 2000);
+      } catch (error) {
+        exibirMensagem('Erro interno ao tentar adicionar funcionário.', 'erro');
+      }
+    }
+    async function atualizarFuncionario(event) {
+        event.preventDefault();
+        const permissoes = Array.from(document.querySelectorAll('input[name="permissoes"]:checked'))
+                                .map(checkbox => checkbox.value);
+        const dadosAtualizados = {
+            nome: document.getElementById('nome').value,
+            email: document.getElementById('email').value,
+            CPF: document.getElementById('CPF').value,
+            telefone: document.getElementById('telefone').value,
+            turno: document.getElementById('turno').value,
+            dataNascimento: document.getElementById('dataNascimento').value,
+            permissoes: permissoes,
+            role: document.getElementById('role').value
+        };
+        try {
+            const resposta = await fetch(`/funcionario/${id}`, {
+                method: 'PUT',
+                headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                },
+                body: JSON.stringify(dadosAtualizados)
+            });
+            if (!resposta.ok) {
+                const erro = await resposta.json();
+                exibirMensagem(erro.msg || 'Erro ao atualizar funcionário.', 'erro');
+                return;
+            }
+            exibirMensagem('Funcionário atualizado com sucesso!', 'sucesso');
+            setTimeout(() => {
+                window.location.href = '/funcionario';
+            }, 2000);
+        } catch (error) {
+            console.error('Erro ao atualizar funcionário:', error);
+            exibirMensagem('Erro interno ao tentar atualizar.', 'erro');
+        }
+    }
+    
+    if(document.getElementById("tabela-funcionarios")) {
+        document.addEventListener("DOMContentLoaded", carregarTabela);
+    }else if(document.getElementById("form-adicionar")) {
+        document.getElementById("form-adicionar").addEventListener("submit", adicionarFuncionario);
+    }else if(document.getElementById("form-editar")) {
+        document.getElementById("form-editar").addEventListener("submit", atualizarFuncionario);
+    }

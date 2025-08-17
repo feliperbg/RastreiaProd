@@ -1,57 +1,26 @@
+// Arquivo: router/ComponenteRouter.js
 const express = require('express');
+const router = express.Router();
 const path = require('path');
-const ComponenteControl = require('../control/ComponenteControl');
-const JWTMiddleware = require('../middleware/TokenJWTMiddleware');
 
-module.exports = class ComponenteRouter {
-    constructor() {
-        this.router = express.Router();
-        this.componenteControl = new ComponenteControl();
-        this.jwtMiddleware = new JWTMiddleware();
-        this.createRoutes();
-    }
+const ComponenteController = require('../control/ComponenteControl');
+const TokenJWTMiddleware = require('../middleware/TokenJWTMiddleware');
+const MongoIdMiddleware = require('../middleware/MongoIdMiddleware');
+const ComponenteMiddleware = require('../middleware/ComponenteMiddleware');
 
-    createRoutes() {
-        // Rota estática
-        this.router.get('/', (req, res) => {
-            res.render('componente');
-        });
+const jwtMiddleware = new TokenJWTMiddleware();
+const viewPath = path.join(__dirname, '..', 'view');
 
-        this.router.get('/adicionar-componente',(req, res) => {
-            console.log('GET /componente/adicionar-componente foi chamado');
-            res.sendFile(path.join(__dirname, '..', 'view', 'add', 'adicionar-componente.html'));
-        });
+// Rotas de Renderização
+router.get('/', (req, res) => res.render('main/componente'));
+router.get('/adicionar-componente', (req, res) => res.sendFile(path.join(viewPath, 'add', 'adicionar-componente.html')));
+router.get('/editar-componente/:id', (req, res) => res.sendFile(path.join(viewPath, 'edit', 'editar-componente.html')));
 
-        this.router.get('/editar-componente/:id', (req, res) => {
-            res.sendFile(path.join(__dirname, "..", "view", 'edit', 'editar-componente.html'));
-        });
+// --- ROTAS DA API ---
+router.post('/', jwtMiddleware.validate.bind(jwtMiddleware), ComponenteMiddleware.validateCreate, ComponenteController.create);
+router.get('/readAll', jwtMiddleware.validate.bind(jwtMiddleware), ComponenteController.readAll);
+router.get('/:id', jwtMiddleware.validate.bind(jwtMiddleware), MongoIdMiddleware.validateParam('id'), ComponenteController.readByID);
+router.put('/:id', jwtMiddleware.validate.bind(jwtMiddleware), MongoIdMiddleware.validateParam('id'), ComponenteController.update);
+router.delete('/:id', jwtMiddleware.validate.bind(jwtMiddleware), MongoIdMiddleware.validateParam('id'), ComponenteController.delete);
 
-
-        // Rotas protegidas por JWT (forma correta)
-        this.router.post('/',
-            (req, res, next) => this.jwtMiddleware.validate(req, res, next),
-            (req, res) => this.componenteControl.create(req, res)
-        );
-
-        this.router.get('/readALL',
-            (req, res, next) => this.jwtMiddleware.validate(req, res, next),
-            (req, res) => this.componenteControl.readAll(req, res)
-        );
-
-        this.router.get('/:id',
-            (req, res, next) => this.jwtMiddleware.validate(req, res, next),
-            (req, res) => this.componenteControl.readByID(req, res)
-        );
-
-        this.router.delete('/:id',
-            (req, res, next) => this.jwtMiddleware.validate(req, res, next),
-            (req, res) => this.componenteControl.delete(req, res)
-        );
-
-        this.router.put('/:id',
-            (req, res, next) => this.jwtMiddleware.validate(req, res, next),
-            (req, res) => this.componenteControl.update(req, res)
-        );
-        return this.router;
-    }
-}
+module.exports = router;

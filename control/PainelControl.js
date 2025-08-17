@@ -1,155 +1,191 @@
-// controllers/PainelControl.js
+// Arquivo: control/PainelControl.js
+
 const OrdemProducao = require('../model/OrdemProducao');
+const Etapa = require('../model/Etapa');
+const Produto = require('../model/Produto');
+const Componente = require('../model/Componente');
 
-module.exports = class PainelControl {
+module.exports = class PainelController {
+
     /**
-     * Retorna dados para o Kanban
+     * Retorna os totais de cada entidade para os cards do dashboard.
      */
-    async getKanban(req, res) {
+    static async getDashboardCards(req, res) {
         try {
-            const ordens = await OrdemProducao.find({}, 'numero produto statusGeral etapas').lean();
+            const [
+                produtos,
+                componentes,
+                ordensPendentes,
+                ordensEmAndamento
+            ] = await Promise.all([
+                Produto.countDocuments(),
+                Componente.countDocuments(),
+                OrdemProducao.countDocuments({ status: 'Pendente' }),
+                OrdemProducao.countDocuments({ status: 'Em Andamento' })
+            ]);
 
-            const boards = {
-                _todo: { id: '_todo', title: 'A Fazer', item: [] },
-                _doing: { id: '_doing', title: 'Em Produção', item: [] },
-                _review: { id: '_review', title: 'Inspeção', item: [] },
-                _done: { id: '_done', title: 'Finalizado', item: [] }
-            };
-
-            ordens.forEach(o => {
-                let boardKey = '_todo';
-                if (o.statusGeral === 'concluida') {
-                    boardKey = '_done';
-                } else {
-                    const etapaEmProducao = (o.etapas || []).find(e => e.status === 'em_producao');
-                    if (etapaEmProducao) {
-                        boardKey = '_doing';
-                    } else if ((o.etapas || []).some(e => e.status === 'inspecao')) {
-                        boardKey = '_review';
-                    }
-                }
-                boards[boardKey].item.push({ title: `${o.numero} - ${o.produto}` });
-            });
-
-            return res.status(200).send({
+            return res.status(200).json({
                 status: true,
-                boards: Object.values(boards)
+                data: {
+                    produtos,
+                    componentes,
+                    ordensPendentes,
+                    ordensEmAndamento,
+                }
             });
+
         } catch (error) {
-            console.error('Erro ao buscar dados do kanban:', error);
-            return res.status(500).send({
-                status: false,
-                msg: 'Erro ao buscar dados do kanban'
-            });
+            console.error('Erro ao buscar dados para os cards do painel:', error);
+            return res.status(500).json({ status: false, msg: 'Erro interno ao buscar dados do painel.' });
         }
     }
 
     /**
-     * Retorna total de etapas finalizadas por dia
+     * Retorna o status das ordens de produção para o gráfico.
      */
-    async getEtapasFinalizadas(req, res) {
+    static async getOrdensStatusChart(req, res) {
         try {
-            const dias = parseInt(req.query.dias || '7', 10);
+            const [concluidas, pendentes, emAndamento] = await Promise.all([
+                OrdemProducao.countDocuments({ status: 'Concluída' }),
+                OrdemProducao.countDocuments({ status: 'Pendente' }),
+                OrdemProducao.countDocuments({ status: 'Em Andamento' })
+            ]);
 
-            const pipeline = [
-                { $unwind: '$etapas' },
-                { $match: { 'etapas.fim': { $exists: true, $ne: null } } },
-                {
-                    $project: {
-                        fim: '$etapas.fim',
-                        dia: { $dateToString: { format: '%Y-%m-%d', date: '$etapas.fim' } }
-                    }
-                },
-                { $group: { _id: '$dia', total: { $sum: 1 } } },
-                { $sort: { _id: -1 } },
-                { $limit: dias },
-                { $sort: { _id: 1 } }
-            ];
-
-            const result = await OrdemProducao.aggregate(pipeline);
-            const dados = result.map(r => ({ dia: r._id, total: r.total }));
-
-            return res.status(200).send({
+            return res.status(200).json({
                 status: true,
-                etapasFinalizadas: dados
+                data: {
+                    labels: ['Concluídas', 'Pendentes', 'Em Andamento'],
+                    datasets: [concluidas, pendentes, emAndamento]
+                }
             });
+        } catch (error) {
+            console.error('Erro ao buscar dados para o gráfico de status de ordens:', error);
+            return res.status(500).json({ status: false, msg: 'Erro ao buscar dados do gráfico.' });
+        }
+    }
+
+    /**
+     * Calcula e retorna o número de ordens concluídas nos últimos 7 dias.
+     */
+    static async getEtapasFinalizadasChart(req, res) {
+        try {
+            const labels = [];
+            const data = [];
+            const today = new Date();
+            today.setHours(23, 59, 59, 999);
+
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date(today);
+                date.setDate(today.getDate() - i);
+
+                const startOfDay = new Date(date);
+                startOfDay.setHours(0, 0, 0, 0);
+
+                const endOfDay = new Date(date);
+                endOfDay.setHours(23, 59, 59, 999);
+
+                const count = await OrdemProducao.countDocuments({
+                    status: 'Concluída',
+                    'timestampProducao.fim': {
+                        $gte: startOfDay,
+                        $lte: endOfDay
+                    }
+                });
+                
+                labels.push(`${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}`);
+                data.push(count);
+            }
+
+            return res.status(200).json({
+                status: true,
+                data: {
+                    labels: labels,
+                    datasets: data
+                }
+            });
+
         } catch (error) {
             console.error('Erro ao calcular etapas finalizadas:', error);
-            return res.status(500).send({
-                status: false,
-                msg: 'Erro ao calcular etapas finalizadas'
-            });
+            return res.status(500).json({ status: false, msg: 'Erro ao processar dados de etapas.' });
         }
     }
 
     /**
-     * Retorna tempo médio por etapa
+     * **[FUNÇÃO ADICIONADA]**
+     * Calcula o tempo médio (em minutos) gasto em cada etapa usando agregação.
      */
-    async getTempoEtapas(req, res) {
+    static async getTempoMedioEtapasChart(req, res) {
         try {
-            const pipeline = [
-                { $unwind: '$etapas' },
-                { $match: { 'etapas.inicio': { $exists: true }, 'etapas.fim': { $exists: true } } },
-                {
-                    $project: {
-                        nome: '$etapas.nome',
-                        duracaoMin: {
-                            $divide: [
-                                { $subtract: ['$etapas.fim', '$etapas.inicio'] },
-                                1000 * 60
-                            ]
-                        }
-                    }
-                },
-                { $group: { _id: '$nome', tempoMedio: { $avg: '$duracaoMin' }, count: { $sum: 1 } } },
-                { $project: { etapa: '$_id', tempoMedio: { $round: ['$tempoMedio', 2] }, count: 1, _id: 0 } },
-                { $sort: { tempoMedio: -1 } }
-            ];
+            const aggregationResult = await OrdemProducao.aggregate([
+                // Estágio 1: Desconstrói o array 'etapaAtual' para ter um documento por etapa
+                { $unwind: '$etapaAtual' },
+                
+                // Estágio 2: Filtra apenas as etapas que foram concluídas (têm data de início e fim)
+                { $match: { 
+                    'etapaAtual.dataInicio': { $exists: true, $ne: null },
+                    'etapaAtual.dataFim': { $exists: true, $ne: null }
+                }},
+                
+                // Estágio 3: Adiciona um novo campo 'duracaoMs' com a diferença entre as datas
+                { $addFields: {
+                    "etapaAtual.duracaoMs": { $subtract: ['$etapaAtual.dataFim', '$etapaAtual.dataInicio'] }
+                }},
+                
+                // Estágio 4: Agrupa os documentos pelo ID da etapa e calcula a média das durações
+                { $group: {
+                    _id: '$etapaAtual.etapa',
+                    tempoMedioMs: { $avg: '$etapaAtual.duracaoMs' }
+                }},
+                
+                // Estágio 5: Faz um "join" com a coleção 'etapas' para buscar o nome de cada etapa
+                { $lookup: {
+                    from: 'etapas', // Nome da coleção de etapas no MongoDB (geralmente plural)
+                    localField: '_id',
+                    foreignField: '_id',
+                    as: 'etapaInfo'
+                }},
 
-            const result = await OrdemProducao.aggregate(pipeline);
+                // Estágio 6: Formata o resultado final para o frontend
+                { $project: {
+                    _id: 0,
+                    nomeEtapa: { $arrayElemAt: ['$etapaInfo.nome', 0] },
+                    // Converte o tempo médio de milissegundos para minutos e arredonda
+                    tempoMedioMinutos: { $round: [{ $divide: ['$tempoMedioMs', 60000] }, 2] }
+                }}
+            ]);
 
-            return res.status(200).send({
+            // Separa os resultados em labels e dados para o gráfico
+            const labels = aggregationResult.map(item => item.nomeEtapa);
+            const datasets = aggregationResult.map(item => item.tempoMedioMinutos);
+
+            return res.status(200).json({
                 status: true,
-                tempoEtapas: result
+                data: { labels, datasets }
             });
+
         } catch (error) {
-            console.error('Erro ao calcular tempo médio por etapa:', error);
-            return res.status(500).send({
-                status: false,
-                msg: 'Erro ao calcular tempo médio por etapa'
-            });
+            console.error('Erro ao calcular tempo médio das etapas:', error);
+            return res.status(500).json({ status: false, msg: 'Erro ao processar tempo médio.' });
         }
     }
 
     /**
-     * Retorna status das ordens (prazo x atrasadas)
+     * Retorna as últimas 5 ordens de produção modificadas.
      */
-    async getStatusOrdens(req, res) {
+    static async getRecentOrdens(req, res) {
         try {
-            const hoje = new Date();
-            const total = await OrdemProducao.countDocuments();
-            const atrasadas = await OrdemProducao.countDocuments({
-                dataPrazo: { $exists: true, $lt: hoje },
-                statusGeral: { $ne: 'concluida' }
-            });
+            const recentOrdens = await OrdemProducao.find()
+                .sort({ updatedAt: -1 })
+                .limit(5)
+                .populate('produto', 'nome codigo');
 
-            const noPrazoCount = total - atrasadas;
-            const noPrazoPct = total === 0 ? 0 : Math.round((noPrazoCount / total) * 100);
-            const atrasadasPct = total === 0 ? 0 : Math.round((atrasadas / total) * 100);
-
-            return res.status(200).send({
+            return res.status(200).json({
                 status: true,
-                noPrazo: noPrazoPct,
-                atrasadas: atrasadasPct,
-                total,
-                atrasadasCount: atrasadas
+                data: recentOrdens
             });
         } catch (error) {
-            console.error('Erro ao calcular status das ordens:', error);
-            return res.status(500).send({
-                status: false,
-                msg: 'Erro ao calcular status das ordens'
-            });
+            console.error('Erro ao buscar ordens recentes:', error);
+            return res.status(500).json({ status: false, msg: 'Erro ao buscar ordens recentes.' });
         }
     }
 };

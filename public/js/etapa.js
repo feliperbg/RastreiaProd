@@ -16,7 +16,6 @@
         
             const resultado = await response.json();
             const tabela = document.getElementById("tabela-etapas");
-            console.log('Dados recebidos:', resultado);
             
             const etapas = Array.isArray(resultado) ? resultado : resultado.etapas;
             
@@ -35,33 +34,32 @@
                     <td data-label="Nome">${etapa.nome}</td>
                     <td data-label="Sequências">
                         <button class="btn btn-outline-secondary btn-sm" title="Ver Sequências"
-                            onclick='mostrarModalArray("Sequências", ${JSON.stringify(etapa.sequencias)})'>
+                            onclick='mostrarModal("Sequências", ${JSON.stringify(etapa.sequencias)})'>
                             <i class="bi bi-diagram-3"></i>
                         </button>
                     </td>
                     <td data-label="Departamento Responsável">${etapa.departamentoResponsavel}</td>
                     <td data-label="Procedimentos">
                         <button class="btn btn-outline-info btn-sm" title="Ver Procedimentos"
-                            onclick='mostrarModalArray("Procedimentos", ${JSON.stringify(etapa.procedimentos)})'>
+                            onclick='mostrarModal("Procedimentos", ${JSON.stringify(etapa.procedimentos)})'>
                             <i class="bi bi-list-check"></i>
                         </button>
                     </td>
                     <td data-label="Componente Conclusão"><span class="componentes-loading">Carregando...</span></td>
                     <td data-label="Funcionários Responsáveis"><span class="funcionarios-loading">Carregando...</span></td>
                     <td data-label="Ações">
-                        <button class="btn btn-sm btn-primary mb-1" onclick="editarEtapa('${etapa._id}')">
-                            <i class="bi bi-pencil"></i> Editar
+                        <button class="btn btn-sm btn-primary mb-1" onclick="editarEtapa('${etapa.nome}','${etapa._id}')">
+                            <i class="bi bi-pencil"></i>
                         </button>
                         <button class="btn btn-sm btn-danger mb-1" onclick="deletarEtapa('${etapa._id}')">
-                            <i class="bi bi-trash"></i> Deletar
+                            <i class="bi bi-trash"></i>
                         </button>
                     </td>
                 `;
                 tabela.appendChild(tr);
 
-                // Funcionários e componentes continuam assíncronos
-                // Para componentes:
                 formatarArrayAssincrono(etapa.componenteConclusao, id => buscarNomePorId(id, 'componente', 'componente')).then(html => {
+                    console.log(html);
                     tr.querySelector('.componentes-loading').innerHTML = html;
                 });
 
@@ -84,10 +82,10 @@
         }
     }
     
-    function editarEtapa(id) {
+    function editarEtapa(nome, id) {
         Swal.fire({
             title: 'Editar Etapa',
-            text: `Você deseja editar a etapa com ID: ${id}?`,
+            text: `Você deseja editar a etapa: ${nome}?`,
             icon: 'question',
             showCancelButton: true,
             confirmButtonText: 'Sim, editar',

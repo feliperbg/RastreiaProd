@@ -1,62 +1,64 @@
+// Arquivo: router/ProdutoRouter.js
 const express = require('express');
+const router = express.Router();
 const path = require('path');
-const ProdutoControl = require('../control/ProdutoControl');
-const JWTMiddleware = require('../middleware/TokenJWTMiddleware');
 
-module.exports = class ProdutoRouter {
-    constructor() {
-        this.router = express.Router();
-        this.produtoControl = new ProdutoControl();
-        this.jwtMiddleware = new JWTMiddleware();
-        this.viewPath = path.join(__dirname, '..', 'view');
-        this.createRoutes();
-    }
+const ProdutoController = require('../control/ProdutoControl');
+const TokenJWTMiddleware = require('../middleware/TokenJWTMiddleware');
+const MongoIdMiddleware = require('../middleware/MongoIdMiddleware');
+const ProdutoMiddleware = require('../middleware/ProdutoMiddleware');
 
-    createRoutes() {
-        // Páginas estáticas
-        this.router.get('/', (req, res) => {
-            res.render('produto');
-        });
+const jwtMiddleware = new TokenJWTMiddleware();
+const viewPath = path.join(__dirname, '..', 'view');
+// Rota para renderizar a página principal de produtos
+router.get('/', (req, res) => {
+    res.render('main/produto'); 
+});
+ router.get('/editar-produto/:id', (req, res) => {
+    res.sendFile(path.join(viewPath, 'edit', 'editar-produto.html'));
+});
 
-        this.router.get('/editar-produto/:id', (req, res) => {
-            res.sendFile(path.join(this.viewPath, 'edit', 'editar-produto.html'));
-        });
+router.get('/adicionar-produto', (req, res) => {
+    res.sendFile(path.join(viewPath, 'add', 'adicionar-produto.html'));
+});
 
-        this.router.get('/adicionar-produto', (req, res) => {
-            res.sendFile(path.join(this.viewPath, 'add', 'adicionar-produto.html'));
-        });
+// Criar um Produto
+router.post(
+    '/',
+    jwtMiddleware.validate.bind(jwtMiddleware),
+    ProdutoMiddleware.validateCreate,
+    ProdutoController.create
+);
 
-        // Rotas de API protegidas
-        this.router.post('/',
-            (req, res) => this.produtoControl.create(req, res)
-        );
+// Ler todos os Produtos
+router.get(
+    '/readAll',
+    jwtMiddleware.validate.bind(jwtMiddleware),
+    ProdutoController.readAll
+);
 
-        this.router.get('/readALL',
-            this.jwtMiddleware.validate.bind(this.jwtMiddleware),
-            (req, res) => this.produtoControl.readAll(req, res)
-        );
+// Ler um Produto pelo ID
+router.get(
+    '/:id',
+    jwtMiddleware.validate.bind(jwtMiddleware),
+    MongoIdMiddleware.validateParam('id'),
+    ProdutoController.readByID
+);
 
-        this.router.get('/:id',
-            this.jwtMiddleware.validate.bind(this.jwtMiddleware),
-            (req, res) => this.produtoControl.readByID(req, res)
-        );
+// Atualizar um Produto
+router.put(
+    '/:id',
+    jwtMiddleware.validate.bind(jwtMiddleware),
+    MongoIdMiddleware.validateParam('id'),
+    ProdutoController.update
+);
 
-        this.router.delete('/:id',
-            this.jwtMiddleware.validate.bind(this.jwtMiddleware),
-            (req, res) => this.produtoControl.delete(req, res)
-        );
+// Deletar um Produto
+router.delete(
+    '/:id',
+    jwtMiddleware.validate.bind(jwtMiddleware),
+    MongoIdMiddleware.validateParam('id'),
+    ProdutoController.delete
+);
 
-        this.router.put('/:id',
-            this.jwtMiddleware.validate.bind(this.jwtMiddleware),
-            (req, res) => this.produtoControl.update(req, res)
-        );
-
-        // Retorna todos em JSON
-        this.router.get('/json',
-            this.jwtMiddleware.validate.bind(this.jwtMiddleware), // Se precisar proteger
-            (req, res) => this.produtoControl.readAllJSON(req, res)
-        );
-
-        return this.router;
-    }
-};
+module.exports = router;

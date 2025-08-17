@@ -12,7 +12,6 @@ const produtoTabela = new Schema({
 	validade: Date,
 	precoMontagem: Number,
 	precoVenda: Number,
-	dimensões: Number,
 	quantidade: Number,
 	etapas:[{
 	...
@@ -25,11 +24,8 @@ const componentesTabela = new Schema({
 	dataEntrada: Date,
 	validade: Date,
 	quantidade: Number,
-	precoPagoLote: Number,
+	Lote: Number,
 	precoUnidade: Number, 
-	dimensões:[{
-	...
-	}]
 });
 const funcionariosTabela = new Schema({
 	nome: String,

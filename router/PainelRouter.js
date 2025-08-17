@@ -1,48 +1,50 @@
-// routes/PainelRouter.js
+// Arquivo: router/PainelRouter.js
+
 const express = require('express');
-const path = require('path');
-const PainelControl = require('../control/PainelControl');
-const JWTMiddleware = require('../middleware/TokenJWTMiddleware');
+const router = express.Router();
 
-module.exports = class PainelRouter {
-    constructor() {
-        this.router = express.Router();
-        this.painelController = new PainelControl();
-        this.jwtMiddleware = new JWTMiddleware();
-        this.viewPath = path.join(__dirname, '..', 'view');
-        this.createRoutes();
-    }
+// Importações
+const PainelController = require('../control/PainelControl');
+const TokenJWTMiddleware = require('../middleware/TokenJWTMiddleware');
 
-    createRoutes() {
-        // Página principal do painel (se houver)
-        this.router.get('/',
-            this.jwtMiddleware.validate.bind(this.jwtMiddleware),
-            (req, res) => {
-                render('painel.ejs');
-            }
-        );
+// Instancia o middleware de JWT para usar em todas as rotas
+const jwtMiddleware = new TokenJWTMiddleware();
 
-        // Rotas de API do painel
-        this.router.get('/kanban',
-            this.jwtMiddleware.validate.bind(this.jwtMiddleware),
-            (req, res) => this.painelController.getKanban(req, res)
-        );
+// --- ROTAS DA API PARA O DASHBOARD ---
 
-        this.router.get('/etapas',
-            this.jwtMiddleware.validate.bind(this.jwtMiddleware),
-            (req, res) => this.painelController.getEtapasFinalizadas(req, res)
-        );
+// Rota para buscar os dados dos cards principais
+router.get(
+    '/cards',
+    jwtMiddleware.validate.bind(jwtMiddleware),
+    PainelController.getDashboardCards
+);
 
-        this.router.get('/tempo-etapas',
-            this.jwtMiddleware.validate.bind(this.jwtMiddleware),
-            (req, res) => this.painelController.getTempoEtapas(req, res)
-        );
+// Rota para buscar os dados do gráfico de status de ordens
+router.get(
+    '/ordens-status-chart',
+    jwtMiddleware.validate.bind(jwtMiddleware),
+    PainelController.getOrdensStatusChart
+);
 
-        this.router.get('/status-ordens',
-            this.jwtMiddleware.validate.bind(this.jwtMiddleware),
-            (req, res) => this.painelController.getStatusOrdens(req, res)
-        );
+// Rota para buscar as últimas ordens de produção
+router.get(
+    '/recentes',
+    jwtMiddleware.validate.bind(jwtMiddleware),
+    PainelController.getRecentOrdens
+);
 
-        return this.router;
-    }
-};
+router.get(
+    '/etapas-finalizadas-chart',
+    jwtMiddleware.validate.bind(jwtMiddleware),
+    PainelController.getEtapasFinalizadasChart
+);
+
+router.get(
+    '/tempo-medio-etapas-chart',
+    jwtMiddleware.validate.bind(jwtMiddleware),
+    PainelController.getTempoMedioEtapasChart
+);
+
+
+
+module.exports = router;

@@ -1,7 +1,8 @@
+   // Substitua a sua função antiga por esta no seu arquivo .js
     async function carregarTabela() {
         try {
             showLoading();
-        
+
             const response = await fetch('/ordem-producao/readALL', {
                 method: 'GET',
                 headers: {
@@ -9,86 +10,91 @@
                     'Authorization': `Bearer ${localStorage.getItem('authToken')}`
                 },
             });
-        
+
             if (!response.ok) {
                 throw new Error(`Erro HTTP: ${response.status}`);
             }
-        
+
             const resultado = await response.json();
             const tabela = document.getElementById("tabela-ordem-producaos");
-            if(resultado.status !== true) {
-                throw new Error("Erro ao carregar ordens de produção");
-            }   
-            const ordemProducoes = Array.isArray(resultado) ? resultado : resultado.ordensProducao || resultado['ordensProducao'];
+            tabela.innerHTML = ""; // Limpa a tabela
 
-            if (!Array.isArray(ordemProducoes)) {
-                throw new Error("Resposta da API não é uma lista de ordem de produções.");
+            if (resultado.status !== true || !Array.isArray(resultado.ordens)) {
+                throw new Error("Resposta da API inválida ou sem ordens.");
             }
-            if (ordemProducoes.length === 0) {
-                tabela.innerHTML = `<tr><td colspan="7">Nenhuma ordem de produção encontrada.</td></tr>`;
+
+            const ordens = resultado.ordens;
+
+            if (ordens.length === 0) {
+                tabela.innerHTML = `<tr><td colspan="12">Nenhuma ordem de produção encontrada.</td></tr>`;
+                hideLoading();
                 return;
             }
-            tabela.innerHTML = ""; // Limpa tabela após carregamento
 
-            ordemProducoes.forEach(ordemProducao => {
+            ordens.forEach(ordem => {
                 const tr = document.createElement("tr");
+
+                // --- Lógica para extrair e formatar os dados do schema ---
+
+                // 1. Produto (assumindo que foi populado no backend)
+                const nomeProduto = ordem.produto ? ordem.produto.nome : 'Produto não encontrado';
+
+                // 2. Etapa Atual (pegando a primeira da lista, se houver)
+                const etapaAtual = ordem.etapaAtual && ordem.etapaAtual.length > 0
+                    ? `${ordem.etapaAtual[0].etapa.nome} (${ordem.etapaAtual[0].status})`
+                    : 'Nenhuma';
+
+                // 3. Funcionário Ativo (pegando o primeiro da lista, se houver)
+                const funcionarioAtivo = ordem.funcionarioAtivo && ordem.funcionarioAtivo.length > 0
+                    ? ordem.funcionarioAtivo[0].funcionario.nome
+                    : 'Nenhum';
+
+                // 4. Horários de Início e Fim
+                const formatarData = (data) => data ? new Date(data).toLocaleString('pt-BR') : 'N/A';
+                const horarioInicio = formatarData(ordem.timestampProducao?.inicio);
+                const horarioFim = formatarData(ordem.timestampProducao?.fim);
+
+
+                // --- Montagem do HTML da linha da tabela ---
                 tr.innerHTML = `
-                    <td data-label="Status">${ordemProducao.status ? "Em Andamento" : "Finalizada"}</td>
-                    <td data-label="Sequências">
-                        <button class="btn btn-outline-secondary btn-sm" title="Ver Sequências"
-                            onclick='mostrarModalArray("Sequências", ${JSON.stringify(ordemProducao.sequencias)})'>
-                            <i class="bi bi-diagram-3"></i>
-                        </button>
-                    </td>
-                    <td data-label="Departamento Responsável">${ordemProducao.departamentoResponsavel}</td>
-                    <td data-label="Procedimentos">
-                        <button class="btn btn-outline-info btn-sm" title="Ver Procedimentos"
-                            onclick='mostrarModalArray("Procedimentos", ${JSON.stringify(ordemProducao.procedimentos)})'>
-                            <i class="bi bi-list-check"></i>
-                        </button>
-                    </td>
-                    <td data-label="Componente Conclusão"><span class="componentes-loading">Carregando...</span></td>
-                    <td data-label="Funcionários Responsáveis"><span class="funcionarios-loading">Carregando...</span></td>
+                    <td data-label="Status">${ordem.status}</td>
+                    <td data-label="Produto">${nomeProduto}</td>
+                    <td data-label="Etapa Atual">${etapaAtual}</td>
+                    <td data-label="Funcionário Ativo">${funcionarioAtivo}</td>
+                    <td data-label="Horário de Início">${horarioInicio}</td>
+                    <td data-label="Horário de Fim">${horarioFim}</td>
                     <td data-label="Ações">
-                        <button class="btn btn-sm btn-primary mb-1" onclick="editarordemProducao('${ordemProducao._id}')">
-                            <i class="bi bi-pencil"></i> Editar
+                        <button class="btn btn-sm btn-primary mb-1" onclick="editarOrdemProducao('${nomeProduto}','${ordem._id}')" title="Editar">
+                            <i class="bi bi-pencil"></i>
                         </button>
-                        <button class="btn btn-sm btn-danger mb-1" onclick="deletarordemProducao('${ordemProducao._id}')">
-                            <i class="bi bi-trash"></i> Deletar
+                        <button class="btn btn-sm btn-danger mb-1" onclick="deletarOrdemProducao('${ordem._id}')" title="Deletar">
+                            <i class="bi bi-trash"></i>
                         </button>
                     </td>
                 `;
                 tabela.appendChild(tr);
-
-                // Funcionários e componentes continuam assíncronos
-                // Para componentes:
-                formatarArrayAssincrono(ordemProducao.componenteConclusao, id => buscarNomePorId(id, 'componente', 'componente')).then(html => {
-                    tr.querySelector('.componentes-loading').innerHTML = html;
-                });
-
-                // Para funcionários:
-                formatarArrayAssincrono(ordemProducao.funcionariosResponsaveis, id => buscarNomePorId(id, 'funcionario', 'funcionario')).then(html => {
-                    tr.querySelector('.funcionarios-loading').innerHTML = html;
-                });
             });
-        
+
         } catch (error) {
-            console.error('Falha ao buscar ordemProducoes:', error);
+            console.error('Falha ao buscar ordens de produção:', error);
             Swal.fire({
                 icon: 'error',
-                title: 'Erro ao carregar',
-                text: 'Ocorreu um erro ao carregar as ordemProducoes. Por favor, tente novamente.',
-                confirmButtonText: 'Ok'
+                title: 'Erro ao Carregar',
+                text: error.message,
             });
+            // Garante que a tabela mostre o erro também
+            const tabela = document.getElementById("tabela-ordem-producaos");
+            if(tabela) tabela.innerHTML = `<tr><td colspan="7">Falha ao carregar os dados.</td></tr>`;
+
         } finally {
             hideLoading();
         }
     }
 
-    function editarOrdemProducoes(id) {
+    function editarOrdemProducao(nomeProduto, id) {
         Swal.fire({
             title: 'Editar ordem de produção',
-            text: `Você deseja editar a ordem de produção com ID: ${id}?`,
+            text: `Você deseja editar a ordem de produção do produto: ${nomeProduto}?`,
             icon: 'question',
             showCancelButton: true,
             confirmButtonText: 'Sim, editar',
@@ -100,7 +106,7 @@
         });
         }
 
-    async function deletarOrdemProducoes(id) {
+    async function deletarOrdemProducAO(id) {
         const { isConfirmed } = await Swal.fire({
             title: 'Tem certeza?',
             text: "Você não poderá reverter isso!",
