@@ -15,7 +15,7 @@
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.18.0",
-    "mongoose": "^8.17.1",
+    "mongoose": "^8.17.2",
     "mongoose-sequence": "^6.0.1"
   },
   "directories": {

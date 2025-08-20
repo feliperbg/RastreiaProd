@@ -1,20 +1,10 @@
-    // Função para formatar a data no formato dd/mm/yyyy
-    function formatarData(data) {
-        if (!data) return '';
-        // Se for Date, converte para string
-        if (data instanceof Date) {
-            const dia = String(data.getDate()).padStart(2, '0');
-            const mes = String(data.getMonth() + 1).padStart(2, '0');
-            const ano = data.getFullYear();
-            return `${dia}/${mes}/${ano}`;
-        }
-        // Se for string no formato YYYY-MM-DD
-        if (typeof data === 'string' && /^\d{4}-\d{2}-\d{2}/.test(data)) {
-            const [ano, mes, dia] = data.split('T')[0].split('-');
-            return `${dia}/${mes}/${ano}`;
-        }
-        return '';
-    }
+  const formatarData = (data) => {
+    if (!data) return 'N/A';
+    const dateObj = new Date(data);
+    const userTimezoneOffset = dateObj.getTimezoneOffset() * 60000;
+    const correctedDate = new Date(dateObj.getTime() + userTimezoneOffset);
+    return correctedDate.toLocaleDateString('pt-BR');
+  };
     function showLoading() {
         Swal.fire({
             title: 'Carregando...',

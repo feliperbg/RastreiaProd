@@ -49,10 +49,6 @@
                     ? ordem.funcionarioAtivo[0].funcionario.nome
                     : 'Nenhum';
 
-                // 4. Horários de Início e Fim
-                // Arquivo: public/js/ordem-producao.js
-
-                // 4. Horários de Início e Fim
                 const formatarData = (data) => {
                     if (!data) return 'N/A';
                     // Cria um objeto de data considerando o fuso horário local para evitar o "day-off"
