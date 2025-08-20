@@ -23,11 +23,14 @@ module.exports = class EtapaController {
             return res.status(500).json({ status: false, msg: 'Erro ao listar etapas.' });
         }
     }
-
+    
     static async readByID(req, res) {
         try {
             const { id } = req.params;
-            const etapa = await Etapa.findById(id);
+            const etapa = await Etapa.findById(id)
+                .populate('componenteConclusao', 'nome') // Popula o nome do componente
+                .populate('funcionariosResponsaveis', 'nome'); // Popula o nome dos funcionários
+
             if (!etapa) {
                 return res.status(404).json({ status: false, msg: 'Etapa não encontrada.' });
             }

@@ -1,4 +1,10 @@
-// public/js/funcionario.js
+    const formatarData = (data) => {
+        if (!data) return 'N/A';
+        const dateObj = new Date(data);
+        const userTimezoneOffset = dateObj.getTimezoneOffset() * 60000;
+        const correctedDate = new Date(dateObj.getTime() + userTimezoneOffset);
+        return correctedDate.toLocaleDateString('pt-BR');
+    };
    async function carregarTabela() {
         try {
             showLoading();

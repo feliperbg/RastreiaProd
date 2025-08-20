@@ -1,3 +1,10 @@
+  const formatarData = (data) => {
+    if (!data) return 'N/A';
+    const dateObj = new Date(data);
+    const userTimezoneOffset = dateObj.getTimezoneOffset() * 60000;
+    const correctedDate = new Date(dateObj.getTime() + userTimezoneOffset);
+    return correctedDate.toLocaleDateString('pt-BR');
+  };
   async function carregarTabelaProdutos() {
     try {
       const resposta = await fetch('/produto/readALL', {
@@ -58,8 +65,8 @@
               <i class="bi bi-puzzle"></i>
             </button>
           </td>
-          <td data-label="Data Entrada">${new Date(prod.dataEntrada).toLocaleDateString("pt-BR")}</td>
-          <td data-label="Data dataValidade">${new Date(prod.dataValidade).toLocaleDateString("pt-BR")}</td>
+          <td data-label="Data Entrada">${formatarData(prod.dataEntrada)}</td>
+          <td data-label="Data Validade">${formatarData(prod.dataValidade)}</td>
           <td data-label="Preços">
             <button class="btn btn-sm btn-outline-success" onclick="verPrecos('${prod.precoMontagem.toFixed(2)}','${prod.precoVenda.toFixed(2)}')" title="Ver preços">
               <i class="bi bi-currency-dollar"></i>

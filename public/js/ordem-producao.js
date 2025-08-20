@@ -50,7 +50,26 @@
                     : 'Nenhum';
 
                 // 4. Horários de Início e Fim
-                const formatarData = (data) => data ? new Date(data).toLocaleString('pt-BR') : 'N/A';
+                // Arquivo: public/js/ordem-producao.js
+
+                // 4. Horários de Início e Fim
+                const formatarData = (data) => {
+                    if (!data) return 'N/A';
+                    // Cria um objeto de data considerando o fuso horário local para evitar o "day-off"
+                    const dateObj = new Date(data);
+                    // Adiciona o offset do fuso horário para corrigir a data para UTC antes de formatar
+                    const userTimezoneOffset = dateObj.getTimezoneOffset() * 60000;
+                    const correctedDate = new Date(dateObj.getTime() + userTimezoneOffset);
+                    
+                    return correctedDate.toLocaleString('pt-BR', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit'
+                    });
+                };
                 const horarioInicio = formatarData(ordem.timestampProducao?.inicio);
                 const horarioFim = formatarData(ordem.timestampProducao?.fim);
 
@@ -106,7 +125,7 @@
         });
         }
 
-    async function deletarOrdemProducAO(id) {
+    async function deletarOrdemProducao(id) {
         const { isConfirmed } = await Swal.fire({
             title: 'Tem certeza?',
             text: "Você não poderá reverter isso!",

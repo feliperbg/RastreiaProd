@@ -123,7 +123,7 @@
       const Lote = document.getElementById('Lote').value;
       const precoUnidade = parseFloat(document.getElementById('precoUnidade').value);
       const dataEntrada = document.getElementById('dataEntrada').value?.substring(0, 10) || '';
-      const dataValidade = document.getElementById('dataValidade').value;
+      const dataValidade = document.getElementById('dataValidade').value?.substring(0, 10) || '';
 
       if (!nome || !codigo) {
         exibirMensagem('Por favor, preencha os campos obrigatórios: Nome e Código.', 'erro');
@@ -146,27 +146,25 @@
       }
 
       const novoComponente = {
-        Componente:{
-          nome,
-          codigo,
-          descricao: document.getElementById('descricao').value.trim(),
-          dataEntrada,
-          dataValidade,
-          quantidade,
-          Lote,
-          precoUnidade
-        }
+        nome,
+        codigo,
+        descricao: document.getElementById('descricao').value.trim(),
+        dataEntrada,
+        dataValidade,
+        quantidade,
+        Lote,
+        precoUnidade
       };
 
       try {
         const resposta = await fetch('/componente', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-          },
-          body: JSON.stringify(novoComponente)
-        });
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+            },
+            body: JSON.stringify(novoComponente)
+      });
 
         if (resposta.ok) {
           exibirMensagem('Componente adicionado com sucesso!', 'sucesso');
