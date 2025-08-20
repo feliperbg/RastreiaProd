@@ -5,21 +5,15 @@ const Produto = require('../model/Produto');
 
 module.exports = class OrdemProducaoController {
     static async create(req, res) {
-        console.log("CORPO DA REQUISIÇÃO RECEBIDO:", req.body); // Este log deve funcionar agora
-
         try {
             const { status, produto, quantidade } = req.body;
 
-            if (status === undefined) { // Verificação mais segura
-                return res.status(400).json({ status: false, msg: 'Número de status inválido.' });
-            }
-            
-            // Use a variável 'produto' que agora terá o valor correto
-            const novaOrdem = await OrdemProducao.create({ status: status, produto: produto, quantidade });
+            const novaOrdem = await OrdemProducao.create({ status, produto, quantidade });
             
             return res.status(201).json({ status: true, msg: 'Ordem de produção criada!', ordem: novaOrdem });
         } catch (error) {
-            console.error("ERRO AO CRIAR ORDEM:", error); // Adicione um log de erro para ver o problema
+            // Erros de validação do Mongoose (ex: campos obrigatórios faltando) serão capturados aqui
+            console.error("ERRO AO CRIAR ORDEM:", error); 
             return res.status(400).json({ status: false, msg: error.message });
         }
     }
@@ -27,12 +21,20 @@ module.exports = class OrdemProducaoController {
     static async readAll(req, res) {
         try {
             const ordens = await OrdemProducao.find()
-                .populate('produto', 'nome')
-                .populate('etapaAtual', 'nome')
+                .populate('produto', 'nome') // Popula o nome do produto
+                .populate({
+                    path: 'etapaAtual.etapa', // Popula o campo 'etapa' dentro do array 'etapaAtual'
+                    select: 'nome' // Seleciona apenas o campo 'nome' da etapa
+                })
+                .populate({
+                    path: 'funcionarioAtivo.funcionario', // Popula o campo 'funcionario' dentro do array 'funcionarioAtivo'
+                    select: 'nome' // Seleciona apenas o nome do funcionário
+                })
                 .sort('-createdAt');
             return res.status(200).json({ status: true, ordens });
         } catch (error) {
-            return res.status(500).json({ status: false, msg: 'Erro ao listar ordens de produção.' });
+            console.error("Erro ao listar ordens:", error); // Adicionado log para debug
+            return res.status(500).json({ status: false, msg: 'Erro ao listar ordens de produção.', error: error.message });
         }
     }
 
