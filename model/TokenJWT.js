@@ -25,9 +25,8 @@ class TokenJWT {
             exp: Math.floor(Date.now() / 1000) + this._duracaoToken, // Expiração (em segundos)
             nbf: Math.floor(Date.now() / 1000), // Não é válido antes do tempo especificado
             jti: require('crypto').randomBytes(16).toString('hex'), // Identificador único (jti)
-            
             emailFuncionario: parametroClaims.email, 
-            idFuncionario: parametroClaims._id,
+            _id: parametroClaims._id,
             role: parametroClaims.role
         };
 
