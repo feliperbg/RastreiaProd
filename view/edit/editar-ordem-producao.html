@@ -134,7 +134,7 @@
             async function carregarListasCompletas() {
                 if (listaCompletaProdutos.length > 0) return;
                 try {
-                    const response = await fetch('/produto/readALL', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } });
+                    const response = await fetch('/produto/readAll', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } });
                     const result = await response.json();
                     listaCompletaProdutos = result.produtos || [];
                 } catch (error) {

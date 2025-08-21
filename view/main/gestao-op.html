@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="pt-BR" data-bs-theme="light">
 <head>
     <meta charset="UTF-8" />
@@ -74,6 +74,135 @@
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/js/toast.js"></script>
+    <script src="/js/gestao-op.js"></script>
+</body>
+</html> -->
+<!DOCTYPE html>
+<html lang="pt-BR" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Gestão de Ordem de Produção</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        body { background-color: #f4f6f9; }
+        .printable-area { background-color: #fff; padding: 2rem; border-radius: .5rem; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        .etapa-card {
+            position: relative;
+            padding-left: 2.5rem;
+            border-left: 3px solid #dee2e6;
+            margin-left: 1rem;
+        }
+        .etapa-card::before {
+            content: '';
+            position: absolute;
+            left: -11px;
+            top: 0;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #dee2e6;
+            border: 3px solid #fff;
+        }
+        .etapa-pendente { border-left-color: #6c757d; }
+        .etapa-pendente::before { background-color: #6c757d; }
+        .etapa-andamento { border-left-color: #0d6efd; }
+        .etapa-andamento::before { background-color: #0d6efd; animation: pulse 2s infinite; }
+        .etapa-concluida { border-left-color: #198754; }
+        .etapa-concluida::before { background-color: #198754; }
+        #qrcode-container { display: flex; justify-content: center; align-items: center; padding: 10px; border: 1px solid #dee2e6; border-radius: .25rem; }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(13, 110, 253, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(13, 110, 253, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(13, 110, 253, 0); }
+        }
+        @media print {
+            body { background-color: #fff; }
+            .no-print { display: none; }
+            .printable-area { box-shadow: none; border: 1px solid #dee2e6; }
+        }
+    </style>
+</head>
+<body class="p-3">
+    <div class="container-fluid">
+        <div id="loading-spinner" class="d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Carregando...</span>
+            </div>
+        </div>
+
+        <div id="conteudo-pagina" class="d-none">
+            <div class="printable-area">
+                <!-- CABEÇALHO E QR CODE -->
+                <div class="row mb-4">
+                    <div class="col-md-9">
+                        <h2 id="op-titulo">Ordem de Produção</h2>
+                        <p class="text-muted">Acompanhe o progresso e gerencie as etapas de produção.</p>
+                    </div>
+                    <div class="col-md-3 text-center">
+                        <div id="qrcode-container"></div>
+                        <small class="text-muted">Digitalize para acessar esta OS</small>
+                    </div>
+                </div>
+
+                <!-- DETALHES DA ORDEM -->
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Detalhes da Ordem de Serviço</h5>
+                        <button class="btn btn-outline-secondary btn-sm no-print" onclick="window.print()">
+                            <i class="bi bi-printer"></i> Imprimir
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4"><strong>Produto:</strong> <span id="op-produto"></span></div>
+                            <div class="col-md-4"><strong>Quantidade a Produzir:</strong> <span id="op-quantidade"></span></div>
+                            <div class="col-md-4"><strong>Status Geral:</strong> <span id="op-status"></span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DETALHES DO PRODUTO E COMPONENTES -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Componentes Necessários</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-bordered mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Componente</th>
+                                        <th>Código</th>
+                                        <th>Quantidade Necessária</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="componentes-tabela">
+                                    <!-- Linhas inseridas via JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LINHA DE PRODUÇÃO (ETAPAS) -->
+                <h3 class="mt-5">Linha de Produção</h3>
+                <div id="etapas-container" class="mt-4">
+                    <!-- Cards das etapas inseridos via JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- BIBLIOTECAS JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    
+    <!-- SCRIPTS DA APLICAÇÃO -->
     <script src="/js/toast.js"></script>
     <script src="/js/gestao-op.js"></script>
 </body>

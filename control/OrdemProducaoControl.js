@@ -29,7 +29,7 @@ module.exports = class OrdemProducaoController {
                 .populate({
                     path: 'funcionarioAtivo.funcionario', // Popula o campo 'funcionario' dentro do array 'funcionarioAtivo'
                     select: 'nome' // Seleciona apenas o nome do funcionário
-                })
+                })                                                          
                 .sort('-createdAt');
             return res.status(200).json({ status: true, ordens });
         } catch (error) {
@@ -99,30 +99,27 @@ module.exports = class OrdemProducaoController {
         }
     }
 
-    /**
-     * NOVO: Inicia uma etapa da Ordem de Produção.
-     */
     static async iniciarEtapa(req, res) {
         try {
             const { id, etapaId } = req.params;
-            const funcionarioId = req.user.id; // Supondo que o JWT Middleware adicione o user ao req
+            const funcionarioId = req.user._id;
 
             const ordem = await OrdemProducao.findById(id);
             if (!ordem) return res.status(404).json({ status: false, msg: 'Ordem de produção não encontrada.' });
 
-            // Verifica se a etapa já foi iniciada
             const etapaExistente = ordem.etapaAtual.find(e => e.etapa.toString() === etapaId);
             if (etapaExistente) {
                 return res.status(400).json({ status: false, msg: 'Esta etapa já foi iniciada.' });
             }
 
-            // Se for a primeira etapa, inicia a produção
             if (ordem.etapaAtual.length === 0) {
                 ordem.status = 'Em Andamento';
+                if (!ordem.timestampProducao) {
+                    ordem.timestampProducao = {};
+                }
                 ordem.timestampProducao.inicio = new Date();
             }
 
-            // Adiciona a nova etapa e o funcionário ativo
             ordem.etapaAtual.push({
                 etapa: etapaId,
                 status: 'Em Andamento',
@@ -138,22 +135,22 @@ module.exports = class OrdemProducaoController {
             return res.status(200).json({ status: true, msg: 'Etapa iniciada com sucesso!', ordem });
 
         } catch (error) {
+            console.error("ERRO DETALHADO AO INICIAR ETAPA:", error);
             return res.status(500).json({ status: false, msg: 'Erro ao iniciar etapa.', error: error.message });
         }
     }
 
     /**
-     * NOVO: Finaliza uma etapa da Ordem de Produção.
+     * Finaliza uma etapa da Ordem de Produção.
      */
     static async finalizarEtapa(req, res) {
         try {
             const { id, etapaId } = req.params;
-            const funcionarioId = req.user.id;
+            const funcionarioId = req.user._id;
 
-            const ordem = await OrdemProducao.findById(id).populate('produto'); // Popula para saber qual é a última etapa
+            const ordem = await OrdemProducao.findById(id).populate('produto');
             if (!ordem) return res.status(404).json({ status: false, msg: 'Ordem de produção não encontrada.' });
 
-            // Encontra a etapa no array da OP para atualizar
             const etapaParaFinalizar = ordem.etapaAtual.find(e => e.etapa.toString() === etapaId);
             if (!etapaParaFinalizar) {
                 return res.status(404).json({ status: false, msg: 'Etapa não encontrada nesta ordem de produção.' });
@@ -162,19 +159,20 @@ module.exports = class OrdemProducaoController {
                 return res.status(400).json({ status: false, msg: 'Esta etapa já foi finalizada.' });
             }
 
-            // Atualiza a etapa
             etapaParaFinalizar.status = 'Concluída';
             etapaParaFinalizar.dataFim = new Date();
 
-            // Remove o funcionário do array de ativos
-            ordem.funcionarioAtivo = ordem.funcionarioAtivo.filter(
-                f => f.funcionario.toString() !== funcionarioId
+            
+            ordem.funcionarioAtivo = (ordem.funcionarioAtivo || []).filter(
+                f => f && f.funcionario && f.funcionario.toString() !== funcionarioId
             );
 
-            // Verifica se esta é a última etapa para concluir a OP
             const definicaoDeEtapas = ordem.produto.etapas;
             if (definicaoDeEtapas[definicaoDeEtapas.length - 1].toString() === etapaId) {
                 ordem.status = 'Concluída';
+                if (!ordem.timestampProducao) {
+                    ordem.timestampProducao = {};
+                }
                 ordem.timestampProducao.fim = new Date();
             }
 
@@ -182,6 +180,7 @@ module.exports = class OrdemProducaoController {
             return res.status(200).json({ status: true, msg: 'Etapa finalizada com sucesso!', ordem });
 
         } catch (error) {
+            console.error("ERRO DETALHADO AO FINALIZAR ETAPA:", error);
             return res.status(500).json({ status: false, msg: 'Erro ao finalizar etapa.', error: error.message });
         }
     }

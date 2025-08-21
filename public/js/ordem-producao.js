@@ -3,7 +3,7 @@
         try {
             showLoading();
 
-            const response = await fetch('/ordem-producao/readALL', {
+            const response = await fetch('/ordem-producao/readAll', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -16,7 +16,8 @@
             }
 
             const resultado = await response.json();
-            const tabela = document.getElementById("tabela-ordem-producaos");
+            console.log(resultado);
+            const tabela = document.getElementById("tabela-ordem-producoes");
             tabela.innerHTML = ""; // Limpa a tabela
 
             if (resultado.status !== true || !Array.isArray(resultado.ordens)) {
@@ -46,10 +47,13 @@
 
                 // 3. Funcionário Ativo (pegando o primeiro da lista, se houver)
                 const funcionarioAtivo = ordem.funcionarioAtivo && ordem.funcionarioAtivo.length > 0
-                    ? ordem.funcionarioAtivo[0].funcionario.nome
+                    ? buscarNomePorId(ordem.funcionarioAtivo[0]._id, "funcionario", 'Funcionários')
                     : 'Nenhum';
 
-                const formatarData = (data) => {
+                // Arquivo: public/js/ordem-producao.js
+
+                // 4. Horários de Início e Fim
+                const formatarHorario = (data) => {
                     if (!data) return 'N/A';
                     // Cria um objeto de data considerando o fuso horário local para evitar o "day-off"
                     const dateObj = new Date(data);
@@ -66,12 +70,13 @@
                         second: '2-digit'
                     });
                 };
-                const horarioInicio = formatarData(ordem.timestampProducao?.inicio);
-                const horarioFim = formatarData(ordem.timestampProducao?.fim);
+                const horarioInicio = formatarHorario(ordem.timestampProducao?.inicio);
+                const horarioFim = formatarHorario(ordem.timestampProducao?.fim);
 
 
                 // --- Montagem do HTML da linha da tabela ---
                 tr.innerHTML = `
+                    <td data-label="Código">${ordem._id.slice(-6).toUpperCase()}</td>                    
                     <td data-label="Status">${ordem.status}</td>
                     <td data-label="Produto">${nomeProduto}</td>
                     <td data-label="Etapa Atual">${etapaAtual}</td>
@@ -79,6 +84,9 @@
                     <td data-label="Horário de Início">${horarioInicio}</td>
                     <td data-label="Horário de Fim">${horarioFim}</td>
                     <td data-label="Ações">
+                        <button class="btn btn-sm btn-info mb-1" onclick="gerenciarOrdemProducao('${ordem._id}')" title="Gerenciar OP">
+                            <i class="bi bi-gear"></i>
+                        </button>
                         <button class="btn btn-sm btn-primary mb-1" onclick="editarOrdemProducao('${nomeProduto}','${ordem._id}')" title="Editar">
                             <i class="bi bi-pencil"></i>
                         </button>
@@ -98,7 +106,7 @@
                 text: error.message,
             });
             // Garante que a tabela mostre o erro também
-            const tabela = document.getElementById("tabela-ordem-producaos");
+            const tabela = document.getElementById("tabela-ordem-producoes");
             if(tabela) tabela.innerHTML = `<tr><td colspan="7">Falha ao carregar os dados.</td></tr>`;
 
         } finally {
@@ -166,22 +174,12 @@
             }
         }
     }
-
+    function gerenciarOrdemProducao(id) {
+        window.location.href = `/ordem-producao/gestao-op/${id}`;
+    }
     // Carregar a tabela ao carregar a página
     document.addEventListener("DOMContentLoaded", function() {
         carregarTabela();
+        configurarFiltroDeTabela('filtro', 'tabela-ordem-producoes', 'Produto');
     });
 
-    // Filtro de busca por nome
-    document.getElementById("filtro").addEventListener("input", function() {
-        const filtro = this.value.toLowerCase();
-        const linhas = document.querySelectorAll("#tabela-ordem-producaos tr");
-        linhas.forEach(linha => {
-            const nome = linha.cells[0]?.innerText.toLowerCase();
-            if (nome && nome.includes(filtro)) {
-                linha.style.display = "";
-            } else {
-                linha.style.display = "none";
-            }
-        });
-    });
