@@ -18,7 +18,7 @@ module.exports = class ComponenteController {
     static async readAll(req, res) {
         try {
             const componentes = await Componente.find().sort('nome');
-            return res.status(200).json({ status: true, componente: componentes });
+            return res.status(200).json({ status: true, componentes: componentes });
         } catch (error) {
             return res.status(500).json({ status: false, msg: 'Erro ao listar componentes.' });
         }

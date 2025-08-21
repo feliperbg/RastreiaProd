@@ -175,7 +175,6 @@
                   document.getElementById('dataValidade').value = formatarDataParaInput(p.dataValidade);
                   if (Array.isArray(p.componentesNecessarios)) {
                     listaCompletaComponentes = p.componentesNecessarios.map(c => c.componente);
-                    console.log(p.componentesNecessarios);
                     componentesSelecionados = p.componentesNecessarios.map(c => ({
                         componente: c.componente._id,
                         quantidade: c.quantidade
@@ -203,19 +202,21 @@
        * Só é chamada quando o usuário clica nos botões "Selecionar".
        */
       async function carregarListasCompletas() {
-          try {
-              const [compRes, etapasRes] = await Promise.all([
-                  fetch('/componente/readALL', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } }),
-                  fetch('/etapa/readALL', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } })
-              ]);
-              const compJson = await compRes.json();
-              const etapasJson = await etapasRes.json();
-              listaCompletaComponentes = compJson.componentes || [];
-              listaCompletaEtapas = etapasJson.etapas || [];
-          } catch (error) {
-              console.error("Erro ao carregar listas completas:", error);
-              exibirMensagem("Não foi possível carregar as opções de seleção.", "erro");
-          }
+        try {
+            // Só carrega se a lista ainda estiver vazia
+            if (listaCompletaComponentes.length > 0 && listaCompletaEtapas.length > 0) return;
+
+            const [compRes, etapasRes] = await Promise.all([
+                fetch('/componente/readAll', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } }),
+                fetch('/etapa/readAll', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } })
+            ]);
+            const compJson = await compRes.json();
+            const etapasJson = await etapasRes.json();
+            listaCompletaComponentes = compJson.componentes || [];
+        } catch (error) {
+            console.error("Erro ao carregar listas completas:", error);
+            exibirMensagem("Não foi possível carregar as opções de seleção.", "erro");
+        }
       }
 
       // --- EVENT LISTENERS ---

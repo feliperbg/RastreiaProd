@@ -153,8 +153,8 @@
             if (listaCompletaComponentes.length > 0 && listaCompletaFuncionarios.length > 0) return;
             try {
                 const [compRes, funcRes] = await Promise.all([
-                    fetch('/componente/readALL', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } }),
-                    fetch('/funcionario/readALL', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } })
+                    fetch('/componente/readAll', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } }),
+                    fetch('/funcionario/readAll', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } })
                 ]);
                 const compJson = await compRes.json();
                 const funcJson = await funcRes.json();

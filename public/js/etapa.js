@@ -2,7 +2,7 @@
         try {
             showLoading();
         
-            const response = await fetch('/etapa/readALL', {
+            const response = await fetch('/etapa/readAll', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -31,13 +31,8 @@
             etapas.forEach(etapa => {
                 const tr = document.createElement("tr");
                 tr.innerHTML = `
+                    <td data-label="Sequência">${etapa.sequencias}</td>
                     <td data-label="Nome">${etapa.nome}</td>
-                    <td data-label="Sequências">
-                        <button class="btn btn-outline-secondary btn-sm" title="Ver Sequências"
-                            onclick='mostrarModal("Sequências", ${JSON.stringify(etapa.sequencias)})'>
-                            <i class="bi bi-diagram-3"></i>
-                        </button>
-                    </td>
                     <td data-label="Departamento Responsável">${etapa.departamentoResponsavel}</td>
                     <td data-label="Procedimentos">
                         <button class="btn btn-outline-info btn-sm" title="Ver Procedimentos"
@@ -59,7 +54,6 @@
                 tabela.appendChild(tr);
 
                 formatarArrayAssincrono(etapa.componenteConclusao, id => buscarNomePorId(id, 'componente', 'componente')).then(html => {
-                    console.log(html);
                     tr.querySelector('.componentes-loading').innerHTML = html;
                 });
 
@@ -146,18 +140,5 @@
     // Carregar a tabela ao carregar a página
     document.addEventListener("DOMContentLoaded", function() {
         carregarTabela();
-    });
-
-    // Filtro de busca por nome
-    document.getElementById("filtro").addEventListener("input", function() {
-        const filtro = this.value.toLowerCase();
-        const linhas = document.querySelectorAll("#tabela-etapas tr");
-        linhas.forEach(linha => {
-            const nome = linha.cells[0]?.innerText.toLowerCase();
-            if (nome && nome.includes(filtro)) {
-                linha.style.display = "";
-            } else {
-                linha.style.display = "none";
-            }
-        });
+        configurarFiltroDeTabela('filtro', 'tabela-etapas', 'Nome');
     });
