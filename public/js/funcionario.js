@@ -2,7 +2,7 @@
    async function carregarTabela() {
         try {
             showLoading();
-            const response = await fetch('/funcionario/readALL', {
+            const response = await fetch('/funcionario/readAll', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -166,20 +166,6 @@
         }
     }
 
-    // Filtro de busca
-    if (document.getElementById("filtro")) {
-        document.getElementById("filtro").addEventListener("input", function () {
-            const termo = this.value.toLowerCase();
-            const linhas = document.querySelectorAll("#tabela-funcionarios tr");
-
-            linhas.forEach(tr => {
-                const texto = tr.innerText.toLowerCase();
-                tr.style.display = texto.includes(termo) ? "" : "none";
-            });
-        });
-    }
-
-
     //Função para adicionar funcionário
     async function adicionarFuncionario(event) {
       event.preventDefault();
@@ -259,7 +245,7 @@
     }
     
     if(document.getElementById("tabela-funcionarios")) {
-        document.addEventListener("DOMContentLoaded", carregarTabela);
+        document.addEventListener("DOMContentLoaded", carregarTabela, configurarFiltroDeTabela('filtro', 'tabela-funcionarios', 'Credencial'));
     }else if(document.getElementById("form-adicionar")) {
         document.getElementById("form-adicionar").addEventListener("submit", adicionarFuncionario);
     }else if(document.getElementById("form-editar")) {

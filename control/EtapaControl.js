@@ -17,7 +17,7 @@ module.exports = class EtapaController {
 
     static async readAll(req, res) {
         try {
-            const etapas = await Etapa.find().sort('sequencias');
+            const etapas = await Etapa.find().sort({ sequencias: 1 });
             return res.status(200).json({ status: true, etapas });
         } catch (error) {
             return res.status(500).json({ status: false, msg: 'Erro ao listar etapas.' });

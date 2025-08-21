@@ -51,26 +51,7 @@
         return nomes.join('<br>');
     }
 
-    async function buscarNomePorId(id, urlBase, atributo) {
-        try {
-            const response = await fetch(`/${urlBase}/${id}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-                },
-            });
-            if (!response.ok) {
-                throw new Error(`Erro HTTP: ${response.status}`);
-            }
-            const resposta = await response.json();
-            return resposta[atributo].nome || 'Desconhecido';
-        } catch (error) {
-            console.error(`Erro ao buscar ${atributo}:`, error);
-            return 'Desconhecido';
-        }
-    }
-        async function formatarComponentes(componentes) {
+    async function formatarComponentes(componentes) {
         if (!Array.isArray(componentes)) return '';
         const nomes = await Promise.all(componentes.map(async (id) => {
             const nome = await nomesComponentes(id);
@@ -83,7 +64,7 @@
     async function formatarFuncionarios(funcionarios) {
         if (!Array.isArray(funcionarios)) return '';
         const nomes = await Promise.all(funcionarios.map(async (id) => {
-            const nome = await nomeFuncionario(id);
+            const nome = await buscarNomePorId(id, "funcionarios", 'Funcionários');
             return `<span class="badge bg-secondary">${nome}</span>`;
         }));
         return nomes.join('<br>');
@@ -290,4 +271,34 @@
             icon: 'info',
             confirmButtonText: 'Fechar'
         });
+    }
+    /**
+     * Anexa um evento de filtro a um campo de input para filtrar uma tabela HTML.
+     * A busca é feita em uma coluna específica, identificada pelo atributo data-label.
+     *
+     * @param {string} inputId - O ID do elemento <input> usado para a busca (ex: 'filtro').
+     * @param {string} tbodyId - O ID do elemento <tbody> da tabela a ser filtrada (ex: 'tabela-funcionarios').
+     * @param {string} colunaAlvo - O valor do atributo 'data-label' da coluna a ser pesquisada (ex: 'Nome').
+     */
+    function configurarFiltroDeTabela(inputId, tbodyId, colunaAlvo) {
+        const inputFiltro = document.getElementById(inputId);
+        
+        if (inputFiltro) {
+            inputFiltro.addEventListener("input", function () {
+                const termo = this.value.toLowerCase();
+                const linhas = document.querySelectorAll(`#${tbodyId} tr`);
+
+                linhas.forEach(linha => {
+                    // Encontra a célula específica na linha usando o data-label
+                    const celula = linha.querySelector(`td[data-label="${colunaAlvo}"]`);
+                    
+                    if (celula) {
+                        const textoCelula = celula.textContent.toLowerCase();
+                        const corresponde = textoCelula.includes(termo);
+                        // Mostra ou esconde a linha inteira (tr)
+                        linha.style.display = corresponde ? "" : "none";
+                    }
+                });
+            });
+        }
     }

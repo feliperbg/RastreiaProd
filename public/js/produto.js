@@ -1,7 +1,7 @@
 
   async function carregarTabelaProdutos() {
     try {
-      const resposta = await fetch('/produto/readALL', {
+      const resposta = await fetch('/produto/readAll', {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('authToken')}`
@@ -42,7 +42,7 @@
             if (!etapa.nome) {
                 return 'Etapa não encontrado ou inválido.';
             }
-            return `Nome: ${etapa.nome || "Desconhecido"} - Departamneto Responsável: ${etapa.departamentoResponsavel || "N/A"} - Sequências: ${etapa.sequencias}`;
+            return `Nome: ${etapa.nome || "Desconhecido"} - Departamento Responsável: ${etapa.departamentoResponsavel || "N/A"} - Sequência: ${etapa.sequencias}`;
         })
         .join("<br>");
         const tr = document.createElement("tr");
@@ -155,7 +155,7 @@
 
       linhas.forEach(tr => {
         const texto = tr.textContent.toLowerCase();
-        tr.style.display = texto.includes(termo) ? "" : "none";
+        tr.style.display = texto.startsWith(termo) ? "" : "none";
       });
     });
 
