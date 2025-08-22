@@ -4,7 +4,9 @@
   "description": "Sistema de Contrles de Etapa do Processo de Producao e Rastreabilidade de Componentes",
   "main": "app.js",
   "scripts": {
-    "start": "npx nodemon app.js"
+    "run": "npx nodemon app.js",
+    "start": "node app.js",
+    "install-depedencies": "npm install axios bcrypt ejs express jsonwebtoken mongodb mongoose mongoose-sequence"
   },
   "author": "Felipe Goncalves, Jose Gadioli, Joao Nogueira",
   "license": "ISC",
