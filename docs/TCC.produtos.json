@@ -1,0 +1,140 @@
+[{
+  "_id": {
+    "$oid": "68a11d8a991a1db43b72e508"
+  },
+  "nome": "Produto de Teste ATUALIZADO",
+  "codigo": "TESTE-API-1755389322017",
+  "descricao": "Esta descrição foi atualizada pelo script.",
+  "quantidade": 75,
+  "precoMontagem": 25.5,
+  "precoVenda": 109.9,
+  "componentesNecessarios": [
+    {
+      "componente": {
+        "$oid": "68a11d73991a1db43b72e4f2"
+      },
+      "quantidade": 12,
+      "_id": {
+        "$oid": "68a1766c254d17b241bd4dfa"
+      }
+    }
+  ],
+  "etapas": [
+    {
+      "$oid": "68a11d79991a1db43b72e4f8"
+    }
+  ],
+  "dataEntrada": {
+    "$date": "2025-08-17T00:00:00.000Z"
+  },
+  "createdAt": {
+    "$date": "2025-08-17T00:08:42.051Z"
+  },
+  "updatedAt": {
+    "$date": "2025-08-17T06:27:56.883Z"
+  },
+  "__v": 0,
+  "dataValidade": {
+    "$date": "2025-08-29T00:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68a16b3da0d4c892004298db"
+  },
+  "nome": "Celular Xiaomi 12 Ultra 512",
+  "codigo": "X12ULTRA",
+  "descricao": "O Xiaomi 12S Ultra é, sem dúvida, um dos smartphones Android mais avançados e abrangentes disponíveis no mercado, graças ao seu rico equipamento e recursos multimídia avançados. Tem um grande display de 6.73 polegadas e uma resolução de 3200x1440 pixels que é uma das mais altas atualmente em circulação. As funcionalidades oferecidas pelo Xiaomi 12S Ultra são muitas e todas inovadoras. Começando pelo 5G que permite a transferência de dados e excelente navegação na internet. Enfatizamos a excelente memória interna de 256 GB mas sem a possibilidade de expansão. A excelência deste Xiaomi 12S Ultra é completada por uma câmera de 50.3 megapixels que permite ao Xiaomi 12S Ultra tirar fotos fantásticas com uma resolução de 8165x6124 pixels e gravar vídeos em 8K a espantosa resolução de 7680x4320 pixels.",
+  "dataEntrada": {
+    "$date": "2025-08-17T00:00:00.000Z"
+  },
+  "dataValidade": null,
+  "quantidade": 25,
+  "precoMontagem": 1499.99,
+  "precoVenda": 2499.9,
+  "componentesNecessarios": [
+    {
+      "componente": {
+        "$oid": "68a11d73991a1db43b72e4f2"
+      },
+      "quantidade": 36,
+      "_id": {
+        "$oid": "68a16b3da0d4c892004298dc"
+      }
+    }
+  ],
+  "etapas": [
+    {
+      "$oid": "68a11d79991a1db43b72e4f8"
+    }
+  ],
+  "createdAt": {
+    "$date": "2025-08-17T05:40:13.175Z"
+  },
+  "updatedAt": {
+    "$date": "2025-08-17T05:40:13.175Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68a64a94bab63b68341b4a02"
+  },
+  "nome": "ChatGpt",
+  "codigo": "GPT",
+  "descricao": "dqdwqd",
+  "dataEntrada": {
+    "$date": "2025-08-20T00:00:00.000Z"
+  },
+  "dataValidade": null,
+  "quantidade": 100,
+  "precoMontagem": 25.5,
+  "precoVenda": 109.9,
+  "componentesNecessarios": [],
+  "etapas": [],
+  "createdAt": {
+    "$date": "2025-08-20T22:22:12.279Z"
+  },
+  "updatedAt": {
+    "$date": "2025-08-20T22:22:12.279Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68a66ed746f31d570bdd15ef"
+  },
+  "nome": "Asa retangular",
+  "codigo": "ASARET",
+  "descricao": "Asa Retangular para monomotor",
+  "dataEntrada": {
+    "$date": "2025-08-21T00:00:00.000Z"
+  },
+  "dataValidade": null,
+  "quantidade": 100,
+  "precoMontagem": 25.5,
+  "precoVenda": 2499.9,
+  "componentesNecessarios": [
+    {
+      "componente": {
+        "$oid": "68a11d73991a1db43b72e4f2"
+      },
+      "quantidade": 70,
+      "_id": {
+        "$oid": "68a6713daf5e278fc4bb1bc0"
+      }
+    }
+  ],
+  "etapas": [
+    {
+      "$oid": "68a64a30bab63b68341b49da"
+    }
+  ],
+  "createdAt": {
+    "$date": "2025-08-21T00:56:55.931Z"
+  },
+  "updatedAt": {
+    "$date": "2025-08-21T01:07:09.662Z"
+  },
+  "__v": 0
+}]
