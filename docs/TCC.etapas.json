@@ -1,0 +1,51 @@
+[{
+  "_id": {
+    "$oid": "68a11d79991a1db43b72e4f8"
+  },
+  "nome": "Etapa de Teste API (ATUALIZADA)",
+  "sequencias": 12,
+  "departamentoResponsavel": "Engenharia de Testes",
+  "procedimentos": "Rodar scripts de teste automatizados.",
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    },
+    {
+      "$oid": "68a146d4b75c42e2b9cda01a"
+    }
+  ],
+  "createdAt": {
+    "$date": "2025-08-17T00:08:25.181Z"
+  },
+  "updatedAt": {
+    "$date": "2025-08-17T05:58:17.734Z"
+  },
+  "__v": 0,
+  "componenteConclusao": {
+    "$oid": "68a11d73991a1db43b72e4f2"
+  }
+},
+{
+  "_id": {
+    "$oid": "68a64a30bab63b68341b49da"
+  },
+  "nome": "Preparacoes iniciais",
+  "sequencias": 1,
+  "departamentoResponsavel": "Engenharia de Testes",
+  "procedimentos": "Separar os componentes para realizar a etapa",
+  "componenteConclusao": {
+    "$oid": "68a11d73991a1db43b72e4f2"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "createdAt": {
+    "$date": "2025-08-20T22:20:32.968Z"
+  },
+  "updatedAt": {
+    "$date": "2025-08-21T01:14:22.034Z"
+  },
+  "__v": 0
+}]

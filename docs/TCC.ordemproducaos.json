@@ -1,0 +1,173 @@
+[{
+  "_id": {
+    "$oid": "68a12a38848a127c2056c798"
+  },
+  "status": "Concluída",
+  "produto": {
+    "$oid": "68a11d8a991a1db43b72e508"
+  },
+  "quantidade": 24,
+  "etapa": [],
+  "funcionarioAtivo": [],
+  "createdAt": {
+    "$date": "2025-08-17T01:02:48.947Z"
+  },
+  "updatedAt": {
+    "$date": "2025-08-20T23:41:49.923Z"
+  },
+  "__v": 2,
+  "etapaAtual": [
+    {
+      "etapa": {
+        "$oid": "68a11d79991a1db43b72e4f8"
+      },
+      "status": "Concluída",
+      "dataInicio": {
+        "$date": "2025-08-20T23:24:44.703Z"
+      },
+      "_id": {
+        "$oid": "68a6593ca3cad0b6f49ffa26"
+      },
+      "dataFim": {
+        "$date": "2025-08-20T23:41:49.918Z"
+      }
+    }
+  ],
+  "timestampProducao": {
+    "inicio": {
+      "$date": "2025-08-20T23:24:44.703Z"
+    },
+    "fim": {
+      "$date": "2025-08-20T23:41:49.919Z"
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "68a17d8c9367011fc08f9d38"
+  },
+  "status": "Concluída",
+  "produto": {
+    "$oid": "68a16b3da0d4c892004298db"
+  },
+  "quantidade": 150,
+  "etapaAtual": [
+    {
+      "etapa": {
+        "$oid": "68a11d79991a1db43b72e4f8"
+      },
+      "status": "Concluída",
+      "dataInicio": {
+        "$date": "2025-08-20T22:09:21.572Z"
+      },
+      "_id": {
+        "$oid": "68a64791bab63b68341b49b5"
+      },
+      "dataFim": {
+        "$date": "2025-08-20T23:23:24.906Z"
+      }
+    }
+  ],
+  "funcionarioAtivo": [],
+  "createdAt": {
+    "$date": "2025-08-17T06:58:20.779Z"
+  },
+  "updatedAt": {
+    "$date": "2025-08-20T23:23:24.912Z"
+  },
+  "__v": 2,
+  "timestampProducao": {
+    "inicio": {
+      "$date": "2025-08-20T22:09:21.572Z"
+    },
+    "fim": {
+      "$date": "2025-08-20T23:23:24.906Z"
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "68a1853a98ec14397ee505d4"
+  },
+  "status": "Concluída",
+  "produto": {
+    "$oid": "68a16b3da0d4c892004298db"
+  },
+  "quantidade": 6,
+  "etapaAtual": [
+    {
+      "etapa": {
+        "$oid": "68a11d79991a1db43b72e4f8"
+      },
+      "status": "Concluída",
+      "dataInicio": {
+        "$date": "2025-08-20T23:42:29.995Z"
+      },
+      "_id": {
+        "$oid": "68a65d65e0d16787450c3d39"
+      },
+      "dataFim": {
+        "$date": "2025-08-21T00:36:33.882Z"
+      }
+    }
+  ],
+  "funcionarioAtivo": [],
+  "createdAt": {
+    "$date": "2025-08-17T07:31:06.222Z"
+  },
+  "updatedAt": {
+    "$date": "2025-08-21T00:36:33.888Z"
+  },
+  "__v": 2,
+  "timestampProducao": {
+    "inicio": {
+      "$date": "2025-08-20T23:42:29.995Z"
+    },
+    "fim": {
+      "$date": "2025-08-21T00:36:33.883Z"
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "68a6730bda82f426eb2594f5"
+  },
+  "status": "Concluída",
+  "produto": {
+    "$oid": "68a66ed746f31d570bdd15ef"
+  },
+  "quantidade": 10,
+  "etapaAtual": [
+    {
+      "etapa": {
+        "$oid": "68a64a30bab63b68341b49da"
+      },
+      "status": "Concluída",
+      "dataInicio": {
+        "$date": "2025-08-21T01:15:35.136Z"
+      },
+      "_id": {
+        "$oid": "68a67337da82f426eb25951f"
+      },
+      "dataFim": {
+        "$date": "2025-08-21T01:48:16.519Z"
+      }
+    }
+  ],
+  "funcionarioAtivo": [],
+  "createdAt": {
+    "$date": "2025-08-21T01:14:51.434Z"
+  },
+  "updatedAt": {
+    "$date": "2025-08-21T01:48:16.525Z"
+  },
+  "__v": 2,
+  "timestampProducao": {
+    "inicio": {
+      "$date": "2025-08-21T01:15:35.136Z"
+    },
+    "fim": {
+      "$date": "2025-08-21T01:48:16.520Z"
+    }
+  }
+}]

@@ -1,0 +1,52 @@
+[{
+  "_id": {
+    "$oid": "68a13d728edc56a5ba8e112f"
+  },
+  "nome": "Felipe Rio Branco Gonçalves",
+  "turno": "Noite",
+  "senha": "$2a$10$UqDQYZMD9lvTmQgICMSI0uA8VhJTIE1rOXD9JmpC0vyuoaG3Ydee.",
+  "CPF": "257.669.008-49",
+  "email": "1111111111111111111111111@gmail.com",
+  "telefone": "+5512345678910",
+  "dataNascimento": {
+    "$date": "2025-08-27T00:00:00.000Z"
+  },
+  "permissoes": [
+    "administrador"
+  ],
+  "role": "administrador",
+  "createdAt": {
+    "$date": "2025-08-17T02:24:50.241Z"
+  },
+  "updatedAt": {
+    "$date": "2025-08-17T02:24:50.241Z"
+  },
+  "credencial": 1,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68a146d4b75c42e2b9cda01a"
+  },
+  "nome": "Funcionário Teste API",
+  "turno": "Manhã",
+  "senha": "$2b$10$4/F3D/9f2gciOtL9IyOKm.YEtFzKdjjgOEbvmSjG9.jLpq7fRxeeS",
+  "CPF": "553.998.921-31",
+  "email": "felipe@gmail.com",
+  "permissoes": [
+    "administrador"
+  ],
+  "role": "funcionario",
+  "createdAt": {
+    "$date": "2025-08-17T03:04:52.193Z"
+  },
+  "updatedAt": {
+    "$date": "2025-08-21T01:41:06.452Z"
+  },
+  "credencial": 3,
+  "__v": 0,
+  "dataNascimento": {
+    "$date": "2025-01-13T00:00:00.000Z"
+  },
+  "telefone": "(11) 98765-4321"
+}]
