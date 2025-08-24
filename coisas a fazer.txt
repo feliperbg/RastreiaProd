@@ -1,11 +1,14 @@
-Controle de etapas agora é sobre as etapas do produto, então no botão etapas na tabela de produto eu vou para tela de Controle de etapas sobre aquele produto
+Controle de etapas agora é sobre as etapas do produto, então no botão etapas na tabela de produto eu vou para tela 
+de Controle de etapas sobre aquele produto
 e lá adiciono as etapas referente aquele produto e devo mostrar somente etapas d o produto especifico
 
-criar um js para criar op ficticias para gerar os resutaldos preenchidos, logo adicionar etapas, componentes e funcionarios novos para isso
+criar um js para criar op ficticias para gerar os resutaldos preenchidos,
+ logo adicionar etapas, componentes e funcionarios novos para isso
 
 criar schema de departamentos e adicionar a funcionarios e onde escreve departamentoResponsavel virar comboBox
 
-arrumar funcionario ativo e arrumar horario na ordem de produção por causa de fuso que está 3h a mais (pegar o fuso local e mexer na data)
+arrumar funcionario ativo e arrumar horario na ordem de produção por causa de fuso que está 3h a mais
+ (pegar o fuso local e mexer na data)
 
 seção na sidebar somente para gráficos detalhados de cada tabela
 
