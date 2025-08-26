@@ -182,4 +182,3 @@
         carregarTabela();
         configurarFiltroDeTabela('filtro', 'tabela-ordem-producoes', 'Produto');
     });
-

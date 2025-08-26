@@ -68,9 +68,7 @@
           </td>
           <td data-label="Quantidade">${prod.quantidade}</td>
           <td data-label="Etapas">
-            <button class="btn btn-sm btn-outline-info" onclick="verEtapas(\`${etapasInfo}\`)" title="Ver etapas">
-              <i class="bi bi-list-check"></i>
-            </button>
+            <a href="/etapa/produto/${prod._id}" class="btn btn-primary">Etapas</a>
           </td>
           <td data-label="Ações">
             <button class="btn btn-sm btn-primary mb-1" onclick="editarProduto('${prod._id}', '${prod.codigo}')">

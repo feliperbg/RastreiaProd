@@ -55,6 +55,10 @@ const FuncionarioSchema = new Schema({
         type: String,
         trim: true,
     },
+    departamento: {
+        type: Schema.Types.ObjectId,
+        ref: 'Departamento'
+    },
 }, {
     timestamps: true,
 });

@@ -13,7 +13,8 @@ const EtapaSchema = new Schema({
         required: [true, 'A ordem da etapa é obrigatória.'],
     },
     departamentoResponsavel: {
-        type: String,
+        type: Schema.Types.ObjectId,
+        ref: 'Departamento',        
         trim: true,
     },
     procedimentos: {
@@ -28,6 +29,11 @@ const EtapaSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Funcionario',
     }],
+    produto: {
+        type: Schema.Types.ObjectId,
+        ref: 'Produto',
+        required: true,
+    },
 }, {
     timestamps: true,
 });
