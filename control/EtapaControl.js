@@ -72,4 +72,12 @@ module.exports = class EtapaController {
             return res.status(500).json({ status: false, msg: 'Erro ao remover etapa.' });
         }
     }
+    static async listarPorProduto(req, res) {
+        try {
+            const etapas = await Etapa.find({ produto: req.params.produtoId });
+            res.render('main/etapa', { etapas: etapas, produtoId: req.params.produtoId });
+        } catch (error) {
+            res.status(500).send(error);
+        }
+    };
 };

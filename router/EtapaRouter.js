@@ -21,5 +21,6 @@ router.get('/readAll', jwtMiddleware.validate.bind(jwtMiddleware), EtapaControll
 router.get('/:id', jwtMiddleware.validate.bind(jwtMiddleware), MongoIdMiddleware.validateParam('id'), EtapaController.readByID);
 router.put('/:id', jwtMiddleware.validate.bind(jwtMiddleware), MongoIdMiddleware.validateParam('id'), EtapaController.update);
 router.delete('/:id', jwtMiddleware.validate.bind(jwtMiddleware), MongoIdMiddleware.validateParam('id'), EtapaController.delete);
+router.get('/produto/:produtoId', EtapaController.listarPorProduto)
 
 module.exports = router;
