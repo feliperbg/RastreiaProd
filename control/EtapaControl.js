@@ -74,10 +74,12 @@ module.exports = class EtapaController {
     }
     static async listarPorProduto(req, res) {
         try {
-            const etapas = await Etapa.find({ produto: req.params.produtoId });
-            res.render('main/etapa', { etapas: etapas, produtoId: req.params.produtoId });
+            const { produtoId } = req.params;
+            const etapas = await Etapa.find({ produto: produtoId }).sort({ sequencias: 1 });
+            return res.render('main/etapa', { etapas, produtoId });
         } catch (error) {
-            res.status(500).send(error);
+            console.error('Erro ao listar etapas por produto:', error);
+            return res.status(500).render('error', { message: 'Não foi possível carregar as etapas para este produto.' });
         }
-    };
+    }
 };

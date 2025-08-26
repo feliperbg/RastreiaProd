@@ -1,8 +1,9 @@
-    async function carregarTabela() {
+    async function carregarTabela(produtoId) {
         try {
             showLoading();
-        
-            const response = await fetch('/etapa/readAll', {
+            // Busca as etapas específicas para o produtoId fornecido.
+            // Note que você precisará de uma rota de API (ex: GET /etapa/produto/:id) que retorne os dados em JSON.
+            const response = await fetch(`/etapa/produto/${produtoId}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -139,6 +140,19 @@
 
     // Carregar a tabela ao carregar a página
     document.addEventListener("DOMContentLoaded", function() {
-        carregarTabela();
+        // Extrai o ID do produto da URL da página atual (ex: /etapas/produto/ID_PRODUTO)
+        const pathParts = window.location.pathname.split('/');
+        const produtoId = pathParts[pathParts.length - 1];
+
+        // Atualiza o link do botão "Nova Etapa" para incluir o ID do produto.
+        // Isso garante que a nova etapa seja associada a este produto.
+        // Certifique-se de que seu botão/link tenha o id="btn-nova-etapa".
+        const btnNovaEtapa = document.getElementById('btn-nova-etapa');
+        if (btnNovaEtapa) {
+            btnNovaEtapa.href = `/etapa/criar-etapa/${produtoId}`;
+        }
+
+        // Carrega a tabela com as etapas do produto específico
+        carregarTabela(produtoId);
         configurarFiltroDeTabela('filtro', 'tabela-etapas', 'Nome');
     });
