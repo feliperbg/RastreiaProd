@@ -11,7 +11,6 @@ const EtapaMiddleware = require('../middleware/EtapaMiddleware');
 const jwtMiddleware = new TokenJWTMiddleware();
 const viewPath = path.join(__dirname, '..', 'view');
 // Rota de Renderização
-router.get('/', (req, res) => res.render('main/etapa'));
 router.get('/editar-etapa/:id', (req, res) => { res.sendFile(path.join(viewPath, 'edit', 'editar-etapa.html')); });
 router.get('/adicionar-etapa', (req, res) => { res.sendFile(path.join(viewPath, 'add', 'adicionar-etapa.html')); });
 
