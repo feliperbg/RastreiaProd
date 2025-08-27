@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="pt-BR" data-bs-theme="light">
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+
     <title>Adicionar Nova Etapa</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
     <style>
@@ -48,174 +49,202 @@
         }
     </style>
 </head>
-<body class="p-3">
-    <div class="container">
+<body>
+    <div class="container mt-5" style="max-width: 600px;">
         <h1>Adicionar Nova Etapa</h1>
-
         <form id="form-adicionar-etapa">
             <div class="mb-3">
                 <label for="nome" class="form-label">Nome da Etapa</label>
                 <input type="text" id="nome" class="form-control" required />
             </div>
-
             <div class="mb-3">
-                <label for="sequencias" class="form-label">Sequência (Ordem)</label>
+                <label for="sequencias" class="form-label">Sequência</label>
                 <input type="number" id="sequencias" class="form-control" required min="1" />
             </div>
-
             <div class="mb-3">
-                <label for="departamentoResponsavel" class="form-label">Departamento Responsável</label>
-                <input type="text" id="departamentoResponsavel" class="form-control" />
+                <label class="form-label">Departamento Responsável</label>
+                <div class="input-group">
+                    <input type="text" id="departamentoResponsavel" class="form-control" placeholder="Nenhum" readonly />
+                    <button type="button" class="btn btn-outline-secondary" id="btnSelecionarDepartamentoResponsavel">Selecionar</button>
+                </div>
             </div>
-
             <div class="mb-3">
                 <label for="procedimentos" class="form-label">Procedimentos</label>
                 <textarea id="procedimentos" class="form-control" rows="3"></textarea>
             </div>
-
             <div class="mb-3">
-                <label class="form-label">Componente de Conclusão (Opcional)</label>
+                <label class="form-label">Componente de Conclusão</label>
                 <div class="input-group">
-                    <input type="text" id="componenteConclusao" class="form-control" placeholder="Nenhum componente selecionado" readonly />
+                    <input type="text" id="componenteConclusao" class="form-control" placeholder="Nenhum" readonly />
                     <button type="button" class="btn btn-outline-secondary" id="btnSelecionarComponente">Selecionar</button>
                 </div>
             </div>
-            
             <div class="mb-3">
                 <label class="form-label">Funcionários Responsáveis</label>
                 <div class="input-group">
-                    <input type="text" id="funcionariosResponsaveis" class="form-control" placeholder="Nenhum funcionário selecionado" readonly />
+                    <input type="text" id="funcionariosResponsaveis" class="form-control" placeholder="Nenhum" readonly />
                     <button type="button" class="btn btn-outline-secondary" id="btnSelecionarFuncionarios">Selecionar</button>
                 </div>
             </div>
-            
             <button type="submit" class="btn btn-primary">Adicionar Etapa</button>
-            <button type="button" class="btn btn-secondary" onclick="window.location.href='/etapa'">Cancelar</button>
+            <button type="button" class="btn btn-secondary">Cancelar</button>
         </form>
     </div>
-    
-    <div id="toast-container" class="position-fixed bottom-0 end-0 p-3" style="z-index: 11"></div>
+
+        <!-- Container de Toasts -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+      <div id="meuToast" class="toast align-items-center border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+          <div id="toast-body" class="toast-body"></div>
+          <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
+        </div>
+      </div>
+    </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="/js/toast.js"></script> 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // --- ESTRUTURA DE DADOS ---
-        let componenteConclusaoId = null;
-        let funcionariosSelecionadosIds = [];
-        let listaCompletaComponentes = [];
-        let listaCompletaFuncionarios = [];
+    <script>
+       document.addEventListener('DOMContentLoaded', function () {
+            const pathParts = window.location.pathname.split('/');
+            const produtoId = pathParts[pathParts.length - 1];
 
-        /**
-         * Carrega as listas completas de componentes e funcionários sob demanda.
-         */
-        async function carregarListasCompletas() {
-            if (listaCompletaComponentes.length > 0 && listaCompletaFuncionarios.length > 0) return;
-            try {
-                const [compRes, funcRes] = await Promise.all([
-                    fetch('/componente/readAll', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } }),
-                    fetch('/funcionario/readAll', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } })
-                ]);
-                const compJson = await compRes.json();
-                const funcJson = await funcRes.json();
-                listaCompletaComponentes = compJson.componentes || [];
-                listaCompletaFuncionarios = funcJson.funcionarios || [];
-            } catch (error) {
-                exibirMensagem("Não foi possível carregar as opções de seleção.", "erro");
+            let componenteConclusaoId = null;
+            let funcionariosSelecionadosIds = [];
+            let departamentoResponsavelId = null;
+            let listaCompletaComponentes = [];
+            let listaCompletaFuncionarios = [];
+            let listaCompletaDepartamentos = [];
+
+
+            if (!produtoId.match(/^[0-9a-fA-F]{24}$/)) {
+                exibirMensagem('Erro!', 'ID do produto inválido na URL.', 'error');
+                document.getElementById('form-adicionar-etapa').style.display = 'none';
+                return;
             }
-        }
 
-        // --- EVENT LISTENERS PARA SELEÇÃO ---
-
-        document.getElementById('btnSelecionarComponente').addEventListener('click', async function () {
-            await carregarListasCompletas();
-            const result = await selecionarUnico('Selecionar Componente de Conclusão', listaCompletaComponentes, componenteConclusaoId);
-            if (result.isConfirmed && result.value) {
-                componenteConclusaoId = result.value;
-                const componente = listaCompletaComponentes.find(c => c._id === componenteConclusaoId);
-                document.getElementById('componenteConclusao').value = componente ? componente.nome : '';
-            }
-        });
-
-        document.getElementById('btnSelecionarFuncionarios').addEventListener('click', async function () {
-            await carregarListasCompletas();
-            const result = await selecionarMultiplos('Selecionar Funcionários', listaCompletaFuncionarios, funcionariosSelecionadosIds);
-            if (result.isConfirmed) {
-                funcionariosSelecionadosIds = result.value;
-                const nomes = listaCompletaFuncionarios
-                    .filter(f => funcionariosSelecionadosIds.includes(f._id))
-                    .map(f => f.nome);
-                document.getElementById('funcionariosResponsaveis').value = nomes.join(', ');
-            }
-        });
-
-        // --- SUBMIT DO FORMULÁRIO ---
-
-        document.getElementById('form-adicionar-etapa').addEventListener('submit', async function(event) {
-            event.preventDefault();
-            
-            const dadosNovaEtapa = {
-                nome: document.getElementById('nome').value,
-                sequencias: parseInt(document.getElementById('sequencias').value, 10),
-                departamentoResponsavel: document.getElementById('departamentoResponsavel').value,
-                procedimentos: document.getElementById('procedimentos').value,
-                componenteConclusao: componenteConclusaoId,
-                funcionariosResponsaveis: funcionariosSelecionadosIds,
+            document.querySelector('.btn-secondary').onclick = () => {
+                window.location.href = `/etapa/produto/${produtoId}`;
             };
 
-            if (!dadosNovaEtapa.nome || !dadosNovaEtapa.sequencias) {
-                return exibirMensagem("Nome e Sequência são obrigatórios.", "erro");
+            async function carregarListasCompletas() {
+                if (listaCompletaComponentes.length > 0 && listaCompletaFuncionarios.length > 0 && listaCompletaDepartamentos.length > 0) return;
+                try {
+                    const [compRes, funcRes, departamentoRes] = await Promise.all([
+                        fetch('/componente/readAll', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } }),
+                        fetch('/funcionario/readAll', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } }),
+                        fetch('/departamento/readAll', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } }),
+                    ]);
+                    if (!compRes.ok || !funcRes.ok || !departamentoRes.ok) throw new Error("Falha ao carregar dados.");
+                    
+                    const compJson = await compRes.json();
+                    const funcJson = await funcRes.json();
+                    const depJson = await departamentoRes.json();
+
+                    listaCompletaDepartamentos = depJson.departamentos || [];
+                    listaCompletaComponentes = compJson.componentes || [];
+                    listaCompletaFuncionarios = funcJson.funcionarios || [];
+
+                } catch (error) {
+                    console.error("Erro em carregarListasCompletas:", error);
+                    exibirMensagem("Não foi possível carregar as opções de seleção.", "erro");
+                }
             }
 
-            try {
-                const response = await fetch('/etapa', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('authToken')}` },
-                    body: JSON.stringify(dadosNovaEtapa)
-                });
-                const result = await response.json();
-                if (!response.ok) throw new Error(result.msg || "Erro ao criar a etapa.");
-                
-                await Swal.fire('Sucesso!', 'Etapa adicionada com sucesso.', 'success');
-                window.location.href = '/etapa';
-            } catch (error) {
-                exibirMensagem(error.message, 'erro');
-            }
-        });
-
-        // --- FUNÇÕES DE MODAL (SweetAlert2) ---
-
-        // Modal para SELEÇÃO MÚLTIPLA
-        async function selecionarMultiplos(titulo, lista, selecionados) {
-            // ... sua função selecionarMultiplos continua aqui, sem alterações ...
-            return Swal.fire({
-                title: titulo,
-                html: `
-                    <input type="text" id="swal-filtro" class="form-control mb-2" placeholder="Filtrar...">
-                    <div id="swal-lista" style="max-height:300px;overflow:auto;text-align:left">
-                        ${lista.map(item => `
-                            <div>
-                                <input type="checkbox" id="swal-${item._id}" value="${item._id}" ${selecionados.includes(item._id) ? 'checked' : ''}>
-                                <label for="swal-${item._id}">${item.nome}</label>
-                            </div>
-                        `).join('')}
-                    </div>`,
-                showCancelButton: true,
-                confirmButtonText: 'Selecionar',
-                cancelButtonText: 'Cancelar',
-                preConfirm: () => Array.from(document.querySelectorAll('#swal-lista input[type=checkbox]:checked')).map(cb => cb.value),
-                didOpen: () => {
-                    document.getElementById('swal-filtro').addEventListener('input', function() {
-                        const val = this.value.toLowerCase();
-                        document.querySelectorAll('#swal-lista label').forEach(label => {
-                            label.parentElement.style.display = label.textContent.toLowerCase().includes(val) ? '' : 'none';
-                        });
-                    });
+            document.getElementById('btnSelecionarComponente').addEventListener('click', async function () {
+                await carregarListasCompletas();
+                const result = await selecionarUnico('Selecionar Componente de Conclusão', listaCompletaComponentes, componenteConclusaoId);
+                if (result.isConfirmed && result.value) {
+                    componenteConclusaoId = result.value;
+                    const componente = listaCompletaComponentes.find(c => c._id === componenteConclusaoId);
+                    document.getElementById('componenteConclusao').value = componente ? componente.nome : '';
                 }
             });
-        }
 
-        // NOVO: Modal para SELEÇÃO ÚNICA
+            document.getElementById('btnSelecionarFuncionarios').addEventListener('click', async function () {
+                await carregarListasCompletas();
+                const result = await selecionarMultiplos('Selecionar Funcionários', listaCompletaFuncionarios, funcionariosSelecionadosIds);
+                if (result.isConfirmed) {
+                    funcionariosSelecionadosIds = result.value;
+                    const nomes = listaCompletaFuncionarios
+                        .filter(f => funcionariosSelecionadosIds.includes(f._id))
+                        .map(f => f.nome);
+                    document.getElementById('funcionariosResponsaveis').value = nomes.join(', ');
+                }
+            });
+
+            
+            document.getElementById('btnSelecionarDepartamentoResponsavel').addEventListener('click', async function () {
+                await carregarListasCompletas();
+                console.log(listaCompletaDepartamentos);
+                const result = await selecionarUnico('Selecione o Departamento Responsável', listaCompletaDepartamentos, departamentoResponsavelId);
+                if (result.isConfirmed && result.value) {
+                    departamentoResponsavelId = result.value;
+                    const departamento = listaCompletaDepartamentos.find(d => d._id === departamentoResponsavelId);
+                    document.getElementById('departamentoResponsavel').value = departamento ? departamento.nome : '';
+                }
+            });
+
+            document.getElementById('form-adicionar-etapa').addEventListener('submit', async function(event) {
+                event.preventDefault();
+                
+                const dadosNovaEtapa = {
+                    nome: document.getElementById('nome').value,
+                    sequencias: parseInt(document.getElementById('sequencias').value, 10),
+                    departamentoResponsavel: departamentoResponsavelId,
+                    procedimentos: document.getElementById('procedimentos').value,
+                    componenteConclusao: componenteConclusaoId,
+                    funcionariosResponsaveis: funcionariosSelecionadosIds,
+                    produto: produtoId
+                };
+
+                if (!dadosNovaEtapa.nome || !dadosNovaEtapa.sequencias) {
+                    return exibirMensagem("Nome e Sequência são obrigatórios.", "erro");
+                }
+
+                try {
+                    const response = await fetch('/etapa', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('authToken')}` },
+                        body: JSON.stringify(dadosNovaEtapa)
+                    });
+                    const result = await response.json();
+                    if (!response.ok) throw new Error(result.msg || "Erro ao criar a etapa.");
+                    
+                    await  Swal.fire('Sucesso!', 'Etapa adicionada com sucesso.', 'success');
+                    window.location.href = `/etapa/produto/${produtoId}`;
+                } catch (error) {
+                    exibirMensagem("Erro", error.message, "error");
+                }
+            });
+
+            async function selecionarMultiplos(titulo, lista, selecionados) {
+                return Swal.fire({
+                    title: titulo,
+                    html: `
+                        <input type="text" id="swal-filtro" class="form-control mb-2" placeholder="Filtrar...">
+                        <div id="swal-lista" style="max-height:300px;overflow:auto;text-align:left">
+                            ${lista.map(item => `
+                                <div>
+                                    <input type="checkbox" id="swal-${item._id}" value="${item._id}" ${selecionados.includes(item._id) ? 'checked' : ''}>
+                                    <label for="swal-${item._id}">${item.nome}</label>
+                                </div>
+                            `).join('')}
+                        </div>`,
+                    showCancelButton: true,
+                    confirmButtonText: 'Selecionar',
+                    cancelButtonText: 'Cancelar',
+                    preConfirm: () => Array.from(document.querySelectorAll('#swal-lista input[type=checkbox]:checked')).map(cb => cb.value),
+                    didOpen: () => {
+                        document.getElementById('swal-filtro').addEventListener('input', function() {
+                            const val = this.value.toLowerCase();
+                            document.querySelectorAll('#swal-lista label').forEach(label => {
+                                label.parentElement.style.display = label.textContent.toLowerCase().includes(val) ? '' : 'none';
+                            });
+                        });
+                    }
+                });
+            }
+
         async function selecionarUnico(titulo, lista, selecionadoId) {
             return Swal.fire({
                 title: titulo,
@@ -246,6 +275,6 @@
             });
         }
     });
-    </script>
+</script>
 </body>
 </html>

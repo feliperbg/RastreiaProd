@@ -37,7 +37,7 @@ const EtapaSchema = new Schema({
 }, {
     timestamps: true,
 });
-
+EtapaSchema.index({ produto: 1, sequencias: 1 }, { unique: true });
 const Etapa = model('Etapa', EtapaSchema);
 
 module.exports = Etapa;
