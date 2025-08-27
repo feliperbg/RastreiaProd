@@ -10,6 +10,7 @@ const etapaRouter = require('./router/EtapaRouter');
 const funcionarioRouter = require('./router/FuncionarioRouter');
 const ordemProducaoRouter = require('./router/OrdemProducaoRouter');
 const painelRouter = require('./router/PainelRouter');
+const departamentoRouter = require('./router/DepartamentoRouter');
 
 const app = express();
 const port = 8081;
@@ -45,6 +46,7 @@ app.use('/etapa', etapaRouter);
 app.use('/funcionario', funcionarioRouter);
 app.use('/ordem-producao', ordemProducaoRouter);
 app.use('/painel', painelRouter);
+app.use('/departamento', departamentoRouter);
 
 app.listen(port, '0.0.0.0', () => {
     console.log(`API rodando no endereço: http://localhost:${port}/`);

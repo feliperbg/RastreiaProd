@@ -7,6 +7,10 @@ const DepartamentoSchema = new Schema({
         required: [true, 'O nome do departamento é obrigatório.'],
         trim: true,
         unique: true
+    },
+    descricao: {
+        type: String,
+        trim: true,
     }
 }, {
     timestamps: true

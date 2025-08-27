@@ -1,51 +1,58 @@
 [{
   "_id": {
-    "$oid": "68a11d79991a1db43b72e4f8"
+    "$oid": "68ae6b24a13eb9b5f0b6dfa7"
   },
-  "nome": "Etapa de Teste API (ATUALIZADA)",
-  "sequencias": 12,
-  "departamentoResponsavel": "Engenharia de Testes",
-  "procedimentos": "Rodar scripts de teste automatizados.",
+  "nome": "Montagem",
+  "sequencias": 1,
+  "departamentoResponsavel": {
+    "$oid": "68ae64069a4922d443aa89e4"
+  },
+  "procedimentos": "Montar peça A\nMontar peça B",
+  "componenteConclusao": {
+    "$oid": "68a11d73991a1db43b72e4f2"
+  },
   "funcionariosResponsaveis": [
     {
       "$oid": "68a13d728edc56a5ba8e112f"
-    },
+    }
+  ],
+  "produto": {
+    "$oid": "68a66ed746f31d570bdd15ef"
+  },
+  "createdAt": {
+    "$date": "2025-08-27T02:19:16.463Z"
+  },
+  "updatedAt": {
+    "$date": "2025-08-27T02:19:16.463Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68ae729499e3886da8c2bf1d"
+  },
+  "nome": "Preparacoes iniciais",
+  "sequencias": 1,
+  "departamentoResponsavel": {
+    "$oid": "68ae64069a4922d443aa89e4"
+  },
+  "procedimentos": "dasda",
+  "componenteConclusao": {
+    "$oid": "68a11d73991a1db43b72e4f2"
+  },
+  "funcionariosResponsaveis": [
     {
       "$oid": "68a146d4b75c42e2b9cda01a"
     }
   ],
+  "produto": {
+    "$oid": "68a66ed746f31d570bdd15ef"
+  },
   "createdAt": {
-    "$date": "2025-08-17T00:08:25.181Z"
+    "$date": "2025-08-27T02:51:00.735Z"
   },
   "updatedAt": {
-    "$date": "2025-08-17T05:58:17.734Z"
-  },
-  "__v": 0,
-  "componenteConclusao": {
-    "$oid": "68a11d73991a1db43b72e4f2"
-  }
-},
-{
-  "_id": {
-    "$oid": "68a64a30bab63b68341b49da"
-  },
-  "nome": "Preparacoes iniciais",
-  "sequencias": 1,
-  "departamentoResponsavel": "Engenharia de Testes",
-  "procedimentos": "Separar os componentes para realizar a etapa",
-  "componenteConclusao": {
-    "$oid": "68a11d73991a1db43b72e4f2"
-  },
-  "funcionariosResponsaveis": [
-    {
-      "$oid": "68a13d728edc56a5ba8e112f"
-    }
-  ],
-  "createdAt": {
-    "$date": "2025-08-20T22:20:32.968Z"
-  },
-  "updatedAt": {
-    "$date": "2025-08-21T01:14:22.034Z"
+    "$date": "2025-08-27T02:51:00.735Z"
   },
   "__v": 0
 }]
