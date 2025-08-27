@@ -26,7 +26,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             const opResult = await opResponse.json();
-            console.log(opResult);
             ordemProducao = opResult.ordem;
 
             const userDataString = localStorage.getItem('userData');
@@ -103,9 +102,7 @@ document.addEventListener('DOMContentLoaded', function () {
             tabelaBody.innerHTML = '<tr><td colspan="3" class="text-center">Nenhum componente necessário para este produto.</td></tr>';
             return;
         }
-        console.log(componentes);
         componentes.forEach(item => {
-            console.log(item);
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td>${item.componente.nome}</td>
@@ -148,7 +145,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                 <span class="badge bg-${statusInfo.bg}">${statusInfo.text}</span>
                             </div>
                             <div class="col-md-6">
-                                <p class="mb-1"><strong>Departamento:</strong> ${etapa.departamentoResponsavel || 'N/A'}</p>
+                                <p class="mb-1"><strong>Departamento:</strong> ${etapa.departamentoResponsavel.nome || 'N/A'}</p>
                                 <p class="mb-0"><strong>Responsáveis:</strong> ${funcionariosNomes || 'Nenhum'}</p>
                             </div>
                             <div class="col-md-3 text-end">
