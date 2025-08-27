@@ -69,24 +69,34 @@ module.exports = class OrdemProducaoController {
             return res.status(500).json({ status: false, msg: 'Erro ao remover ordem de produção.' });
         }
     }
-     /**
-     * ATUALIZADO: Este método agora faz o populate aninhado necessário 
-     * para a tela de gestão da OP.
-     */
+
     static async readByID(req, res) {
         try {
             const { id } = req.params;
             const ordem = await OrdemProducao.findById(id)
                 .populate({
-                    path: 'produto', // 1. Popula o produto
-                    populate: {
-                        path: 'etapas', // 2. Dentro do produto, popula a definição de suas etapas
-                        populate: {
-                            path: 'funcionariosResponsaveis' // 3. Dentro de cada etapa, popula os funcionários
+                    path: 'produto', // 1. Popula o campo 'produto' da Ordem de Produção
+                    populate: [      // 2. DENTRO de 'produto', popula os seguintes campos (em um array):
+                        {
+                            path: 'etapas', // 2a. Popula o campo 'etapas' do produto
+                             populate: [
+                                {
+                                    path: 'funcionariosResponsaveis', // 3a. Popula os funcionários de cada etapa
+                                    select: 'nome'
+                                },
+                                {
+                                    path: 'departamentoResponsavel', // 3b. (NOVO) Popula o departamento de cada etapa
+                                    select: 'nome'
+                                }
+                            ]
+                        },
+                        {
+                            path: 'componentesNecessarios.componente', // 2b. Popula o campo 'componente' dentro do array 'componentesNecessarios' do produto
+                            select: 'nome codigo'
                         }
-                    }
+                    ]
                 })
-                .populate('etapaAtual.etapa') // Popula também as etapas que já estão na OP
+                .populate('etapaAtual.etapa') // Popula as etapas que já estão na OP
                 .populate('funcionarioAtivo.funcionario'); // Popula o funcionário que está ativo na OP
 
             if (!ordem) {
