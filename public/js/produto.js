@@ -68,7 +68,7 @@
           </td>
           <td data-label="Quantidade">${prod.quantidade}</td>
           <td data-label="Etapas">
-            <a href="/etapa/produto/${prod._id}" class="btn btn-primary">Etapas</a>
+            <a href="/etapa/produto/${prod._id}" class="btn btn-warning">Etapas</a>
           </td>
           <td data-label="Ações">
             <button class="btn btn-sm btn-primary mb-1" onclick="editarProduto('${prod._id}', '${prod.codigo}')">

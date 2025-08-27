@@ -31,18 +31,7 @@
                 const nomeCompleto = func.nome || '';
                 const email = func.email || '';
                 let emailHtml = '';
-                let nomeHtml = '';
-                if (nomeCompleto.length > 25) {
-                    nomeHtml = `
-                        <span title="${nomeCompleto}"></span>
-                        <button class="btn btn-sm btn-secondary" onclick="mostrarModal('Nome Completo', '${nomeCompleto.replace(/'/g, "\\'").replace(/"/g, '&quot;')}')">
-                            <i class="bi bi-eye"></i>
-                        </button>
-                    `;
-                } else {
-                    nomeHtml = `<span>${nomeCompleto}</span>`;
-                }
-                if(email.length >= 35) {
+                if(email.length > 34) {
                     emailHtml = `
                         <span title="${email.replace(/"/g, '&quot;')}"></span>
                         <button class="btn  btn-sm btn-secondary" onclick="mostrarModal('Email', '${email.replace(/'/g, "\\'").replace(/"/g, '&quot;')}')">
@@ -54,13 +43,9 @@
                 }
                 tr.innerHTML = `
                     <td data-label="Credencial">${func.credencial}</td>
-                    <td data-label="Nome">${nomeHtml}</td>
+                    <td data-label="Nome">${nomeCompleto}</td>
                     <td data-label="Turno">${func.turno}</td>
-                    <td data-label="CPF">
-                        <button class="btn btn-sm btn-secondary" onclick="mostrarModal('CPF', '${formatarCPF(func.CPF)}')">
-                            <i class="bi bi-card-text"></i>
-                        </button>
-                    </td>
+                    <td data-label="CPF">${func.CPF}</td>
                     <td data-label="Email">${emailHtml}</td>
                     <td data-label="Telefone">${func.telefone}</td>
                     <td data-label="Data Nasc.">${formatarData(func.dataNascimento)}</td>
