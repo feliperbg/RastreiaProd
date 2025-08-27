@@ -1,50 +1,49 @@
-    async function carregarTabela(produtoId) {
+    async function carregarEtapas() {
+        const pathParts = window.location.pathname.split('/');
+        const produtoId = pathParts[pathParts.length - 1];
+        const tabelaBody = document.getElementById('tabela-etapas');
         try {
-            showLoading();
-            // Busca as etapas específicas para o produtoId fornecido.
-            // Note que você precisará de uma rota de API (ex: GET /etapa/produto/:id) que retorne os dados em JSON.
-            const response = await fetch(`/etapa/produto/${produtoId}`, {
+            const response = await fetch(`/etapa/api/produto/${produtoId}`, {
                 method: 'GET',
                 headers: {
-                    'Content-Type': 'application/json',
                     'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-                },
+                }
             });
-        
+
             if (!response.ok) {
-                throw new Error(`Erro HTTP: ${response.status}`);
+                throw new Error(`Falha ao buscar dados: ${response.statusText}`);
             }
-        
-            const resultado = await response.json();
-            const tabela = document.getElementById("tabela-etapas");
-            
-            const etapas = Array.isArray(resultado) ? resultado : resultado.etapas;
-            
-            if (!Array.isArray(etapas)) {
-                throw new Error("Resposta da API não é uma lista de etapas.");
+
+            const data = await response.json();
+            if (!data.status || !Array.isArray(data.etapas)) {
+                throw new Error('Formato da resposta da API inválido.');
             }
+            
+            const etapas = data.etapas;
+            tabelaBody.innerHTML = ''; // Limpa a mensagem de "Carregando..."
+
             if (etapas.length === 0) {
-                tabela.innerHTML = `<tr><td colspan="7">Nenhuma etapa encontrada.</td></tr>`;
+                tabelaBody.innerHTML = `<tr><td colspan="7" class="text-center">Nenhuma etapa encontrada para este produto.</td></tr>`;
                 return;
             }
-            tabela.innerHTML = ""; // Limpa tabela após carregamento
 
             etapas.forEach(etapa => {
-                const tr = document.createElement("tr");
+                const tr = document.createElement('tr');
+                
+                // Constrói a lista de nomes de funcionários
+                const nomesFuncionarios = etapa.funcionariosResponsaveis && etapa.funcionariosResponsaveis.length > 0
+                    ? etapa.funcionariosResponsaveis.map(f => f.nome).join(', ')
+                    : 'Nenhum';
+
                 tr.innerHTML = `
-                    <td data-label="Sequência">${etapa.sequencias}</td>
-                    <td data-label="Nome">${etapa.nome}</td>
-                    <td data-label="Departamento Responsável">${etapa.departamentoResponsavel}</td>
-                    <td data-label="Procedimentos">
-                        <button class="btn btn-outline-info btn-sm" title="Ver Procedimentos"
-                            onclick='mostrarModal("Procedimentos", ${JSON.stringify(etapa.procedimentos)})'>
-                            <i class="bi bi-list-check"></i>
-                        </button>
-                    </td>
-                    <td data-label="Componente Conclusão"><span class="componentes-loading">Carregando...</span></td>
-                    <td data-label="Funcionários Responsáveis"><span class="funcionarios-loading">Carregando...</span></td>
+                    <td>${etapa.sequencias}</td>
+                    <td>${etapa.nome}</td>
+                    <td>${etapa.departamentoResponsavel ? etapa.departamentoResponsavel.nome : 'N/A'}</td>
+                    <td>${etapa.procedimentos || 'N/A'}</td>
+                    <td>${etapa.componenteConclusao ? etapa.componenteConclusao.nome : 'N/A'}</td>
+                    <td>${nomesFuncionarios}</td>
                     <td data-label="Ações">
-                        <button class="btn btn-sm btn-primary mb-1" onclick="editarEtapa('${etapa.nome}','${etapa._id}')">
+                        <button class="btn btn-sm btn-primary mb-1" onclick="editarEtapa('${etapa._id}', '${etapa.nome}')">
                             <i class="bi bi-pencil"></i>
                         </button>
                         <button class="btn btn-sm btn-danger mb-1" onclick="deletarEtapa('${etapa._id}')">
@@ -52,107 +51,61 @@
                         </button>
                     </td>
                 `;
-                tabela.appendChild(tr);
-
-                formatarArrayAssincrono(etapa.componenteConclusao, id => buscarNomePorId(id, 'componente', 'componente')).then(html => {
-                    tr.querySelector('.componentes-loading').innerHTML = html;
-                });
-
-                // Para funcionários:
-                formatarArrayAssincrono(etapa.funcionariosResponsaveis, id => buscarNomePorId(id, 'funcionario', 'funcionario')).then(html => {
-                    tr.querySelector('.funcionarios-loading').innerHTML = html;
-                });
+                tabelaBody.appendChild(tr);
             });
-        
+
         } catch (error) {
-            console.error('Falha ao buscar etapas:', error);
-            Swal.fire({
-                icon: 'error',
-                title: 'Erro ao carregar',
-                text: 'Ocorreu um erro ao carregar as etapas. Por favor, tente novamente.',
-                confirmButtonText: 'Ok'
-            });
-        } finally {
-            hideLoading();
+            console.error('Erro ao carregar etapas:', error);
+            tabelaBody.innerHTML = `<tr><td colspan="7" class="text-center">Erro ao carregar as etapas. Por favor, tente novamente.</td></tr>`;
         }
     }
-    
-    function editarEtapa(nome, id) {
+
+    function editarEtapa(id, nome) {
         Swal.fire({
-            title: 'Editar Etapa',
-            text: `Você deseja editar a etapa: ${nome}?`,
+            title: 'Editar Produto',
+            text: `Você deseja editar a etapa com o nome: ${nome}?`,
             icon: 'question',
             showCancelButton: true,
             confirmButtonText: 'Sim, editar',
             cancelButtonText: 'Cancelar'
-        }).then(result => {
+        }).then((result) => {
             if (result.isConfirmed) {
-                window.location.href = `/etapa/editar-etapa/${id}`;
+            window.location.href = `/etapa/editar-etapa/${id}`;
             }
         });
     }
 
     async function deletarEtapa(id) {
-        const { isConfirmed } = await Swal.fire({
-            title: 'Tem certeza?',
-            text: "Você não poderá reverter isso!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Sim, deletar!',
-            cancelButtonText: 'Cancelar'
-        });
-        
-        if (isConfirmed) {
-            try {
-                showLoading();
-                const response = await fetch(`/etapa/${id}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-                    }
-                });
-        
-                if (response.ok) {
-                    await Swal.fire(
-                        'Deletado!',
-                        'A etapa foi deletada com sucesso.',
-                        'success'
-                    );
-                    carregarTabela(); // Recarrega a tabela após exclusão
-                } else {
-                    throw new Error("Falha ao excluir etapa");
-                }
-            } catch (error) {
-                console.error("Erro ao excluir etapa:", error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Erro ao deletar',
-                    text: 'Ocorreu um erro ao tentar deletar a etapa. Por favor, tente novamente.',
-                    confirmButtonText: 'Ok'
-                });
-            } finally {
-                hideLoading();
-            }
-        }
-    }
+      const { isConfirmed } = await Swal.fire({
+          title: 'Confirmar Exclusão',
+          text: "Tem certeza que deseja deletar esta etapa?",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Sim, deletar',
+          cancelButtonText: 'Cancelar'
+      });
 
-    // Carregar a tabela ao carregar a página
-    document.addEventListener("DOMContentLoaded", function() {
-        // Extrai o ID do produto da URL da página atual (ex: /etapas/produto/ID_PRODUTO)
-        const pathParts = window.location.pathname.split('/');
-        const produtoId = pathParts[pathParts.length - 1];
+      if (isConfirmed) {
+          try {
+              Swal.fire({ title: 'Deletando...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+              const response = await fetch(`/etapa/${id}`, {
+                  method: 'DELETE',
+                  headers: {
+                      'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                  }
+              });
 
-        // Atualiza o link do botão "Nova Etapa" para incluir o ID do produto.
-        // Isso garante que a nova etapa seja associada a este produto.
-        // Certifique-se de que seu botão/link tenha o id="btn-nova-etapa".
-        const btnNovaEtapa = document.getElementById('btn-nova-etapa');
-        if (btnNovaEtapa) {
-            btnNovaEtapa.href = `/etapa/criar-etapa/${produtoId}`;
-        }
+              if (!response.ok) throw new Error("Erro ao deletar");
 
-        // Carrega a tabela com as etapas do produto específico
-        carregarTabela(produtoId);
-        configurarFiltroDeTabela('filtro', 'tabela-etapas', 'Nome');
-    });
+              Swal.fire('Deletado!', 'Etapa removido com sucesso.', 'success');
+              carregarEtapas();
+          } catch (error) {
+              console.error(error);
+              Swal.fire('Erro!', 'Não foi possível deletar a etapa.', 'error');
+          } finally {
+              hideLoading();
+          }
+      }
+  }
+    // Carga inicial dos dados
+    carregarEtapas();

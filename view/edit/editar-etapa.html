@@ -1,120 +1,30 @@
 <!DOCTYPE html>
 <html lang="pt-BR" data-bs-theme="light">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Editar Etapa</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <style>
-        body {
-            background-color: #f8f9fa;
-            font-family: Arial, sans-serif;
-        }
-        .container {
-            max-width: 500px;
-            margin-top: 50px;
-        }
-        .form-label {
-            font-weight: 600;
-            color: #495057;
-        }
-        .form-control, .form-select {
-            border-radius: 5px;
-            box-shadow: none;
-            padding: 0.8rem 1rem;
-        }
-        .form-control:focus, .form-select:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 0 0.25rem rgba(38, 143, 255, 0.25);
-        }
-        .btn-primary {
-            border-radius: 5px;
-            padding: 0.6rem 1.5rem;
-            font-weight: bold;
-        }
-            .btn-secondary {
-            background-color: #ff0000;
-            border-color: #ff0000b9;
-            border-radius: 5px;
-            padding: 0.6rem 1.5rem;
-            font-weight: bold;
-        }
-        .btn-secondary:hover {
-            background-color: #ff0000;
-            border-color: #ff0000b9;
-        }
-        .mb-3 {
-            margin-bottom: 1rem;
-        }
-    </style>
-</head>
-<body class="p-3">
+<body>
     <div class="container">
         <h1>Editar Etapa</h1>
         <form id="form-editar-etapa">
-            <div class="mb-3">
-                <label for="nome" class="form-label">Nome da Etapa</label>
-                <input type="text" id="nome" class="form-control" required />
-            </div>
-
-            <div class="mb-3">
-                <label for="sequencias" class="form-label">Sequência (Ordem)</label>
-                <input type="number" id="sequencias" class="form-control" required min="1" />
-            </div>
-
-            <div class="mb-3">
-                <label for="departamentoResponsavel" class="form-label">Departamento Responsável</label>
-                <input type="text" id="departamentoResponsavel" class="form-control" />
-            </div>
-
-            <div class="mb-3">
-                <label for="procedimentos" class="form-label">Procedimentos</label>
-                <textarea id="procedimentos" class="form-control" rows="3"></textarea>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Componente de Conclusão (Opcional)</label>
-                <div class="input-group">
-                    <input type="text" id="componenteConclusao" class="form-control" placeholder="Nenhum componente selecionado" readonly />
-                    <button type="button" class="btn btn-outline-secondary" id="btnSelecionarComponente">Selecionar</button>
-                </div>
-            </div>
-            
-            <div class="mb-3">
-                <label class="form-label">Funcionários Responsáveis</label>
-                <div class="input-group">
-                    <input type="text" id="funcionariosResponsaveis" class="form-control" placeholder="Nenhum funcionário selecionado" readonly />
-                    <button type="button" class="btn btn-outline-secondary" id="btnSelecionarFuncionarios">Selecionar</button>
-                </div>
-            </div>
-            
             <button type="submit" class="btn btn-primary">Salvar Alterações</button>
-            <button type="button" class="btn btn-secondary" onclick="window.location.href='/etapa'">Cancelar</button>
+            <button type="button" class="btn btn-secondary">Cancelar</button>
         </form>
     </div>
     
-    <div id="toast-container" class="position-fixed bottom-0 end-0 p-3" style="z-index: 11"></div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="/js/toast.js"></script> 
-<script>
+    <script>
     document.addEventListener('DOMContentLoaded', function () {
         const pathParts = window.location.pathname.split('/');
-        const id = pathParts[pathParts.length - 1];
+        const id = pathParts[pathParts.length - 2]; // O ID da etapa está antes de 'editar-etapa'
 
         if (!id) {
             return exibirMensagem('ID da etapa não encontrado na URL!', 'erro');
         }
 
         // --- ESTRUTURA DE DADOS ---
+        let produtoIdForRedirect = null; // CORREÇÃO: Variável para guardar o ID do produto para o redirect
         let componenteConclusaoId = null;
         let funcionariosSelecionadosIds = [];
         let listaCompletaComponentes = [];
         let listaCompletaFuncionarios = [];
 
-        /**
-         * Carrega os dados da etapa específica e preenche o formulário.
-         */
         async function carregarEtapa() {
             try {
                 const response = await fetch(`/etapa/${id}`, { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } });
@@ -122,18 +32,26 @@
 
                 if (dados.status && dados.etapa) {
                     const etapa = dados.etapa;
+                    produtoIdForRedirect = etapa.produto; // CORREÇÃO: Armazena o ID do produto vindo da API
+
+                    // CORREÇÃO: Atualiza o botão cancelar com o link correto
+                    if (produtoIdForRedirect) {
+                        document.querySelector('.btn-secondary').onclick = () => window.location.href = `/etapa/produto/${produtoIdForRedirect}`;
+                    } else {
+                        // Se não encontrar o ID, desabilita o botão para evitar erro
+                         document.querySelector('.btn-secondary').style.display = 'none';
+                    }
+
                     document.getElementById('nome').value = etapa.nome;
                     document.getElementById('sequencias').value = etapa.sequencias;
                     document.getElementById('departamentoResponsavel').value = etapa.departamentoResponsavel || '';
                     document.getElementById('procedimentos').value = etapa.procedimentos || '';
 
-                    // Preenche componente de conclusão (dado já vem populado do backend)
                     if (etapa.componenteConclusao) {
                         componenteConclusaoId = etapa.componenteConclusao._id;
                         document.getElementById('componenteConclusao').value = etapa.componenteConclusao.nome;
                     }
 
-                    // Preenche funcionários (dados já vêm populados do backend)
                     if (Array.isArray(etapa.funcionariosResponsaveis) && etapa.funcionariosResponsaveis.length > 0) {
                         funcionariosSelecionadosIds = etapa.funcionariosResponsaveis.map(f => f._id);
                         const nomes = etapa.funcionariosResponsaveis.map(f => f.nome);
@@ -146,10 +64,7 @@
                 exibirMensagem('Erro ao carregar informações da etapa.', 'erro');
             }
         }
-        /**
-        * Carrega as listas completas de componentes e funcionários sob demanda.
-        */
-        async function carregarListasCompletas() {
+         async function carregarListasCompletas() {
             if (listaCompletaComponentes.length > 0 && listaCompletaFuncionarios.length > 0) return;
             try {
                 const [compRes, funcRes] = await Promise.all([
@@ -250,7 +165,7 @@
         }
         document.getElementById('form-editar-etapa').addEventListener('submit', async function(event) {
             event.preventDefault();
-            console.log(componenteConclusaoId);
+            
             const dadosAtualizados = {
                 nome: document.getElementById('nome').value,
                 sequencias: parseInt(document.getElementById('sequencias').value, 10),
@@ -261,8 +176,8 @@
             };
 
             try {
-                const response = await fetch(`/etapa/${id}`, { // URL com ID
-                    method: 'PUT', // Método PUT
+                const response = await fetch(`/etapa/${id}`, {
+                    method: 'PUT',
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('authToken')}` },
                     body: JSON.stringify(dadosAtualizados)
                 });
@@ -270,13 +185,18 @@
                 if (!response.ok) throw new Error(result.msg || "Erro ao atualizar a etapa.");
                 
                 await Swal.fire('Sucesso!', 'Etapa atualizada com sucesso.', 'success');
-                window.location.href = '/etapa';
+                
+                // CORREÇÃO: Redireciona para a página de etapas do produto específico
+                if (produtoIdForRedirect) {
+                    window.location.href = `/etapa/produto/${produtoIdForRedirect}`;
+                } else {
+                    window.location.href = '/produto'; // Fallback caso o ID não seja encontrado
+                }
             } catch (error) {
                 exibirMensagem(error.message, 'erro');
             }
         });
 
-        // Inicia o carregamento dos dados da etapa
         carregarEtapa();
     });
 </script>

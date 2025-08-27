@@ -1,5 +1,6 @@
-// Arquivo: control/EtapaControl.js
 const Etapa = require('../model/Etapa');
+const Produto = require('../model/Produto');
+
 
 module.exports = class EtapaController {
     static async create(req, res) {
@@ -72,14 +73,38 @@ module.exports = class EtapaController {
             return res.status(500).json({ status: false, msg: 'Erro ao remover etapa.' });
         }
     }
-    static async listarPorProduto(req, res) {
+
+    static async getEtapasPorProdutoAPI(req, res) {
         try {
             const { produtoId } = req.params;
-            const etapas = await Etapa.find({ produto: produtoId }).sort({ sequencias: 1 });
-            return res.render('main/etapa', { etapas, produtoId });
+            const etapas = await Etapa.find({ produto: produtoId })
+                .populate('departamentoResponsavel', 'nome')
+                .populate('componenteConclusao', 'nome')
+                .populate('funcionariosResponsaveis', 'nome')
+                .sort({ sequencias: 1 });
+            
+            return res.status(200).json({ status: true, etapas: etapas });
         } catch (error) {
-            console.error('Erro ao listar etapas por produto:', error);
-            return res.status(500).render('error', { message: 'Não foi possível carregar as etapas para este produto.' });
+            console.error('Erro na API ao listar etapas por produto:', error);
+            return res.status(500).json({ status: false, msg: 'Erro interno ao buscar etapas.' });
+        }
+    }
+
+     static async listarPorProdutoView(req, res) {
+        try {
+            const { produtoId } = req.params;
+            const produto = await Produto.findById(produtoId).select('nome').lean();
+            if (!produto) {
+                return res.status(404).render('error', { message: 'Produto não encontrado.' });
+            }
+            return res.render('main/etapa', { 
+                produtoId: produtoId,
+                nomeProduto: produto.nome 
+            });
+
+        } catch (error) {
+            console.error('Erro ao renderizar a página de etapas:', error);
+            return res.status(500).render('error', { message: 'Não foi possível carregar a página de etapas.' });
         }
     }
 };

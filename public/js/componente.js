@@ -51,7 +51,6 @@
                 tabela.appendChild(tr);
             });
         } catch (err) {
-            console.error(err);
             Swal.fire('Erro!', 'Não foi possível carregar os componentes.', 'error');
         } finally {
             hideLoading()
