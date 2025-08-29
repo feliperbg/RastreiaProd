@@ -158,10 +158,31 @@ module.exports = class OrdemProducaoController {
             const { id, etapaId } = req.params;
             const funcionarioId = req.user._id;
 
-            const ordem = await OrdemProducao.findById(id).populate('produto');
-            if (!ordem) return res.status(404).json({ status: false, msg: 'Ordem de produção não encontrada.' });
+           const ordem = await OrdemProducao.findById(id)
+                .populate({
+                    path: 'produto', // 1. Popula o campo 'produto' da Ordem de Produção
+                    populate: [      // 2. DENTRO de 'produto', popula os seguintes campos (em um array):
+                        {
+                            path: 'etapas', // 2a. Popula o campo 'etapas' do produto
+                             populate: [
+                                {
+                                    path: 'funcionariosResponsaveis', // 3a. Popula os funcionários de cada etapa
+                                    select: 'nome'
+                                },
+                                {
+                                    path: 'departamentoResponsavel', // 3b. (NOVO) Popula o departamento de cada etapa
+                                    select: 'nome'
+                                }
+                            ]
+                        }
+                    ]
+                })
+                .populate('etapaAtual.etapa') // Popula as etapas que já estão na OP
+                .populate('funcionarioAtivo.funcionario'); // Popula o funcionário que está ativo na OP
 
-            const etapaParaFinalizar = ordem.etapaAtual.find(e => e.etapa.toString() === etapaId);
+            if (!ordem) return res.status(404).json({ status: false, msg: 'Ordem de produção não encontrada.' });
+            console.log(ordem.etapaAtual);
+            const etapaParaFinalizar = ordem.etapaAtual.find(e => e.etapa._id.toString() === etapaId);
             if (!etapaParaFinalizar) {
                 return res.status(404).json({ status: false, msg: 'Etapa não encontrada nesta ordem de produção.' });
             }
@@ -178,6 +199,8 @@ module.exports = class OrdemProducaoController {
             );
 
             const definicaoDeEtapas = ordem.produto.etapas;
+            console.log(ordem.produto);
+            console.log(definicaoDeEtapas);
             if (definicaoDeEtapas[definicaoDeEtapas.length - 1].toString() === etapaId) {
                 ordem.status = 'Concluída';
                 if (!ordem.timestampProducao) {
