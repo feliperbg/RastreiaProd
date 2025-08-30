@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"},{"v":{"$numberInt":"2"},"key":{"produto":{"$numberInt":"1"},"sequencias":{"$numberInt":"1"}},"name":"produto_1_sequencias_1","background":true,"unique":true}],"uuid":"7aaf56f008fe4547a7f99e20aeb101b5","collectionName":"etapas","type":"collection"}
