@@ -1,4 +1,11 @@
-pc
-& "C:\Program Files\MongoDB\Tools\100\bin\mongorestore.exe" --drop --uri="mongodb://localhost:27017/" --db="TCC" "D:\GitHub\RastreiaProd\docs\backup_tcc"
+PC
+Dump:
+& "C:\Program Files\MongoDB\Tools\100\bin\mongodump.exe" --uri="mongodb://localhost:27017/" --db="TCC" --out="D:\GitHub\RastreiaProd\docs\backup_tcc"
+Restore:
+& "C:\Program Files\MongoDB\Tools\100\bin\mongorestore.exe" --drop --uri="mongodb://localhost:27017/" --db="TCC" "D:\GitHub\RastreiaProd\docs\backup_tcc\TCC"
 
-notebook
+NOTEBOOK
+Dump:
+& "C:\Program Files\MongoDB\Tools\100\bin\mongodump.exe" --uri="mongodb://localhost:27017/" --db="TCC" --out="C:\Users\kurby\Documents\GitHub\RastreiaProd\docs\backup_tcc"
+Restore:
+& "C:\Program Files\MongoDB\Tools\100\bin\mongorestore.exe" --drop --uri="mongodb://localhost:27017/" --db="TCC" "C:\Users\kurby\Documents\GitHub\RastreiaProd\docs\backup_tcc\TCC
