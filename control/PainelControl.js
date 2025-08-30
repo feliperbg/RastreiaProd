@@ -67,14 +67,14 @@ module.exports = class PainelController {
     /**
      * Calcula e retorna o número de ordens concluídas nos últimos 7 dias.
      */
-    static async getEtapasFinalizadasChart(req, res) {
+    static async getOrdensFinalizadasChart(req, res) {
         try {
             const labels = [];
             const data = [];
             const today = new Date();
             today.setHours(23, 59, 59, 999);
 
-            for (let i = 6; i >= 0; i--) {
+            for (let i = 4; i >= 0; i--) {
                 const date = new Date(today);
                 date.setDate(today.getDate() - i);
 

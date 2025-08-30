@@ -86,7 +86,6 @@ document.addEventListener("DOMContentLoaded", function () {
           } else {
             localStorage.setItem('rememberPassword', JSON.stringify(false));
           }
-          console.log(dados);
           localStorage.setItem('userData', JSON.stringify(dados.funcionario));
           localStorage.setItem('authToken', dados.token);
           localStorage.setItem('userImage', dados.funcionario.imagem || "imagens/funcionario/default.png");
