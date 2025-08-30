@@ -1,0 +1,4 @@
+pc
+& "C:\Program Files\MongoDB\Tools\100\bin\mongorestore.exe" --drop --uri="mongodb://localhost:27017/" --db="TCC" "D:\GitHub\RastreiaProd\docs\backup_tcc"
+
+notebook
