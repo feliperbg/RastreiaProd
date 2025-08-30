@@ -34,9 +34,9 @@ router.get(
 );
 
 router.get(
-    '/etapas-finalizadas-chart',
+    '/ordens-finalizadas-chart',
     jwtMiddleware.validate.bind(jwtMiddleware),
-    PainelController.getEtapasFinalizadasChart
+    PainelController.getOrdensFinalizadasChart
 );
 
 router.get(

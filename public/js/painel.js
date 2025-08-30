@@ -18,22 +18,43 @@ document.addEventListener("DOMContentLoaded", function () {
 
         boards.forEach(board => {
             const columnWrapper = document.createElement('div');
-            columnWrapper.className = 'col-12 col-md-6 col-lg-3 mb-4';
+            columnWrapper.className = 'col-12 col-md-6 col-lg-3';
+            
             const columnCard = document.createElement('div');
-            columnCard.className = 'card h-100';
+            columnCard.className = 'kanban-board-card';
+
             const header = document.createElement('div');
-            header.className = `card-header text-white ${board.class}`;
-            header.textContent = `${board.title} (${board.items.length})`; // Adiciona a contagem
+            header.className = `kanban-header text-white ${board.class}`;
+            header.innerHTML = `<strong>${board.title}</strong> <span class="badge bg-light text-dark ms-2">${board.items.length}</span>`;
+
             const body = document.createElement('div');
-            body.className = 'card-body kanban-column p-2';
+            body.className = 'kanban-column p-2';
             body.id = `kanban-col-${board.id}`;
 
             if (board.items.length > 0) {
+                // --- MODIFICAÇÃO PRINCIPAL AQUI ---
+                // 1. Converte a classe de background (ex: 'bg-primary') em classe de borda (ex: 'border-primary')
+                const borderClass = board.class.replace('bg-', 'border-');
+
                 board.items.forEach(item => {
                     const taskCard = document.createElement('div');
-                    taskCard.className = 'card mb-2';
-                    taskCard.innerHTML = `<div class="card-body p-2">${item.title}</div>`;
-                    taskCard.style.cursor = 'pointer';
+                    // 2. Adiciona a nova classe de borda dinâmica ao card
+                    taskCard.className = `task-card ${borderClass}`; 
+                    taskCard.setAttribute('role', 'button');
+
+                    // O restante do seu código para criar o conteúdo do card permanece o mesmo...
+                    let cardContent = `<div class="task-card-body"> ... </div>`; // (código omitido por brevidade)
+                    taskCard.innerHTML = `
+                        <div class="task-card-body">
+                            <div class="task-title">${item.title}</div>
+                            ${(item.etapa || item.funcionario) ? `
+                            <div class="task-subtitle">
+                                ${item.etapa ? `<span><i class="fas fa-cogs me-1"></i> ${item.etapa}</span>` : ''}
+                                ${item.funcionario ? `<span class="ms-3"><i class="fas fa-user me-1"></i> ${item.funcionario}</span>` : ''}
+                            </div>
+                            ` : ''}
+                        </div>`;
+
                     taskCard.addEventListener('click', () => {
                         if (item.link) {
                             window.location.href = item.link;
@@ -77,17 +98,32 @@ document.addEventListener("DOMContentLoaded", function () {
     function renderBarChart(elementId, label, labels, data) {
         const ctx = document.getElementById(elementId);
         if (!ctx) return;
+
         new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: labels,
+                labels: labels, 
                 datasets: [{
                     label: label,
                     data: data,
-                    backgroundColor: '#ffc107'
+                    backgroundColor: '#ffc107',
+                    borderColor: '#e6ac00', // Opcional: melhora a estética
+                    borderWidth: 1
                 }]
             },
-            options: { responsive: true, maintainAspectRatio: false }
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.raw;
+                            }
+                        }
+                    }
+                }
+            }
         });
     }
 
@@ -151,13 +187,14 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     async function buscarDadosParaKanban() {
+        // Simula o fetch, substitua pela sua chamada real
         const ordensResponse = await fetchWithAuth('/ordem-producao/readAll');
         if (!ordensResponse || !ordensResponse.ordens) return [];
-        
+
         const kanbanData = [
-            { id: '_todo', title: 'A Fazer', class: 'bg-warning', items: [] },
-            { id: '_doing', title: 'Em Produção', class: 'bg-info', items: [] },
-            { id: '_done', title: 'Finalizado', class: 'bg-success', items: [] },
+            { id: '_todo', title: 'Pendente', class: 'bg-warning', items: [] },
+            { id: '_doing', title: 'Em Andamento', class: 'bg-primary', items: [] },
+            { id: '_done', title: 'Concluída', class: 'bg-success', items: [] },
             { id: '_canceled', title: 'Cancelada', class: 'bg-danger', items: [] }
         ];
 
@@ -169,12 +206,20 @@ document.addEventListener("DOMContentLoaded", function () {
         };
 
         ordensResponse.ordens.forEach(ordem => {
-            console.log(ordem);
             const column = kanbanData.find(b => b.id === statusMap[ordem.status]);
+
             if (column) {
+                const etapaAtivaObj = ordem.etapaAtual.find(e => e.status.toLowerCase() !== 'concluída');
+                const nomeEtapa = etapaAtivaObj && etapaAtivaObj.etapa ? etapaAtivaObj.etapa.nome : '';
+                const nomeFuncionario = (ordem.funcionarioAtivo && ordem.funcionarioAtivo.length > 0 && ordem.funcionarioAtivo[0].funcionario) 
+                                        ? ordem.funcionarioAtivo[0].funcionario.nome 
+                                        : '';
+
                 column.items.push({
+                    funcionario: nomeFuncionario,
+                    etapa: nomeEtapa,
                     title: `OP-${ordem._id.slice(-6).toUpperCase()} - ${ordem.produto.nome}`,
-                    link: `/ordem-producao/gestao-op/${ordem._id}`
+                    link: `/ordem-producao/gestao-op/${ordem._id}`,
                 });
             }
         });
@@ -182,7 +227,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     async function buscarDadosGraficoEtapasFinalizadas() {
-        const response = await fetchWithAuth('/painel/etapas-finalizadas-chart');
+        const response = await fetchWithAuth('/painel/ordens-finalizadas-chart');
         if (!response) return { labels: [], data: [] };
         return { labels: response.labels, data: response.datasets };
     }
@@ -224,7 +269,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (cardData) renderizarCards(cardData);
         if (kanbanData) renderKanban(kanbanData);
-        if (etapasFinalizadasData) renderLineChart('graficoEtapas', 'Ordens Finalizadas (7 dias)', etapasFinalizadasData.labels, etapasFinalizadasData.data);
+        if (etapasFinalizadasData) renderLineChart('graficoEtapas', 'Ordens Finalizadas (5 dias)', etapasFinalizadasData.labels, etapasFinalizadasData.data);
         if (tempoMedioData) renderBarChart('graficoTempo', 'Tempo Médio por Etapa (min)', tempoMedioData.labels, tempoMedioData.data);
         if (statusOrdensData) renderDoughnutChart('graficoStatusOrdens', statusOrdensData.labels, statusOrdensData.data, ['#28a745', '#ffc107', '#17a2b8', '#dc3545']);
     }

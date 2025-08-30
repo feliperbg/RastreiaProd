@@ -16,7 +16,7 @@ router.get('/', (req, res) => res.render('main/ordem-producao'));
 router.get('/editar-ordem-producao/:id', (req, res) => { res.sendFile(path.join(viewPath, 'edit', 'editar-ordem-producao.html')); });
 router.get('/adicionar-ordem-producao', (req, res) => { res.sendFile(path.join(viewPath, 'add', 'adicionar-ordem-producao.html')); });
 
-// ROTA NOVA: Para renderizar a tela de gestão da OP
+// Para renderizar a tela de gestão da OP
 router.get('/gestao-op/:id', (req, res) => { res.sendFile(path.join(viewPath,'main', 'gestao-op.html')); });
 
 
@@ -32,7 +32,7 @@ router.delete('/:id', jwtMiddleware.validate.bind(jwtMiddleware),MongoIdMiddlewa
 router.post(
     '/:id/etapa/:etapaId/iniciar',
     jwtMiddleware.validate.bind(jwtMiddleware),
-    MongoIdMiddleware.validateParams(['id', 'etapaId']), // <-- MUDOU AQUI
+    MongoIdMiddleware.validateParams(['id', 'etapaId']), 
     OrdemProducaoController.iniciarEtapa
 );
 
@@ -40,7 +40,7 @@ router.post(
 router.post(
     '/:id/etapa/:etapaId/finalizar',
     jwtMiddleware.validate.bind(jwtMiddleware),
-    MongoIdMiddleware.validateParams(['id', 'etapaId']), // <-- MUDOU AQUI
+    MongoIdMiddleware.validateParams(['id', 'etapaId']),
     OrdemProducaoController.finalizarEtapa
 );
 
