@@ -1,4 +1,3 @@
-   // Substitua a sua função antiga por esta no seu arquivo .js
     async function carregarTabela() {
         try {
             showLoading();
@@ -16,9 +15,8 @@
             }
 
             const resultado = await response.json();
-            console.log(resultado);
             const tabela = document.getElementById("tabela-ordem-producoes");
-            tabela.innerHTML = ""; // Limpa a tabela
+            tabela.innerHTML = "";
 
             if (resultado.status !== true || !Array.isArray(resultado.ordens)) {
                 throw new Error("Resposta da API inválida ou sem ordens.");
@@ -34,47 +32,20 @@
 
             ordens.forEach(ordem => {
                 const tr = document.createElement("tr");
-
-                // --- Lógica para extrair e formatar os dados do schema ---
-
-                // 1. Produto (assumindo que foi populado no backend)
                 const nomeProduto = ordem.produto ? ordem.produto.nome : 'Produto não encontrado';
 
-                // 2. Etapa Atual (pegando a primeira da lista, se houver)
                 const etapaAtual = ordem.etapaAtual && ordem.etapaAtual.length > 0
                     ? `${ordem.etapaAtual[0].etapa.nome} (${ordem.etapaAtual[0].status})`
                     : 'Nenhuma';
 
-                // 3. Funcionário Ativo (pegando o primeiro da lista, se houver)
                 const funcionarioAtivo = ordem.funcionarioAtivo && ordem.funcionarioAtivo.length > 0
-                    ? buscarNomePorId(ordem.funcionarioAtivo[0]._id, "funcionario", 'Funcionários')
+                    ? `<span class="badge bg-secondary">${ordem.funcionarioAtivo[0].funcionario.nome}</span>`
                     : 'Nenhum';
 
-                // Arquivo: public/js/ordem-producao.js
 
-                // 4. Horários de Início e Fim
-                const formatarHorario = (data) => {
-                    if (!data) return 'N/A';
-                    // Cria um objeto de data considerando o fuso horário local para evitar o "day-off"
-                    const dateObj = new Date(data);
-                    // Adiciona o offset do fuso horário para corrigir a data para UTC antes de formatar
-                    const userTimezoneOffset = dateObj.getTimezoneOffset() * 60000;
-                    const correctedDate = new Date(dateObj.getTime() + userTimezoneOffset);
-                    
-                    return correctedDate.toLocaleString('pt-BR', {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        second: '2-digit'
-                    });
-                };
                 const horarioInicio = formatarHorario(ordem.timestampProducao?.inicio);
                 const horarioFim = formatarHorario(ordem.timestampProducao?.fim);
 
-
-                // --- Montagem do HTML da linha da tabela ---
                 tr.innerHTML = `
                     <td data-label="Código">${ordem._id.slice(-6).toUpperCase()}</td>                    
                     <td data-label="Status">${ordem.status}</td>
@@ -105,10 +76,8 @@
                 title: 'Erro ao Carregar',
                 text: error.message,
             });
-            // Garante que a tabela mostre o erro também
             const tabela = document.getElementById("tabela-ordem-producoes");
             if(tabela) tabela.innerHTML = `<tr><td colspan="7">Falha ao carregar os dados.</td></tr>`;
-
         } finally {
             hideLoading();
         }
@@ -157,7 +126,7 @@
                         'A ordem-producao foi deletada com sucesso.',
                         'success'
                     );
-                    carregarTabela(); // Recarrega a tabela após exclusão
+                    carregarTabela();
                 } else {
                     throw new Error("Falha ao excluir ordem-producao");
                 }
@@ -177,7 +146,6 @@
     function gerenciarOrdemProducao(id) {
         window.location.href = `/ordem-producao/gestao-op/${id}`;
     }
-    // Carregar a tabela ao carregar a página
     document.addEventListener("DOMContentLoaded", function() {
         carregarTabela();
         configurarFiltroDeTabela('filtro', 'tabela-ordem-producoes', 'Produto');

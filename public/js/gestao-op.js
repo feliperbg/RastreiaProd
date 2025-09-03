@@ -63,9 +63,13 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('op-titulo').textContent = `Ordem de Produção #${ordemProducao._id.slice(-6).toUpperCase()}`;
         document.getElementById('op-produto').textContent = ordemProducao.produto.nome;
         document.getElementById('op-quantidade').textContent = ordemProducao.quantidade;
-        document.getElementById('op-status').innerHTML = `<span class="badge bg-primary fs-6">${ordemProducao.status}</span>`;
-
-        console.log(ordemProducao.produto);
+        const statusClasses = {
+            'Pendente': { bg: 'secondary', text: 'Pendente'},
+            'Em Andamento': { bg: 'primary', text: 'Em Andamento'},
+            'Concluída': { bg: 'success', text: 'Concluída' }
+        };
+        const statusInfo = statusClasses[ordemProducao.status] || statusClasses['Pendente'];
+        document.getElementById('op-status').innerHTML = `<h1 class="badge bg-${statusInfo.bg}" fw-bold m-0>${statusInfo.text}</h1>`;
         renderizarTabelaComponentes(ordemProducao.produto.componentesNecessarios);
 
         const etapasContainer = document.getElementById('etapas-container');
