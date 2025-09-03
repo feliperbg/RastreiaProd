@@ -181,7 +181,6 @@ module.exports = class OrdemProducaoController {
                 .populate('funcionarioAtivo.funcionario'); // Popula o funcionário que está ativo na OP
 
             if (!ordem) return res.status(404).json({ status: false, msg: 'Ordem de produção não encontrada.' });
-            console.log(ordem.etapaAtual);
             const etapaParaFinalizar = ordem.etapaAtual.find(e => e.etapa._id.toString() === etapaId);
             if (!etapaParaFinalizar) {
                 return res.status(404).json({ status: false, msg: 'Etapa não encontrada nesta ordem de produção.' });
@@ -199,9 +198,8 @@ module.exports = class OrdemProducaoController {
             );
 
             const definicaoDeEtapas = ordem.produto.etapas;
-            console.log(ordem.produto);
-            console.log(definicaoDeEtapas);
-            if (definicaoDeEtapas[definicaoDeEtapas.length - 1].toString() === etapaId) {
+            console.log("Definição de Etapas do Produto:", definicaoDeEtapas);
+            if (definicaoDeEtapas[definicaoDeEtapas.length - 1]._id.toString() === etapaId) {
                 ordem.status = 'Concluída';
                 if (!ordem.timestampProducao) {
                     ordem.timestampProducao = {};
