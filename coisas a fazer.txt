@@ -1,15 +1,24 @@
-Ver se gestao op é funcionando corretamente
-
 Editar de Etapas
 
-criar um js para criar op ficticias para gerar os resutaldos preenchidos,
- logo adicionar etapas, componentes e funcionarios novos para isso
+Gestao
+    Temp medio de execucao da OS e etapas ou n/a, mostrar no card da etapa medio e da OS mostrar no detalhe da OS
+    botao de pause na gestao e motivo
 
-departamentoResponsavel virar comboBox em funcionario
+Ordem de produção:
+    tirar status inicial
+    funcionario que criou a os -> Precisa?
+    add data de entrega no schema de ordem e add no adicionar e no gestao
+    no deletar virar cancelar e motivo do cancelar, mudar icone
 
-arrumar funcionario ativo e arrumar horario na ordem de produção por causa de fuso que está 3h a mais
- (pegar o fuso local e mexer na data)
+Funcionario: 
+    add imagem e regex para cpf e telefone, salvar no banco somente numeros e formatar na hr de mostrar
+    departamentoResponsavel virar comboBox em funcionario e fazer front do crud de departamento
 
-seção na sidebar somente para gráficos detalhados de cada tabela
+Gerar filtros personalizados nas tabelas
 
-gerar filtro de radio button para status da OS
+Final:
+    Permissoes e roles
+
+opcionais:
+    seção na sidebar somente para gráficos detalhados de cada tabela
+
