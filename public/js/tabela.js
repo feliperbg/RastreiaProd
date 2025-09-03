@@ -78,6 +78,24 @@
         if (!telefone || telefone.length < 10) return telefone;
         return telefone.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
     }
+    function formatarHorario(data){
+        if (!data) {
+            return 'N/A';
+        }
+        
+        // O construtor new Date() entende a data como UTC (horário zero).
+        const dateObj = new Date(data);
+
+        // O método toLocaleString() converte e formata para o horário local do usuário.
+        return dateObj.toLocaleString('pt-BR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+        });
+    };
 
     /**
      * Formata um array de strings de permissão para um formato legível.
