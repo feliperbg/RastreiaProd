@@ -63,10 +63,15 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('op-titulo').textContent = `Ordem de Produção #${ordemProducao._id.slice(-6).toUpperCase()}`;
         document.getElementById('op-produto').textContent = ordemProducao.produto.nome;
         document.getElementById('op-quantidade').textContent = ordemProducao.quantidade;
+        document.getElementById('op-data-entrega').textContent = formatarData(ordemProducao.dataEntrega);
+        document.getElementById('op-criado-por').textContent = ordemProducao.criadoPor ? ordemProducao.criadoPor.nome : 'N/A';
+
         const statusClasses = {
             'Pendente': { bg: 'secondary', text: 'Pendente'},
             'Em Andamento': { bg: 'primary', text: 'Em Andamento'},
-            'Concluída': { bg: 'success', text: 'Concluída' }
+            'Pausada': { bg: 'warning', text: 'Pausada' },
+            'Concluída': { bg: 'success', text: 'Concluída' },
+            'Cancelada': { bg: 'danger', text: 'Cancelada' }
         };
         const statusInfo = statusClasses[ordemProducao.status] || statusClasses['Pendente'];
         document.getElementById('op-status').innerHTML = `<h1 class="badge bg-${statusInfo.bg}" fw-bold m-0>${statusInfo.text}</h1>`;
@@ -84,16 +89,29 @@ document.addEventListener('DOMContentLoaded', function () {
             const etapaAtual = ordemProducao.etapaAtual.find(e => e.etapa._id === etapaDefinida._id);
             const status = etapaAtual ? etapaAtual.status : 'Pendente';
             
+            // Verifica se o funcionário logado é um dos responsáveis pela etapa
             const isFuncionarioResponsavel = etapaDefinida.funcionariosResponsaveis.some(f => f._id === userData._id);
             
+            // A etapa só pode ser iniciada se for a próxima na sequência (não houver etapas anteriores pendentes)
             const podeIniciar = (index === ultimaEtapaConcluidaIndex);
 
-            const showIniciarBtn = status === 'Pendente' && isFuncionarioResponsavel && podeIniciar;
-            const showFinalizarBtn = status === 'Em Andamento' && isFuncionarioResponsavel;
+            // Condições para mostrar os botões, agora também verificando se a OP não está pausada
+            const podeInteragir = ordemProducao.status !== 'Pausada' && 
+                                  ordemProducao.status !== 'Concluída' && 
+                                  ordemProducao.status !== 'Cancelada';
+
+            const showIniciarBtn = podeInteragir && status === 'Pendente' && isFuncionarioResponsavel && podeIniciar;
+            const showFinalizarBtn = podeInteragir && status === 'Em Andamento' && isFuncionarioResponsavel;
 
             const cardHtml = criarCardEtapa(etapaDefinida, status, showIniciarBtn, showFinalizarBtn);
             etapasContainer.innerHTML += cardHtml;
         });
+
+        // Controla a visibilidade dos botões de Pausar/Retomar
+        const btnPausar = document.getElementById('btn-pausar-op');
+        const btnRetomar = document.getElementById('btn-retomar-op');
+        btnPausar.classList.toggle('d-none', ordemProducao.status !== 'Em Andamento');
+        btnRetomar.classList.toggle('d-none', ordemProducao.status !== 'Pausada');
 
         spinner.classList.add('d-none');
         conteudoPagina.classList.remove('d-none');
@@ -119,10 +137,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function criarCardEtapa(etapa, status, showIniciar, showFinalizar) {
         const statusClasses = {
-            'Pendente': { bg: 'secondary', text: 'Pendente', timeline: 'etapa-pendente' },
-            'Em Andamento': { bg: 'primary', text: 'Em Andamento', timeline: 'etapa-andamento' },
-            'Concluída': { bg: 'success', text: 'Concluída', timeline: 'etapa-concluida' }
+            'Pendente':     { bg: 'secondary', text: 'Pendente',     timeline: 'etapa-pendente' },
+            'Em Andamento': { bg: 'primary',   text: 'Em Andamento', timeline: 'etapa-andamento' },
+            'Concluída':    { bg: 'success',   text: 'Concluída',    timeline: 'etapa-concluida' }
         };
+
         const statusInfo = statusClasses[status] || statusClasses['Pendente'];
         const funcionariosNomes = etapa.funcionariosResponsaveis.map(f => f.nome).join(', ');
 
@@ -135,8 +154,10 @@ document.addEventListener('DOMContentLoaded', function () {
             botoesHtml = `<button class="btn btn-success" onclick="finalizarEtapa('${ordemProducao._id}', '${etapa._id}')">
                             <i class="bi bi-check-circle"></i> Finalizar Etapa
                           </button>`;
+        } else if (ordemProducao.status === 'Pausada') {
+            botoesHtml = '<p class="text-warning fw-bold m-0">Produção Pausada.</p>';
         } else if (status === 'Concluída') {
-             botoesHtml = '<p class="text-success fw-bold m-0">Etapa finalizada.</p>';
+            botoesHtml = '<p class="text-success fw-bold m-0">Etapa finalizada.</p>';
         }
 
         return `
@@ -211,6 +232,74 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 Swal.fire('Concluída!', 'A etapa foi finalizada com sucesso.', 'success');
                 inicializar();
+            } catch(error) {
+                Swal.fire('Erro!', error.message, 'error');
+            }
+        }
+    }
+
+    // --- FUNÇÕES DE AÇÃO (Pausar/Retomar) ---
+    window.pausarOrdemProducao = async function() {
+        const opId = ordemProducao._id;
+        const { value: motivo } = await Swal.fire({
+            title: 'Pausar Produção',
+            input: 'text',
+            inputLabel: 'Motivo da Pausa',
+            inputPlaceholder: 'Ex: Falta de material, manutenção de máquina...',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Sim, pausar',
+            cancelButtonText: 'Cancelar',
+            inputValidator: (value) => {
+                if (!value) {
+                    return 'Você precisa informar um motivo para a pausa!'
+                }
+            }
+        });
+
+        if (motivo) {
+            try {
+                const response = await fetch(`/ordem-producao/${opId}/pausar`, {
+                    method: 'PATCH',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}` 
+                    },
+                    body: JSON.stringify({ motivo: motivo })
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.msg);
+
+                Swal.fire('Pausada!', 'A produção foi pausada com sucesso.', 'success');
+                inicializar(); // Recarrega os dados da página
+            } catch(error) {
+                Swal.fire('Erro!', error.message, 'error');
+            }
+        }
+    }
+
+    window.retomarOrdemProducao = async function() {
+        const opId = ordemProducao._id;
+        const result = await Swal.fire({
+            title: 'Retomar Produção?',
+            text: "Você confirma a retomada da produção desta ordem?",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Sim, retomar',
+            cancelButtonText: 'Cancelar'
+        });
+
+        if (result.isConfirmed) {
+            try {
+                const response = await fetch(`/ordem-producao/${opId}/retomar`, {
+                    method: 'PATCH',
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.msg);
+
+                Swal.fire('Retomada!', 'A produção foi retomada com sucesso.', 'success');
+                inicializar(); // Recarrega os dados da página
             } catch(error) {
                 Swal.fire('Erro!', error.message, 'error');
             }
