@@ -31,12 +31,6 @@ body {
   padding: 1rem;
 }
 
-main.container-fluid {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-}
-
 /* --- Caixa de Login (Estilo do 2º, Cores do 1º) --- */
 .login-box {
   background: var(--cor-fundo);

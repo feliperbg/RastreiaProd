@@ -58,9 +58,12 @@
     const userDataJSON = localStorage.getItem("userData");
     if (userDataJSON) {
       try {
+        console.log("entrou no if do sidebar");
         const authData = JSON.parse(userDataJSON);
+        console.log("authData:", authData);
         // Verifica se existe o campo permissoes e se inclui "Administrador"
-        if (!authData.permissoes || !authData.permissoes.includes("administrador")) {
+        if (!authData.role || !authData.role.includes("administrador")) {
+          console.log("entrou no if do sidebar para remover o menu funcionarios");
           const menuFuncionarios = document.getElementById("menu-funcionarios");
           if (menuFuncionarios) {
             menuFuncionarios.remove(); // Remove o <li> do DOM

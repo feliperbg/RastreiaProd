@@ -45,12 +45,16 @@
 
                 const horarioInicio = formatarHorario(ordem.timestampProducao?.inicio);
                 const horarioFim = formatarHorario(ordem.timestampProducao?.fim);
+                const dataEntrega = formatarData(ordem.dataEntrega);
+                const criadoPor = ordem.criadoPor ? ordem.criadoPor.nome : 'N/A';
 
                 tr.innerHTML = `
                     <td data-label="Código">${ordem._id.slice(-6).toUpperCase()}</td>                    
                     <td data-label="Status">${ordem.status}</td>
                     <td data-label="Produto">${nomeProduto}</td>
+                    <td data-label="Data de Entrega">${dataEntrega}</td>
                     <td data-label="Etapa Atual">${etapaAtual}</td>
+                    <td data-label="Criado por">${criadoPor}</td>
                     <td data-label="Funcionário Ativo">${funcionarioAtivo}</td>
                     <td data-label="Horário de Início">${horarioInicio}</td>
                     <td data-label="Horário de Fim">${horarioFim}</td>
@@ -61,8 +65,8 @@
                         <button class="btn btn-sm btn-primary mb-1" onclick="editarOrdemProducao('${nomeProduto}','${ordem._id}')" title="Editar">
                             <i class="bi bi-pencil"></i>
                         </button>
-                        <button class="btn btn-sm btn-danger mb-1" onclick="deletarOrdemProducao('${ordem._id}')" title="Deletar">
-                            <i class="bi bi-trash"></i>
+                        <button class="btn btn-sm btn-danger mb-1" onclick="cancelarOrdemProducao('${ordem._id}')" title="Cancelar">
+                            <i class="bi bi-x-circle"></i>
                         </button>
                     </td>
                 `;
@@ -77,7 +81,7 @@
                 text: error.message,
             });
             const tabela = document.getElementById("tabela-ordem-producoes");
-            if(tabela) tabela.innerHTML = `<tr><td colspan="7">Falha ao carregar os dados.</td></tr>`;
+            if(tabela) tabela.innerHTML = `<tr><td colspan="10">Falha ao carregar os dados.</td></tr>`;
         } finally {
             hideLoading();
         }
@@ -98,44 +102,55 @@
         });
         }
 
-    async function deletarOrdemProducao(id) {
-        const { isConfirmed } = await Swal.fire({
-            title: 'Tem certeza?',
-            text: "Você não poderá reverter isso!",
+    async function cancelarOrdemProducao(id) {
+        const { value: motivo } = await Swal.fire({
+            title: 'Cancelar Ordem de Produção',
+            input: 'text',
+            inputLabel: 'Motivo do cancelamento',
+            inputPlaceholder: 'Digite o motivo aqui...',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#d33',
             cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Sim, deletar!',
-            cancelButtonText: 'Cancelar'
+            confirmButtonText: 'Sim, cancelar!',
+            cancelButtonText: 'Voltar',
+            inputValidator: (value) => {
+                if (!value) {
+                    return 'Você precisa informar um motivo!'
+                }
+            }
         });
-        
-        if (isConfirmed) {
+
+        if (motivo) {
             try {
                 showLoading();
-                const response = await fetch(`/ordem-producao/${id}`, {
-                    method: 'DELETE',
+                const response = await fetch(`/ordem-producao/${id}/cancelar`, {
+                    method: 'PATCH',
                     headers: {
+                        'Content-Type': 'application/json',
                         'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-                    }
+                    },
+                    body: JSON.stringify({ motivo: motivo })
                 });
         
+                const result = await response.json();
+
                 if (response.ok) {
                     await Swal.fire(
-                        'Deletado!',
-                        'A ordem-producao foi deletada com sucesso.',
+                        'Cancelada!',
+                        'A ordem de produção foi cancelada com sucesso.',
                         'success'
                     );
                     carregarTabela();
                 } else {
-                    throw new Error("Falha ao excluir ordem-producao");
+                    throw new Error(result.msg || "Falha ao cancelar a ordem de produção");
                 }
             } catch (error) {
-                console.error("Erro ao excluir ordem-producao:", error);
+                console.error("Erro ao cancelar ordem de produção:", error);
                 Swal.fire({
                     icon: 'error',
-                    title: 'Erro ao deletar',
-                    text: 'Ocorreu um erro ao tentar deletar a ordem-producao. Por favor, tente novamente.',
+                    title: 'Erro ao Cancelar',
+                    text: error.message,
                     confirmButtonText: 'Ok'
                 });
             } finally {

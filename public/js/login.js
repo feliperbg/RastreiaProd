@@ -88,7 +88,12 @@ document.addEventListener("DOMContentLoaded", function () {
           }
           localStorage.setItem('userData', JSON.stringify(dados.funcionario));
           localStorage.setItem('authToken', dados.token);
-          localStorage.setItem('userImage', dados.funcionario.imagem || "imagens/funcionario/default.png");
+          // Garante que o caminho da imagem seja absoluto para evitar problemas com rotas aninhadas
+          let imagePath = dados.funcionario.imagem || "imagens/funcionario/default.png";
+          if (!imagePath.startsWith('/')) {
+            imagePath = `/${imagePath}`;
+          }
+          localStorage.setItem('userImage', imagePath);
           exibirMensagem("Login bem-sucedido! Redirecionando...", "sucesso");
           window.location.href = "/painel";
         } else {
