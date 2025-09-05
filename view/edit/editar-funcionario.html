@@ -1,197 +1,188 @@
 <!DOCTYPE html>
 <html lang="pt-BR" data-bs-theme="light">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Editar Funcionário</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Editar Funcionário</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; font-family: Arial, sans-serif; }
+        .container { max-width: 600px; margin-top: 50px; }
+        .form-label { font-weight: 600; color: #495057; }
+        .form-control, .form-select { border-radius: 5px; box-shadow: none; }
+        .form-control:focus, .form-select:focus { border-color: #007bff; box-shadow: 0 0 0 0.25rem rgba(38, 143, 255, 0.25); }
+        .btn-primary, .btn-secondary { border-radius: 5px; padding: 0.6rem 1.5rem; font-weight: bold; }
+    </style>
+</head>
+<body class="p-3">
+    <div class="container">
+        <h1>Editar Funcionário</h1>
+        <form id="form-editar">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="nome" class="form-label">Nome Completo</label>
+                    <input type="text" id="nome" name="nome" class="form-control" required />
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" id="email" name="email" class="form-control" required />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="CPF" class="form-label">CPF</label>
+                    <input type="text" id="CPF" name="CPF" class="form-control" />
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="telefone" class="form-label">Telefone</label>
+                    <input type="text" id="telefone" name="telefone" class="form-control" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="dataNascimento" class="form-label">Data de Nascimento</label>
+                    <input type="date" id="dataNascimento" name="dataNascimento" class="form-control" />
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="turno" class="form-label">Turno</label>
+                    <select id="turno" name="turno" class="form-select">
+                        <option value="Manhã">Manhã</option>
+                        <option value="Tarde">Tarde</option>
+                        <option value="Noite">Noite</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="role" class="form-label">Nível de Acesso (Role)</label>
+                    <select id="role" name="role" class="form-select">
+                        <option value="operador">Operador</option>
+                        <option value="supervisor">Supervisor</option>
+                        <option value="admin">Administrador</option>
+                    </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="departamento" class="form-label">Departamento</label>
+                    <select id="departamento" name="departamento" class="form-select">
+                        <option value="">Selecione um departamento</option>
+                        <!-- Opções carregadas via JS -->
+                    </select>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Permissões</label>
+                <div class="border p-2 rounded" id="permissoes-container">
+                    <!-- Checkboxes de permissões serão inseridos aqui -->
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+            <button type="button" class="btn btn-secondary" onclick="window.location.href='/funcionario'">Cancelar</button>
+        </form>
+    </div>
+    
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="meuToast" class="toast align-items-center border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div id="toast-body" class="toast-body"></div>
+                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/inputmask@5.0.6/dist/inputmask.min.js"></script>
     <script src="/js/toast.js"></script>
     <script src="/js/funcionario.js"></script>
-</head>
-<style>
-  body {
-    background-color: #f8f9fa;
-    font-family: Arial, sans-serif;
-  }
-  .container {
-    max-width: 500px;
-    margin-top: 50px;
-  }
-  .form-label {
-    font-weight: 600;
-    color: #495057;
-  }
-  .form-control, .form-select {
-    border-radius: 5px;
-    box-shadow: none;
-    padding: 0.8rem 1rem;
-  }
-  .form-control:focus, .form-select:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 0 0.25rem rgba(38, 143, 255, 0.25);
-  }
-  .btn-primary {
-    border-radius: 5px;
-    padding: 0.6rem 1.5rem;
-    font-weight: bold;
-  }
-    .btn-secondary {
-    background-color: #ff0000;
-    border-color: #ff0000b9;
-    border-radius: 5px;
-    padding: 0.6rem 1.5rem;
-    font-weight: bold;
-  }
-  .btn-secondary:hover {
-    background-color: #ff0000;
-    border-color: #ff0000b9;
-  }
-  .mb-3 {
-    margin-bottom: 1rem;
-  }
-</style>
-<body class="p-3">
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const pathParts = window.location.pathname.split('/');
+            const id = pathParts[pathParts.length - 1];
 
-  <div class="container">
-    <h1>Editar Funcionário</h1>
-    
-    <form id="form-editar">
-      <div class="mb-3">
-        <label for="nome" class="form-label">Nome</label>
-        <input type="text" id="nome" name="nome" class="form-control" required>
-      </div>
-
-      <div class="mb-3">
-        <label for="email" class="form-label">E-mail</label>
-        <input type="email" id="email" name="email" class="form-control" required>
-      </div>
-
-      <div class="mb-3">
-        <label for="CPF" class="form-label">CPF</label>
-        <input type="text" id="CPF" name="CPF" class="form-control" required>
-      </div>
-
-      <div class="mb-3">
-        <label for="telefone" class="form-label">Telefone</label>
-        <input type="tel" id="telefone" name="telefone" class="form-control" required>
-      </div>
-
-      <div class="mb-3">
-        <label for="turno" class="form-label">Turno</label>
-        <select id="turno" name="turno" class="form-select" required>
-          <option value="" selected>Selecione o turno</option>
-          <option value="Manhã">Manhã</option>
-          <option value="Tarde">Tarde</option>
-          <option value="Noite">Noite</option>
-        </select>
-      </div>
-
-      <div class="mb-3">
-        <label for="dataNascimento" class="form-label">Data de Nascimento</label>
-        <input type="date" id="dataNascimento" name="dataNascimento" class="form-control" required>
-      </div>
-
-    <div class="mb-3">
-      <label class="form-label">Permissões</label>
-      <div class="border p-3 rounded">
-        <div class="form-check mb-2">
-          <input class="form-check-input" type="checkbox" id="permissao-admin" name="permissoes" value="administrador">
-          <label class="form-check-label" for="permissao-admin">Administrador</label>
-        </div>
-        <div class="form-check mb-2">
-          <input class="form-check-input" type="checkbox" id="permissao-editar" name="permissoes" value="editar_conteúdos">
-          <label class="form-check-label" for="permissao-editar">Editar Conteúdo</label>
-        </div>
-        <div class="form-check mb-2">
-          <input class="form-check-input" type="checkbox" id="permissao-excluir" name="permissoes" value="excluir_conteúdos">
-          <label class="form-check-label" for="permissao-excluir">Excluir Conteúdo</label>
-        </div>
-        <div class="form-check mb-2">
-          <input class="form-check-input" type="checkbox" id="permissao-usuarios" name="permissoes" value="gerenciar_usuários">
-          <label class="form-check-label" for="permissao-usuarios">Gerenciar Usuários</label>
-        </div>
-        <div class="form-check mb-2">
-          <input class="form-check-input" type="checkbox" id="permissao-relatorios" name="permissoes" value="gerar_relatórios">
-          <label class="form-check-label" for="permissao-relatorios">Gerar Relatórios</label>
-        </div>
-      </div>
-    </div>
-    <div class="mb-3">
-      <label for="role" class="form-label">Nível de Acesso</label>
-      <select id="role" name="role" class="form-select">
-          <option value="">Selecione o nível</option>
-          <option value="funcionario">Funcionário</option>
-          <option value="administrador">Administrador</option>>
-      </select>
-    </div>
-
-      <button type="submit" class="btn btn-primary">Salvar Alterações</button>
-      <button type="button" class="btn btn-secondary" onclick="window.location.href='/funcionario'">Cancelar</button>
-    </form>
-  </div>
-      <!-- Container de Toasts -->
-  <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
-    <div id="meuToast" class="toast align-items-center border-0" role="alert" aria-live="assertive" aria-atomic="true">
-      <div class="d-flex">
-        <div id="toast-body" class="toast-body"></div>
-        <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
-      </div>
-    </div>
-  </div>
-<script>
-  const pathParts = window.location.pathname.split('/');
-  const id = pathParts[pathParts.length - 1]; 
-  document.addEventListener('DOMContentLoaded', () => {
-    carregarFuncionario();
-
-    if (!id || id === 'undefined') {
-      exibirMensagem('ID do funcionário não encontrado!', 'erro');
-      return;
-    }
-  });
-  document.getElementById('form-editar').addEventListener('submit', atualizarFuncionario);
-  async function carregarFuncionario() {
-      try {
-        console.log('Carregando funcionário com ID:', id);
-        const response = await fetch(`/funcionario/${id}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error(`Erro na requisição: ${response.status}`);
-        }
- 
-        const dados = await response.json();
-    
-        if (dados.status && dados.funcionario) {
-            const funcionario = dados.funcionario;
-            console.log('Dados do funcionário:', funcionario);
-            document.getElementById('nome').value = funcionario.nome || '';
-            document.getElementById('email').value = funcionario.email || '';
-            document.getElementById('CPF').value = funcionario.CPF || '';
-            document.getElementById('telefone').value = funcionario.telefone || '';
-            document.getElementById('turno').value = funcionario.turno || '';
-            document.getElementById('dataNascimento').value = funcionario.dataNascimento?.substring(0, 10) || '';
-            if (funcionario.permissoes) {
-              funcionario.permissoes.forEach(permissao => {
-                  const checkbox = document.querySelector(`input[name="permissoes"][value="${permissao}"]`);
-                  if (checkbox) checkbox.checked = true;
-              });
+            if (!id) {
+                exibirMensagem('ID do funcionário não encontrado na URL!', 'erro');
+                return;
             }
-            document.getElementById('role').value = funcionario.role || '';
-        } else {
-          exibirMensagem('Funcionário não encontrado!', 'erro');
-        }
-      } catch (error) {
-        console.error('Erro ao carregar funcionário:', error);
-        exibirMensagem('Erro ao carregar informações do funcionário.', 'erro');
-      }
-    }
-  </script>
+
+            // Aplica as máscaras de formatação
+            Inputmask("999.999.999-99").mask(document.getElementById('CPF'));
+            Inputmask("(99) 99999-9999").mask(document.getElementById('telefone'));
+
+            // Lista de todas as permissões possíveis no sistema
+            const todasAsPermissoes = [
+                { value: 'administrador', label: 'Administrador' },
+                { value: 'editar_conteudos', label: 'Editar Conteúdo' },
+                { value: 'excluir_conteudos', label: 'Excluir Conteúdo' },
+                { value: 'gerenciar_usuarios', label: 'Gerenciar Usuários' },
+                { value: 'gerar_relatorios', label: 'Gerar Relatórios' }
+            ];
+
+            /**
+             * Carrega os dados do funcionário e preenche o formulário.
+             */
+            async function carregarDadosFuncionario() {
+                // Inicia as duas requisições em paralelo para mais eficiência
+                const deptoPromise = fetch('/departamento/readAll', {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
+                }).then(res => res.json());
+
+                const funcPromise = fetch(`/funcionario/${id}`, {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
+                }).then(res => res.json());
+
+                try {
+                    // Aguarda a conclusão de ambas as requisições
+                    const [deptoResult, funcResult] = await Promise.all([deptoPromise, funcPromise]);
+
+                    // 1. Popula o select de departamentos
+                    if (deptoResult.status && deptoResult.departamentos) {
+                        const select = document.getElementById('departamento');
+                        deptoResult.departamentos.forEach(depto => {
+                            select.innerHTML += `<option value="${depto._id}">${depto.nome}</option>`;
+                        });
+                    }
+
+                    // 2. Preenche o formulário com os dados do funcionário
+                    if (!funcResult.status || !funcResult.funcionario) {
+                        throw new Error(funcResult.msg || 'Funcionário não encontrado.');
+                    }
+
+                    const func = funcResult.funcionario;
+                    document.getElementById('nome').value = func.nome || '';
+                    document.getElementById('email').value = func.email || '';
+                    document.getElementById('CPF').value = func.CPF || '';
+                    document.getElementById('telefone').value = func.telefone || '';
+                    document.getElementById('turno').value = func.turno || 'Manhã';
+                    document.getElementById('role').value = func.role || 'operador';
+                    document.getElementById('dataNascimento').value = func.dataNascimento ? new Date(func.dataNascimento).toISOString().split('T')[0] : '';
+                    document.getElementById('departamento').value = func.departamento ? func.departamento._id : '';
+
+                    // 3. Preenche as permissões
+                    const permissoesContainer = document.getElementById('permissoes-container');
+                    permissoesContainer.innerHTML = '';
+                    todasAsPermissoes.forEach(p => {
+                        const isChecked = func.permissoes && func.permissoes.includes(p.value);
+                        permissoesContainer.innerHTML += `<div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="perm_${p.value}" name="permissoes" value="${p.value}" ${isChecked ? 'checked' : ''}><label class="form-check-label" for="perm_${p.value}">${p.label}</label></div>`;
+                    });
+
+                } catch (error) {
+                    exibirMensagem(`Erro ao carregar dados: ${error.message}`, 'erro');
+                }
+            }
+
+            // Adiciona o listener ao formulário de edição
+            const form = document.getElementById("form-editar");
+            if (form) {
+                form.addEventListener("submit", atualizarFuncionario);
+            }
+
+            // Inicia o carregamento dos dados
+            carregarDadosFuncionario();
+        });
+    </script>
 </body>
 </html>

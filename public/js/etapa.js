@@ -3,7 +3,7 @@
         const produtoId = pathParts[pathParts.length - 1];
         const tabelaBody = document.getElementById('tabela-etapas');
         try {
-            const response = await fetch(`/etapa/api/produto/${produtoId}`, {
+            const response = await fetch(`/etapa/produto/etapas/${produtoId}`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('authToken')}`

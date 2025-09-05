@@ -70,13 +70,26 @@
         return nomes.join('<br>');
     }
     function formatarCPF(cpf) {
-        if (!cpf || cpf.length !== 11) return cpf;
-        return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+        if (!cpf) return '';
+        const cleaned = String(cpf).replace(/\D/g, '');
+        if (cleaned.length !== 11) return cpf; // Retorna o original se não for um CPF válido
+        return cleaned.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
     }
 
     function formatarTelefone(telefone) {
-        if (!telefone || telefone.length < 10) return telefone;
-        return telefone.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+        if (!telefone) return '';
+        const cleaned = String(telefone).replace(/\D/g, '');
+        const length = cleaned.length;
+
+        if (length === 11) {
+            // Formato para celular: (XX) XXXXX-XXXX
+            return cleaned.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+        }
+        if (length === 10) {
+            // Formato para telefone fixo: (XX) XXXX-XXXX
+            return cleaned.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
+        }
+        return telefone; // Retorna o original se não tiver 10 ou 11 dígitos
     }
     function formatarHorario(data){
         if (!data) {
