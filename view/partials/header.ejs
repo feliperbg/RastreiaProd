@@ -62,20 +62,17 @@
         const fotoFuncionario = document.getElementById("user-image");
         const btnLogout = document.getElementById("btnLogout");
 
-        fotoFuncionario.src = localStorage.getItem("userImage");
+        fotoFuncionarioLocal= localStorage.getItem("userImage");
 
         if (userDataJSON) {
           const userData = JSON.parse(userDataJSON);
-          if(userData.imagem){
-            fotoFuncionario.src = userData.imagem;
-          }else{
-            fotoFuncionario.src = "/imagens/funcionario/default.png";
-          }
-          
           nomeFuncionario.textContent = userData.nome || "Funcionário";
+          fotoFuncionario.src = (fotoFuncionarioLocal) ? fotoFuncionarioLocal : "/imagens/funcionario/default.png";
         } else {
           nomeFuncionario.textContent = "Funcionário";
+          fotoFuncionario.imagem || "/imagens/funcionario/default.png";
         }
+          
 
     });
 
