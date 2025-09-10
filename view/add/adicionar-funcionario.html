@@ -57,7 +57,7 @@
 <body class="p-3">
   <div class="container">
     <h1>Adicionar Funcionário</h1>
-    <form id="form-adicionar">
+    <form id="form-adicionar" enctype="multipart/form-data">
         <div class="mb-3">
             <label for="nome" class="form-label">Nome</label>
             <input type="text" id="nome" name="nome" class="form-control" required>
@@ -99,6 +99,12 @@
         </div>
 
         <div class="mb-3">
+            <label for="imagem" class="form-label">Foto do Funcionário</label>
+            <input class="form-control" type="file" id="imagem" name="imagem" accept="image/*" onchange="previewImagem(event)">
+            <img id="imagem-preview" src="#" alt="Preview da Imagem" class="mt-2" style="display: none; max-width: 150px; border-radius: 8px;"/>
+        </div>
+
+        <div class="mb-3">
             <label class="form-label" for=" ">Permissões</label>
             <div class="border p-3 rounded">
               <div class="form-check mb-2">
@@ -132,6 +138,14 @@
             </select>
         </div>
 
+        <div class="mb-3">
+            <label for="departamento" class="form-label">Departamento</label>
+            <select id="departamento" name="departamento" class="form-select">
+                <option value="">Selecione um departamento</option>
+                <!-- Opções carregadas via JS -->
+            </select>
+        </div>
+
    
             <button type="submit" class="btn btn-primary">Adicionar Funcionário</button>
             <button type="button" class="btn btn-secondary" onclick="window.location.href='/funcionario'">Cancelar</button>
@@ -153,14 +167,45 @@
   <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.15/build/js/intlTelInput.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/inputmask@5.0.6/dist/inputmask.min.js"></script>
   <script>
-    const pathParts = window.location.pathname.split('/');
-    const id = pathParts[pathParts.length - 1]; 
     document.addEventListener("DOMContentLoaded", function () {
-      if (!id || id === 'undefined') {
-        exibirMensagem('ID do funcionário não encontrado!', 'erro');
-        return;
-      }
+        // Aplica a máscara de CPF no formato XXX.XXX.XXX-XX
+        const cpfInput = document.getElementById('CPF');
+        Inputmask("999.999.999-99").mask(cpfInput);
+
+        // Aplica a máscara de Telefone no formato (XX) XXXXX-XXXX
+        const telefoneInput = document.getElementById('telefone');
+        Inputmask("(99) 99999-9999").mask(telefoneInput);
+
+        // Carrega os departamentos para o ComboBox
+        async function carregarDepartamentos() {
+            try {
+                const response = await fetch('/departamento/readAll', {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
+                });
+                const result = await response.json();
+                if (result.status && result.departamentos) {
+                    const select = document.getElementById('departamento');
+                    result.departamentos.forEach(depto => {
+                        select.innerHTML += `<option value="${depto._id}">${depto.nome}</option>`;
+                    });
+                }
+            } catch (error) {
+                console.error('Erro ao carregar departamentos:', error);
+            }
+        }
+
+        carregarDepartamentos();
     });
+
+    function previewImagem(event) {
+      const reader = new FileReader();
+      const preview = document.getElementById('imagem-preview');
+      reader.onload = function(){
+        preview.src = reader.result;
+        preview.style.display = 'block';
+      }
+      reader.readAsDataURL(event.target.files[0]);
+    }
   </script>
 </body>
 </html>

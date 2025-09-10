@@ -100,14 +100,6 @@
                 <label for="quantidade" class="form-label">Quantidade em Estoque</label>
                 <input type="number" id="quantidade" name="quantidade" class="form-control" />
             </div>
-
-            <div class="mb-3">
-                <label class="form-label">Etapas de Montagem</label>
-                <div class="input-group">
-                    <input type="text" id="etapas" name="etapas" class="form-control" placeholder="Nenhuma etapa selecionada" readonly />
-                    <button type="button" class="btn btn-outline-secondary" id="btnSelecionarEtapas">Selecionar</button>
-                </div>
-            </div>
             
             <button type="submit" class="btn btn-primary">Adicionar Produto</button>
             <button type="button" class="btn btn-secondary" onclick="window.location.href='/produto'">Cancelar</button>
@@ -131,9 +123,7 @@
           // --- ESTRUTURA DE DADOS ---
           // Começa com tudo vazio, pois é um novo produto
           let componentesSelecionados = []; // Formato: [{ componente: 'id', quantidade: 1 }]
-          let etapasSelecionadasIds = [];
           let listaCompletaComponentes = [];
-          let listaCompletaEtapas = [];
 
           // --- FUNÇÕES AUXILIARES ---
 
@@ -158,20 +148,16 @@
            */
             async function carregarListasCompletas() {
                 try {
-                    // Só carrega se a lista ainda estiver vazia
-                    if (listaCompletaComponentes.length > 0 && listaCompletaEtapas.length > 0) return;
+                    // Só carrega se a lista de componentes ainda estiver vazia
+                    if (listaCompletaComponentes.length > 0) return;
 
-                    const [compRes, etapasRes] = await Promise.all([
-                        fetch('/componente/readAll', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } }),
-                        fetch('/etapa/readll', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } })
-                    ]);
+                    const compRes = await fetch('/componente/readAll', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } });
+                    if (!compRes.ok) throw new Error('Falha ao carregar os componentes.');
+
                     const compJson = await compRes.json();
-                    const etapasJson = await etapasRes.json();
                     listaCompletaComponentes = compJson.componentes || [];
-                    console.log(compJson);
-                    listaCompletaEtapas = etapasJson.etapas || [];
                 } catch (error) {
-                    console.error("Erro ao carregar listas completas:", error);
+                    console.error("Erro em carregarListasCompletas:", error);
                     exibirMensagem("Não foi possível carregar as opções de seleção.", "erro");
                 }
             }
@@ -226,19 +212,6 @@
               }
           });
 
-          document.getElementById('btnSelecionarEtapas').addEventListener('click', async function () {
-              await carregarListasCompletas();
-              const result = await selecionarMultiplos('Selecionar Etapas', listaCompletaEtapas, etapasSelecionadasIds);
-
-              if (result.isConfirmed) {
-                  etapasSelecionadasIds = result.value;
-                  const nomesSelecionados = listaCompletaEtapas
-                      .filter(item => etapasSelecionadasIds.includes(item._id))
-                      .map(item => item.nome);
-                  document.getElementById('etapas').value = nomesSelecionados.join(', ');
-              }
-          });
-
           // --- FUNÇÃO DE SUBMIT ---
 
           /**
@@ -258,7 +231,7 @@
                   precoMontagem: parseFloat(document.getElementById('precoMontagem').value),
                   precoVenda: parseFloat(document.getElementById('precoVenda').value),
                   quantidade: parseInt(document.getElementById('quantidade').value),
-                  etapas: etapasSelecionadasIds,
+                  etapas: [], // Não há seleção de etapas nesta tela
               };
 
               // Adicione aqui suas validações se necessário

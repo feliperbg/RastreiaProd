@@ -25,9 +25,34 @@ router.post('/', jwtMiddleware.validate.bind(jwtMiddleware), OrdemProducaoMiddle
 router.get('/readAll', jwtMiddleware.validate.bind(jwtMiddleware), OrdemProducaoController.readAll);
 router.get('/:id', jwtMiddleware.validate.bind(jwtMiddleware),MongoIdMiddleware.validateParam('id'), OrdemProducaoController.readByID);
 router.put('/:id', jwtMiddleware.validate.bind(jwtMiddleware),MongoIdMiddleware.validateParam('id'), OrdemProducaoController.update);
-router.delete('/:id', jwtMiddleware.validate.bind(jwtMiddleware),MongoIdMiddleware.validateParam('id'), OrdemProducaoController.delete);
 
-// ROTAS NOVAS: Para iniciar e finalizar uma etapa
+// --- ROTAS DE AÇÃO (CANCELAR, PAUSAR, RETOMAR) ---
+
+// Rota para CANCELAR uma OP (substitui o delete)
+router.patch(
+    '/:id/cancelar',
+    jwtMiddleware.validate.bind(jwtMiddleware),
+    MongoIdMiddleware.validateParam('id'),
+    OrdemProducaoController.cancelar
+);
+
+// Rota para PAUSAR uma OP
+router.patch(
+    '/:id/pausar',
+    jwtMiddleware.validate.bind(jwtMiddleware),
+    MongoIdMiddleware.validateParam('id'),
+    OrdemProducaoController.pausar
+);
+
+// Rota para RETOMAR uma OP
+router.patch(
+    '/:id/retomar',
+    jwtMiddleware.validate.bind(jwtMiddleware),
+    MongoIdMiddleware.validateParam('id'),
+    OrdemProducaoController.retomar
+);
+
+// --- ROTAS DE ETAPA ---
 // Valida os parâmetros 'id' E 'etapaId'
 router.post(
     '/:id/etapa/:etapaId/iniciar',
