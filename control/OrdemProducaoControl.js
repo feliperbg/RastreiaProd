@@ -6,9 +6,15 @@ const Produto = require('../model/Produto');
 module.exports = class OrdemProducaoController {
     static async create(req, res) {
         try {
-            const { status, produto, quantidade } = req.body;
+            const { produto, quantidade, dataEntrega } = req.body;
+            const criadoPor = req.user._id; // Obtido do token JWT
 
-            const novaOrdem = await OrdemProducao.create({ status, produto, quantidade });
+            const novaOrdem = await OrdemProducao.create({ 
+                produto, 
+                quantidade, 
+                dataEntrega,
+                criadoPor 
+            });
             
             return res.status(201).json({ status: true, msg: 'Ordem de produção criada!', ordem: novaOrdem });
         } catch (error) {
@@ -29,7 +35,8 @@ module.exports = class OrdemProducaoController {
                 .populate({
                     path: 'funcionarioAtivo.funcionario', // Popula o campo 'funcionario' dentro do array 'funcionarioAtivo'
                     select: 'nome' // Seleciona apenas o nome do funcionário
-                })                                                          
+                })
+                .populate('criadoPor', 'nome') // Popula o nome de quem criou a OS
                 .sort('-createdAt');
             return res.status(200).json({ status: true, ordens });
         } catch (error) {
@@ -55,16 +62,24 @@ module.exports = class OrdemProducaoController {
         }
     }
 
-    static async delete(req, res) {
+    static async cancelar(req, res) {
         try {
             const { id } = req.params;
-            const ordemDeletada = await OrdemProducao.findByIdAndDelete(id);
+            const { motivo } = req.body;
 
-            if (!ordemDeletada) {
-                return res.status(404).json({ status: false, msg: 'Ordem de produção não encontrada.' });
+            if (!motivo) {
+                return res.status(400).json({ status: false, msg: 'O motivo do cancelamento é obrigatório.' });
             }
 
-            return res.status(200).json({ status: true, msg: 'Ordem removida!' });
+            const ordemCancelada = await OrdemProducao.findByIdAndUpdate(id, 
+                { status: 'Cancelada', motivoCancelamento: motivo }, 
+                { new: true }
+            );
+
+            if (!ordemCancelada) {
+                return res.status(404).json({ status: false, msg: 'Ordem de produção não encontrada.' });
+            }
+            return res.status(200).json({ status: true, msg: 'Ordem de produção cancelada com sucesso!', ordem: ordemCancelada });
         } catch (error) {
             return res.status(500).json({ status: false, msg: 'Erro ao remover ordem de produção.' });
         }
@@ -97,7 +112,8 @@ module.exports = class OrdemProducaoController {
                     ]
                 })
                 .populate('etapaAtual.etapa') // Popula as etapas que já estão na OP
-                .populate('funcionarioAtivo.funcionario'); // Popula o funcionário que está ativo na OP
+                .populate('funcionarioAtivo.funcionario') // Popula o funcionário que está ativo na OP
+                .populate('criadoPor', 'nome'); // Popula o nome de quem criou a OP
 
             if (!ordem) {
                 return res.status(404).json({ status: false, msg: 'Ordem de produção não encontrada.' });
@@ -181,7 +197,6 @@ module.exports = class OrdemProducaoController {
                 .populate('funcionarioAtivo.funcionario'); // Popula o funcionário que está ativo na OP
 
             if (!ordem) return res.status(404).json({ status: false, msg: 'Ordem de produção não encontrada.' });
-            console.log(ordem.etapaAtual);
             const etapaParaFinalizar = ordem.etapaAtual.find(e => e.etapa._id.toString() === etapaId);
             if (!etapaParaFinalizar) {
                 return res.status(404).json({ status: false, msg: 'Etapa não encontrada nesta ordem de produção.' });
@@ -199,9 +214,8 @@ module.exports = class OrdemProducaoController {
             );
 
             const definicaoDeEtapas = ordem.produto.etapas;
-            console.log(ordem.produto);
-            console.log(definicaoDeEtapas);
-            if (definicaoDeEtapas[definicaoDeEtapas.length - 1].toString() === etapaId) {
+            console.log("Definição de Etapas do Produto:", definicaoDeEtapas);
+            if (definicaoDeEtapas[definicaoDeEtapas.length - 1]._id.toString() === etapaId) {
                 ordem.status = 'Concluída';
                 if (!ordem.timestampProducao) {
                     ordem.timestampProducao = {};
@@ -215,6 +229,66 @@ module.exports = class OrdemProducaoController {
         } catch (error) {
             console.error("ERRO DETALHADO AO FINALIZAR ETAPA:", error);
             return res.status(500).json({ status: false, msg: 'Erro ao finalizar etapa.', error: error.message });
+        }
+    }
+
+    static async pausar(req, res) {
+        try {
+            const { id } = req.params;
+            const { motivo } = req.body;
+
+            if (!motivo) {
+                return res.status(400).json({ status: false, msg: 'O motivo da pausa é obrigatório.' });
+            }
+
+            const ordem = await OrdemProducao.findById(id);
+            if (!ordem) {
+                return res.status(404).json({ status: false, msg: 'Ordem de produção não encontrada.' });
+            }
+
+            if (ordem.status !== 'Em Andamento') {
+                return res.status(400).json({ status: false, msg: `Não é possível pausar uma ordem com status '${ordem.status}'.` });
+            }
+
+            ordem.status = 'Pausada';
+            ordem.pausas.push({
+                motivo: motivo,
+                inicio: new Date()
+            });
+
+            await ordem.save();
+            return res.status(200).json({ status: true, msg: 'Ordem de produção pausada.', ordem });
+
+        } catch (error) {
+            console.error("ERRO AO PAUSAR ORDEM:", error);
+            return res.status(500).json({ status: false, msg: 'Erro ao pausar ordem de produção.', error: error.message });
+        }
+    }
+
+    static async retomar(req, res) {
+        try {
+            const { id } = req.params;
+            const ordem = await OrdemProducao.findById(id);
+
+            if (!ordem) {
+                return res.status(404).json({ status: false, msg: 'Ordem de produção não encontrada.' });
+            }
+
+            if (ordem.status !== 'Pausada') {
+                return res.status(400).json({ status: false, msg: 'A ordem de produção não está pausada.' });
+            }
+
+            const ultimaPausa = ordem.pausas[ordem.pausas.length - 1];
+            if (ultimaPausa && !ultimaPausa.fim) {
+                ultimaPausa.fim = new Date();
+            }
+
+            ordem.status = 'Em Andamento';
+            await ordem.save();
+            return res.status(200).json({ status: true, msg: 'Ordem de produção retomada.', ordem });
+        } catch (error) {
+            console.error("ERRO AO RETOMAR ORDEM:", error);
+            return res.status(500).json({ status: false, msg: 'Erro ao retomar ordem de produção.', error: error.message });
         }
     }
 }

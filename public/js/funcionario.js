@@ -26,7 +26,6 @@
             tabela.innerHTML = ""; // Limpa tabela após carregamento
 
             funcionarios.forEach(func => {
-                console.log(func);
                 const tr = document.createElement("tr");
                 const nomeCompleto = func.nome || '';
                 const email = func.email || '';
@@ -44,10 +43,11 @@
                 tr.innerHTML = `
                     <td data-label="Credencial">${func.credencial}</td>
                     <td data-label="Nome">${nomeCompleto}</td>
+                    <td data-label="Departamento">${func.departamento ? func.departamento.nome : 'N/A'}</td>
                     <td data-label="Turno">${func.turno}</td>
-                    <td data-label="CPF">${func.CPF}</td>
+                    <td data-label="CPF">${formatarCPF(func.CPF)}</td>
                     <td data-label="Email">${emailHtml}</td>
-                    <td data-label="Telefone">${func.telefone}</td>
+                    <td data-label="Telefone">${formatarTelefone(func.telefone)}</td>
                     <td data-label="Data Nasc.">${formatarData(func.dataNascimento)}</td>
                     <td data-label="Permissões">
                         <button class="btn btn-sm btn-warning" onclick='mostrarPermissoesModal(${JSON.stringify(func.permissoes)})'>
@@ -154,27 +154,30 @@
     //Função para adicionar funcionário
     async function adicionarFuncionario(event) {
       event.preventDefault();
+      
+      const form = document.getElementById('form-adicionar');
+      const formData = new FormData(form);
 
-      const permissoes = Array.from(document.querySelectorAll('input[name="permissoes"]:checked')).map(checkbox => checkbox.value);
-      const Funcionario = {
-        nome: document.getElementById('nome').value,
-        senha: document.getElementById('senha').value,
-        email: document.getElementById('email').value,
-        CPF: document.getElementById('CPF').value,
-        telefone: document.getElementById('telefone').value,
-        turno: document.getElementById('turno').value,
-        dataNascimento: document.getElementById('dataNascimento').value,
-        permissoes: permissoes,
-        role: document.getElementById('role').value
-      };
+      // Pega os valores não mascarados de CPF e Telefone para enviar ao backend
+      // O inputmask anexa uma propriedade 'inputmask' ao elemento do DOM
+      const cpfInput = document.getElementById('CPF');
+      if (cpfInput && cpfInput.inputmask) {
+        formData.set('CPF', cpfInput.inputmask.unmaskedvalue());
+      }
+
+      const telefoneInput = document.getElementById('telefone');
+      if (telefoneInput && telefoneInput.inputmask) {
+        formData.set('telefone', telefoneInput.inputmask.unmaskedvalue());
+      }
+
       try {
         const resposta = await fetch(`/funcionario`, {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
+            // O 'Content-Type' para multipart/form-data é definido automaticamente pelo navegador
             'Authorization': `Bearer ${localStorage.getItem('authToken')}`
           },
-          body: JSON.stringify(Funcionario)
+          body: formData
         });
 
         if (!resposta.ok) {
@@ -195,15 +198,27 @@
         event.preventDefault();
         const permissoes = Array.from(document.querySelectorAll('input[name="permissoes"]:checked'))
                                 .map(checkbox => checkbox.value);
+
+        // Remove a máscara dos campos antes de enviar
+        const cpfInput = document.getElementById('CPF');
+        const unmaskedCpf = (cpfInput && cpfInput.inputmask) ? cpfInput.inputmask.unmaskedvalue() : cpfInput.value;
+
+        const telefoneInput = document.getElementById('telefone');
+        const unmaskedTelefone = (telefoneInput && telefoneInput.inputmask) ? telefoneInput.inputmask.unmaskedvalue() : telefoneInput.value;
+
+        const pathParts = window.location.pathname.split('/');
+        const id = pathParts[pathParts.length - 1];
+
         const dadosAtualizados = {
             nome: document.getElementById('nome').value,
             email: document.getElementById('email').value,
-            CPF: document.getElementById('CPF').value,
-            telefone: document.getElementById('telefone').value,
+            CPF: unmaskedCpf,
+            telefone: unmaskedTelefone,
             turno: document.getElementById('turno').value,
             dataNascimento: document.getElementById('dataNascimento').value,
             permissoes: permissoes,
-            role: document.getElementById('role').value
+            role: document.getElementById('role').value,
+            departamento: document.getElementById('departamento').value || null
         };
         try {
             const resposta = await fetch(`/funcionario/${id}`, {

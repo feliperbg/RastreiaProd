@@ -51,7 +51,7 @@ const FuncionarioSchema = new Schema({
         type: String,
         trim: true,
     },
-    imagemFuncionario: {
+    imagem: {
         type: String,
         trim: true,
     },
