@@ -221,7 +221,6 @@ module.exports = class OrdemProducaoController {
             );
 
             const definicaoDeEtapas = ordem.produto.etapas;
-            console.log("Definição de Etapas do Produto:", definicaoDeEtapas);
             if (definicaoDeEtapas[definicaoDeEtapas.length - 1]._id.toString() === etapaId) {
                 ordem.status = 'Concluída';
                 if (!ordem.timestampProducao) {

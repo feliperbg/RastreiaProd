@@ -127,9 +127,9 @@
             if (listaCompletaComponentes.length > 0 && listaCompletaFuncionarios.length > 0 && listaCompletaDepartamentos.length > 0) return;
             try {
                 const [compRes, funcRes, depRes] = await Promise.all([
-                    fetch('/componente', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } }),
-                    fetch('/funcionario', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } }),
-                    fetch('/departamento', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } })
+                    fetch('api/componentes', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } }),
+                    fetch('api/funcionarios', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } }),
+                    fetch('api/departamentos', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } })
                 ]);
                 if (!compRes.ok || !funcRes.ok || !depRes.ok) throw new Error("Falha ao carregar dados de seleção.");
 

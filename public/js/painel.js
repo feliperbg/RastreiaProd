@@ -144,7 +144,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function renderizarCards(data) {
-        console.log(data);
         document.getElementById('card-produtos-count').textContent = data.produtos || 0;
         document.getElementById('card-componentes-count').textContent = data.componentes || 0;
         document.getElementById('card-ordens-pendentes-count').textContent = data.ordensPendentes || 0;
@@ -187,7 +186,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     async function buscarDadosParaKanban() {
-        // Simula o fetch, substitua pela sua chamada real
         const ordensResponse = await fetchWithAuth('api/ordens-producao');
         if (!ordensResponse || !ordensResponse.ordens) return [];
 
