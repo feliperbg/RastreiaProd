@@ -2,7 +2,7 @@
         try {
             showLoading();
             
-            const response = await fetch('/componente/readALL', {
+            const response = await fetch('api/componentes', {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${localStorage.getItem('authToken')}`
@@ -15,7 +15,7 @@
             const dados = await response.json();
             const tabela = document.getElementById("tabela-componentes");
             
-            const componentes = Array.isArray(dados) ? dados : dados.componente || [];
+            const componentes = Array.isArray(dados) ? dados : dados.componentes || [];
             if (!Array.isArray(componentes)) {
                 throw new Error("Resposta da API não é uma lista de componentes.");
             }
@@ -51,7 +51,6 @@
                 tabela.appendChild(tr);
             });
         } catch (err) {
-            console.error(err);
             Swal.fire('Erro!', 'Não foi possível carregar os componentes.', 'error');
         } finally {
             hideLoading()
@@ -85,7 +84,7 @@
         if (isConfirmed) {
             try {
                 Swal.fire({ title: 'Deletando...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-                const response = await fetch(`/componente/${id}`, {
+                const response = await fetch(`api/api/componente/${id}`, {
                     method: 'DELETE',
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('authToken')}`
@@ -104,10 +103,4 @@
             }
         }
     }
-    document.getElementById("filtro").addEventListener("input", function () {
-        const termo = this.value.toLowerCase();
-        document.querySelectorAll("#tabela-componentes tr").forEach(tr => {
-            tr.style.display = tr.innerText.toLowerCase().includes(termo) ? "" : "none";
-        });
-    });
-    document.addEventListener('DOMContentLoaded', carregarComponentes); 
+    document.addEventListener('DOMContentLoaded', carregarComponentes, configurarFiltroDeTabela('filtro', 'tabela-componentes', 'Nome')); 

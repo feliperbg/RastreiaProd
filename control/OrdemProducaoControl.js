@@ -6,9 +6,22 @@ const Produto = require('../model/Produto');
 module.exports = class OrdemProducaoController {
     static async create(req, res) {
         try {
-            const { status, produto, quantidade } = req.body;
+            const { produto, quantidade, dataEntrega } = req.body;
+            const criadoPor = req.user._id;
+            const produtoParaOrdem = await Produto.findById(produto).populate('etapas');
+            if (!produtoParaOrdem) {
+                return res.status(404).json({ status: false, msg: 'Produto não encontrado.' });
+            }
+            if (!produtoParaOrdem.etapas || produtoParaOrdem.etapas.length === 0) {
+                return res.status(400).json({ status: false, msg: 'Não é possível criar uma ordem de produção para um produto sem etapas de montagem definidas.' });
+            }
 
-            const novaOrdem = await OrdemProducao.create({ status, produto, quantidade });
+            const novaOrdem = await OrdemProducao.create({ 
+                produto, 
+                quantidade, 
+                dataEntrega,
+                criadoPor 
+            });
             
             return res.status(201).json({ status: true, msg: 'Ordem de produção criada!', ordem: novaOrdem });
         } catch (error) {
@@ -30,6 +43,7 @@ module.exports = class OrdemProducaoController {
                     path: 'funcionarioAtivo.funcionario', // Popula o campo 'funcionario' dentro do array 'funcionarioAtivo'
                     select: 'nome' // Seleciona apenas o nome do funcionário
                 })
+                .populate('criadoPor', 'nome') // Popula o nome de quem criou a OS
                 .sort('-createdAt');
             return res.status(200).json({ status: true, ordens });
         } catch (error) {
@@ -55,39 +69,58 @@ module.exports = class OrdemProducaoController {
         }
     }
 
-    static async delete(req, res) {
+    static async cancelar(req, res) {
         try {
             const { id } = req.params;
-            const ordemDeletada = await OrdemProducao.findByIdAndDelete(id);
+            const { motivo } = req.body;
 
-            if (!ordemDeletada) {
-                return res.status(404).json({ status: false, msg: 'Ordem de produção não encontrada.' });
+            if (!motivo) {
+                return res.status(400).json({ status: false, msg: 'O motivo do cancelamento é obrigatório.' });
             }
 
-            return res.status(200).json({ status: true, msg: 'Ordem removida!' });
+            const ordemCancelada = await OrdemProducao.findByIdAndUpdate(id, 
+                { status: 'Cancelada', motivoCancelamento: motivo }, 
+                { new: true }
+            );
+
+            if (!ordemCancelada) {
+                return res.status(404).json({ status: false, msg: 'Ordem de produção não encontrada.' });
+            }
+            return res.status(200).json({ status: true, msg: 'Ordem de produção cancelada com sucesso!', ordem: ordemCancelada });
         } catch (error) {
             return res.status(500).json({ status: false, msg: 'Erro ao remover ordem de produção.' });
         }
     }
-     /**
-     * ATUALIZADO: Este método agora faz o populate aninhado necessário 
-     * para a tela de gestão da OP.
-     */
+
     static async readByID(req, res) {
         try {
             const { id } = req.params;
             const ordem = await OrdemProducao.findById(id)
                 .populate({
-                    path: 'produto', // 1. Popula o produto
-                    populate: {
-                        path: 'etapas', // 2. Dentro do produto, popula a definição de suas etapas
-                        populate: {
-                            path: 'funcionariosResponsaveis' // 3. Dentro de cada etapa, popula os funcionários
+                    path: 'produto', // 1. Popula o campo 'produto' da Ordem de Produção
+                    populate: [      // 2. DENTRO de 'produto', popula os seguintes campos (em um array):
+                        {
+                            path: 'etapas', // 2a. Popula o campo 'etapas' do produto
+                             populate: [
+                                {
+                                    path: 'funcionariosResponsaveis', // 3a. Popula os funcionários de cada etapa
+                                    select: 'nome'
+                                },
+                                {
+                                    path: 'departamentoResponsavel', // 3b. (NOVO) Popula o departamento de cada etapa
+                                    select: 'nome'
+                                }
+                            ]
+                        },
+                        {
+                            path: 'componentesNecessarios.componente', // 2b. Popula o campo 'componente' dentro do array 'componentesNecessarios' do produto
+                            select: 'nome codigo'
                         }
-                    }
+                    ]
                 })
-                .populate('etapaAtual.etapa') // Popula também as etapas que já estão na OP
-                .populate('funcionarioAtivo.funcionario'); // Popula o funcionário que está ativo na OP
+                .populate('etapaAtual.etapa') // Popula as etapas que já estão na OP
+                .populate('funcionarioAtivo.funcionario') // Popula o funcionário que está ativo na OP
+                .populate('criadoPor', 'nome'); // Popula o nome de quem criou a OP
 
             if (!ordem) {
                 return res.status(404).json({ status: false, msg: 'Ordem de produção não encontrada.' });
@@ -99,30 +132,27 @@ module.exports = class OrdemProducaoController {
         }
     }
 
-    /**
-     * NOVO: Inicia uma etapa da Ordem de Produção.
-     */
     static async iniciarEtapa(req, res) {
         try {
             const { id, etapaId } = req.params;
-            const funcionarioId = req.user.id; // Supondo que o JWT Middleware adicione o user ao req
+            const funcionarioId = req.user._id;
 
             const ordem = await OrdemProducao.findById(id);
             if (!ordem) return res.status(404).json({ status: false, msg: 'Ordem de produção não encontrada.' });
 
-            // Verifica se a etapa já foi iniciada
             const etapaExistente = ordem.etapaAtual.find(e => e.etapa.toString() === etapaId);
             if (etapaExistente) {
                 return res.status(400).json({ status: false, msg: 'Esta etapa já foi iniciada.' });
             }
 
-            // Se for a primeira etapa, inicia a produção
             if (ordem.etapaAtual.length === 0) {
                 ordem.status = 'Em Andamento';
+                if (!ordem.timestampProducao) {
+                    ordem.timestampProducao = {};
+                }
                 ordem.timestampProducao.inicio = new Date();
             }
 
-            // Adiciona a nova etapa e o funcionário ativo
             ordem.etapaAtual.push({
                 etapa: etapaId,
                 status: 'Em Andamento',
@@ -138,23 +168,43 @@ module.exports = class OrdemProducaoController {
             return res.status(200).json({ status: true, msg: 'Etapa iniciada com sucesso!', ordem });
 
         } catch (error) {
+            console.error("ERRO DETALHADO AO INICIAR ETAPA:", error);
             return res.status(500).json({ status: false, msg: 'Erro ao iniciar etapa.', error: error.message });
         }
     }
 
     /**
-     * NOVO: Finaliza uma etapa da Ordem de Produção.
+     * Finaliza uma etapa da Ordem de Produção.
      */
     static async finalizarEtapa(req, res) {
         try {
             const { id, etapaId } = req.params;
-            const funcionarioId = req.user.id;
+            const funcionarioId = req.user._id;
 
-            const ordem = await OrdemProducao.findById(id).populate('produto'); // Popula para saber qual é a última etapa
+           const ordem = await OrdemProducao.findById(id)
+                .populate({
+                    path: 'produto', // 1. Popula o campo 'produto' da Ordem de Produção
+                    populate: [      // 2. DENTRO de 'produto', popula os seguintes campos (em um array):
+                        {
+                            path: 'etapas', // 2a. Popula o campo 'etapas' do produto
+                             populate: [
+                                {
+                                    path: 'funcionariosResponsaveis', // 3a. Popula os funcionários de cada etapa
+                                    select: 'nome'
+                                },
+                                {
+                                    path: 'departamentoResponsavel', // 3b. (NOVO) Popula o departamento de cada etapa
+                                    select: 'nome'
+                                }
+                            ]
+                        }
+                    ]
+                })
+                .populate('etapaAtual.etapa') // Popula as etapas que já estão na OP
+                .populate('funcionarioAtivo.funcionario'); // Popula o funcionário que está ativo na OP
+
             if (!ordem) return res.status(404).json({ status: false, msg: 'Ordem de produção não encontrada.' });
-
-            // Encontra a etapa no array da OP para atualizar
-            const etapaParaFinalizar = ordem.etapaAtual.find(e => e.etapa.toString() === etapaId);
+            const etapaParaFinalizar = ordem.etapaAtual.find(e => e.etapa._id.toString() === etapaId);
             if (!etapaParaFinalizar) {
                 return res.status(404).json({ status: false, msg: 'Etapa não encontrada nesta ordem de produção.' });
             }
@@ -162,19 +212,21 @@ module.exports = class OrdemProducaoController {
                 return res.status(400).json({ status: false, msg: 'Esta etapa já foi finalizada.' });
             }
 
-            // Atualiza a etapa
             etapaParaFinalizar.status = 'Concluída';
             etapaParaFinalizar.dataFim = new Date();
 
-            // Remove o funcionário do array de ativos
-            ordem.funcionarioAtivo = ordem.funcionarioAtivo.filter(
-                f => f.funcionario.toString() !== funcionarioId
+            
+            ordem.funcionarioAtivo = (ordem.funcionarioAtivo || []).filter(
+                f => f && f.funcionario && f.funcionario.toString() !== funcionarioId
             );
 
-            // Verifica se esta é a última etapa para concluir a OP
             const definicaoDeEtapas = ordem.produto.etapas;
-            if (definicaoDeEtapas[definicaoDeEtapas.length - 1].toString() === etapaId) {
+            console.log("Definição de Etapas do Produto:", definicaoDeEtapas);
+            if (definicaoDeEtapas[definicaoDeEtapas.length - 1]._id.toString() === etapaId) {
                 ordem.status = 'Concluída';
+                if (!ordem.timestampProducao) {
+                    ordem.timestampProducao = {};
+                }
                 ordem.timestampProducao.fim = new Date();
             }
 
@@ -182,7 +234,68 @@ module.exports = class OrdemProducaoController {
             return res.status(200).json({ status: true, msg: 'Etapa finalizada com sucesso!', ordem });
 
         } catch (error) {
+            console.error("ERRO DETALHADO AO FINALIZAR ETAPA:", error);
             return res.status(500).json({ status: false, msg: 'Erro ao finalizar etapa.', error: error.message });
+        }
+    }
+
+    static async pausar(req, res) {
+        try {
+            const { id } = req.params;
+            const { motivo } = req.body;
+
+            if (!motivo) {
+                return res.status(400).json({ status: false, msg: 'O motivo da pausa é obrigatório.' });
+            }
+
+            const ordem = await OrdemProducao.findById(id);
+            if (!ordem) {
+                return res.status(404).json({ status: false, msg: 'Ordem de produção não encontrada.' });
+            }
+
+            if (ordem.status !== 'Em Andamento') {
+                return res.status(400).json({ status: false, msg: `Não é possível pausar uma ordem com status '${ordem.status}'.` });
+            }
+
+            ordem.status = 'Pausada';
+            ordem.pausas.push({
+                motivo: motivo,
+                inicio: new Date()
+            });
+
+            await ordem.save();
+            return res.status(200).json({ status: true, msg: 'Ordem de produção pausada.', ordem });
+
+        } catch (error) {
+            console.error("ERRO AO PAUSAR ORDEM:", error);
+            return res.status(500).json({ status: false, msg: 'Erro ao pausar ordem de produção.', error: error.message });
+        }
+    }
+
+    static async retomar(req, res) {
+        try {
+            const { id } = req.params;
+            const ordem = await OrdemProducao.findById(id);
+
+            if (!ordem) {
+                return res.status(404).json({ status: false, msg: 'Ordem de produção não encontrada.' });
+            }
+
+            if (ordem.status !== 'Pausada') {
+                return res.status(400).json({ status: false, msg: 'A ordem de produção não está pausada.' });
+            }
+
+            const ultimaPausa = ordem.pausas[ordem.pausas.length - 1];
+            if (ultimaPausa && !ultimaPausa.fim) {
+                ultimaPausa.fim = new Date();
+            }
+
+            ordem.status = 'Em Andamento';
+            await ordem.save();
+            return res.status(200).json({ status: true, msg: 'Ordem de produção retomada.', ordem });
+        } catch (error) {
+            console.error("ERRO AO RETOMAR ORDEM:", error);
+            return res.status(500).json({ status: false, msg: 'Erro ao retomar ordem de produção.', error: error.message });
         }
     }
 }

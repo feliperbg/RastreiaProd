@@ -1,35 +1,97 @@
 
-body {
-    font-family: Arial, sans-serif;
-    background-color: #e9ecef;
+/* Estilo geral do container do Kanban */
+#kanban-container {
+    display: flex;
+    flex-wrap: nowrap; /* Impede que as colunas quebrem para a linha de baixo */
+    overflow-x: auto; /* Adiciona scroll horizontal se necessário */
+    gap: 1rem; /* Opcional: adiciona um espaçamento consistente entre as colunas */
+}
+#kanban-container > div {
+    flex-grow: 1;
+    flex-basis: 250px; /* Garante que cada coluna tenha no mínimo 250px */
 }
 
-nav {
-    background-color: #495057;
-    color: #fff;
-    padding: 10px;
-    text-align: center;
-    font-size: 50px;
+/* Card da coluna inteira (header + body) */
+.kanban-board-card {
+    background-color: #f8f9fa; /* Um cinza bem claro para o fundo */
+    border: none;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* Header da coluna */
+.kanban-header {
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Corpo da coluna onde ficam os cards */
+.kanban-column {
+    min-height: 100px; /* Altura mínima para colunas vazias */
+    flex-grow: 1;
+}
+
+/* Cards individuais das tarefas (ordens de produção) */
+.task-card {
+    background-color: #ffffff;
+    border: 1px solid #e9ecef;
+    border-left-width: 4px;
+    border-left-style: solid;
     
+    border-radius: 0.375rem;
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
 }
 
-nav a {
-    color: #fff;
-    margin: 0 10px;
-    text-decoration: none;
+.task-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    /* A cor da borda no hover agora será a mesma da coluna, mantendo a consistência */
 }
-.container {
-    width: 800px;
-    text-align: center;
-    margin-bottom: auto;
-    margin-right: auto;
-    margin-top: 200px;
-    margin-left: auto;
-    background-color: #fff;
-    padding: 100px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
+/* Título principal do card */
+.task-title {
+    font-weight: 500;
+    color: #212529;
+    margin-bottom: 0.5rem;
 }
-h1 {
-    color: #343a40;
+
+/* Subtítulo para etapa e funcionário */
+.task-subtitle {
+    font-size: 0.8rem;
+    color: #6c757d; /* Cinza mais escuro para melhor leitura */
+    display: flex;
+    flex-wrap: wrap; /* Permite quebrar a linha em telas pequenas */
+    align-items: center;
+}
+
+/* Ícones do Font Awesome no subtítulo */
+.task-subtitle .fas {
+    color: #adb5bd; /* Cor dos ícones */
+}
+
+.small-box {
+    color: #fff !important;
+}
+.small-box .icon {
+    color: rgba(0,0,0,.15);
+    z-index: 0;
+}
+.small-box .icon>i {
+    font-size: 70px;
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    transition: all .3s linear;
 }

@@ -74,7 +74,7 @@
                 </select>
             </div>
             <button type="submit" class="btn btn-primary">Salvar Alterações</button>
-            <button type="button" class="btn btn-secondary" onclick="window.location.href='/ordem-producao'">Cancelar</button>
+            <button type="button" class="btn btn-secondary" onclick="window.location.href='/ordens-producao/'">Cancelar</button>
         </form>
     </div>
         <!-- Container de Toasts -->
@@ -107,7 +107,7 @@
              */
             async function carregarOrdem() {
                 try {
-                    const response = await fetch(`/ordem-producao/${id}`, { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } });
+                    const response = await fetch(`api/ordens-producao/${id}`, { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } });
                     const dados = await response.json();
 
                     if (dados.status && dados.ordem) {
@@ -134,7 +134,7 @@
             async function carregarListasCompletas() {
                 if (listaCompletaProdutos.length > 0) return;
                 try {
-                    const response = await fetch('/produto/readALL', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } });
+                    const response = await fetch('/produto', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } });
                     const result = await response.json();
                     listaCompletaProdutos = result.produtos || [];
                 } catch (error) {
@@ -164,7 +164,7 @@
                 };
 
                 try {
-                    const response = await fetch(`/ordem-producao/${id}`, { // URL com ID
+                    const response = await fetch(`api/ordens-producao/${id}`, { // URL com ID
                         method: 'PUT', // Método PUT
                         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('authToken')}` },
                         body: JSON.stringify(dadosAtualizados)
@@ -173,7 +173,7 @@
                     if (!response.ok) throw new Error(result.msg || "Erro ao atualizar a ordem.");
                     
                     await Swal.fire('Sucesso!', 'Ordem de produção atualizada com sucesso.', 'success');
-                    window.location.href = '/ordem-producao';
+                    window.location.href = '/ordens-producao/';
                 } catch (error) {
                     exibirMensagem(error.message, 'erro');
                 }
