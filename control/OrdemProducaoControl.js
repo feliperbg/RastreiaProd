@@ -7,7 +7,14 @@ module.exports = class OrdemProducaoController {
     static async create(req, res) {
         try {
             const { produto, quantidade, dataEntrega } = req.body;
-            const criadoPor = req.user._id; // Obtido do token JWT
+            const criadoPor = req.user._id;
+            const produtoParaOrdem = await Produto.findById(produto).populate('etapas');
+            if (!produtoParaOrdem) {
+                return res.status(404).json({ status: false, msg: 'Produto não encontrado.' });
+            }
+            if (!produtoParaOrdem.etapas || produtoParaOrdem.etapas.length === 0) {
+                return res.status(400).json({ status: false, msg: 'Não é possível criar uma ordem de produção para um produto sem etapas de montagem definidas.' });
+            }
 
             const novaOrdem = await OrdemProducao.create({ 
                 produto, 

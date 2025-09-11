@@ -2,7 +2,7 @@
         try {
             showLoading();
 
-            const response = await fetch('/ordem-producao/readAll', {
+            const response = await fetch('api/ordens-producao', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -97,7 +97,7 @@
             cancelButtonText: 'Cancelar'
         }).then(result => {
             if (result.isConfirmed) {
-                window.location.href = `/ordem-producao/editar-ordem-producao/${id}`;
+                window.location.href = `/ordens-producao/editar-ordens-producao/${id}`;
             }
         });
         }
@@ -124,7 +124,7 @@
         if (motivo) {
             try {
                 showLoading();
-                const response = await fetch(`/ordem-producao/${id}/cancelar`, {
+                const response = await fetch(`api/ordens-producao/${id}/cancelar`, {
                     method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/json',
@@ -159,7 +159,7 @@
         }
     }
     function gerenciarOrdemProducao(id) {
-        window.location.href = `/ordem-producao/gestao-op/${id}`;
+        window.location.href = `/ordens-producao/${id}/gestao`;
     }
     document.addEventListener("DOMContentLoaded", function() {
         carregarTabela();

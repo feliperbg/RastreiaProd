@@ -151,7 +151,7 @@
                     // Só carrega se a lista de componentes ainda estiver vazia
                     if (listaCompletaComponentes.length > 0) return;
 
-                    const compRes = await fetch('/componente/readAll', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } });
+                    const compRes = await fetch('/componente', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } });
                     if (!compRes.ok) throw new Error('Falha ao carregar os componentes.');
 
                     const compJson = await compRes.json();

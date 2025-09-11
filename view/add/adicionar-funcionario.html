@@ -179,7 +179,7 @@
         // Carrega os departamentos para o ComboBox
         async function carregarDepartamentos() {
             try {
-                const response = await fetch('/departamento/readAll', {
+                const response = await fetch('/departamento', {
                     headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
                 });
                 const result = await response.json();

@@ -55,16 +55,20 @@ module.exports = class FuncionarioController {
     }
 
     static async login(req, res) {
+        console.log("Tentativa de login recebida.");
         try {
-            const { emailFuncionario, senhaFuncionario } = req.body;
-            if (!emailFuncionario || !senhaFuncionario) {
+            console.log("Corpo da requisição:", req.body);
+            const { email, senha } = req.body;
+            console.log("Email recebido:", email);
+            console.log("Senha recebida:", senha);
+            if (!email || !senha) {
                 return res.status(400).json({ status: false, msg: 'Email e senha são obrigatórios.' });
             }
-            const funcionario = await Funcionario.findOne({ email: emailFuncionario }).select('+senha');
+            const funcionario = await Funcionario.findOne({ email: email }).select('+senha');
             if (!funcionario) {
                 return res.status(401).json({ status: false, msg: 'Credenciais inválidas.' });
             }
-            const senhaCorreta = await bcrypt.compare(senhaFuncionario, funcionario.senha);
+            const senhaCorreta = await bcrypt.compare(senha, funcionario.senha);
             if (!senhaCorreta) {
                 return res.status(401).json({ status: false, msg: 'Credenciais inválidas.' });
             }
