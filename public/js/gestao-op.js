@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     async function inicializar() {
         const pathParts = window.location.pathname.split('/');
-        const opId = pathParts[pathParts.length - 1];
+        const opId = pathParts[pathParts.length - 2]; // Assume que o ID está na penúltima parte da URL
 
         if (!opId) {
             Swal.fire('Erro', 'ID da Ordem de Produção não encontrado na URL.', 'error');
@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         try {
-            const opResponse = await fetch(`/ordem-producao/${opId}`, {
+            const opResponse = await fetch(`/api/ordens-producao/${opId}`, {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}`} 
             });
 
@@ -196,7 +196,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (result.isConfirmed) {
             try {
-                const response = await fetch(`/ordem-producao/${opId}/etapa/${etapaId}/iniciar`, {
+                const response = await fetch(`api/ordens-producao/${opId}/etapa/${etapaId}/iniciar`, {
                     method: 'POST',
                     headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
                 });
@@ -223,7 +223,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (result.isConfirmed) {
             try {
-                const response = await fetch(`/ordem-producao/${opId}/etapa/${etapaId}/finalizar`, {
+                const response = await fetch(`api/ordens-producao/${opId}/etapa/${etapaId}/finalizar`, {
                     method: 'POST',
                     headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
                 });
@@ -259,7 +259,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (motivo) {
             try {
-                const response = await fetch(`/ordem-producao/${opId}/pausar`, {
+                const response = await fetch(`api/ordens-producao/${opId}/pausar`, {
                     method: 'PATCH',
                     headers: { 
                         'Content-Type': 'application/json',
@@ -291,7 +291,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (result.isConfirmed) {
             try {
-                const response = await fetch(`/ordem-producao/${opId}/retomar`, {
+                const response = await fetch(`api/ordens-producao/${opId}/retomar`, {
                     method: 'PATCH',
                     headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
                 });

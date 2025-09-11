@@ -188,7 +188,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     async function buscarDadosParaKanban() {
         // Simula o fetch, substitua pela sua chamada real
-        const ordensResponse = await fetchWithAuth('/ordem-producao/readAll');
+        const ordensResponse = await fetchWithAuth('api/ordens-producao');
         if (!ordensResponse || !ordensResponse.ordens) return [];
 
         const kanbanData = [
@@ -219,7 +219,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     funcionario: nomeFuncionario,
                     etapa: nomeEtapa,
                     title: `OP-${ordem._id.slice(-6).toUpperCase()} - ${ordem.produto.nome}`,
-                    link: `/ordem-producao/gestao-op/${ordem._id}`,
+                    link: `/ordens-producao/gestao-op/${ordem._id}`,
                 });
             }
         });
@@ -227,25 +227,25 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     async function buscarDadosGraficoEtapasFinalizadas() {
-        const response = await fetchWithAuth('/painel/ordens-finalizadas-chart');
+        const response = await fetchWithAuth('api/painel/ordens-finalizadas-chart');
         if (!response) return { labels: [], data: [] };
         return { labels: response.labels, data: response.datasets };
     }
 
     async function buscarDadosGraficoTempo() {
-        const response = await fetchWithAuth('/painel/tempo-medio-etapas-chart');
+        const response = await fetchWithAuth('api/painel/tempo-medio-etapas-chart');
         if (!response) return { labels: [], data: [] };
         return { labels: response.labels, data: response.datasets };
     }
 
     async function buscarDadosGraficoStatus() {
-        const response = await fetchWithAuth('/painel/ordens-status-chart');
+        const response = await fetchWithAuth('api/painel/ordens-status-chart');
         if (!response) return { labels: [], data: [] };
         return { labels: response.labels, data: response.datasets };
     }
 
     async function buscarDadosParaCards() {
-        return await fetchWithAuth('/painel/cards');
+        return await fetchWithAuth('api/painel/cards');
     }
 
     // =================================================================================

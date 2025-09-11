@@ -1,50 +1,21 @@
 // Arquivo: router/PainelRouter.js
-
 const express = require('express');
-const router = express.Router();
+const apiRouter = express.Router(); // Renomeado para apiRouter para consistência
 
 // Importações
 const PainelController = require('../control/PainelControl');
 const TokenJWTMiddleware = require('../middleware/TokenJWTMiddleware');
 
-// Instancia o middleware de JWT para usar em todas as rotas
+// Instancia o middleware de JWT
 const jwtMiddleware = new TokenJWTMiddleware();
 
 // --- ROTAS DA API PARA O DASHBOARD ---
+// Montadas em /api/painel no arquivo principal da aplicação
+apiRouter.get('/cards', jwtMiddleware.validate.bind(jwtMiddleware), PainelController.getDashboardCards);
+apiRouter.get('/ordens-status-chart', jwtMiddleware.validate.bind(jwtMiddleware), PainelController.getOrdensStatusChart);
+apiRouter.get('/recentes', jwtMiddleware.validate.bind(jwtMiddleware), PainelController.getRecentOrdens);
+apiRouter.get('/ordens-finalizadas-chart', jwtMiddleware.validate.bind(jwtMiddleware), PainelController.getOrdensFinalizadasChart);
+apiRouter.get('/tempo-medio-etapas-chart', jwtMiddleware.validate.bind(jwtMiddleware), PainelController.getTempoMedioEtapasChart);
 
-// Rota para buscar os dados dos cards principais
-router.get(
-    '/cards',
-    jwtMiddleware.validate.bind(jwtMiddleware),
-    PainelController.getDashboardCards
-);
-
-// Rota para buscar os dados do gráfico de status de ordens
-router.get(
-    '/ordens-status-chart',
-    jwtMiddleware.validate.bind(jwtMiddleware),
-    PainelController.getOrdensStatusChart
-);
-
-// Rota para buscar as últimas ordens de produção
-router.get(
-    '/recentes',
-    jwtMiddleware.validate.bind(jwtMiddleware),
-    PainelController.getRecentOrdens
-);
-
-router.get(
-    '/ordens-finalizadas-chart',
-    jwtMiddleware.validate.bind(jwtMiddleware),
-    PainelController.getOrdensFinalizadasChart
-);
-
-router.get(
-    '/tempo-medio-etapas-chart',
-    jwtMiddleware.validate.bind(jwtMiddleware),
-    PainelController.getTempoMedioEtapasChart
-);
-
-
-
-module.exports = router;
+// Exporta apenas o apiRouter, pois não há views
+module.exports = { apiRouter };

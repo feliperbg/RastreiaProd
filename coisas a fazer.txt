@@ -1,7 +1,7 @@
 gestao-op:
     Temp medio de execucao da OS e etapas ou n/a, mostrar no card da etapa medio e da OS mostrar no detalhe da OS
 
-ordem-producao:
+ordens-producao/:
     tirar status inicial
     funcionario que criou a os -> Precisa?
     add data de entrega no schema de ordem e add no adicionar e no gestao

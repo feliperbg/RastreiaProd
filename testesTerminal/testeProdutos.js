@@ -58,11 +58,11 @@ async function testarCriacao() {
     }
 }
 
-// 2. Teste de LEITURA DE TODOS (GET /readAll)
+// 2. Teste de LEITURA DE TODOS (GET )
 async function testarLeituraTodos() {
-    console.log('\n--- Iniciando Teste de Leitura de Todos (GET /readAll) ---');
+    console.log('\n--- Iniciando Teste de Leitura de Todos (GET ) ---');
     try {
-        const response = await axios.get(`${BASE_URL}/readAll`, AUTH_HEADER);
+        const response = await axios.get(`${BASE_URL}`, AUTH_HEADER);
         console.log(`✅ Sucesso! Encontrados ${response.data.produtos.length} produtos.`);
         // console.log(response.data.produtos); // Descomente para ver a lista completa
     } catch (error) {
