@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
     localStorage.removeItem("mensagemErro");
   }
   if (token && rememberPassword) {
-    fetch("/verifica-login", {
+    fetch("api/verifica-login", {
       method: "GET",
       headers: { "Authorization": `Bearer ${token}` }
     })
@@ -73,10 +73,10 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
   
-    fetch("/funcionario/login", {
+    fetch("api/funcionarios/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({emailFuncionario, senhaFuncionario })
+      body: JSON.stringify({ email: emailFuncionario, senha: senhaFuncionario })
     })
       .then(res => res.json())
       .then(dados => {
@@ -86,10 +86,14 @@ document.addEventListener("DOMContentLoaded", function () {
           } else {
             localStorage.setItem('rememberPassword', JSON.stringify(false));
           }
-          console.log(dados);
           localStorage.setItem('userData', JSON.stringify(dados.funcionario));
           localStorage.setItem('authToken', dados.token);
-          localStorage.setItem('userImage', dados.funcionario.imagem || "imagens/funcionario/default.png");
+          // Garante que o caminho da imagem seja absoluto para evitar problemas com rotas aninhadas
+          let imagePath = dados.funcionario.imagem || "imagens/funcionario/default.png";
+          if (!imagePath.startsWith('/')) {
+            imagePath = `/${imagePath}`;
+          }
+          localStorage.setItem('userImage', imagePath);
           exibirMensagem("Login bem-sucedido! Redirecionando...", "sucesso");
           window.location.href = "/painel";
         } else {

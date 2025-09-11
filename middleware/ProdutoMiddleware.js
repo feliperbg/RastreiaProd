@@ -18,4 +18,25 @@ module.exports = class ProdutoMiddleware {
     }
     next();
   }
+  static validateUpdate(req, res, next) {
+    const { nome, quantidade, precoMontagem, precoVenda } = req.body;
+
+    // Em uma atualização, podemos validar se os campos enviados não estão vazios
+    if (nome === '') {
+        return res.status(400).json({ status: false, msg: 'O campo "nome" não pode ser vazio.' });
+    }
+    // E se os valores numéricos são válidos
+    if (quantidade != null && isNaN(Number(quantidade))) {
+        return res.status(400).json({ status: false, msg: 'O campo "quantidade" deve ser um número.' });
+    }
+    if (precoMontagem != null && isNaN(Number(precoMontagem))) {
+        return res.status(400).json({ status: false, msg: 'O campo "precoMontagem" deve ser um número.' });
+    }
+    if (precoVenda != null && isNaN(Number(precoVenda))) {
+        return res.status(400).json({ status: false, msg: 'O campo "precoVenda" deve ser um número.' });
+    }
+
+    // Se a validação passar, continua para o próximo passo (o controller)
+    next();
+  }
 };
