@@ -5,8 +5,7 @@ const axios = require('axios');
 const BASE_URL = 'http://localhost:8081/departamento'; // A URL base da sua API de departamentos
 
 // !! IMPORTANTE !! Cole aqui o seu token JWT válido
-const TOKEN_JWT = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdCIsInN1YiI6ImFjZXNzb19zaXN0ZW1hIiwiaWF0IjoxNzU2MDc3OTgxLCJleHAiOjE3NTg2Njk5ODEsIm5iZiI6MTc1NjA3Nzk4MSwianRpIjoiYjM5ZWY5NjZlMThmOWFlYWFiYTNmYjBlNGNiODhmZjgiLCJlbWFpbEZ1bmNpb25hcmlvIjoiZmVsaXBlQGdtYWlsLmNvbSIsIl9pZCI6IjY4YTE0NmQ0Yjc1YzQyZTJiOWNkYTAxYSIsInJvbGUiOiJmdW5jaW9uYXJpbyJ9.eATqEDstuZ_-c0FDhpCngcsV-c9ZTXljQDVRIp0rins';
-
+const TOKEN_JWT = 'COLE_SEU_TOKEN_AQUI';
 const AUTH_HEADER = {
     headers: { 'Authorization': `Bearer ${TOKEN_JWT}` }
 };
