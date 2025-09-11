@@ -46,9 +46,6 @@ module.exports = class FuncionarioMiddleware {
 
     static validateLogin(req, res, next) {
         const { email, senha } = req.body;
-        console.log("Validando login com email:", email);
-        console.log("Validando login com senha:", senha);
-
 
         if (!email || !senha) {
             return res.status(400).json({ status: false, msg: 'Os campos "email" e "senha" são obrigatórios.' });

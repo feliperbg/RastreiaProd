@@ -74,7 +74,7 @@
                 </select>
             </div>
             <button type="submit" class="btn btn-primary">Salvar Alterações</button>
-            <button type="button" class="btn btn-secondary" onclick="window.location.href='/ordens-producao/'">Cancelar</button>
+            <button type="button" class="btn btn-secondary" onclick="window.location.href='/ordens-producao'">Cancelar</button>
         </form>
     </div>
         <!-- Container de Toasts -->
@@ -134,7 +134,7 @@
             async function carregarListasCompletas() {
                 if (listaCompletaProdutos.length > 0) return;
                 try {
-                    const response = await fetch('/produto', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } });
+                    const response = await fetch('api/produtos', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } });
                     const result = await response.json();
                     listaCompletaProdutos = result.produtos || [];
                 } catch (error) {
