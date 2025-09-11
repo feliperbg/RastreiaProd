@@ -1,103 +1,74 @@
 <!DOCTYPE html>
 <html lang="pt-BR" data-bs-theme="light">
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Editar Etapa</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
     <style>
-        body {
-            background-color: #f8f9fa;
-            font-family: Arial, sans-serif;
-        }
-        .container {
-            max-width: 500px;
-            margin-top: 50px;
-        }
-        .form-label {
-            font-weight: 600;
-            color: #495057;
-        }
-        .form-control, .form-select {
-            border-radius: 5px;
-            box-shadow: none;
-            padding: 0.8rem 1rem;
-        }
-        .form-control:focus, .form-select:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 0 0.25rem rgba(38, 143, 255, 0.25);
-        }
-        .btn-primary {
-            border-radius: 5px;
-            padding: 0.6rem 1.5rem;
-            font-weight: bold;
-        }
-            .btn-secondary {
-            background-color: #ff0000;
-            border-color: #ff0000b9;
-            border-radius: 5px;
-            padding: 0.6rem 1.5rem;
-            font-weight: bold;
-        }
-        .btn-secondary:hover {
-            background-color: #ff0000;
-            border-color: #ff0000b9;
-        }
-        .mb-3 {
-            margin-bottom: 1rem;
-        }
+        body { background-color: #f8f9fa; font-family: Arial, sans-serif; }
+        .container { max-width: 600px; margin-top: 50px; }
+        .form-label { font-weight: 600; color: #495057; }
+        .form-control, .form-select { border-radius: 5px; box-shadow: none; padding: 0.8rem 1rem; }
+        .form-control:focus, .form-select:focus { border-color: #007bff; box-shadow: 0 0 0 0.25rem rgba(38, 143, 255, 0.25); }
+        .btn-primary, .btn-secondary { border-radius: 5px; padding: 0.6rem 1.5rem; font-weight: bold; }
     </style>
 </head>
-<body class="p-3">
-    <div class="container">
+<body>
+    <div class="container mt-5">
         <h1>Editar Etapa</h1>
         <form id="form-editar-etapa">
             <div class="mb-3">
                 <label for="nome" class="form-label">Nome da Etapa</label>
                 <input type="text" id="nome" class="form-control" required />
             </div>
-
             <div class="mb-3">
-                <label for="sequencias" class="form-label">Sequência (Ordem)</label>
+                <label for="sequencias" class="form-label">Sequência</label>
                 <input type="number" id="sequencias" class="form-control" required min="1" />
             </div>
-
             <div class="mb-3">
-                <label for="departamentoResponsavel" class="form-label">Departamento Responsável</label>
-                <input type="text" id="departamentoResponsavel" class="form-control" />
+                <label class="form-label">Departamento Responsável</label>
+                <div class="input-group">
+                    <input type="text" id="departamentoResponsavel" class="form-control" placeholder="Nenhum" readonly />
+                    <button type="button" class="btn btn-outline-secondary" id="btnSelecionarDepartamento">Selecionar</button>
+                </div>
             </div>
-
             <div class="mb-3">
                 <label for="procedimentos" class="form-label">Procedimentos</label>
                 <textarea id="procedimentos" class="form-control" rows="3"></textarea>
             </div>
-
             <div class="mb-3">
-                <label class="form-label">Componente de Conclusão (Opcional)</label>
+                <label class="form-label">Componente de Conclusão</label>
                 <div class="input-group">
-                    <input type="text" id="componenteConclusao" class="form-control" placeholder="Nenhum componente selecionado" readonly />
+                    <input type="text" id="componenteConclusao" class="form-control" placeholder="Nenhum" readonly />
                     <button type="button" class="btn btn-outline-secondary" id="btnSelecionarComponente">Selecionar</button>
                 </div>
             </div>
-            
             <div class="mb-3">
                 <label class="form-label">Funcionários Responsáveis</label>
                 <div class="input-group">
-                    <input type="text" id="funcionariosResponsaveis" class="form-control" placeholder="Nenhum funcionário selecionado" readonly />
+                    <input type="text" id="funcionariosResponsaveis" class="form-control" placeholder="Nenhum" readonly />
                     <button type="button" class="btn btn-outline-secondary" id="btnSelecionarFuncionarios">Selecionar</button>
                 </div>
             </div>
-            
             <button type="submit" class="btn btn-primary">Salvar Alterações</button>
-            <button type="button" class="btn btn-secondary" onclick="window.location.href='/etapa'">Cancelar</button>
+            <button type="button" class="btn btn-secondary">Cancelar</button>
         </form>
     </div>
     
-    <div id="toast-container" class="position-fixed bottom-0 end-0 p-3" style="z-index: 11"></div>
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="meuToast" class="toast align-items-center border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div id="toast-body" class="toast-body"></div>
+                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="/js/toast.js"></script> 
-<script>
+    <script src="/js/toast.js"></script>
+    <script>
     document.addEventListener('DOMContentLoaded', function () {
         const pathParts = window.location.pathname.split('/');
         const id = pathParts[pathParts.length - 1];
@@ -107,34 +78,40 @@
         }
 
         // --- ESTRUTURA DE DADOS ---
+        let produtoIdParaRedirecionar = null;
         let componenteConclusaoId = null;
         let funcionariosSelecionadosIds = [];
+        let departamentoResponsavelId = null;
         let listaCompletaComponentes = [];
         let listaCompletaFuncionarios = [];
+        let listaCompletaDepartamentos = [];
 
-        /**
-         * Carrega os dados da etapa específica e preenche o formulário.
-         */
         async function carregarEtapa() {
             try {
-                const response = await fetch(`/etapa/${id}`, { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } });
+                const response = await fetch(`api/etapas/${id}`, { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } });
                 const dados = await response.json();
 
                 if (dados.status && dados.etapa) {
                     const etapa = dados.etapa;
+                    produtoIdParaRedirecionar = etapa.produto;
+
+                    document.querySelector('.btn-secondary').onclick = () => window.location.href = `/etapa/produto/${produtoIdParaRedirecionar}`;
+
                     document.getElementById('nome').value = etapa.nome;
                     document.getElementById('sequencias').value = etapa.sequencias;
-                    document.getElementById('departamentoResponsavel').value = etapa.departamentoResponsavel || '';
                     document.getElementById('procedimentos').value = etapa.procedimentos || '';
 
-                    // Preenche componente de conclusão (dado já vem populado do backend)
+                    if (etapa.departamentoResponsavel) {
+                        departamentoResponsavelId = etapa.departamentoResponsavel._id;
+                        document.getElementById('departamentoResponsavel').value = etapa.departamentoResponsavel.nome;
+                    }
+
                     if (etapa.componenteConclusao) {
                         componenteConclusaoId = etapa.componenteConclusao._id;
                         document.getElementById('componenteConclusao').value = etapa.componenteConclusao.nome;
                     }
 
-                    // Preenche funcionários (dados já vêm populados do backend)
-                    if (Array.isArray(etapa.funcionariosResponsaveis) && etapa.funcionariosResponsaveis.length > 0) {
+                    if (etapa.funcionariosResponsaveis?.length > 0) {
                         funcionariosSelecionadosIds = etapa.funcionariosResponsaveis.map(f => f._id);
                         const nomes = etapa.funcionariosResponsaveis.map(f => f.nome);
                         document.getElementById('funcionariosResponsaveis').value = nomes.join(', ');
@@ -146,26 +123,39 @@
                 exibirMensagem('Erro ao carregar informações da etapa.', 'erro');
             }
         }
-        /**
-        * Carrega as listas completas de componentes e funcionários sob demanda.
-        */
-        async function carregarListasCompletas() {
-            if (listaCompletaComponentes.length > 0 && listaCompletaFuncionarios.length > 0) return;
+         async function carregarListasCompletas() {
+            if (listaCompletaComponentes.length > 0 && listaCompletaFuncionarios.length > 0 && listaCompletaDepartamentos.length > 0) return;
             try {
-                const [compRes, funcRes] = await Promise.all([
-                    fetch('/componente/readALL', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } }),
-                    fetch('/funcionario/readALL', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } })
+                const [compRes, funcRes, depRes] = await Promise.all([
+                    fetch('/componente', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } }),
+                    fetch('/funcionario', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } }),
+                    fetch('/departamento', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } })
                 ]);
+                if (!compRes.ok || !funcRes.ok || !depRes.ok) throw new Error("Falha ao carregar dados de seleção.");
+
                 const compJson = await compRes.json();
                 const funcJson = await funcRes.json();
+                const depJson = await depRes.json();
+
                 listaCompletaComponentes = compJson.componentes || [];
                 listaCompletaFuncionarios = funcJson.funcionarios || [];
+                listaCompletaDepartamentos = depJson.departamentos || [];
             } catch (error) {
                 exibirMensagem("Não foi possível carregar as opções de seleção.", "erro");
             }
         }
 
         // --- EVENT LISTENERS PARA SELEÇÃO ---
+
+        document.getElementById('btnSelecionarDepartamento').addEventListener('click', async function () {
+            await carregarListasCompletas();
+            const result = await selecionarUnico('Selecionar Departamento', listaCompletaDepartamentos, departamentoResponsavelId);
+            if (result.isConfirmed) {
+                departamentoResponsavelId = result.value;
+                const depto = listaCompletaDepartamentos.find(d => d._id === departamentoResponsavelId);
+                document.getElementById('departamentoResponsavel').value = depto ? depto.nome : '';
+            }
+        });
 
         document.getElementById('btnSelecionarComponente').addEventListener('click', async function () {
             await carregarListasCompletas();
@@ -189,7 +179,7 @@
             }
         });
 
-        // Modal para SELEÇÃO MÚLTIPLA (reaproveitado)
+        // --- FUNÇÕES DE MODAL (SweetAlert2) ---
         async function selecionarMultiplos(titulo, lista, selecionados) {
             return Swal.fire({
                 title: titulo,
@@ -218,7 +208,6 @@
             });
         }
 
-        // NOVO: Modal para SELEÇÃO ÚNICA
         async function selecionarUnico(titulo, lista, selecionadoId) {
             return Swal.fire({
                 title: titulo,
@@ -250,19 +239,19 @@
         }
         document.getElementById('form-editar-etapa').addEventListener('submit', async function(event) {
             event.preventDefault();
-            console.log(componenteConclusaoId);
+            
             const dadosAtualizados = {
                 nome: document.getElementById('nome').value,
                 sequencias: parseInt(document.getElementById('sequencias').value, 10),
-                departamentoResponsavel: document.getElementById('departamentoResponsavel').value,
+                departamentoResponsavel: departamentoResponsavelId,
                 procedimentos: document.getElementById('procedimentos').value,
                 componenteConclusao: componenteConclusaoId,
                 funcionariosResponsaveis: funcionariosSelecionadosIds,
             };
-
+            if (!dadosAtualizados.nome || !dadosAtualizados.sequencias) return exibirMensagem("Nome e Sequência são obrigatórios.", "erro");
             try {
-                const response = await fetch(`/etapa/${id}`, { // URL com ID
-                    method: 'PUT', // Método PUT
+                const response = await fetch(`api/etapas/${id}`, {
+                    method: 'PUT',
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('authToken')}` },
                     body: JSON.stringify(dadosAtualizados)
                 });
@@ -270,15 +259,20 @@
                 if (!response.ok) throw new Error(result.msg || "Erro ao atualizar a etapa.");
                 
                 await Swal.fire('Sucesso!', 'Etapa atualizada com sucesso.', 'success');
-                window.location.href = '/etapa';
+                if (produtoIdParaRedirecionar) {
+                    window.location.href = `/etapa/produto/${produtoIdParaRedirecionar}`;
+                } else {
+                    window.location.href = '/produto'; // Fallback caso o ID não seja encontrado
+                }
             } catch (error) {
+                console.error("Erro ao atualizar etapa:", error);
                 exibirMensagem(error.message, 'erro');
             }
         });
 
-        // Inicia o carregamento dos dados da etapa
         carregarEtapa();
     });
 </script>
+
 </body>
 </html>

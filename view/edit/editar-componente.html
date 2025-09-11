@@ -115,7 +115,7 @@
 
         async function carregarComponente() {
             try {
-                const response = await fetch(`/componente/${id}`, {
+                const response = await fetch(`api/componentes/${id}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -156,7 +156,7 @@
                     Lote: document.getElementById('Lote').value,
                     precoUnidade: document.getElementById('precoUnidade').value,
             };
-            fetch(`/componente/${id}`, {
+            fetch(`api/componente/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

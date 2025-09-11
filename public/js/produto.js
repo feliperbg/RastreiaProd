@@ -1,13 +1,7 @@
-  const formatarData = (data) => {
-    if (!data) return 'N/A';
-    const dateObj = new Date(data);
-    const userTimezoneOffset = dateObj.getTimezoneOffset() * 60000;
-    const correctedDate = new Date(dateObj.getTime() + userTimezoneOffset);
-    return correctedDate.toLocaleDateString('pt-BR');
-  };
+
   async function carregarTabelaProdutos() {
     try {
-      const resposta = await fetch('/produto/readALL', {
+      const resposta = await fetch('api/produtos', {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('authToken')}`
@@ -48,7 +42,7 @@
             if (!etapa.nome) {
                 return 'Etapa não encontrado ou inválido.';
             }
-            return `Nome: ${etapa.nome || "Desconhecido"} - Departamneto Responsável: ${etapa.departamentoResponsavel || "N/A"} - Sequências: ${etapa.sequencias}`;
+            return `Nome: ${etapa.nome || "Desconhecido"} - Departamento Responsável: ${etapa.departamentoResponsavel || "N/A"} - Sequência: ${etapa.sequencias}`;
         })
         .join("<br>");
         const tr = document.createElement("tr");
@@ -74,9 +68,7 @@
           </td>
           <td data-label="Quantidade">${prod.quantidade}</td>
           <td data-label="Etapas">
-            <button class="btn btn-sm btn-outline-info" onclick="verEtapas(\`${etapasInfo}\`)" title="Ver etapas">
-              <i class="bi bi-list-check"></i>
-            </button>
+            <a href="/etapa/produto/${prod._id}" class="btn btn-warning">Etapas</a>
           </td>
           <td data-label="Ações">
             <button class="btn btn-sm btn-primary mb-1" onclick="editarProduto('${prod._id}', '${prod.codigo}')">
@@ -135,7 +127,7 @@
       if (isConfirmed) {
           try {
               Swal.fire({ title: 'Deletando...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-              const response = await fetch(`/produto/${id}`, {
+              const response = await fetch(`api/produtos/${id}`, {
                   method: 'DELETE',
                   headers: {
                       'Authorization': `Bearer ${localStorage.getItem('authToken')}`
@@ -161,7 +153,7 @@
 
       linhas.forEach(tr => {
         const texto = tr.textContent.toLowerCase();
-        tr.style.display = texto.includes(termo) ? "" : "none";
+        tr.style.display = texto.startsWith(termo) ? "" : "none";
       });
     });
 

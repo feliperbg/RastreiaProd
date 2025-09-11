@@ -6,7 +6,7 @@ const OrdemProducaoSchema = new Schema({
     status: {
         type: String,
         required: true,
-        enum: ['Pendente', 'Em Andamento', 'Concluída', 'Cancelada'],
+        enum: ['Pendente', 'Em Andamento', 'Pausada', 'Concluída', 'Cancelada'],
         default: 'Pendente'
     },
     produto: {
@@ -18,6 +18,10 @@ const OrdemProducaoSchema = new Schema({
         type: Number,
         required: [true, 'A quantidade é obrigatória.'],
         min: [1, 'A quantidade mínima deve ser 1.'],
+    },
+    dataEntrega: {
+        type: Date,
+        required: [true, 'A data de entrega é obrigatória.'],
     },
     etapaAtual: [{
         etapa: {
@@ -52,6 +56,29 @@ const OrdemProducaoSchema = new Schema({
             type: Date,
         },
     },
+    pausas: [{
+        motivo: {
+            type: String,
+            required: true
+        },
+        inicio: {
+            type: Date,
+            required: true
+        },
+        fim: {
+            type: Date
+        }
+    }],
+    criadoPor: {
+        type: Schema.Types.ObjectId,
+        ref: 'Funcionario',
+        required: true,
+    },
+    motivoCancelamento: {
+        type: String,
+        trim: true,
+        default: null
+    }
 }, {
     timestamps: true,
 });
