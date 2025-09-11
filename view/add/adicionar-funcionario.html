@@ -148,7 +148,7 @@
 
    
             <button type="submit" class="btn btn-primary">Adicionar Funcionário</button>
-            <button type="button" class="btn btn-secondary" onclick="window.location.href='/funcionario'">Cancelar</button>
+            <button type="button" class="btn btn-secondary" onclick="window.location.href='/funcionarios'">Cancelar</button>
         </div>
     </form>
 
@@ -179,7 +179,7 @@
         // Carrega os departamentos para o ComboBox
         async function carregarDepartamentos() {
             try {
-                const response = await fetch('/departamento', {
+                const response = await fetch('api/departamentos', {
                     headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
                 });
                 const result = await response.json();

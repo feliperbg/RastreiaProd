@@ -3,7 +3,7 @@
         const produtoId = pathParts[pathParts.length - 1];
         const tabelaBody = document.getElementById('tabela-etapas');
         try {
-            const response = await fetch(`api/etapa/produto/etapas/${produtoId}`, {
+            const response = await fetch(`api/etapas/produto/etapas/${produtoId}`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('authToken')}`
@@ -88,7 +88,7 @@
       if (isConfirmed) {
           try {
               Swal.fire({ title: 'Deletando...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-              const response = await fetch(`api/etapa/${id}`, {
+              const response = await fetch(`api/etapas/${id}`, {
                   method: 'DELETE',
                   headers: {
                       'Authorization': `Bearer ${localStorage.getItem('authToken')}`

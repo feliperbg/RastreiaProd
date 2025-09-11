@@ -100,7 +100,7 @@
         </div>
       </div>
       <button type="submit" class="btn btn-primary">Salvar Alterações</button>
-      <button type="button" class="btn btn-danger" onclick="window.location.href='/produto'">Cancelar</button>
+      <button type="button" class="btn btn-danger" onclick="window.location.href='/produtos'">Cancelar</button>
     </form>
   </div>
   <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
@@ -207,8 +207,8 @@
             if (listaCompletaComponentes.length > 0 && listaCompletaEtapas.length > 0) return;
 
             const [compRes, etapasRes] = await Promise.all([
-                fetch('/componente', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } }),
-                fetch('/etapa', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } })
+                fetch('api/componentes', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } }),
+                fetch('api/etapas', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } })
             ]);
             const compJson = await compRes.json();
             const etapasJson = await etapasRes.json();
