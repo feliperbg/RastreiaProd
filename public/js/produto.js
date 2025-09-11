@@ -1,7 +1,7 @@
 
   async function carregarTabelaProdutos() {
     try {
-      const resposta = await fetch('/produto/readAll', {
+      const resposta = await fetch('api/produtos', {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('authToken')}`
@@ -127,7 +127,7 @@
       if (isConfirmed) {
           try {
               Swal.fire({ title: 'Deletando...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-              const response = await fetch(`/produto/${id}`, {
+              const response = await fetch(`api/produtos/${id}`, {
                   method: 'DELETE',
                   headers: {
                       'Authorization': `Bearer ${localStorage.getItem('authToken')}`

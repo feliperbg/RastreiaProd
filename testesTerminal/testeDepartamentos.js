@@ -38,9 +38,9 @@ async function testarCriacao() {
 }
 
 async function testarLeituraTodos() {
-    console.log('\n--- Iniciando Teste de Leitura de Todos os Departamentos (GET /readAll) ---');
+    console.log('\n--- Iniciando Teste de Leitura de Todos os Departamentos (GET ) ---');
     try {
-        const response = await axios.get(`${BASE_URL}/readAll`, AUTH_HEADER);
+        const response = await axios.get(`${BASE_URL}`, AUTH_HEADER);
         console.log(`✅ Sucesso! Encontrados ${response.data.length} departamentos.`);
         // console.log(response.data); // Descomente para ver a lista completa
     } catch (error) {

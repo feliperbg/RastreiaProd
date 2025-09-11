@@ -2,7 +2,7 @@
         try {
             showLoading();
             
-            const response = await fetch('/componente/readAll', {
+            const response = await fetch('api/componentes', {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${localStorage.getItem('authToken')}`
@@ -84,7 +84,7 @@
         if (isConfirmed) {
             try {
                 Swal.fire({ title: 'Deletando...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-                const response = await fetch(`/componente/${id}`, {
+                const response = await fetch(`api/api/componente/${id}`, {
                     method: 'DELETE',
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('authToken')}`

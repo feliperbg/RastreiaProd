@@ -154,7 +154,7 @@
     }
       async function carregarProduto() {
           try {
-              const response = await fetch(`/produto/${id}`, {
+              const response = await fetch(`api/produtos/${id}`, {
                   headers: {
                       'Authorization': `Bearer ${localStorage.getItem('authToken')}`
                   }
@@ -207,8 +207,8 @@
             if (listaCompletaComponentes.length > 0 && listaCompletaEtapas.length > 0) return;
 
             const [compRes, etapasRes] = await Promise.all([
-                fetch('/componente/readAll', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } }),
-                fetch('/etapa/readAll', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } })
+                fetch('/componente', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } }),
+                fetch('/etapa', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } })
             ]);
             const compJson = await compRes.json();
             const etapasJson = await etapasRes.json();
@@ -314,7 +314,7 @@
             return;
           }
           try {
-              const response = await fetch(`/produto/${id}`, {
+              const response = await fetch(`api/produtos/${id}`, {
                   method: 'PUT',
                   headers: {
                       'Content-Type': 'application/json',

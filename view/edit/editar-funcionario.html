@@ -126,11 +126,11 @@
              */
             async function carregarDadosFuncionario() {
                 // Inicia as duas requisições em paralelo para mais eficiência
-                const deptoPromise = fetch('/departamento/readAll', {
+                const deptoPromise = fetch('api/departamentos', {
                     headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
                 }).then(res => res.json());
 
-                const funcPromise = fetch(`/funcionario/${id}`, {
+                const funcPromise = fetch(`api/funcionarios/${id}`, {
                     headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
                 }).then(res => res.json());
 

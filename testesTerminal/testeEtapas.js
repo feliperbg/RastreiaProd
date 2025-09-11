@@ -40,9 +40,9 @@ async function testarCriacao() {
 }
 
 async function testarLeituraTodos() {
-    console.log('\n--- Iniciando Teste de Leitura de Todas as Etapas (GET /readAll) ---');
+    console.log('\n--- Iniciando Teste de Leitura de Todas as Etapas (GET ) ---');
     try {
-        const response = await axios.get(`${BASE_URL}/readAll`, AUTH_HEADER);
+        const response = await axios.get(`${BASE_URL}`, AUTH_HEADER);
         console.log(`✅ Sucesso! Encontradas ${response.data.etapas.length} etapas.`);
     } catch (error) {
         console.error('❌ Falha no Teste de Leitura de Todos:', error.response ? error.response.data : error.message);

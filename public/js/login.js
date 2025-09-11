@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
     localStorage.removeItem("mensagemErro");
   }
   if (token && rememberPassword) {
-    fetch("/verifica-login", {
+    fetch("api/verifica-login", {
       method: "GET",
       headers: { "Authorization": `Bearer ${token}` }
     })
@@ -73,10 +73,10 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
   
-    fetch("/funcionario/login", {
+    fetch("api/funcionarios/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({emailFuncionario, senhaFuncionario })
+      body: JSON.stringify({ email: emailFuncionario, senha: senhaFuncionario })
     })
       .then(res => res.json())
       .then(dados => {

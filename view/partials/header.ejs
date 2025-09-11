@@ -82,7 +82,7 @@
     });
 
     function fazerLogout() {
-      fetch("/funcionario/logout", {
+      fetch("api/funcionarios/logout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token: localStorage.getItem("authToken") }),
