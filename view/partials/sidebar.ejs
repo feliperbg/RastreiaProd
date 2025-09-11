@@ -14,25 +14,25 @@
           </a>
         </li>
         <li class="nav-item" id="menu-funcionarios">
-          <a href="/funcionario" class="nav-link">
+          <a href="/funcionarios" class="nav-link">
             <i class="nav-icon bi bi-person-lines-fill"></i>
             <p>Funcionários</p>
           </a>
         </li>
         <li class="nav-item">
-          <a href="/componente" class="nav-link">
+          <a href="/componentes" class="nav-link">
             <i class="nav-icon bi bi-cpu"></i>
             <p>Componentes</p>
           </a>
         </li>
         <li class="nav-item">
-          <a href="/produto" class="nav-link">
+          <a href="/produtos" class="nav-link">
             <i class="nav-icon bi bi-box-seam"></i>
             <p>Produtos</p>
           </a>
         </li>
         <li class="nav-item">
-          <a href="/ordem-producao" class="nav-link">
+          <a href="/ordens-producao" class="nav-link">
             <i class="nav-icon bi bi-diagram-3"></i>
             <p>Ordem de Produção</p>
           </a>
@@ -58,9 +58,7 @@
     const userDataJSON = localStorage.getItem("userData");
     if (userDataJSON) {
       try {
-        console.log("entrou no if do sidebar");
         const authData = JSON.parse(userDataJSON);
-        console.log("authData:", authData);
         // Verifica se existe o campo permissoes e se inclui "Administrador"
         if (!authData.role || !authData.role.includes("administrador")) {
           console.log("entrou no if do sidebar para remover o menu funcionarios");

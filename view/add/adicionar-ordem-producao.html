@@ -69,17 +69,12 @@
             </div>
             
             <div class="mb-3">
-                <label for="status" class="form-label">Status Inicial</label>
-                <select id="status" class="form-select">
-                    <option value="Pendente" selected>Pendente</option>
-                    <option value="Em Andamento">Em Andamento</option>
-                    <option value="Concluída">Concluída</option>
-                    <option value="Cancelada">Cancelada</option>
-                </select>
+                <label for="dataEntrega" class="form-label">Data de entrega</label>
+                <input type="date" id="dataEntrega" class="form-control" required />
             </div>
             
             <button type="submit" class="btn btn-primary">Adicionar Ordem</button>
-            <button type="button" class="btn btn-secondary" onclick="window.location.href='/ordem-producao'">Cancelar</button>
+            <button type="button" class="btn btn-secondary" onclick="window.location.href='/ordens-producao/'">Cancelar</button>
         </form>
     </div>
     <!-- Container de Toasts -->
@@ -107,7 +102,7 @@
             async function carregarListasCompletas() {
                 if (listaCompletaProdutos.length > 0) return;
                 try {
-                    const response = await fetch('/produto/readAll', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } });
+                    const response = await fetch('/produto', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } });
                     const result = await response.json();
                     listaCompletaProdutos = result.produtos || [];
                 } catch (error) {
@@ -135,15 +130,15 @@
                 const dadosNovaOrdem = {
                     produto: produtoSelecionadoId,
                     quantidade: parseInt(document.getElementById('quantidade').value, 10),
-                    status: document.getElementById('status').value,
+                    dataEntrega: document.getElementById('dataEntrega').value,
                 };
 
-                if (!dadosNovaOrdem.produto || !dadosNovaOrdem.quantidade) {
-                    return exibirMensagem("Produto e Quantidade são obrigatórios.", "erro");
+                if (!dadosNovaOrdem.produto || !dadosNovaOrdem.quantidade || !dadosNovaOrdem.dataEntrega) {
+                    return exibirMensagem("Produto, Quantidade e Data de Entrega são obrigatórios.", "erro");
                 }
 
                 try {
-                    const response = await fetch('/ordem-producao', {
+                    const response = await fetch('/ordens-producao/', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('authToken')}` },
                         body: JSON.stringify(dadosNovaOrdem)
@@ -152,7 +147,7 @@
                     if (!response.ok) throw new Error(result.msg || "Erro ao criar a ordem de produção.");
                     
                     await Swal.fire('Sucesso!', 'Ordem de produção criada com sucesso.', 'success');
-                    window.location.href = '/ordem-producao';
+                    window.location.href = '/ordens-producao/';
                 } catch (error) {
                     exibirMensagem(error.message, 'erro');
                 }

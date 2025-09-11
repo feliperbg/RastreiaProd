@@ -146,7 +146,7 @@
 
     async function buscarNomePorId(id, urlBase, atributo) {
         try {
-            const response = await fetch(`/${urlBase}/${id}`, {
+            const response = await fetch(`api/${urlBase}/${id}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',

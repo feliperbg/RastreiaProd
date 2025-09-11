@@ -2,7 +2,7 @@
    async function carregarTabela() {
         try {
             showLoading();
-            const response = await fetch('/funcionario/readAll', {
+            const response = await fetch('api/funcionarios', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -120,7 +120,7 @@
         if (isConfirmed) {
             try {
                 showLoading();
-                const response = await fetch(`/funcionario/${id}`, {
+                const response = await fetch(`api/funcionarios/${id}`, {
                     method: 'DELETE',
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('authToken')}`
@@ -171,7 +171,7 @@
       }
 
       try {
-        const resposta = await fetch(`/funcionario`, {
+        const resposta = await fetch(`api/funcionarios`, {
           method: 'POST',
           headers: {
             // O 'Content-Type' para multipart/form-data é definido automaticamente pelo navegador
@@ -221,7 +221,7 @@
             departamento: document.getElementById('departamento').value || null
         };
         try {
-            const resposta = await fetch(`/funcionario/${id}`, {
+            const resposta = await fetch(`api/funcionarios/${id}`, {
                 method: 'PUT',
                 headers: {
                 'Content-Type': 'application/json',

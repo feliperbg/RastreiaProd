@@ -59,9 +59,9 @@ async function testarCriacao() {
 }
 
 async function testarLeituraTodos() {
-    console.log('\n--- Iniciando Teste de Leitura de Todos os Funcionários (GET /readAll) ---');
+    console.log('\n--- Iniciando Teste de Leitura de Todos os Funcionários (GET ) ---');
     try {
-        const response = await axios.get(`${BASE_URL}/readAll`, AUTH_HEADER);
+        const response = await axios.get(`${BASE_URL}`, AUTH_HEADER);
         console.log(`✅ Sucesso! Encontrados ${response.data.funcionarios.length} funcionários.`);
     } catch (error) {
         console.error('❌ Falha no Teste de Leitura de Todos:', error.response ? error.response.data : error.message);
