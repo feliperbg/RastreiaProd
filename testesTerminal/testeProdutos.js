@@ -5,8 +5,7 @@ const axios = require('axios');
 const BASE_URL = 'http://localhost:8081/produto'; // A URL base da sua API de produtos
 
 // !! IMPORTANTE !! Cole aqui o seu token JWT válido após fazer login
-const TOKEN_JWT = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdCIsInN1YiI6ImFjZXNzb19zaXN0ZW1hIiwiaWF0IjoxNzU1MzE0NzA1LCJleHAiOjE3NTc5MDY3MDUsIm5iZiI6MTc1NTMxNDcwNSwianRpIjoiY2E2OWRkMjZlOGU3YjFiZmQyZmY2NmI3YmEzNWE1ZjciLCJjcmVkZW5jaWFsRnVuY2lvbmFyaW8iOjMsImlkRnVuY2lvbmFyaW8iOiI2ODBjMWEyOTQ0ZTgxOTczNzc3NjAwZDQifQ.3wGial7GK93ivhZ2YLEaGPL3Zw1z701EVj0oEgk3WCY'; 
-
+const TOKEN_JWT = 'COLE_SEU_TOKEN_AQUI';
 // Crie um cabeçalho de autorização que será usado em todas as requisições
 const AUTH_HEADER = {
     headers: { 'Authorization': `Bearer ${TOKEN_JWT}` }
@@ -58,11 +57,11 @@ async function testarCriacao() {
     }
 }
 
-// 2. Teste de LEITURA DE TODOS (GET /readAll)
+// 2. Teste de LEITURA DE TODOS (GET )
 async function testarLeituraTodos() {
-    console.log('\n--- Iniciando Teste de Leitura de Todos (GET /readAll) ---');
+    console.log('\n--- Iniciando Teste de Leitura de Todos (GET ) ---');
     try {
-        const response = await axios.get(`${BASE_URL}/readAll`, AUTH_HEADER);
+        const response = await axios.get(`${BASE_URL}`, AUTH_HEADER);
         console.log(`✅ Sucesso! Encontrados ${response.data.produtos.length} produtos.`);
         // console.log(response.data.produtos); // Descomente para ver a lista completa
     } catch (error) {

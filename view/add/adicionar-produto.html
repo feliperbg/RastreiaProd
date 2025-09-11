@@ -100,14 +100,6 @@
                 <label for="quantidade" class="form-label">Quantidade em Estoque</label>
                 <input type="number" id="quantidade" name="quantidade" class="form-control" />
             </div>
-
-            <div class="mb-3">
-                <label class="form-label">Etapas de Montagem</label>
-                <div class="input-group">
-                    <input type="text" id="etapas" name="etapas" class="form-control" placeholder="Nenhuma etapa selecionada" readonly />
-                    <button type="button" class="btn btn-outline-secondary" id="btnSelecionarEtapas">Selecionar</button>
-                </div>
-            </div>
             
             <button type="submit" class="btn btn-primary">Adicionar Produto</button>
             <button type="button" class="btn btn-secondary" onclick="window.location.href='/produto'">Cancelar</button>
@@ -131,9 +123,7 @@
           // --- ESTRUTURA DE DADOS ---
           // Começa com tudo vazio, pois é um novo produto
           let componentesSelecionados = []; // Formato: [{ componente: 'id', quantidade: 1 }]
-          let etapasSelecionadasIds = [];
           let listaCompletaComponentes = [];
-          let listaCompletaEtapas = [];
 
           // --- FUNÇÕES AUXILIARES ---
 
@@ -156,24 +146,21 @@
           /**
            * Carrega as listas completas de componentes e etapas sob demanda (lazy loading).
            */
-          async function carregarListasCompletas() {
-              try {
-                  // Só carrega se a lista ainda estiver vazia
-                  if (listaCompletaComponentes.length > 0 && listaCompletaEtapas.length > 0) return;
+            async function carregarListasCompletas() {
+                try {
+                    // Só carrega se a lista de componentes ainda estiver vazia
+                    if (listaCompletaComponentes.length > 0) return;
 
-                  const [compRes, etapasRes] = await Promise.all([
-                      fetch('/componente/readALL', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } }),
-                      fetch('/etapa/readALL', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } })
-                  ]);
-                  const compJson = await compRes.json();
-                  const etapasJson = await etapasRes.json();
-                  listaCompletaComponentes = compJson.componentes || [];
-                  listaCompletaEtapas = etapasJson.etapas || [];
-              } catch (error) {
-                  console.error("Erro ao carregar listas completas:", error);
-                  exibirMensagem("Não foi possível carregar as opções de seleção.", "erro");
-              }
-          }
+                    const compRes = await fetch('/componente', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } });
+                    if (!compRes.ok) throw new Error('Falha ao carregar os componentes.');
+
+                    const compJson = await compRes.json();
+                    listaCompletaComponentes = compJson.componentes || [];
+                } catch (error) {
+                    console.error("Erro em carregarListasCompletas:", error);
+                    exibirMensagem("Não foi possível carregar as opções de seleção.", "erro");
+                }
+            }
 
           // --- EVENT LISTENERS PARA OS BOTÕES DE SELEÇÃO ---
 
@@ -208,7 +195,8 @@
                       if (quantidadeResult.isConfirmed && quantidadeResult.value) {
                           novosComponentesInfo.push({
                               componente: id,
-                              quantidade: parseInt(quantidadeResult.value, 10)
+                              quantidade: parseInt(quantidadeResult.value, 10),
+                              nome: componente.nome
                           });
                       } else {
                           processoCancelado = true;
@@ -221,19 +209,6 @@
                       atualizarDisplayComponentes();
                       exibirMensagem('Componentes atualizados!', 'sucesso');
                   }
-              }
-          });
-
-          document.getElementById('btnSelecionarEtapas').addEventListener('click', async function () {
-              await carregarListasCompletas();
-              const result = await selecionarMultiplos('Selecionar Etapas', listaCompletaEtapas, etapasSelecionadasIds);
-
-              if (result.isConfirmed) {
-                  etapasSelecionadasIds = result.value;
-                  const nomesSelecionados = listaCompletaEtapas
-                      .filter(item => etapasSelecionadasIds.includes(item._id))
-                      .map(item => item.nome);
-                  document.getElementById('etapas').value = nomesSelecionados.join(', ');
               }
           });
 
@@ -256,7 +231,7 @@
                   precoMontagem: parseFloat(document.getElementById('precoMontagem').value),
                   precoVenda: parseFloat(document.getElementById('precoVenda').value),
                   quantidade: parseInt(document.getElementById('quantidade').value),
-                  etapas: etapasSelecionadasIds,
+                  etapas: [], // Não há seleção de etapas nesta tela
               };
 
               // Adicione aqui suas validações se necessário
@@ -285,37 +260,56 @@
           // MUDANÇA: Adiciona o listener ao formulário de adicionar
           document.getElementById('form-adicionar').addEventListener('submit', adicionarProduto);
 
-          // --- FUNÇÕES GENÉRICAS (sem alterações) ---
-
-          // Função para o modal de seleção (SweetAlert2)
-          async function selecionarMultiplos(titulo, lista, selecionados) {
-              // ... sua função selecionarMultiplos continua aqui, sem alterações ...
-              return Swal.fire({
-                  title: titulo,
-                  html: `
-                      <input type="text" id="swal-filtro" class="form-control mb-2" placeholder="Filtrar...">
-                      <div id="swal-lista" style="max-height:300px;overflow:auto;text-align:left">
-                          ${lista.map(item => `
-                              <div>
-                                  <input type="checkbox" id="swal-${item._id}" value="${item._id}" ${selecionados.includes(item._id) ? 'checked' : ''}>
-                                  <label for="swal-${item._id}">${item.nome}</label>
-                              </div>
-                          `).join('')}
-                      </div>`,
-                  showCancelButton: true,
-                  confirmButtonText: 'Selecionar',
-                  cancelButtonText: 'Cancelar',
-                  preConfirm: () => Array.from(document.querySelectorAll('#swal-lista input[type=checkbox]:checked')).map(cb => cb.value),
-                  didOpen: () => {
-                      document.getElementById('swal-filtro').addEventListener('input', function() {
-                          const val = this.value.toLowerCase();
-                          document.querySelectorAll('#swal-lista label').forEach(label => {
-                              label.parentElement.style.display = label.textContent.toLowerCase().includes(val) ? '' : 'none';
-                          });
-                      });
-                  }
-              });
-          }
+ 
+        /**
+         * Abre um modal do SweetAlert2 para seleção múltipla de itens com um filtro de busca.
+         *
+         * @param {string} titulo - O título que aparecerá no topo do modal.
+         * @param {Array<Object>} lista - A lista completa de itens para exibir. Cada item deve ser um objeto com as chaves `_id` e `nome`.
+         * @param {Array<string>} selecionados - Um array com os `_id`s dos itens que já devem vir pré-selecionados.
+         * @returns {Promise<Object>} - A promessa do SweetAlert2, que resolve com o resultado da seleção.
+         */
+        async function selecionarMultiplos(titulo, lista, selecionados) {
+            return Swal.fire({
+                title: titulo,
+                html: `
+                    <input type="text" id="swal-filtro" class="form-control mb-2" placeholder="Filtrar por nome...">
+                    <div id="swal-lista" style="max-height: 300px; overflow-y: auto; text-align: left; border: 1px solid #ddd; padding: 10px; border-radius: 5px;">
+                        ${lista.map(item => `
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="swal-${item._id}" value="${item._id}" ${selecionados.includes(item._id) ? 'checked' : ''}>
+                                <label class="form-check-label" for="swal-${item._id}">
+                                    ${item.nome}
+                                </label>
+                            </div>
+                        `).join('')}
+                    </div>
+                `,
+                showCancelButton: true,
+                confirmButtonText: 'Confirmar Seleção',
+                cancelButtonText: 'Cancelar',
+                width: '500px',
+                preConfirm: () => {
+                    // Coleta os valores de todos os checkboxes que estão marcados
+                    const checkedBoxes = document.querySelectorAll('#swal-lista input[type=checkbox]:checked');
+                    return Array.from(checkedBoxes).map(cb => cb.value);
+                },
+                didOpen: () => {
+                    // Adiciona a funcionalidade de filtro ao input
+                    const filtro = document.getElementById('swal-filtro');
+                    filtro.addEventListener('input', function() {
+                        const termoBusca = this.value.toLowerCase();
+                        document.querySelectorAll('#swal-lista .form-check').forEach(div => {
+                            const label = div.querySelector('label');
+                            const nomeItem = label.textContent.toLowerCase();
+                            div.style.display = nomeItem.includes(termoBusca) ? '' : 'none';
+                        });
+                    });
+                    // Foca no campo de filtro assim que o modal abre
+                    filtro.focus();
+                }
+            });
+        }
 
           /**
            * BÔNUS: Define a data de entrada como a data de hoje para conveniência.

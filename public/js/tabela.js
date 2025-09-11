@@ -1,20 +1,10 @@
-    // Função para formatar a data no formato dd/mm/yyyy
-    function formatarData(data) {
-        if (!data) return '';
-        // Se for Date, converte para string
-        if (data instanceof Date) {
-            const dia = String(data.getDate()).padStart(2, '0');
-            const mes = String(data.getMonth() + 1).padStart(2, '0');
-            const ano = data.getFullYear();
-            return `${dia}/${mes}/${ano}`;
-        }
-        // Se for string no formato YYYY-MM-DD
-        if (typeof data === 'string' && /^\d{4}-\d{2}-\d{2}/.test(data)) {
-            const [ano, mes, dia] = data.split('T')[0].split('-');
-            return `${dia}/${mes}/${ano}`;
-        }
-        return '';
-    }
+  const formatarData = (data) => {
+    if (!data) return 'N/A';
+    const dateObj = new Date(data);
+    const userTimezoneOffset = dateObj.getTimezoneOffset() * 60000;
+    const correctedDate = new Date(dateObj.getTime() + userTimezoneOffset);
+    return correctedDate.toLocaleDateString('pt-BR');
+  };
     function showLoading() {
         Swal.fire({
             title: 'Carregando...',
@@ -61,26 +51,7 @@
         return nomes.join('<br>');
     }
 
-    async function buscarNomePorId(id, urlBase, atributo) {
-        try {
-            const response = await fetch(`/${urlBase}/${id}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-                },
-            });
-            if (!response.ok) {
-                throw new Error(`Erro HTTP: ${response.status}`);
-            }
-            const resposta = await response.json();
-            return resposta[atributo].nome || 'Desconhecido';
-        } catch (error) {
-            console.error(`Erro ao buscar ${atributo}:`, error);
-            return 'Desconhecido';
-        }
-    }
-        async function formatarComponentes(componentes) {
+    async function formatarComponentes(componentes) {
         if (!Array.isArray(componentes)) return '';
         const nomes = await Promise.all(componentes.map(async (id) => {
             const nome = await nomesComponentes(id);
@@ -93,20 +64,51 @@
     async function formatarFuncionarios(funcionarios) {
         if (!Array.isArray(funcionarios)) return '';
         const nomes = await Promise.all(funcionarios.map(async (id) => {
-            const nome = await nomeFuncionario(id);
+            const nome = await buscarNomePorId(id, "funcionarios", 'Funcionários');
             return `<span class="badge bg-secondary">${nome}</span>`;
         }));
         return nomes.join('<br>');
     }
     function formatarCPF(cpf) {
-        if (!cpf || cpf.length !== 11) return cpf;
-        return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+        if (!cpf) return '';
+        const cleaned = String(cpf).replace(/\D/g, '');
+        if (cleaned.length !== 11) return cpf; // Retorna o original se não for um CPF válido
+        return cleaned.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
     }
 
     function formatarTelefone(telefone) {
-        if (!telefone || telefone.length < 10) return telefone;
-        return telefone.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+        if (!telefone) return '';
+        const cleaned = String(telefone).replace(/\D/g, '');
+        const length = cleaned.length;
+
+        if (length === 11) {
+            // Formato para celular: (XX) XXXXX-XXXX
+            return cleaned.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+        }
+        if (length === 10) {
+            // Formato para telefone fixo: (XX) XXXX-XXXX
+            return cleaned.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
+        }
+        return telefone; // Retorna o original se não tiver 10 ou 11 dígitos
     }
+    function formatarHorario(data){
+        if (!data) {
+            return 'N/A';
+        }
+        
+        // O construtor new Date() entende a data como UTC (horário zero).
+        const dateObj = new Date(data);
+
+        // O método toLocaleString() converte e formata para o horário local do usuário.
+        return dateObj.toLocaleString('pt-BR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+        });
+    };
 
     /**
      * Formata um array de strings de permissão para um formato legível.
@@ -144,7 +146,7 @@
 
     async function buscarNomePorId(id, urlBase, atributo) {
         try {
-            const response = await fetch(`/${urlBase}/${id}`, {
+            const response = await fetch(`api/${urlBase}/${id}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -300,4 +302,34 @@
             icon: 'info',
             confirmButtonText: 'Fechar'
         });
+    }
+    /**
+     * Anexa um evento de filtro a um campo de input para filtrar uma tabela HTML.
+     * A busca é feita em uma coluna específica, identificada pelo atributo data-label.
+     *
+     * @param {string} inputId - O ID do elemento <input> usado para a busca (ex: 'filtro').
+     * @param {string} tbodyId - O ID do elemento <tbody> da tabela a ser filtrada (ex: 'tabela-funcionarios').
+     * @param {string} colunaAlvo - O valor do atributo 'data-label' da coluna a ser pesquisada (ex: 'Nome').
+     */
+    function configurarFiltroDeTabela(inputId, tbodyId, colunaAlvo) {
+        const inputFiltro = document.getElementById(inputId);
+        
+        if (inputFiltro) {
+            inputFiltro.addEventListener("input", function () {
+                const termo = this.value.toLowerCase();
+                const linhas = document.querySelectorAll(`#${tbodyId} tr`);
+
+                linhas.forEach(linha => {
+                    // Encontra a célula específica na linha usando o data-label
+                    const celula = linha.querySelector(`td[data-label="${colunaAlvo}"]`);
+                    
+                    if (celula) {
+                        const textoCelula = celula.textContent.toLowerCase();
+                        const corresponde = textoCelula.includes(termo);
+                        // Mostra ou esconde a linha inteira (tr)
+                        linha.style.display = corresponde ? "" : "none";
+                    }
+                });
+            });
+        }
     }

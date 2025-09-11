@@ -19,11 +19,11 @@ const ProdutoSchema = new Schema({
         trim: true
     },
     dataEntrada: {
-        type: Date, // TIPO CORRIGIDO
+        type: Date,
         default: Date.now
     },
     dataValidade: {
-        type: Date // TIPO CORRIGIDO
+        type: Date
     },
     quantidade: {
         type: Number,
@@ -56,12 +56,16 @@ const ProdutoSchema = new Schema({
             default: 1
         }
     }],
-    etapas: [{
-        type: Schema.Types.ObjectId,
-        ref: 'Etapa'
-    }]
 }, {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
     timestamps: true
+});
+
+ProdutoSchema.virtual('etapas', {
+  ref: 'Etapa',
+  localField: '_id',
+  foreignField: 'produto'
 });
 
 const Produto = model('Produto', ProdutoSchema);

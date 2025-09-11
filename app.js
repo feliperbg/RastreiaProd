@@ -1,52 +1,65 @@
 // Arquivo: app.js
 const express = require('express');
 const path = require('path');
-const BancoMongoose = require('./model/BancoMongoose');
-const TokenJWTMiddleware = require('./middleware/TokenJWTMiddleware');
-
-const produtoRouter = require('./router/ProdutoRouter');
-const componenteRouter = require('./router/ComponenteRouter');
-const etapaRouter = require('./router/EtapaRouter');
-const funcionarioRouter = require('./router/FuncionarioRouter');
-const ordemProducaoRouter = require('./router/OrdemProducaoRouter');
-const painelRouter = require('./router/PainelRouter');
+const Banco = require('./model/BancoMongoose');
 
 const app = express();
-const port = 8081;
+const port = 3000;
 
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'view'));
-
+// --- CONFIGURAÇÕES DO EXPRESS ---
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, 'public')));
+app.set('views', path.join(__dirname, 'view'));
+app.set('view engine', 'ejs');
 
-// Conexão com o banco de dados
-const Banco = new BancoMongoose();
+// --- IMPORTAÇÃO DOS ROUTERS ---
+const { viewRouter: produtoViewRouter, apiRouter: produtoApiRouter } = require('./router/ProdutoRouter');
+const { viewRouter: componenteViewRouter, apiRouter: componenteApiRouter } = require('./router/ComponenteRouter');
+const { viewRouter: etapaViewRouter, apiRouter: etapaApiRouter } = require('./router/EtapaRouter');
+const { viewRouter: funcionarioViewRouter, apiRouter: funcionarioApiRouter } = require('./router/FuncionarioRouter');
+const { viewRouter: ordemProducaoViewRouter, apiRouter: ordemProducaoApiRouter } = require('./router/OrdemProducaoRouter');
+const { apiRouter: painelApiRouter } = require('./router/PainelRouter');
+const { viewRouter: departamentoViewRouter, apiRouter: departamentoApiRouter } = require('./router/DepartamentoRouter');
 
-const jwtMiddleware = new TokenJWTMiddleware();
-// Rotas
+
+// --- ROTAS DE VIEWS (FRONTEND) ---
+
+// Rota para a PÁGINA de login (pública)
 app.get('/login', (req, res) => {
-  res.sendFile(path.join(__dirname, 'view', 'login.html'));
-});
-app.get('/', (req, res) => {
-  res.redirect('/login');
-});
-app.get('/painel', (req, res) => {
-    res.render('painel');
-});
-app.get('/verifica-login', jwtMiddleware.validate.bind(jwtMiddleware), (req, res) => {
-  return res.status(200).json({ status: true, msg: "Usuário autenticado" });
+    res.sendFile(path.join(__dirname, 'view', 'login.html')); // Verifique o caminho/nome do seu arquivo
 });
 
-app.use('/produto', produtoRouter);
-app.use('/componente', componenteRouter);
-app.use('/etapa', etapaRouter);
-app.use('/funcionario', funcionarioRouter);
-app.use('/ordem-producao', ordemProducaoRouter);
-app.use('/painel', painelRouter);
+app.use('/produtos', produtoViewRouter);
+app.use('/componentes', componenteViewRouter);
+app.use('/etapas', etapaViewRouter);
+app.use('/funcionarios', funcionarioViewRouter);
+app.use('/ordens-producao', ordemProducaoViewRouter);
+app.use('/departamentos', departamentoViewRouter);
+app.get('/painel', (req, res) => res.render('main/painel'));
 
-app.listen(port, '0.0.0.0', () => {
-    console.log(`API rodando no endereço: http://localhost:${port}/`);
-    Banco.getConexao();
+// Rota raiz redireciona para a página de login por padrão
+app.get('/', (req, res) => res.redirect('/login'));
+
+
+// --- ROTAS DE API (BACKEND) ---
+app.use('/api/funcionarios', funcionarioApiRouter); 
+app.use('/api/produtos', produtoApiRouter);
+app.use('/api/componentes', componenteApiRouter);
+app.use('/api/etapas', etapaApiRouter);
+app.use('/api/ordens-producao', ordemProducaoApiRouter);
+app.use('/api/departamentos', departamentoApiRouter);
+app.use('/api/painel', painelApiRouter);
+
+
+// --- INICIALIZAÇÃO DO SERVIDOR ---
+async function startServer() {
+  await Banco.connect();
+  app.listen(port, '0.0.0.0', () => {
+    console.log(`✅ Servidor rodando no endereço: http://localhost:${port}`);
+  });
+}
+
+startServer().catch(err => {
+    console.error("❌ Falha ao iniciar o servidor:", err);
 });

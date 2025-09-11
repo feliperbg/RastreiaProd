@@ -67,14 +67,14 @@ module.exports = class PainelController {
     /**
      * Calcula e retorna o número de ordens concluídas nos últimos 7 dias.
      */
-    static async getEtapasFinalizadasChart(req, res) {
+    static async getOrdensFinalizadasChart(req, res) {
         try {
             const labels = [];
             const data = [];
             const today = new Date();
             today.setHours(23, 59, 59, 999);
 
-            for (let i = 6; i >= 0; i--) {
+            for (let i = 4; i >= 0; i--) {
                 const date = new Date(today);
                 date.setDate(today.getDate() - i);
 
@@ -117,39 +117,27 @@ module.exports = class PainelController {
     static async getTempoMedioEtapasChart(req, res) {
         try {
             const aggregationResult = await OrdemProducao.aggregate([
-                // Estágio 1: Desconstrói o array 'etapaAtual' para ter um documento por etapa
                 { $unwind: '$etapaAtual' },
-                
-                // Estágio 2: Filtra apenas as etapas que foram concluídas (têm data de início e fim)
                 { $match: { 
                     'etapaAtual.dataInicio': { $exists: true, $ne: null },
                     'etapaAtual.dataFim': { $exists: true, $ne: null }
                 }},
-                
-                // Estágio 3: Adiciona um novo campo 'duracaoMs' com a diferença entre as datas
                 { $addFields: {
                     "etapaAtual.duracaoMs": { $subtract: ['$etapaAtual.dataFim', '$etapaAtual.dataInicio'] }
                 }},
-                
-                // Estágio 4: Agrupa os documentos pelo ID da etapa e calcula a média das durações
                 { $group: {
                     _id: '$etapaAtual.etapa',
                     tempoMedioMs: { $avg: '$etapaAtual.duracaoMs' }
                 }},
-                
-                // Estágio 5: Faz um "join" com a coleção 'etapas' para buscar o nome de cada etapa
                 { $lookup: {
-                    from: 'etapas', // Nome da coleção de etapas no MongoDB (geralmente plural)
+                    from: 'etapas',
                     localField: '_id',
                     foreignField: '_id',
                     as: 'etapaInfo'
                 }},
-
-                // Estágio 6: Formata o resultado final para o frontend
                 { $project: {
                     _id: 0,
                     nomeEtapa: { $arrayElemAt: ['$etapaInfo.nome', 0] },
-                    // Converte o tempo médio de milissegundos para minutos e arredonda
                     tempoMedioMinutos: { $round: [{ $divide: ['$tempoMedioMs', 60000] }, 2] }
                 }}
             ]);

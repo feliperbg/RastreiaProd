@@ -28,7 +28,7 @@ module.exports = class ProdutoController {
     try {
       const { id } = request.params;
       const produto = await Produto.findById(id)
-        .populate('componentesNecessarios.componente', 'nome codigo')
+        .populate('componentesNecessarios.componente')
         .populate('etapas', 'nome');
       if (!produto) {
         return response.status(404).json({ status: false, msg: 'Produto não encontrado.' });
