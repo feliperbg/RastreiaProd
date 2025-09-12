@@ -59,9 +59,8 @@
                 <div class="col-md-6 mb-3">
                     <label for="role" class="form-label">Nível de Acesso (Role)</label>
                     <select id="role" name="role" class="form-select">
-                        <option value="operador">Operador</option>
-                        <option value="supervisor">Supervisor</option>
-                        <option value="admin">Administrador</option>
+                        <option value="administrador">Administrador</option>
+                        <optin value="funcionario">Funcionário</optin>
                     </select>
                 </div>
                 <div class="col-md-6 mb-3">
@@ -101,7 +100,8 @@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const pathParts = window.location.pathname.split('/');
-            const id = pathParts[pathParts.length - 1];
+            const id = pathParts[pathParts.length - 2];
+            console.log("ID do funcionário:", id);
 
             if (!id) {
                 exibirMensagem('ID do funcionário não encontrado na URL!', 'erro');
@@ -114,11 +114,12 @@
 
             // Lista de todas as permissões possíveis no sistema
             const todasAsPermissoes = [
-                { value: 'administrador', label: 'Administrador' },
                 { value: 'editar_conteudos', label: 'Editar Conteúdo' },
                 { value: 'excluir_conteudos', label: 'Excluir Conteúdo' },
                 { value: 'gerenciar_usuarios', label: 'Gerenciar Usuários' },
-                { value: 'gerar_relatorios', label: 'Gerar Relatórios' }
+                { value: 'gerar_relatorios', label: 'Gerar Relatórios' },
+                { value: 'visualizar_dados', label: 'Visualizar Dados' },
+                { value: 'configurar_sistema', label: 'Configurar Sistema' }
             ];
 
             /**
@@ -126,11 +127,13 @@
              */
             async function carregarDadosFuncionario() {
                 // Inicia as duas requisições em paralelo para mais eficiência
-                const deptoPromise = fetch('api/departamentos', {
+                const deptoPromise = fetch('/api/departamentos', {
+                    method: 'GET',
                     headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
                 }).then(res => res.json());
 
-                const funcPromise = fetch(`api/funcionarios/${id}`, {
+                const funcPromise = fetch(`/api/funcionarios/${id}`, {
+                    method: 'GET',
                     headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
                 }).then(res => res.json());
 
@@ -157,7 +160,7 @@
                     document.getElementById('CPF').value = func.CPF || '';
                     document.getElementById('telefone').value = func.telefone || '';
                     document.getElementById('turno').value = func.turno || 'Manhã';
-                    document.getElementById('role').value = func.role || 'operador';
+                    document.getElementById('role').value = func.role || 'funcionario';
                     document.getElementById('dataNascimento').value = func.dataNascimento ? new Date(func.dataNascimento).toISOString().split('T')[0] : '';
                     document.getElementById('departamento').value = func.departamento ? func.departamento._id : '';
 
@@ -183,6 +186,8 @@
             // Inicia o carregamento dos dados
             carregarDadosFuncionario();
         });
+       
+
     </script>
 </body>
 </html>

@@ -120,10 +120,11 @@
       const nome = document.getElementById('nome').value.trim();
       const codigo = document.getElementById('codigo').value.trim();
       const quantidade = parseInt(document.getElementById('quantidade').value, 10);
-      const Lote = document.getElementById('Lote').value;
-      const precoUnidade = parseFloat(document.getElementById('precoUnidade').value);
       const dataEntrada = document.getElementById('dataEntrada').value?.substring(0, 10) || '';
       const dataValidade = document.getElementById('dataValidade').value?.substring(0, 10) || '';
+      const Lote = document.getElementById('Lote').value;
+      const precoUnidade = parseFloat(document.getElementById('precoUnidade').value);
+
 
       if (!nome || !codigo) {
         exibirMensagem('Por favor, preencha os campos obrigatórios: Nome e Código.', 'erro');
@@ -157,7 +158,7 @@
       };
 
       try {
-        const resposta = await fetch('api/componentes', {
+        const resposta = await fetch('/api/componentes', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -168,7 +169,7 @@
 
         if (resposta.ok) {
           exibirMensagem('Componente adicionado com sucesso!', 'sucesso');
-          window.location.href = '/componente'; // Redireciona para a listagem
+          window.location.href = '/componentes'; // Redireciona para a listagem
         } else {
           const erro = await resposta.json();
           exibirMensagem(erro.msg || 'Erro ao adicionar componente.', 'erro');

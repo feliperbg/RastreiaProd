@@ -44,6 +44,6 @@ apiRouter.get('/', jwtMiddleware.validate.bind(jwtMiddleware), EtapaController.r
 apiRouter.get('/:id', jwtMiddleware.validate.bind(jwtMiddleware), MongoIdMiddleware.validateParam('id'), EtapaController.readByID);
 apiRouter.put('/:id', jwtMiddleware.validate.bind(jwtMiddleware), MongoIdMiddleware.validateParam('id'), EtapaMiddleware.validateUpdate, EtapaController.update);
 apiRouter.delete('/:id', jwtMiddleware.validate.bind(jwtMiddleware), MongoIdMiddleware.validateParam('id'), EtapaController.delete);
-apiRouter.get('/produto/etapas/:produtoId', jwtMiddleware.validate.bind(jwtMiddleware), MongoIdMiddleware.validateParam('produtoId'), EtapaController.readByProduto);
+apiRouter.get('/produtos/:produtoId', jwtMiddleware.validate.bind(jwtMiddleware), MongoIdMiddleware.validateParam('produtoId'), EtapaController.readByProduto);
 
 module.exports = { viewRouter, apiRouter };
