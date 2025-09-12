@@ -13,7 +13,7 @@ module.exports = class EtapaController {
             if (!produtoId) {
                 return res.status(400).json({ status: false, msg: 'O ID do produto é obrigatório.' });
             }
-
+            
             const novaEtapa = await Etapa.create({ ...etapaData, produto: produtoId });
 
             // Adiciona a nova etapa ao array de etapas do produto correspondente

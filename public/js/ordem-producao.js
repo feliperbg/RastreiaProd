@@ -2,7 +2,7 @@
         try {
             showLoading();
 
-            const response = await fetch('api/ordens-producao', {
+            const response = await fetch('/api/ordens-producao', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -97,7 +97,7 @@
             cancelButtonText: 'Cancelar'
         }).then(result => {
             if (result.isConfirmed) {
-                window.location.href = `/ordens-producao/editar-ordens-producao/${id}`;
+                window.location.href = `/ordens-producao/${id}/editar`;
             }
         });
         }

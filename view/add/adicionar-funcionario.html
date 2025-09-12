@@ -179,7 +179,8 @@
         // Carrega os departamentos para o ComboBox
         async function carregarDepartamentos() {
             try {
-                const response = await fetch('api/departamentos', {
+                const response = await fetch('/api/departamentos', {
+                    method: 'GET',
                     headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
                 });
                 const result = await response.json();
@@ -189,6 +190,8 @@
                         select.innerHTML += `<option value="${depto._id}">${depto.nome}</option>`;
                     });
                 }
+                if(!response.ok) throw new Error(result.msg || "Erro ao carregar departamentos.");
+                
             } catch (error) {
                 console.error('Erro ao carregar departamentos:', error);
             }

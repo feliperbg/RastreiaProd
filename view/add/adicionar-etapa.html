@@ -106,7 +106,7 @@
     <script>
        document.addEventListener('DOMContentLoaded', function () {
             const pathParts = window.location.pathname.split('/');
-            const produtoId = pathParts[pathParts.length - 1];
+            const produtoId = pathParts[pathParts.length - 2];
 
             let componenteConclusaoId = null;
             let funcionariosSelecionadosIds = [];
@@ -123,16 +123,16 @@
             }
 
             document.querySelector('.btn-secondary').onclick = () => {
-                window.location.href = `/etapa/produto/${produtoId}`;
+                window.location.href = `/etapas/produtos/${produtoId}`;
             };
 
             async function carregarListasCompletas() {
                 if (listaCompletaComponentes.length > 0 && listaCompletaFuncionarios.length > 0 && listaCompletaDepartamentos.length > 0) return;
                 try {
                     const [compRes, funcRes, departamentoRes] = await Promise.all([
-                        fetch('api/componentes', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } }),
-                        fetch('api/funcionarios', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } }),
-                        fetch('api/departamentos', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } }),
+                        fetch('/api/componentes', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } }),
+                        fetch('/api/funcionarios', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } }),
+                        fetch('/api/departamentos', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } }),
                     ]);
                     if (!compRes.ok || !funcRes.ok || !departamentoRes.ok) throw new Error("Falha ao carregar dados.");
                     
@@ -201,7 +201,7 @@
                 }
 
                 try {
-                    const response = await fetch('api/etapas', {
+                    const response = await fetch('/api/etapas', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('authToken')}` },
                         body: JSON.stringify(dadosNovaEtapa)
@@ -209,8 +209,14 @@
                     const result = await response.json();
                     if (!response.ok) throw new Error(result.msg || "Erro ao criar a etapa.");
                     
-                    await  Swal.fire('Sucesso!', 'Etapa adicionada com sucesso.', 'success');
-                    window.location.href = `/etapa/produto/${produtoId}`;
+                    
+                if (resposta.ok) {
+                    exibirMensagem('Componente adicionado com sucesso!', 'sucesso');
+                    window.location.href = `/etapas/produtos/${produtoId}`;
+                } else {
+                    const erro = await resposta.json();
+                    exibirMensagem(erro.msg || 'Erro ao adicionar componente.', 'erro');
+                }
                 } catch (error) {
                     exibirMensagem("Erro", error.message, "error");
                 }
