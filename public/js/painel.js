@@ -186,7 +186,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     async function buscarDadosParaKanban() {
-        const ordensResponse = await fetchWithAuth('api/ordens-producao');
+        const ordensResponse = await fetchWithAuth('/api/ordens-producao');
         if (!ordensResponse || !ordensResponse.ordens) return [];
 
         const kanbanData = [
@@ -225,25 +225,25 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     async function buscarDadosGraficoEtapasFinalizadas() {
-        const response = await fetchWithAuth('api/painel/ordens-finalizadas-chart');
+        const response = await fetchWithAuth('/api/painel/ordens-finalizadas-chart');
         if (!response) return { labels: [], data: [] };
         return { labels: response.labels, data: response.datasets };
     }
 
     async function buscarDadosGraficoTempo() {
-        const response = await fetchWithAuth('api/painel/tempo-medio-etapas-chart');
+        const response = await fetchWithAuth('/api/painel/tempo-medio-etapas-chart');
         if (!response) return { labels: [], data: [] };
         return { labels: response.labels, data: response.datasets };
     }
 
     async function buscarDadosGraficoStatus() {
-        const response = await fetchWithAuth('api/painel/ordens-status-chart');
+        const response = await fetchWithAuth('/api/painel/ordens-status-chart');
         if (!response) return { labels: [], data: [] };
         return { labels: response.labels, data: response.datasets };
     }
 
     async function buscarDadosParaCards() {
-        return await fetchWithAuth('api/painel/cards');
+        return await fetchWithAuth('/api/painel/cards');
     }
 
     // =================================================================================

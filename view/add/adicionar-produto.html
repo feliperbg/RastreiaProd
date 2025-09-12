@@ -125,8 +125,6 @@
           let componentesSelecionados = []; // Formato: [{ componente: 'id', quantidade: 1 }]
           let listaCompletaComponentes = [];
 
-          // --- FUNÇÕES AUXILIARES ---
-
           /**
            * Atualiza o campo de input visual dos componentes.
            */
@@ -151,7 +149,7 @@
                     // Só carrega se a lista de componentes ainda estiver vazia
                     if (listaCompletaComponentes.length > 0) return;
 
-                    const compRes = await fetch('api/componentes', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } });
+                    const compRes = await fetch('/api/componentes', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } });
                     if (!compRes.ok) throw new Error('Falha ao carregar os componentes.');
 
                     const compJson = await compRes.json();
@@ -207,7 +205,7 @@
                   if (!processoCancelado) {
                       componentesSelecionados = novosComponentesInfo;
                       atualizarDisplayComponentes();
-                      exibirMensagem('Componentes atualizados!', 'sucesso');
+                      exibirMensagem('Componentes adicionados com sucesso!', 'sucesso');
                   }
               }
           });
@@ -234,10 +232,8 @@
                   etapas: [], // Não há seleção de etapas nesta tela
               };
 
-              // Adicione aqui suas validações se necessário
-
               try {
-                  const response = await fetch('api/produtos', {
+                  const response = await fetch('/api/produtos', {
                       method: 'POST', 
                       headers: {
                           'Content-Type': 'application/json',
@@ -248,10 +244,13 @@
 
                   const result = await response.json();
                   if (!response.ok) throw new Error(result.msg || "Erro ao criar o produto.");
-                  
-                  await Swal.fire('Sucesso!', 'Produto adicionado com sucesso.', 'success');
-                  window.location.href = '/produto'; // Redireciona para a lista de produtos
-
+                  if(response.ok){
+                        exibirMensagem('Produto adicionado com sucesso!', 'sucesso');
+                        window.location.href = '/produtos'; // Redireciona para a lista de produtos
+                  }
+                else{
+                    exibirMensagem(result.msg || 'Erro ao adicionar produto.', 'erro');
+                }
               } catch (error) {
                   exibirMensagem(error.message, 'erro');
               }

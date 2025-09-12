@@ -1,7 +1,7 @@
 
   async function carregarTabelaProdutos() {
     try {
-      const resposta = await fetch('api/produtos', {
+      const resposta = await fetch('/api/produtos', {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('authToken')}`
@@ -68,7 +68,7 @@
           </td>
           <td data-label="Quantidade">${prod.quantidade}</td>
           <td data-label="Etapas">
-            <a href="/etapa/produto/${prod._id}" class="btn btn-warning">Etapas</a>
+            <a href="/etapas/produtos/${prod._id}" class="btn btn-warning">Etapas</a>
           </td>
           <td data-label="Ações">
             <button class="btn btn-sm btn-primary mb-1" onclick="editarProduto('${prod._id}', '${prod.codigo}')">
@@ -109,7 +109,7 @@
         cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
-          window.location.href = `/produto/editar-produto/${id}`;
+          window.location.href = `/produtos/${id}/editar`;
         }
     });
   }
