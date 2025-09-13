@@ -71,7 +71,7 @@
     <script>
     document.addEventListener('DOMContentLoaded', function () {
         const pathParts = window.location.pathname.split('/');
-        const id = pathParts[pathParts.length - 1];
+        const id = pathParts[pathParts.length - 2];
 
         if (!id) {
             return exibirMensagem('ID da etapa não encontrado na URL!', 'erro');
@@ -88,14 +88,14 @@
 
         async function carregarEtapa() {
             try {
-                const response = await fetch(`api/etapas/${id}`, { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } });
+                const response = await fetch(`/api/etapas/${id}`, { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } });
                 const dados = await response.json();
 
                 if (dados.status && dados.etapa) {
                     const etapa = dados.etapa;
                     produtoIdParaRedirecionar = etapa.produto;
 
-                    document.querySelector('.btn-secondary').onclick = () => window.location.href = `/etapa/produto/${produtoIdParaRedirecionar}`;
+                    document.querySelector('.btn-secondary').onclick = () => window.location.href = `/etapas/produtos/${produtoIdParaRedirecionar}`;
 
                     document.getElementById('nome').value = etapa.nome;
                     document.getElementById('sequencias').value = etapa.sequencias;
@@ -127,9 +127,9 @@
             if (listaCompletaComponentes.length > 0 && listaCompletaFuncionarios.length > 0 && listaCompletaDepartamentos.length > 0) return;
             try {
                 const [compRes, funcRes, depRes] = await Promise.all([
-                    fetch('/componente', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } }),
-                    fetch('/funcionario', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } }),
-                    fetch('/departamento', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } })
+                    fetch('/api/componentes', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } }),
+                    fetch('/api/funcionarios', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } }),
+                    fetch('/api/departamentos', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } })
                 ]);
                 if (!compRes.ok || !funcRes.ok || !depRes.ok) throw new Error("Falha ao carregar dados de seleção.");
 
@@ -250,7 +250,7 @@
             };
             if (!dadosAtualizados.nome || !dadosAtualizados.sequencias) return exibirMensagem("Nome e Sequência são obrigatórios.", "erro");
             try {
-                const response = await fetch(`api/etapas/${id}`, {
+                const response = await fetch(`/api/etapas/${id}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('authToken')}` },
                     body: JSON.stringify(dadosAtualizados)
@@ -260,9 +260,9 @@
                 
                 await Swal.fire('Sucesso!', 'Etapa atualizada com sucesso.', 'success');
                 if (produtoIdParaRedirecionar) {
-                    window.location.href = `/etapa/produto/${produtoIdParaRedirecionar}`;
+                    window.location.href = `/etapas/produtos/${produtoIdParaRedirecionar}`;
                 } else {
-                    window.location.href = '/produto'; // Fallback caso o ID não seja encontrado
+                    window.location.href = '/produtos'; // Fallback caso o ID não seja encontrado
                 }
             } catch (error) {
                 console.error("Erro ao atualizar etapa:", error);
