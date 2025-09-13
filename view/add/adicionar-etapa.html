@@ -104,7 +104,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="/js/toast.js"></script> 
     <script>
-       document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function () {
             const pathParts = window.location.pathname.split('/');
             const produtoId = pathParts[pathParts.length - 2];
 
@@ -115,12 +115,34 @@
             let listaCompletaFuncionarios = [];
             let listaCompletaDepartamentos = [];
 
-
             if (!produtoId.match(/^[0-9a-fA-F]{24}$/)) {
                 exibirMensagem('Erro!', 'ID do produto inválido na URL.', 'error');
                 document.getElementById('form-adicionar-etapa').style.display = 'none';
                 return;
             }
+
+            // --- FUNÇÃO ADICIONADA ---
+            // Busca o próximo número de sequência disponível e preenche o campo.
+            async function buscarProximaSequencia() {
+                try {
+                    const response = await fetch(`/api/etapas/produtos/${produtoId}/proxima-sequencia`, {
+                        headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
+                    });
+                    if (!response.ok) throw new Error('Não foi possível obter a próxima sequência.');
+                    
+                    const data = await response.json();
+                    if (data.status) {
+                        document.getElementById('sequencias').value = data.proximaSequencia;
+                    }
+                } catch (error) {
+                    console.error('Erro ao buscar próxima sequência:', error);
+                    exibirMensagem("Atenção", "Não foi possível sugerir um número de sequência.", "warning");
+                }
+            }
+            
+            // Chama a nova função ao carregar a página
+            buscarProximaSequencia();
+
 
             document.querySelector('.btn-secondary').onclick = () => {
                 window.location.href = `/etapas/produtos/${produtoId}`;
@@ -207,21 +229,24 @@
                         body: JSON.stringify(dadosNovaEtapa)
                     });
                     const result = await response.json();
-                    if (!response.ok) throw new Error(result.msg || "Erro ao criar a etapa.");
                     
+                    if (!response.ok) {
+                        // O backend agora envia uma mensagem de erro clara
+                        throw new Error(result.msg || "Erro desconhecido ao criar a etapa.");
+                    }
                     
-                if (resposta.ok) {
-                    exibirMensagem('Componente adicionado com sucesso!', 'sucesso');
-                    window.location.href = `/etapas/produtos/${produtoId}`;
-                } else {
-                    const erro = await resposta.json();
-                    exibirMensagem(erro.msg || 'Erro ao adicionar componente.', 'erro');
-                }
+                    exibirMensagem('Etapa adicionada com sucesso!', 'sucesso');
+                    // Aguarda um pouco para o usuário ver a mensagem antes de redirecionar
+                    setTimeout(() => {
+                        window.location.href = `/etapas/produtos/${produtoId}`;
+                    }, 1500);
+
                 } catch (error) {
                     exibirMensagem("Erro", error.message, "error");
                 }
             });
 
+            // Restante das suas funções (selecionarMultiplos, selecionarUnico)
             async function selecionarMultiplos(titulo, lista, selecionados) {
                 return Swal.fire({
                     title: titulo,
@@ -250,36 +275,36 @@
                 });
             }
 
-        async function selecionarUnico(titulo, lista, selecionadoId) {
-            return Swal.fire({
-                title: titulo,
-                html: `
-                    <input type="text" id="swal-filtro" class="form-control mb-2" placeholder="Filtrar...">
-                    <div id="swal-lista" style="max-height:300px;overflow:auto;text-align:left">
-                        ${lista.map(item => `
-                            <div>
-                                <input type="radio" id="swal-${item._id}" value="${item._id}" name="selecaoUnica" ${selecionadoId === item._id ? 'checked' : ''}>
-                                <label for="swal-${item._id}">${item.nome}</label>
-                            </div>
-                        `).join('')}
-                    </div>`,
-                showCancelButton: true,
-                confirmButtonText: 'Selecionar',
-                preConfirm: () => {
-                    const checked = document.querySelector('#swal-lista input[type=radio]:checked');
-                    return checked ? checked.value : null;
-                },
-                didOpen: () => { 
-                    document.getElementById('swal-filtro').addEventListener('input', function() {
-                        const val = this.value.toLowerCase();
-                        document.querySelectorAll('#swal-lista label').forEach(label => {
-                            label.parentElement.style.display = label.textContent.toLowerCase().includes(val) ? '' : 'none';
+            async function selecionarUnico(titulo, lista, selecionadoId) {
+                return Swal.fire({
+                    title: titulo,
+                    html: `
+                        <input type="text" id="swal-filtro" class="form-control mb-2" placeholder="Filtrar...">
+                        <div id="swal-lista" style="max-height:300px;overflow:auto;text-align:left">
+                            ${lista.map(item => `
+                                <div>
+                                    <input type="radio" id="swal-${item._id}" value="${item._id}" name="selecaoUnica" ${selecionadoId === item._id ? 'checked' : ''}>
+                                    <label for="swal-${item._id}">${item.nome}</label>
+                                </div>
+                            `).join('')}
+                        </div>`,
+                    showCancelButton: true,
+                    confirmButtonText: 'Selecionar',
+                    preConfirm: () => {
+                        const checked = document.querySelector('#swal-lista input[type=radio]:checked');
+                        return checked ? checked.value : null;
+                    },
+                    didOpen: () => { 
+                        document.getElementById('swal-filtro').addEventListener('input', function() {
+                            const val = this.value.toLowerCase();
+                            document.querySelectorAll('#swal-lista label').forEach(label => {
+                                label.parentElement.style.display = label.textContent.toLowerCase().includes(val) ? '' : 'none';
+                            });
                         });
-                    });
-                    }
-            });
-        }
-    });
-</script>
+                        }
+                });
+            }
+        });
+    </script>
 </body>
 </html>

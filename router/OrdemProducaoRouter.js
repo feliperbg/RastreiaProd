@@ -24,18 +24,19 @@ viewRouter.get('/:id/gestao', (req, res) => { res.sendFile(path.join(viewPath,'m
 
 // --- ROTAS DA API ---
 // Montadas em /api/ordens-producao no arquivo principal da aplicação
-apiRouter.post('/', jwtMiddleware.validate.bind(jwtMiddleware), OrdemProducaoMiddleware.validateCreate, OrdemProducaoController.create);
-apiRouter.get('/', jwtMiddleware.validate.bind(jwtMiddleware), OrdemProducaoController.readAll);
-apiRouter.get('/:id', jwtMiddleware.validate.bind(jwtMiddleware), MongoIdMiddleware.validateParam('id'), OrdemProducaoController.readByID);
-apiRouter.put('/:id', jwtMiddleware.validate.bind(jwtMiddleware), MongoIdMiddleware.validateParam('id'), OrdemProducaoController.update);
+// Adicionado .bind(OrdemProducaoController) a todos os métodos estáticos do controller
+apiRouter.post('/', jwtMiddleware.validate.bind(jwtMiddleware), OrdemProducaoMiddleware.validateCreate, OrdemProducaoController.create.bind(OrdemProducaoController));
+apiRouter.get('/', jwtMiddleware.validate.bind(jwtMiddleware), OrdemProducaoController.readAll.bind(OrdemProducaoController));
+apiRouter.get('/:id', jwtMiddleware.validate.bind(jwtMiddleware), MongoIdMiddleware.validateParam('id'), OrdemProducaoController.readByID.bind(OrdemProducaoController));
+apiRouter.put('/:id', jwtMiddleware.validate.bind(jwtMiddleware), MongoIdMiddleware.validateParam('id'), OrdemProducaoController.update.bind(OrdemProducaoController));
 
-// --- ROTAS DE AÇÃO (CANCELAR, PAUSAR, RETOMAR) ---
-apiRouter.patch('/:id/cancelar', jwtMiddleware.validate.bind(jwtMiddleware), MongoIdMiddleware.validateParam('id'), OrdemProducaoController.cancelar);
-apiRouter.patch('/:id/pausar', jwtMiddleware.validate.bind(jwtMiddleware), MongoIdMiddleware.validateParam('id'), OrdemProducaoController.pausar);
-apiRouter.patch('/:id/retomar', jwtMiddleware.validate.bind(jwtMiddleware), MongoIdMiddleware.validateParam('id'), OrdemProducaoController.retomar);
+// --- ROTAS DE AÇÃO (CANCELAR) ---
+apiRouter.patch('/:id/cancelar', jwtMiddleware.validate.bind(jwtMiddleware), MongoIdMiddleware.validateParam('id'), OrdemProducaoController.cancelar.bind(OrdemProducaoController));
 
 // --- ROTAS DE ETAPA ---
-apiRouter.post('/:id/etapa/:etapaId/iniciar', jwtMiddleware.validate.bind(jwtMiddleware), MongoIdMiddleware.validateParams(['id', 'etapaId']), OrdemProducaoController.iniciarEtapa);
-apiRouter.post('/:id/etapa/:etapaId/finalizar', jwtMiddleware.validate.bind(jwtMiddleware), MongoIdMiddleware.validateParams(['id', 'etapaId']), OrdemProducaoController.finalizarEtapa);
+apiRouter.post('/:id/etapa/:etapaId/iniciar', jwtMiddleware.validate.bind(jwtMiddleware), MongoIdMiddleware.validateParams(['id', 'etapaId']), OrdemProducaoController.iniciarEtapa.bind(OrdemProducaoController));
+apiRouter.post('/:id/etapa/:etapaId/finalizar', jwtMiddleware.validate.bind(jwtMiddleware), MongoIdMiddleware.validateParams(['id', 'etapaId']), OrdemProducaoController.finalizarEtapa.bind(OrdemProducaoController));
+apiRouter.patch('/:id/etapa/:etapaId/pausar', jwtMiddleware.validate.bind(jwtMiddleware), MongoIdMiddleware.validateParams(['id', 'etapaId']), OrdemProducaoController.pausarEtapa.bind(OrdemProducaoController));
+apiRouter.patch('/:id/etapa/:etapaId/retomar', jwtMiddleware.validate.bind(jwtMiddleware), MongoIdMiddleware.validateParams(['id', 'etapaId']), OrdemProducaoController.retomarEtapa.bind(OrdemProducaoController));
 
 module.exports = { viewRouter, apiRouter };
