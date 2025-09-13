@@ -1,9 +1,3 @@
-gestao-op:
-    Temp medio de execucao da OS e etapas ou n/a, mostrar no card da etapa medio e da OS mostrar no detalhe da OS
-
-ordens-producao/:
-    funcionario que criou a os -> Precisa?
-
 Gerar filtros personalizados nas tabelas
 
 Final:
