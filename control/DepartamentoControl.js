@@ -13,15 +13,19 @@ module.exports = class DepartamentoController {
 
     static async readAll(req, res) {
         try {
-            const departamentos = await Departamento.find().sort({ sequencias: 1 });
+            const departamentos = await Departamento.find().populate('funcionariosCount etapasCount').sort({ nome: 1 });
             if (!departamentos) {
-                res.status(404).json({ status: false, msg: 'Nenhum departamento encontrado.' });
+                return res.status(404).json({ status: false, msg: 'Nenhum departamento encontrado.' });
             }
-           return res.status(200).json({ status: true, departamentos: departamentos });
+
+            return res.status(200).json({ status: true, departamentos: departamentos });
+
         } catch (error) {
-            res.status(500).json({ error: 'Erro ao buscar departamentos' });
+            console.error("Erro ao buscar departamentos:", error); // Log do erro no servidor
+            return res.status(500).json({ status: false, msg: 'Erro interno ao buscar departamentos.' });
         }
     }
+
 
     static async readById(req, res) {
         try {
