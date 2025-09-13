@@ -2,10 +2,7 @@
 const express = require('express');
 const path = require('path');
 const Banco = require('./model/BancoMongoose');
-<<<<<<< HEAD
 const { cleanTempFolder } = require('./utils/cleanup.js');
-=======
->>>>>>> ff2dd710be6e4a6cc7c0c39e0af8f4843f5f7417
 
 const app = express();
 
@@ -61,7 +58,6 @@ async function startServer() {
   await Banco.connect();
   app.listen(process.env.PORT, '0.0.0.0', () => {
     console.log(`✅ Servidor rodando no endereço: http://localhost:${process.env.PORT}`);
-<<<<<<< HEAD
     // 1. Executa a limpeza uma vez quando o servidor inicia
     console.log('[CLEANUP] Executando limpeza inicial da pasta temp...');
     cleanTempFolder();
@@ -72,8 +68,6 @@ async function startServer() {
         console.log('[CLEANUP] Executando limpeza agendada da pasta temp...');
         cleanTempFolder();
     }, cleanupInterval);
-=======
->>>>>>> ff2dd710be6e4a6cc7c0c39e0af8f4843f5f7417
   });
 }
 

@@ -177,7 +177,6 @@ module.exports = class FuncionarioController {
             return res.status(500).json({ status: false, msg: 'Erro ao remover funcionário.' });
         }
     }
-<<<<<<< HEAD
 
         /**
      * @summary Recupera a senha do funcionário e envia por e-mail.
@@ -236,6 +235,4 @@ module.exports = class FuncionarioController {
             return res.status(500).json({ status: false, msg: 'Erro interno no servidor ao tentar recuperar a senha.' });
         }
     }
-=======
->>>>>>> ff2dd710be6e4a6cc7c0c39e0af8f4843f5f7417
 }
