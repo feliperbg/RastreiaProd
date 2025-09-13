@@ -1,0 +1,56 @@
+/* Estilos para o container do item (li) */
+.nav-item {
+    margin: 5px 10px; /* Apenas margem para espaçamento */
+}
+
+/* Estilos para o link (a) - aqui aplicamos o visual */
+.nav-link {
+    display: flex;
+    align-items: center;
+    padding: 8px 10px; /* Padding para criar a área de clique */
+    border-radius: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-decoration: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333; /* Cor padrão do texto */
+}
+
+/* Efeito hover para o link */
+.nav-link:hover {
+    background-color: #f0f0f0;
+    color: #000;
+    text-decoration: none;
+}
+
+/* Estilo do link ativo */
+.nav-link.active {
+    background-color: #007bff; /* Cor de fundo azul para o ativo */
+    color: #fff; /* Texto branco para o ativo */
+}
+
+/* Efeito hover para o link quando ele já está ativo */
+.nav-link.active:hover {
+    background-color: #0056b3; /* Um azul mais escuro no hover */
+}
+
+.nav-link i {
+    margin-right: 8px;
+}
+
+.nav-link span, .nav-link p {
+    vertical-align: middle;
+    margin: 0; /* Remove margens padrão do <p> */
+}
+
+.nav-link .badge {
+    margin-left: auto;
+    font-size: 12px;
+    background-color: #dc3545;
+    color: #fff;
+    padding: 2px 6px;
+    border-radius: 10px;
+}
