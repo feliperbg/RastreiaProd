@@ -20,9 +20,40 @@ module.exports = class EtapaController {
             await Produto.findByIdAndUpdate(produtoId, { $push: { etapas: novaEtapa._id } });
 
             return res.status(201).json({ status: true, msg: 'Etapa criada e associada ao produto com sucesso!', etapa: novaEtapa });
-        } catch (error) {
+        }catch (error) {
+            // Verifica se o erro é de chave duplicada
+            if (error.code === 11000) {
+                // Retorna um status 409 Conflict, que é apropriado para este caso
+                return res.status(409).json({
+                    status: false,
+                    msg: `Erro: O número de sequência '${req.body.sequencias}' já está em uso para este produto. Por favor, escolha outro.`
+                });
+            }
+
+            // Para outros erros, mantém a resposta genérica
             console.error("Erro ao criar etapa:", error);
-            return res.status(500).json({ status: false, msg: 'Erro interno no servidor.', error: error.message });
+            return res.status(500).json({ status: false, msg: "Erro interno ao criar etapa." });
+        }
+    }
+    
+    // --- NOVO MÉTODO ---
+    /**
+     * Calcula e retorna o próximo número de sequência disponível para um produto.
+     */
+    static async getProximaSequencia(req, res) {
+        try {
+            const { produtoId } = req.params;
+            
+            // Encontra a etapa com o maior número de sequência para este produto
+            const ultimaEtapa = await Etapa.findOne({ produto: produtoId }).sort({ sequencias: -1 });
+            
+            // Se houver uma última etapa, a próxima sequência é o número dela + 1. Senão, é 1.
+            const proximaSequencia = ultimaEtapa ? ultimaEtapa.sequencias + 1 : 1;
+            
+            return res.status(200).json({ status: true, proximaSequencia });
+        } catch (error) {
+            console.error("Erro ao buscar próxima sequência:", error);
+            return res.status(500).json({ status: false, msg: "Erro ao buscar a próxima sequência." });
         }
     }
 
@@ -95,6 +126,12 @@ module.exports = class EtapaController {
             return res.status(200).json({ status: true, msg: 'Etapa atualizada com sucesso!', etapa: etapaAtualizada });
         } catch (error) {
             console.error("Erro ao atualizar etapa:", error);
+            if (error.code === 11000) {
+                 return res.status(409).json({
+                    status: false,
+                    msg: `Erro: O número de sequência '${req.body.sequencias}' já está em uso para este produto. Por favor, escolha outro.`
+                });
+            }
             if (error.name === 'ValidationError') {
                 return res.status(400).json({ status: false, msg: error.message });
             }

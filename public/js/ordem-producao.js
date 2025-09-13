@@ -34,8 +34,8 @@
                 const tr = document.createElement("tr");
                 const nomeProduto = ordem.produto ? ordem.produto.nome : 'Produto não encontrado';
 
-                const etapaAtual = ordem.etapaAtual && ordem.etapaAtual.length > 0
-                    ? `${ordem.etapaAtual[0].etapa.nome} (${ordem.etapaAtual[0].status})`
+                const historicoEtapas = ordem.historicoEtapas && ordem.historicoEtapas.length > 0
+                    ? `${ordem.historicoEtapas[0].etapa.nome} (${ordem.historicoEtapas[0].status})`
                     : 'Nenhuma';
 
                 const funcionarioAtivo = ordem.funcionarioAtivo && ordem.funcionarioAtivo.length > 0
@@ -46,16 +46,17 @@
                 const horarioInicio = formatarHorario(ordem.timestampProducao?.inicio);
                 const horarioFim = formatarHorario(ordem.timestampProducao?.fim);
                 const dataEntrega = formatarData(ordem.dataEntrega);
-                const criadoPor = ordem.criadoPor ? ordem.criadoPor.nome : 'N/A';
+                const criadoPor = ordem.criadoPor ? `<span class="badge bg-secondary">${ordem.criadoPor.nome}</span>` : 'N/A';
 
                 tr.innerHTML = `
+                
                     <td data-label="Código">${ordem._id.slice(-6).toUpperCase()}</td>                    
                     <td data-label="Status">${ordem.status}</td>
                     <td data-label="Produto">${nomeProduto}</td>
-                    <td data-label="Data de Entrega">${dataEntrega}</td>
-                    <td data-label="Etapa Atual">${etapaAtual}</td>
                     <td data-label="Criado por">${criadoPor}</td>
+                    <td data-label="Etapa Atual">${historicoEtapas}</td>
                     <td data-label="Funcionário Ativo">${funcionarioAtivo}</td>
+                    <td data-label="Data de Entrega">${dataEntrega}</td>
                     <td data-label="Horário de Início">${horarioInicio}</td>
                     <td data-label="Horário de Fim">${horarioFim}</td>
                     <td data-label="Ações">

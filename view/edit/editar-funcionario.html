@@ -101,8 +101,6 @@
         document.addEventListener("DOMContentLoaded", function () {
             const pathParts = window.location.pathname.split('/');
             const id = pathParts[pathParts.length - 2];
-            console.log("ID do funcionário:", id);
-
             if (!id) {
                 exibirMensagem('ID do funcionário não encontrado na URL!', 'erro');
                 return;

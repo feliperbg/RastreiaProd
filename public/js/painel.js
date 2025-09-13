@@ -32,18 +32,13 @@ document.addEventListener("DOMContentLoaded", function () {
             body.id = `kanban-col-${board.id}`;
 
             if (board.items.length > 0) {
-                // --- MODIFICAÇÃO PRINCIPAL AQUI ---
-                // 1. Converte a classe de background (ex: 'bg-primary') em classe de borda (ex: 'border-primary')
                 const borderClass = board.class.replace('bg-', 'border-');
 
                 board.items.forEach(item => {
                     const taskCard = document.createElement('div');
-                    // 2. Adiciona a nova classe de borda dinâmica ao card
                     taskCard.className = `task-card ${borderClass}`; 
                     taskCard.setAttribute('role', 'button');
-
-                    // O restante do seu código para criar o conteúdo do card permanece o mesmo...
-                    let cardContent = `<div class="task-card-body"> ... </div>`; // (código omitido por brevidade)
+                    let cardContent = `<div class="task-card-body"> ... </div>`;
                     taskCard.innerHTML = `
                         <div class="task-card-body">
                             <div class="task-title">${item.title}</div>
@@ -107,7 +102,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     label: label,
                     data: data,
                     backgroundColor: '#ffc107',
-                    borderColor: '#e6ac00', // Opcional: melhora a estética
+                    borderColor: '#e6ac00',
                     borderWidth: 1
                 }]
             },
@@ -207,7 +202,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const column = kanbanData.find(b => b.id === statusMap[ordem.status]);
 
             if (column) {
-                const etapaAtivaObj = ordem.etapaAtual.find(e => e.status.toLowerCase() !== 'concluída');
+                const etapaAtivaObj = ordem.historicoEtapas.find(e => e.status.toLowerCase() !== 'concluída');
                 const nomeEtapa = etapaAtivaObj && etapaAtivaObj.etapa ? etapaAtivaObj.etapa.nome : '';
                 const nomeFuncionario = (ordem.funcionarioAtivo && ordem.funcionarioAtivo.length > 0 && ordem.funcionarioAtivo[0].funcionario) 
                                         ? ordem.funcionarioAtivo[0].funcionario.nome 
@@ -217,7 +212,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     funcionario: nomeFuncionario,
                     etapa: nomeEtapa,
                     title: `OP-${ordem._id.slice(-6).toUpperCase()} - ${ordem.produto.nome}`,
-                    link: `/ordens-producao/gestao-op/${ordem._id}`,
+                    link: `/ordens-producao/${ordem._id}/gestao`,
                 });
             }
         });
