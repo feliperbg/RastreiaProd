@@ -26,7 +26,7 @@ const componenteAtualizadoData = {
     precoUnidade: 1.30
 };
 
-// --- FUNÇÕES DE TESTE ---
+// --- FUNÇÕES DE TESTE ----
 
 async function testarCriacao() {
     console.log('--- Iniciando Teste de Criação de Componente (POST) ---');
