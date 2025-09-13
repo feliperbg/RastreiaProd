@@ -1,6 +1,5 @@
 
 Criar esqueceu a senha
-Crud Departamentos
 Clique na sidebar para ativar a class
 
 Gerar filtros personalizados nas tabelas
