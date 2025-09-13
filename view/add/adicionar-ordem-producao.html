@@ -74,7 +74,7 @@
             </div>
             
             <button type="submit" class="btn btn-primary">Adicionar Ordem</button>
-            <button type="button" class="btn btn-secondary" onclick="window.location.href='/ordens-producao/'">Cancelar</button>
+            <button type="button" class="btn btn-secondary" onclick="window.location.href='/ordens-producao'">Cancelar</button>
         </form>
     </div>
     <!-- Container de Toasts -->
@@ -102,7 +102,7 @@
             async function carregarListasCompletas() {
                 if (listaCompletaProdutos.length > 0) return;
                 try {
-                    const response = await fetch('/produto', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } });
+                    const response = await fetch('/api/produtos', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } });
                     const result = await response.json();
                     listaCompletaProdutos = result.produtos || [];
                 } catch (error) {
@@ -138,16 +138,21 @@
                 }
 
                 try {
-                    const response = await fetch('/ordens-producao/', {
+                    const response = await fetch('/api/ordens-producao', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('authToken')}` },
                         body: JSON.stringify(dadosNovaOrdem)
                     });
                     const result = await response.json();
                     if (!response.ok) throw new Error(result.msg || "Erro ao criar a ordem de produção.");
+                    if(response.ok){
+                        exibirMensagem('Ordem de produção criada com sucesso!', 'sucesso');
+                        window.location.href = '/ordens-producao';
+                    }
+                    else{
+                        exibirMensagem(result.msg || 'Erro ao criar a ordem de produção.', 'erro');
+                    }
                     
-                    await Swal.fire('Sucesso!', 'Ordem de produção criada com sucesso.', 'success');
-                    window.location.href = '/ordens-producao/';
                 } catch (error) {
                     exibirMensagem(error.message, 'erro');
                 }

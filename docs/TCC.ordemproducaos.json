@@ -16,7 +16,7 @@
     "$date": "2025-08-20T23:41:49.923Z"
   },
   "__v": 2,
-  "etapaAtual": [
+  "historicoEtapas": [
     {
       "etapa": {
         "$oid": "68a11d79991a1db43b72e4f8"
@@ -51,7 +51,7 @@
     "$oid": "68a16b3da0d4c892004298db"
   },
   "quantidade": 150,
-  "etapaAtual": [
+  "historicoEtapas": [
     {
       "etapa": {
         "$oid": "68a11d79991a1db43b72e4f8"
@@ -94,7 +94,7 @@
     "$oid": "68a16b3da0d4c892004298db"
   },
   "quantidade": 6,
-  "etapaAtual": [
+  "historicoEtapas": [
     {
       "etapa": {
         "$oid": "68a11d79991a1db43b72e4f8"
@@ -137,7 +137,7 @@
     "$oid": "68a66ed746f31d570bdd15ef"
   },
   "quantidade": 10,
-  "etapaAtual": [
+  "historicoEtapas": [
     {
       "etapa": {
         "$oid": "68a64a30bab63b68341b49da"

@@ -148,7 +148,7 @@
 
    
             <button type="submit" class="btn btn-primary">Adicionar Funcionário</button>
-            <button type="button" class="btn btn-secondary" onclick="window.location.href='/funcionario'">Cancelar</button>
+            <button type="button" class="btn btn-secondary" onclick="window.location.href='/funcionarios'">Cancelar</button>
         </div>
     </form>
 
@@ -179,7 +179,8 @@
         // Carrega os departamentos para o ComboBox
         async function carregarDepartamentos() {
             try {
-                const response = await fetch('/departamento', {
+                const response = await fetch('/api/departamentos', {
+                    method: 'GET',
                     headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
                 });
                 const result = await response.json();
@@ -189,6 +190,8 @@
                         select.innerHTML += `<option value="${depto._id}">${depto.nome}</option>`;
                     });
                 }
+                if(!response.ok) throw new Error(result.msg || "Erro ao carregar departamentos.");
+                
             } catch (error) {
                 console.error('Erro ao carregar departamentos:', error);
             }
