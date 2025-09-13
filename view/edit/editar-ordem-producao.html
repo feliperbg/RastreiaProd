@@ -74,7 +74,7 @@
                 </select>
             </div>
             <button type="submit" class="btn btn-primary">Salvar Alterações</button>
-            <button type="button" class="btn btn-secondary" onclick="window.location.href='/ordens-producao/'">Cancelar</button>
+            <button type="button" class="btn btn-secondary" onclick="window.location.href='/ordens-producao'">Cancelar</button>
         </form>
     </div>
         <!-- Container de Toasts -->
@@ -92,7 +92,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const pathParts = window.location.pathname.split('/');
-            const id = pathParts[pathParts.length - 1];
+            const id = pathParts[pathParts.length - 2];
 
             if (!id) {
                 return exibirMensagem('ID da ordem não encontrado na URL!', 'erro');
@@ -107,7 +107,7 @@
              */
             async function carregarOrdem() {
                 try {
-                    const response = await fetch(`api/ordens-producao/${id}`, { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } });
+                    const response = await fetch(`/api/ordens-producao/${id}`, { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } });
                     const dados = await response.json();
 
                     if (dados.status && dados.ordem) {
@@ -134,7 +134,7 @@
             async function carregarListasCompletas() {
                 if (listaCompletaProdutos.length > 0) return;
                 try {
-                    const response = await fetch('/produto', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } });
+                    const response = await fetch('/api/produtos', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } });
                     const result = await response.json();
                     listaCompletaProdutos = result.produtos || [];
                 } catch (error) {
@@ -173,7 +173,7 @@
                     if (!response.ok) throw new Error(result.msg || "Erro ao atualizar a ordem.");
                     
                     await Swal.fire('Sucesso!', 'Ordem de produção atualizada com sucesso.', 'success');
-                    window.location.href = '/ordens-producao/';
+                    window.location.href = '/ordens-producao';
                 } catch (error) {
                     exibirMensagem(error.message, 'erro');
                 }

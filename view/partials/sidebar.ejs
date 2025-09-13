@@ -61,10 +61,9 @@
         const authData = JSON.parse(userDataJSON);
         // Verifica se existe o campo permissoes e se inclui "Administrador"
         if (!authData.role || !authData.role.includes("administrador")) {
-          console.log("entrou no if do sidebar para remover o menu funcionarios");
           const menuFuncionarios = document.getElementById("menu-funcionarios");
           if (menuFuncionarios) {
-            menuFuncionarios.remove(); // Remove o <li> do DOM
+            menuFuncionarios.remove();
           }
         }
       } catch (e) {   

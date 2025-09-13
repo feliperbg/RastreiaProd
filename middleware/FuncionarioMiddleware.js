@@ -1,44 +1,154 @@
 // Arquivo: middleware/FuncionarioMiddleware.js
 module.exports = class FuncionarioMiddleware {
+    /**
+     * Middleware para validar os campos durante a criação de um novo registro.
+     */
     static validateCreate(req, res, next) {
-        const { nome, email, senha } = req.body;
+        // Extrai todos os campos esperados do corpo da requisição
+        const {
+            nome,
+            email,
+            CPF,
+            telefone,
+            turno,
+            dataNascimento,
+            role,
+            departamento,
+            senha
+        } = req.body;
 
-        if (!nome || !email || !senha) {
-            let camposFaltando = [];
-            if (!nome) camposFaltando.push('nome'); //
-            if (!email) camposFaltando.push('email'); //
-            if (!senha) camposFaltando.push('senha'); //
-            return res.status(400).json({ status: false, msg: `Campos obrigatórios faltando: ${camposFaltando.join(', ')}.` });
+        // Validação do Nome
+        if (nome === undefined || nome.trim() === '') {
+            return res.status(400).json({ status: false, msg: 'O campo "nome" é obrigatório.' });
         }
 
-        // --- NOVA VALIDAÇÃO DE FORMATO DE EMAIL ---
+        // Validação do Email
+        if (email === undefined || email.trim() === '') {
+            return res.status(400).json({ status: false, msg: 'O campo "email" é obrigatório.' });
+        }
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
             return res.status(400).json({ status: false, msg: 'O formato do email é inválido.' });
         }
 
-        return next();
+        // Validação da Senha
+        if (senha === undefined || senha === '') {
+            return res.status(400).json({ status: false, msg: 'O campo "senha" é obrigatório.' });
+        }
+        if (senha.length < 6) {
+            return res.status(400).json({ status: false, msg: 'A senha deve ter pelo menos 6 caracteres.' });
+        }
+
+        // Validação do CPF
+        if (CPF === undefined || CPF.trim() === '') {
+            return res.status(400).json({ status: false, msg: 'O campo "CPF" é obrigatório.' });
+        }
+        if (!validaCPF(CPF)) {
+            return res.status(400).json({ status: false, msg: 'O CPF informado é inválido.' });
+        }
+        
+        // Validação do Telefone
+        if (telefone === undefined || telefone.trim() === '') {
+            return res.status(400).json({ status: false, msg: 'O campo "telefone" é obrigatório.' });
+        }
+
+        // Validação do Turno
+        if (turno === undefined || turno.trim() === '') {
+            return res.status(400).json({ status: false, msg: 'O campo "turno" é obrigatório.' });
+        }
+
+        // Validação da Data de Nascimento
+        if (dataNascimento === undefined || dataNascimento.trim() === '') {
+            return res.status(400).json({ status: false, msg: 'O campo "data de nascimento" é obrigatório.' });
+        }
+        const dataRegex = /^\d{4}-\d{2}-\d{2}$/;
+        if (!dataRegex.test(dataNascimento)) {
+            return res.status(400).json({ status: false, msg: 'O formato da data de nascimento deve ser AAAA-MM-DD.' });
+        }
+
+        // Validação da Role
+        if (role === undefined || role.trim() === '') {
+            return res.status(400).json({ status: false, msg: 'O campo "role" é obrigatório.' });
+        }
+
+        // Validação do Departamento
+        if (departamento === undefined || departamento.trim() === '') {
+            return res.status(400).json({ status: false, msg: 'O campo "departamento" é obrigatório.' });
+        }
+
+
+        // Se todas as validações passarem, continua para a próxima função
+        next();
     }
 
+
+
+    /**
+     * Middleware para validar os campos do corpo da requisição.
+     */
     static validateUpdate(req, res, next) {
-        const { nome, email, senha } = req.body;
+        // Extrai todos os campos esperados do corpo da requisição
+        const {
+            nome,
+            email,
+            CPF,
+            telefone,
+            turno,
+            dataNascimento,
+            role,
+            departamento
+        } = req.body;
 
-        if (nome === '') {
-            return res.status(400).json({ status: false, msg: 'O campo "nome" não pode ser vazio.' });
-        }
-        if (email === '') {
-            return res.status(400).json({ status: false, msg: 'O campo "email" não pode ser vazio.' });
-        }
-        // --- NOVA VALIDAÇÃO DE FORMATO DE EMAIL ---
-        if (email) {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                return res.status(400).json({ status: false, msg: 'O formato do email é inválido.' });
-            }
+        // Validação do Nome
+        if (nome === undefined || nome.trim() === '') {
+            return res.status(400).json({ status: false, msg: 'O campo "nome" é obrigatório.' });
         }
 
-        if (senha != null && senha.length < 6) {
-            return res.status(400).json({ status: false, msg: 'A senha deve ter pelo menos 6 caracteres.' });
+        // Validação do Email
+        if (email === undefined || email.trim() === '') {
+            return res.status(400).json({ status: false, msg: 'O campo "email" é obrigatório.' });
+        }
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return res.status(400).json({ status: false, msg: 'O formato do email é inválido.' });
+        }
+
+        // Validação do CPF
+        if (CPF === undefined || CPF.trim() === '') {
+            return res.status(400).json({ status: false, msg: 'O campo "CPF" é obrigatório.' });
+        }
+        if (!validaCPF(CPF)) {
+            return res.status(400).json({ status: false, msg: 'O CPF informado é inválido.' });
+        }
+        
+        // Validação do Telefone (opcional, mas se existir, pode ter um formato)
+        if (telefone === undefined || telefone.trim() === '') {
+            return res.status(400).json({ status: false, msg: 'O campo "telefone" é obrigatório.' });
+        }
+
+        // Validação do Turno
+        if (turno === undefined || turno.trim() === '') {
+            return res.status(400).json({ status: false, msg: 'O campo "turno" é obrigatório.' });
+        }
+
+        // Validação da Data de Nascimento
+        if (dataNascimento === undefined || dataNascimento.trim() === '') {
+            return res.status(400).json({ status: false, msg: 'O campo "dataNascimento" é obrigatório.' });
+        }
+        // Verifica se a data está no formato YYYY-MM-DD
+        const dataRegex = /^\d{4}-\d{2}-\d{2}$/;
+        if (!dataRegex.test(dataNascimento)) {
+            return res.status(400).json({ status: false, msg: 'O formato da data de nascimento deve ser AAAA-MM-DD.' });
+        }
+
+        // Validação da Role
+        if (role === undefined || role.trim() === '') {
+            return res.status(400).json({ status: false, msg: 'O campo "role" é obrigatório.' });
+        }
+
+        // Validação do Departamento
+        if (!departamento || String(departamento).trim() === '') {
+            return res.status(400).json({ status: false, msg: 'O campo "departamento" é obrigatório.' });
         }
 
         next();
@@ -46,9 +156,6 @@ module.exports = class FuncionarioMiddleware {
 
     static validateLogin(req, res, next) {
         const { email, senha } = req.body;
-        console.log("Validando login com email:", email);
-        console.log("Validando login com senha:", senha);
-
 
         if (!email || !senha) {
             return res.status(400).json({ status: false, msg: 'Os campos "email" e "senha" são obrigatórios.' });
@@ -63,3 +170,51 @@ module.exports = class FuncionarioMiddleware {
         next();
     }
 };
+    /**
+     * Função auxiliar para validar o CPF.
+     * @param {string} strCPF - O CPF a ser validado, pode conter pontos e traços.
+     * @returns {boolean} - Retorna true se o CPF for válido, false caso contrário.
+     */
+    function validaCPF(strCPF) {
+        let soma = 0;
+        let resto;
+
+        // Remove caracteres não numéricos
+        const cpfLimpo = String(strCPF).replace(/[^\d]/g, '');
+
+        // Verifica se o CPF tem 11 dígitos
+        if (cpfLimpo.length !== 11) {
+            return false;
+        }
+
+        if (/^(\d)\1+$/.test(cpfLimpo)) {
+            return false;
+        }
+
+        // Validação do primeiro dígito verificador
+        for (let i = 1; i <= 9; i++) {
+            soma += parseInt(cpfLimpo.substring(i - 1, i)) * (11 - i);
+        }
+        resto = (soma * 10) % 11;
+        if ((resto === 10) || (resto === 11)) {
+            resto = 0;
+        }
+        if (resto !== parseInt(cpfLimpo.substring(9, 10))) {
+            return false;
+        }
+
+        // Validação do segundo dígito verificador
+        soma = 0;
+        for (let i = 1; i <= 10; i++) {
+            soma += parseInt(cpfLimpo.substring(i - 1, i)) * (12 - i);
+        }
+        resto = (soma * 10) % 11;
+        if ((resto === 10) || (resto === 11)) {
+            resto = 0;
+        }
+        if (resto !== parseInt(cpfLimpo.substring(10, 11))) {
+            return false;
+        }
+
+        return true;
+    }
