@@ -18,11 +18,18 @@
 
         <div id="conteudo-pagina" class="d-none">
             <div class="printable-area">
+                <!-- BOTÃO DE VOLTAR CORRIGIDO -->
+                <div class="mb-4 no-print">
+                    <button class="btn btn-outline-secondary" onclick="location.href = document.referrer;">
+                        <i class="bi bi-arrow-left"></i> Voltar
+                    </button>
+                </div>
+
                 <!-- CABEÇALHO E QR CODE -->
-                <div class="row mb-4">
+                <div class="row mb-4 align-items-center">
                     <div class="col-md-9">
                         <h2 id="op-titulo">Ordem de Produção</h2>
-                        <p class="text-muted">Acompanhe o progresso e gerencie as etapas de produção.</p>
+                        <p class="text-muted mb-0">Acompanhe o progresso e gerencie as etapas de produção.</p>
                     </div>
                     <div class="col-md-3 text-center">
                         <div id="qrcode-container"></div>
@@ -34,13 +41,7 @@
                 <div class="card mb-4">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">Detalhes da Ordem de Serviço</h5>
-                        <div class="d-flex gap-2 no-print">
-                            <button id="btn-pausar-op" class="btn btn-warning btn-sm d-none" onclick="pausarOrdemProducao()">
-                                <i class="bi bi-pause-circle"></i> Pausar
-                            </button>
-                            <button id="btn-retomar-op" class="btn btn-info btn-sm d-none" onclick="retomarOrdemProducao()">
-                                <i class="bi bi-play-circle"></i> Retomar
-                            </button>
+                        <div class="no-print">
                             <button class="btn btn-outline-secondary btn-sm" onclick="window.print()">
                                 <i class="bi bi-printer"></i> Imprimir
                             </button>
@@ -51,6 +52,7 @@
                             <div class="col-lg-3 col-md-6 mb-2"><strong>Produto:</strong> <span id="op-produto"></span></div>
                             <div class="col-lg-2 col-md-6 mb-2"><strong>Quantidade:</strong> <span id="op-quantidade"></span></div>
                             <div class="col-lg-2 col-md-6 mb-2"><strong>Data de Entrega:</strong> <span id="op-data-entrega"></span></div>
+                            <div class="col-lg-2 col-md-6 mb-2"><strong>Tempo Médio OP:</strong> <span id="op-tempo-medio"></span></div>
                             <div class="col-lg-3 col-md-6 mb-2"><strong>Criado por:</strong> <span id="op-criado-por"></span></div>
                             <div class="col-lg-2 col-md-12 text-lg-end">
                                 <strong>Status:</strong>
@@ -99,7 +101,7 @@
     
     <!-- SCRIPTS DA APLICAÇÃO -->
     <script src="/js/toast.js"></script>
-    <script src="/js/tabela.js"></script> <!-- Adicionado para ter acesso às funções de formatação -->
+    <script src="/js/tabela.js"></script>
     <script src="/js/gestao-op.js"></script>
 </body>
 </html>

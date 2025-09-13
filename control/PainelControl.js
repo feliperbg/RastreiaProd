@@ -117,17 +117,17 @@ module.exports = class PainelController {
     static async getTempoMedioEtapasChart(req, res) {
         try {
             const aggregationResult = await OrdemProducao.aggregate([
-                { $unwind: '$etapaAtual' },
+                { $unwind: '$historicoEtapas' },
                 { $match: { 
-                    'etapaAtual.dataInicio': { $exists: true, $ne: null },
-                    'etapaAtual.dataFim': { $exists: true, $ne: null }
+                    'historicoEtapas.dataInicio': { $exists: true, $ne: null },
+                    'historicoEtapas.dataFim': { $exists: true, $ne: null }
                 }},
                 { $addFields: {
-                    "etapaAtual.duracaoMs": { $subtract: ['$etapaAtual.dataFim', '$etapaAtual.dataInicio'] }
+                    "historicoEtapas.duracaoMs": { $subtract: ['$historicoEtapas.dataFim', '$historicoEtapas.dataInicio'] }
                 }},
                 { $group: {
-                    _id: '$etapaAtual.etapa',
-                    tempoMedioMs: { $avg: '$etapaAtual.duracaoMs' }
+                    _id: '$historicoEtapas.etapa',
+                    tempoMedioMs: { $avg: '$historicoEtapas.duracaoMs' }
                 }},
                 { $lookup: {
                     from: 'etapas',
