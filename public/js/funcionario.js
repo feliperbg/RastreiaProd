@@ -153,42 +153,43 @@
 
     //Função para adicionar funcionário
     async function adicionarFuncionario(event) {
-      event.preventDefault();
-      
-      const form = document.getElementById('form-adicionar');
-      const formData = new FormData(form);
-      const cpfInput = document.getElementById('CPF');
-      if (cpfInput && cpfInput.inputmask) {
-        formData.set('CPF', cpfInput.inputmask.unmaskedvalue());
-      }
-
-      const telefoneInput = document.getElementById('telefone');
-      if (telefoneInput && telefoneInput.inputmask) {
-        formData.set('telefone', telefoneInput.inputmask.unmaskedvalue());
-      }
-
-      try {
-        const resposta = await fetch(`/api/funcionarios`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-          },
-          body: formData
-        });
-
-        if (!resposta.ok) {
-          const erro = await resposta.json();
-          exibirMensagem(erro.msg || 'Erro ao adicionar funcionário.', 'erro');
-          return;
+        event.preventDefault();
+        
+        const form = document.getElementById('form-adicionar');
+        const formData = new FormData(form);
+        const cpfInput = document.getElementById('CPF');
+        if (cpfInput && cpfInput.inputmask) {
+            formData.set('CPF', cpfInput.inputmask.unmaskedvalue());
         }
 
-        exibirMensagem('Funcionário adicionado com sucesso!', 'sucesso');
-        setTimeout(() => {
-          window.location.href = '/funcionarios';
-        }, 2000);
-      } catch (error) {
-        exibirMensagem('Erro interno ao tentar adicionar funcionário.', 'erro');
-      }
+        const telefoneInput = document.getElementById('telefone');
+        if (telefoneInput && telefoneInput.inputmask) {
+            formData.set('telefone', telefoneInput.inputmask.unmaskedvalue());
+        }
+        const permissoes = Array.from(document.querySelectorAll('input[name="permissoes"]:checked'))
+                                .map(checkbox => checkbox.value);
+        formData.set('permissoes', permissoes);
+        try {
+            const resposta = await fetch(`/api/funcionarios`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                },
+                body: formData
+            });
+
+            if (!resposta.ok) {
+                const erro = await resposta.json();
+                exibirMensagem(erro.msg || 'Erro ao adicionar funcionário.', 'erro');
+                return;
+            }
+            exibirMensagem('Funcionário adicionado com sucesso!', 'sucesso');
+            setTimeout(() => {
+                window.location.href = '/funcionarios';
+            }, 2000);
+        } catch (error) {
+            exibirMensagem('Erro interno ao tentar adicionar funcionário.', 'erro');
+        }
     }
     async function atualizarFuncionario(event) {
         event.preventDefault();
