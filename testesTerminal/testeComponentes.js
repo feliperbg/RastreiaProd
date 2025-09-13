@@ -4,7 +4,7 @@ const axios = require('axios');
 // --- CONFIGURAÇÕES ---
 const BASE_URL = 'http://localhost:8081/componente'; // A URL base da sua API de componentes
 
-// !! IMPORTANTE !! Cole aqui o seu token JWT válido
+// !! IMPORTANTE !! Cole aqui o seu token JWT válidodd
 const TOKEN_JWT = 'COLE_SEU_TOKEN_AQUI';
 const AUTH_HEADER = {
     headers: { 'Authorization': `Bearer ${TOKEN_JWT}` }
