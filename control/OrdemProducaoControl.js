@@ -43,13 +43,13 @@ module.exports = class OrdemProducaoController {
                     select: 'nome'
                 })
                 .populate('criadoPor', 'nome');
-            const ordemStatus = {
-                'Pendente': 1,
-                'Em Andamento': 2,
-                'Pausada': 3,
-                'Concluída': 4,
-                'Cancelada': 5
-            };
+                const ordemStatus = {
+                    'Pendente': 1,
+                    'Em Andamento': 2,
+                    'Pausada': 3,
+                    'Concluída': 4,
+                    'Cancelada': 5
+                };
 
             ordens.sort((a, b) => {
                 const ordemA = ordemStatus[a.status] || 99;

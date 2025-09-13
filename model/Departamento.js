@@ -25,6 +25,7 @@ DepartamentoSchema.virtual('funcionariosCount', {
     foreignField: 'departamento', // O campo no model Funcionario que guarda o ID do departamento
     count: true // Apenas contar os documentos
 });
+
 DepartamentoSchema.virtual('etapasCount', {
     ref: 'Etapa', // O nome do seu model de Funcionário
     localField: '_id',

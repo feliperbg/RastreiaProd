@@ -29,7 +29,7 @@ const ProdutoSchema = new Schema({
         type: Number,
         required: [true, 'A quantidade em estoque é obrigatória.'],
         min: [0, 'A quantidade não pode ser negativa.'],
-        default: 0
+        default: 1
     },
     precoMontagem: {
         type: Number,

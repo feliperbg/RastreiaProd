@@ -48,8 +48,6 @@ module.exports = class FuncionarioController {
 
         } catch (error) {
             console.error("Erro ao criar funcionário:", error);
-
-            // --- Lógica de Rollback Aprimorada ---
             try {
                 if (tempPath) {
                     await fs.unlink(tempPath);
@@ -216,7 +214,6 @@ module.exports = class FuncionarioController {
                 message: mensagem,
             });
     
-            // CORREÇÃO 3: Crie o objeto de resposta antes de enviá-lo para adicionar a chave condicional.
             const responseBody = {
                 status: true,
                 msg: 'Uma nova senha foi enviada para o seu e-mail de cadastro.'

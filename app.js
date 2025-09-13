@@ -21,7 +21,6 @@ const { viewRouter: funcionarioViewRouter, apiRouter: funcionarioApiRouter } = r
 const { viewRouter: ordemProducaoViewRouter, apiRouter: ordemProducaoApiRouter } = require('./router/OrdemProducaoRouter');
 const { apiRouter: painelApiRouter } = require('./router/PainelRouter');
 const { viewRouter: departamentoViewRouter, apiRouter: departamentoApiRouter } = require('./router/DepartamentoRouter');
-const { env } = require('process');
 
 
 // --- ROTAS DE VIEWS (FRONTEND) ---
@@ -61,7 +60,6 @@ async function startServer() {
     // 1. Executa a limpeza uma vez quando o servidor inicia
     console.log('[CLEANUP] Executando limpeza inicial da pasta temp...');
     cleanTempFolder();
-
     // 2. Agenda a limpeza para rodar a cada hora (3600000 milissegundos)
     const cleanupInterval = 3600 * 1000; 
     setInterval(() => {

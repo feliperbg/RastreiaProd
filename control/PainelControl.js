@@ -65,7 +65,7 @@ module.exports = class PainelController {
     }
 
     /**
-     * Calcula e retorna o número de ordens concluídas nos últimos 7 dias.
+     * Calcula e retorna o número de ordens concluídas nos últimos 5 dias.
      */
     static async getOrdensFinalizadasChart(req, res) {
         try {

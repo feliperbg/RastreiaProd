@@ -21,7 +21,7 @@ module.exports = class DepartamentoController {
             return res.status(200).json({ status: true, departamentos: departamentos });
 
         } catch (error) {
-            console.error("Erro ao buscar departamentos:", error); // Log do erro no servidor
+            console.error("Erro ao buscar departamentos:", error);
             return res.status(500).json({ status: false, msg: 'Erro interno ao buscar departamentos.' });
         }
     }

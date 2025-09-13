@@ -84,7 +84,7 @@
         if (isConfirmed) {
             try {
                 Swal.fire({ title: 'Deletando...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-                const response = await fetch(`api/componentes/${id}`, {
+                const response = await fetch(`/api/componentes/${id}`, {
                     method: 'DELETE',
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('authToken')}`

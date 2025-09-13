@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "npx nodemon app.js",
     "start": "node app.js",
-    "install-depedencies": "npm install axios bcrypt ejs express jsonwebtoken mongodb mongoose mongoose-sequence"
+    "install-depedencies": "npm install axios bcrypt ejs express jsonwebtoken mongodb mongoose mongoose-sequence multer nodemailer dotenv fs"
   },
   "author": "Felipe Goncalves, Jose Gadioli, Joao Nogueira",
   "license": "ISC",

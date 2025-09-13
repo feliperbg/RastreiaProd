@@ -104,7 +104,6 @@ document.addEventListener("DOMContentLoaded", function () {
         exibirMensagem(`Erro ao fazer login: ${error.message}`, "erro");
       });
   }
-
   function exibirMensagem(texto, tipo) {
     divResposta.innerText = texto;
     divResposta.style.padding = "10px";

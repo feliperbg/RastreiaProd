@@ -34,7 +34,6 @@ viewRouter.get('/:produtoId/adicionar', (req, res) => { res.sendFile(path.join(v
 viewRouter.get('/:id/editar', (req, res) => { res.sendFile(path.join(viewPath, 'edit', 'editar-etapa.html')); });
 
 // --- ROTAS DA API ---
-// Montadas em /api/etapas no arquivo principal da aplicação
 // Adicionado .bind() para garantir o contexto (this) correto nos métodos do controller
 apiRouter.post('/', jwtMiddleware.validate.bind(jwtMiddleware), EtapaMiddleware.validateCreate, EtapaController.create.bind(EtapaController));
 apiRouter.get('/', jwtMiddleware.validate.bind(jwtMiddleware), EtapaController.readAll.bind(EtapaController));
