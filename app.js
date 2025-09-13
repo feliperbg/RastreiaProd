@@ -2,6 +2,7 @@
 const express = require('express');
 const path = require('path');
 const Banco = require('./model/BancoMongoose');
+const { cleanTempFolder } = require('./utils/cleanup.js');
 
 const app = express();
 
@@ -57,6 +58,16 @@ async function startServer() {
   await Banco.connect();
   app.listen(process.env.PORT, '0.0.0.0', () => {
     console.log(`✅ Servidor rodando no endereço: http://localhost:${process.env.PORT}`);
+    // 1. Executa a limpeza uma vez quando o servidor inicia
+    console.log('[CLEANUP] Executando limpeza inicial da pasta temp...');
+    cleanTempFolder();
+
+    // 2. Agenda a limpeza para rodar a cada hora (3600000 milissegundos)
+    const cleanupInterval = 3600 * 1000; 
+    setInterval(() => {
+        console.log('[CLEANUP] Executando limpeza agendada da pasta temp...');
+        cleanTempFolder();
+    }, cleanupInterval);
   });
 }
 

@@ -1,58 +1,82 @@
 const Funcionario = require('../model/Funcionario');
 const TokenJWT = require('../model/TokenJWT');
 const bcrypt = require('bcrypt');
-const fs = require('fs');
+const fs = require('fs').promises;
 const path = require('path');
+const crypto = require('crypto');
+const sendEmail = require('../utils/emailService.js');
 
 module.exports = class FuncionarioController {
     static async create(req, res) {
         let novoFuncionario;
         const tempPath = req.file ? req.file.path : null;
+        let finalPath = null;
 
         try {
-            // 1. Cria o funcionário no banco de dados para obter o _id
             novoFuncionario = new Funcionario({
                 ...req.body,
-                imagem: null // Define a imagem como nula inicialmente
+                imagem: null
             });
             await novoFuncionario.save();
 
-            // 2. Se um arquivo foi enviado, renomeia-o com o _id do funcionário
             if (tempPath) {
                 const fileExtension = path.extname(req.file.originalname);
                 const newFileName = `${novoFuncionario._id}${fileExtension}`;
-                const finalPath = path.join(path.dirname(tempPath), newFileName);
+                
+                // Define o diretório final
+                const finalDir = path.join(path.dirname(tempPath), '..', 'funcionario');
+                
+                // Garante que o diretório final exista (usando a versão síncrona aqui, pois é uma verificação rápida na inicialização)
+                const fsSync = require('fs');
+                if (!fsSync.existsSync(finalDir)){
+                    fsSync.mkdirSync(finalDir, { recursive: true });
+                }
 
-                fs.renameSync(tempPath, finalPath);
+                finalPath = path.join(finalDir, newFileName);
 
-                // 3. Atualiza o registro do funcionário com o caminho da imagem
-                // O caminho salvo no banco deve ser relativo à pasta 'public'
+                // USA A VERSÃO ASSÍNCRONA para mover o arquivo
+                await fs.rename(tempPath, finalPath);
+
                 const imagePathForDB = `/imagens/funcionario/${newFileName}`;
                 novoFuncionario.imagem = imagePathForDB;
                 await novoFuncionario.save();
             }
 
-            // Remove a senha do objeto de retorno
             const funcionarioRetorno = novoFuncionario.toObject();
             delete funcionarioRetorno.senha;
             return res.status(201).json({ status: true, msg: 'Funcionário criado com sucesso!', funcionario: funcionarioRetorno });
 
         } catch (error) {
-            // Lógica de rollback: se algo der errado, desfaz as ações
-            if (tempPath && fs.existsSync(tempPath)) {
-                fs.unlinkSync(tempPath); // Deleta o arquivo temporário
-            }
-            if (novoFuncionario && novoFuncionario._id) {
-                await Funcionario.findByIdAndDelete(novoFuncionario._id); // Deleta o registro do funcionário
+            console.error("Erro ao criar funcionário:", error);
+
+            // --- Lógica de Rollback Aprimorada ---
+            try {
+                if (tempPath) {
+                    await fs.unlink(tempPath);
+                }
+                if (finalPath) {
+                    // O fs.unlink falhará se o arquivo não existir, o que é esperado se o rename não ocorreu
+                    // Adicionamos um catch para ignorar esse erro específico de "arquivo não encontrado"
+                    await fs.unlink(finalPath).catch(err => {
+                        if (err.code !== 'ENOENT') throw err; // Re-lança o erro se não for "file not found"
+                    });
+                }
+            } catch (cleanupError) {
+                console.error("Erro durante a limpeza dos arquivos:", cleanupError);
             }
 
-            console.error("Erro ao criar funcionário:", error);
-            if (error.code === 11000) { // Erro de chave duplicada (ex: email)
-                return res.status(400).json({ status: false, msg: 'O e-mail informado já está em uso.' });
+            // Deleta o registro do banco
+            if (novoFuncionario && novoFuncionario._id) {
+                await Funcionario.findByIdAndDelete(novoFuncionario._id);
+            }
+
+            if (error.code === 11000) {
+                return res.status(400).json({ status: false, msg: 'O e-mail ou CPF informado já está em uso.' });
             }
             return res.status(500).json({ status: false, msg: 'Erro interno no servidor.', error: error.message });
         }
     }
+
 
     static async login(req, res) {
         try {
@@ -152,6 +176,64 @@ module.exports = class FuncionarioController {
             return res.status(200).json({ status: true, msg: 'Funcionário removido!' });
         } catch (error) {
             return res.status(500).json({ status: false, msg: 'Erro ao remover funcionário.' });
+        }
+    }
+
+        /**
+     * @summary Recupera a senha do funcionário e envia por e-mail.
+     * @description Verifica as credenciais, gera uma nova senha, atualiza no banco
+     * e utiliza o serviço de e-mail para notificar o funcionário.
+     * @param {object} req - A requisição Express.
+     * @param {object} res - A resposta Express.
+     * @returns {object} Retorna uma resposta JSON indicando sucesso ou falha.
+     */
+    static async recuperarSenha(req, res) {
+        try {
+            const { credential, birthdate } = req.body;
+    
+            const cpfSemMascara = credential.replace(/\D/g, '');
+    
+            const funcionario = await Funcionario.findOne({
+                CPF: cpfSemMascara,
+                dataNascimento: new Date(birthdate)
+            });
+    
+            if (!funcionario) {
+                return res.status(404).json({ status: false, msg: 'Funcionário não encontrado com os dados informados.' });
+            }
+    
+            const novaSenha = crypto.randomBytes(8).toString('hex');
+    
+            funcionario.senha = novaSenha;
+            await funcionario.save();
+    
+            const mensagem = `Olá, ${funcionario.nome}.\n\nVocê solicitou a recuperação de sua senha no sistema RastreiaProd.\nSua nova senha é: ${novaSenha}\n\nRecomendamos que você altere esta senha após o primeiro login.\n\nAtenciosamente,\nEquipe RastreiaProd`;
+
+            // Chama a função de e-mail diretamente
+            await sendEmail({
+                email: funcionario.email,
+                subject: 'Recuperação de Senha - RastreiaProd',
+                message: mensagem,
+            });
+    
+            // CORREÇÃO 3: Crie o objeto de resposta antes de enviá-lo para adicionar a chave condicional.
+            const responseBody = {
+                status: true,
+                msg: 'Uma nova senha foi enviada para o seu e-mail de cadastro.'
+            };
+
+            if (process.env.NODE_ENV === 'development') {
+                responseBody.novaSenha = novaSenha; // Adiciona a nova senha apenas em ambiente de desenvolvimento
+            }
+
+            return res.status(200).json(responseBody);
+    
+        } catch (error) {
+            console.error('Erro ao recuperar senha:', error);
+            if (error.message.includes('enviar o e-mail')) {
+                return res.status(500).json({ status: false, msg: error.message });
+            }
+            return res.status(500).json({ status: false, msg: 'Erro interno no servidor ao tentar recuperar a senha.' });
         }
     }
 }
