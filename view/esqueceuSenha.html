@@ -60,32 +60,90 @@
         .btn:hover {
             background-color: #0056b3;
         }
+        #divResposta {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Recuperar Senha</h1>
-        <form action="/recuperar-senha" method="POST">
+        <form id="form-recuperar-senha">
             <div class="form-group">
-                <label for="credential">Credencial</label>
-                <input type="text" id="txtCredencial" name="credential" placeholder="Digite sua credencial" required>
+                <label for="credential">CPF</label>
+                <input type="text" id="txtCredential" name="credential" placeholder="Digite seu CPF" required>
             </div>
             <div class="form-group">
                 <label for="birthdate">Data de Nascimento</label>
                 <input type="date" id="data_nasc" name="birthdate" required>
             </div>
-            <button type="submit" class="btnRecuperar">Enviar</button>
+            <button type="submit" class="btn">Recuperar</button>
         </form>
+        <div id="divResposta"></div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/inputmask@5.0.6/dist/inputmask.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.getElementById("form-recuperar-senha");
+            const txtCredential = document.getElementById("txtCredential");
+            const divResposta = document.getElementById("divResposta");
+
+            // Aplica a máscara de CPF
+            Inputmask("999.999.999-99").mask(txtCredential);
+
+            form.addEventListener("submit", function (event) {
+                event.preventDefault();
+                recuperarSenha();
+            });
+
+            function recuperarSenha() {
+                const credential = txtCredential.value;
+                const birthdate = document.getElementById("data_nasc").value;
+
+                fetch('/api/funcionarios/recuperar-senha', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ credential, birthdate }),
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status) {
+                        exibirMensagem(data.msg, 'sucesso');
+                        window.setTimeout(() => {
+                            window.location.href = '/login';
+                        }, 5000); // Redireciona após 5 segundos
+                    } else {
+                        exibirMensagem(data.msg, 'erro');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                    exibirMensagem('Ocorreu um erro ao tentar recuperar a senha.', 'erro');
+                });
+            }
+
+            function exibirMensagem(texto, tipo) {
+                divResposta.innerHTML = texto;
+                divResposta.style.padding = "10px";
+                divResposta.style.marginTop = "10px";
+                divResposta.style.borderRadius = "5px";
+                divResposta.style.textAlign = "center";
+
+                if (tipo === "sucesso") {
+                    divResposta.style.backgroundColor = "#d4edda";
+                    divResposta.style.color = "#155724";
+                } else {
+                    divResposta.style.backgroundColor = "#f8d7da";
+                    divResposta.style.color = "#721c24";
+                }
+            }
+        });
+    </script>
 </body>
-<script>
-    const btnRecuperar = document.getElementById("btnRecuperar");
-    const txtCredencial = document.getElementById("txtCredencial");
-    const txtDataNascimento = document.getElementById("dtDataNascimento");
-    // Ação do botão de login
-    btnLogin.onclick = function (event) {
-    event.preventDefault(); // Evita o comportamento padrão do botão
-    recuperarSenhar();
-    };
-</script>
 </html>

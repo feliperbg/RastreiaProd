@@ -1,6 +1,4 @@
 
-Criar esqueceu a senha
-Clique na sidebar para ativar a class
 
 Gerar filtros personalizados nas tabelas
 

@@ -5,16 +5,18 @@ module.exports = class FuncionarioMiddleware {
      */
     static validateCreate(req, res, next) {
         // Extrai todos os campos esperados do corpo da requisição
-        const {
+        let {
             nome,
-            email,
+            senha,
             CPF,
+            email,
             telefone,
             turno,
             dataNascimento,
+            imagem,
+            permissoes,
             role,
             departamento,
-            senha
         } = req.body;
 
         // Validação do Nome
@@ -64,6 +66,14 @@ module.exports = class FuncionarioMiddleware {
         const dataRegex = /^\d{4}-\d{2}-\d{2}$/;
         if (!dataRegex.test(dataNascimento)) {
             return res.status(400).json({ status: false, msg: 'O formato da data de nascimento deve ser AAAA-MM-DD.' });
+        }
+        if (new Date(dataNascimento) > new Date()) {
+            return res.status(400).json({ status: false, msg: 'A data de nascimento não pode ser no futuro.' });
+        }
+
+        if (permissoes && typeof permissoes === 'string') {
+            permissoes = permissoes.split(',');
+            req.body.permissoes = permissoes; 
         }
 
         // Validação da Role
