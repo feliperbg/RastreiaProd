@@ -1,8 +1,13 @@
+
+Criar esqueceu a senha
+Crud Departamentos
+Clique na sidebar para ativar a class
+
 Gerar filtros personalizados nas tabelas
 
 Final:
     Permissoes e roles
 
-opcionais:
+Opcionais:
     seção na sidebar somente para gráficos detalhados de cada tabela
 
