@@ -30,6 +30,7 @@ const jwtMiddleware = new TokenJWTMiddleware();
 const viewPath = path.join(__dirname, '..', 'view');
 
 // --- ROTAS DE RENDERIZAÇÃO (VIEWS) ---
+<<<<<<< HEAD
 viewRouter.get('/', (req, res) => res.render('main/funcionario'));
 viewRouter.get('/adicionar', (req, res) => { res.sendFile(path.join(viewPath, 'add', 'adicionar-funcionario.html')); });
 viewRouter.get('/:id/editar', (req, res) => { res.sendFile(path.join(viewPath, 'edit', 'editar-funcionario.html')); });
@@ -45,10 +46,25 @@ apiRouter.post(
     FuncionarioMiddleware.validateCreate,
     FuncionarioController.create
 );
+=======
+// Montadas em /funcionarios no arquivo principal da aplicação
+viewRouter.get('/', (req, res) => res.render('main/funcionario'));
+viewRouter.get('/adicionar', (req, res) => { res.sendFile(path.join(viewPath, 'add', 'adicionar-funcionario.html')); });
+viewRouter.get('/:id/editar', (req, res) => { res.sendFile(path.join(viewPath, 'edit', 'editar-funcionario.html')); });
+
+// --- ROTAS DA API ---
+// Montadas em /api/funcionarios no arquivo principal da aplicação
+apiRouter.post('/login', FuncionarioMiddleware.validateLogin, FuncionarioController.login); // Rota de login pública
+apiRouter.post('/logout', jwtMiddleware.validate.bind(jwtMiddleware), FuncionarioController.logout); // Rota de logout protegida
+apiRouter.post('/', jwtMiddleware.validate.bind(jwtMiddleware), FuncionarioMiddleware.validateCreate, FuncionarioController.create);
+>>>>>>> ff2dd710be6e4a6cc7c0c39e0af8f4843f5f7417
 apiRouter.get('/', jwtMiddleware.validate.bind(jwtMiddleware), FuncionarioController.readAll);
 apiRouter.get('/:id', jwtMiddleware.validate.bind(jwtMiddleware), MongoIdMiddleware.validateParam('id'), FuncionarioController.readByID);
 apiRouter.put('/:id', jwtMiddleware.validate.bind(jwtMiddleware), MongoIdMiddleware.validateParam('id'), FuncionarioMiddleware.validateUpdate, FuncionarioController.update);
 apiRouter.delete('/:id', jwtMiddleware.validate.bind(jwtMiddleware), MongoIdMiddleware.validateParam('id'), FuncionarioController.delete);
+<<<<<<< HEAD
 apiRouter.post('/recuperar-senha', FuncionarioController.recuperarSenha);
+=======
+>>>>>>> ff2dd710be6e4a6cc7c0c39e0af8f4843f5f7417
 
 module.exports = { viewRouter, apiRouter };
