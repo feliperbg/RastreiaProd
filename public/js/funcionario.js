@@ -2,7 +2,7 @@
    async function carregarTabela() {
         try {
             showLoading();
-            const response = await fetch('api/funcionarios', {
+            const response = await fetch('/api/funcionarios', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -99,7 +99,7 @@
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
-                window.location.href = `/funcionario/editar-funcionario/${id}`;
+                window.location.href = `/funcionarios/${id}/editar`;
             }
         });
     }
@@ -157,9 +157,6 @@
       
       const form = document.getElementById('form-adicionar');
       const formData = new FormData(form);
-
-      // Pega os valores não mascarados de CPF e Telefone para enviar ao backend
-      // O inputmask anexa uma propriedade 'inputmask' ao elemento do DOM
       const cpfInput = document.getElementById('CPF');
       if (cpfInput && cpfInput.inputmask) {
         formData.set('CPF', cpfInput.inputmask.unmaskedvalue());
@@ -171,10 +168,9 @@
       }
 
       try {
-        const resposta = await fetch(`api/funcionarios`, {
+        const resposta = await fetch(`/api/funcionarios`, {
           method: 'POST',
           headers: {
-            // O 'Content-Type' para multipart/form-data é definido automaticamente pelo navegador
             'Authorization': `Bearer ${localStorage.getItem('authToken')}`
           },
           body: formData
@@ -188,7 +184,7 @@
 
         exibirMensagem('Funcionário adicionado com sucesso!', 'sucesso');
         setTimeout(() => {
-          window.location.href = '/funcionario';
+          window.location.href = '/funcionarios';
         }, 2000);
       } catch (error) {
         exibirMensagem('Erro interno ao tentar adicionar funcionário.', 'erro');
@@ -207,7 +203,7 @@
         const unmaskedTelefone = (telefoneInput && telefoneInput.inputmask) ? telefoneInput.inputmask.unmaskedvalue() : telefoneInput.value;
 
         const pathParts = window.location.pathname.split('/');
-        const id = pathParts[pathParts.length - 1];
+        const id = pathParts[pathParts.length - 2];
 
         const dadosAtualizados = {
             nome: document.getElementById('nome').value,
@@ -218,14 +214,14 @@
             dataNascimento: document.getElementById('dataNascimento').value,
             permissoes: permissoes,
             role: document.getElementById('role').value,
-            departamento: document.getElementById('departamento').value || null
+            departamento: document.getElementById('departamento').value
         };
         try {
-            const resposta = await fetch(`api/funcionarios/${id}`, {
+            const resposta = await fetch(`/api/funcionarios/${id}`, {
                 method: 'PUT',
                 headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`
                 },
                 body: JSON.stringify(dadosAtualizados)
             });
@@ -236,7 +232,7 @@
             }
             exibirMensagem('Funcionário atualizado com sucesso!', 'sucesso');
             setTimeout(() => {
-                window.location.href = '/funcionario';
+                window.location.href = '/funcionarios';
             }, 2000);
         } catch (error) {
             console.error('Erro ao atualizar funcionário:', error);

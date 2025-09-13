@@ -1,17 +1,13 @@
-gestao-op:
-    Temp medio de execucao da OS e etapas ou n/a, mostrar no card da etapa medio e da OS mostrar no detalhe da OS
 
-ordens-producao/:
-    tirar status inicial
-    funcionario que criou a os -> Precisa?
-    add data de entrega no schema de ordem e add no adicionar e no gestao
-    no deletar virar cancelar e motivo do cancelar, mudar icone
+Criar esqueceu a senha
+Crud Departamentos
+Clique na sidebar para ativar a class
 
 Gerar filtros personalizados nas tabelas
 
 Final:
     Permissoes e roles
 
-opcionais:
+Opcionais:
     seção na sidebar somente para gráficos detalhados de cada tabela
 

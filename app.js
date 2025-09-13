@@ -4,7 +4,6 @@ const path = require('path');
 const Banco = require('./model/BancoMongoose');
 
 const app = express();
-const port = 3000;
 
 // --- CONFIGURAÇÕES DO EXPRESS ---
 app.use(express.static(path.join(__dirname, 'public')));
@@ -21,6 +20,7 @@ const { viewRouter: funcionarioViewRouter, apiRouter: funcionarioApiRouter } = r
 const { viewRouter: ordemProducaoViewRouter, apiRouter: ordemProducaoApiRouter } = require('./router/OrdemProducaoRouter');
 const { apiRouter: painelApiRouter } = require('./router/PainelRouter');
 const { viewRouter: departamentoViewRouter, apiRouter: departamentoApiRouter } = require('./router/DepartamentoRouter');
+const { env } = require('process');
 
 
 // --- ROTAS DE VIEWS (FRONTEND) ---
@@ -55,8 +55,8 @@ app.use('/api/painel', painelApiRouter);
 // --- INICIALIZAÇÃO DO SERVIDOR ---
 async function startServer() {
   await Banco.connect();
-  app.listen(port, '0.0.0.0', () => {
-    console.log(`✅ Servidor rodando no endereço: http://localhost:${port}`);
+  app.listen(process.env.PORT, '0.0.0.0', () => {
+    console.log(`✅ Servidor rodando no endereço: http://localhost:${process.env.PORT}`);
   });
 }
 
