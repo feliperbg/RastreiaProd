@@ -55,12 +55,8 @@ module.exports = class FuncionarioController {
     }
 
     static async login(req, res) {
-        console.log("Tentativa de login recebida.");
         try {
-            console.log("Corpo da requisição:", req.body);
             const { email, senha } = req.body;
-            console.log("Email recebido:", email);
-            console.log("Senha recebida:", senha);
             if (!email || !senha) {
                 return res.status(400).json({ status: false, msg: 'Email e senha são obrigatórios.' });
             }
@@ -131,7 +127,8 @@ module.exports = class FuncionarioController {
         try {
             const { id } = req.params;
             const dadosAtualizacao = req.body;
-            delete dadosAtualizacao.senhaFuncionario;
+            delete dadosAtualizacao.senha;
+            delete dadosAtualizacao.imagem;
 
             const funcionarioAtualizado = await Funcionario.findByIdAndUpdate(id, dadosAtualizacao, { new: true, runValidators: true });
 
