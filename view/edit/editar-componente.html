@@ -93,7 +93,7 @@
             </div>
 
             <button type="submit" class="btn btn-primary">Salvar Alterações</button>
-            <button type="button" class="btn btn-danger" onclick="window.location.href='/componente'">Cancelar</button>
+            <button type="button" class="btn btn-danger" onclick="window.location.href='/componentes'">Cancelar</button>
         </form>
     </div>
       <!-- Container de Toasts -->
@@ -110,12 +110,12 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         const pathParts = window.location.pathname.split('/');
-        const id = pathParts[pathParts.length - 1];
+        const id = pathParts[pathParts.length - 2];
         const regexBR = /^(\d{1,3}(\.\d{3})*|\d+)(\,\d{2})?$/;
 
         async function carregarComponente() {
             try {
-                const response = await fetch(`api/componentes/${id}`, {
+                const response = await fetch(`/api/componentes/${id}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -125,7 +125,6 @@
                 const dados = await response.json();
                 if (dados.status && dados.componente) {
                     const c = dados.componente;
-
                     document.getElementById('nome').value = c.nome || '';
                     document.getElementById('codigo').value = c.codigo || '';
                     document.getElementById('descricao').value = c.descricao || '';
@@ -156,7 +155,7 @@
                     Lote: document.getElementById('Lote').value,
                     precoUnidade: document.getElementById('precoUnidade').value,
             };
-            fetch(`api/componente/${id}`, {
+            fetch(`/api/componentes/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -175,7 +174,7 @@
             })
             .then(dados => {
                 exibirMensagem('Componente atualizado com sucesso!', 'sucesso');
-                window.location.href = '/componente';
+                window.location.href = '/componentes';
             })
             .catch(error => {
                 console.error('Erro ao atualizar componente:', error);

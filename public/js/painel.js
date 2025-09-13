@@ -32,18 +32,13 @@ document.addEventListener("DOMContentLoaded", function () {
             body.id = `kanban-col-${board.id}`;
 
             if (board.items.length > 0) {
-                // --- MODIFICAÇÃO PRINCIPAL AQUI ---
-                // 1. Converte a classe de background (ex: 'bg-primary') em classe de borda (ex: 'border-primary')
                 const borderClass = board.class.replace('bg-', 'border-');
 
                 board.items.forEach(item => {
                     const taskCard = document.createElement('div');
-                    // 2. Adiciona a nova classe de borda dinâmica ao card
                     taskCard.className = `task-card ${borderClass}`; 
                     taskCard.setAttribute('role', 'button');
-
-                    // O restante do seu código para criar o conteúdo do card permanece o mesmo...
-                    let cardContent = `<div class="task-card-body"> ... </div>`; // (código omitido por brevidade)
+                    let cardContent = `<div class="task-card-body"> ... </div>`;
                     taskCard.innerHTML = `
                         <div class="task-card-body">
                             <div class="task-title">${item.title}</div>
@@ -107,7 +102,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     label: label,
                     data: data,
                     backgroundColor: '#ffc107',
-                    borderColor: '#e6ac00', // Opcional: melhora a estética
+                    borderColor: '#e6ac00',
                     borderWidth: 1
                 }]
             },
@@ -144,7 +139,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function renderizarCards(data) {
-        console.log(data);
         document.getElementById('card-produtos-count').textContent = data.produtos || 0;
         document.getElementById('card-componentes-count').textContent = data.componentes || 0;
         document.getElementById('card-ordens-pendentes-count').textContent = data.ordensPendentes || 0;
@@ -187,8 +181,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     async function buscarDadosParaKanban() {
-        // Simula o fetch, substitua pela sua chamada real
-        const ordensResponse = await fetchWithAuth('api/ordens-producao');
+        const ordensResponse = await fetchWithAuth('/api/ordens-producao');
         if (!ordensResponse || !ordensResponse.ordens) return [];
 
         const kanbanData = [
@@ -209,7 +202,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const column = kanbanData.find(b => b.id === statusMap[ordem.status]);
 
             if (column) {
-                const etapaAtivaObj = ordem.etapaAtual.find(e => e.status.toLowerCase() !== 'concluída');
+                const etapaAtivaObj = ordem.historicoEtapas.find(e => e.status.toLowerCase() !== 'concluída');
                 const nomeEtapa = etapaAtivaObj && etapaAtivaObj.etapa ? etapaAtivaObj.etapa.nome : '';
                 const nomeFuncionario = (ordem.funcionarioAtivo && ordem.funcionarioAtivo.length > 0 && ordem.funcionarioAtivo[0].funcionario) 
                                         ? ordem.funcionarioAtivo[0].funcionario.nome 
@@ -219,7 +212,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     funcionario: nomeFuncionario,
                     etapa: nomeEtapa,
                     title: `OP-${ordem._id.slice(-6).toUpperCase()} - ${ordem.produto.nome}`,
-                    link: `/ordens-producao/gestao-op/${ordem._id}`,
+                    link: `/ordens-producao/${ordem._id}/gestao`,
                 });
             }
         });
@@ -227,25 +220,25 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     async function buscarDadosGraficoEtapasFinalizadas() {
-        const response = await fetchWithAuth('api/painel/ordens-finalizadas-chart');
+        const response = await fetchWithAuth('/api/painel/ordens-finalizadas-chart');
         if (!response) return { labels: [], data: [] };
         return { labels: response.labels, data: response.datasets };
     }
 
     async function buscarDadosGraficoTempo() {
-        const response = await fetchWithAuth('api/painel/tempo-medio-etapas-chart');
+        const response = await fetchWithAuth('/api/painel/tempo-medio-etapas-chart');
         if (!response) return { labels: [], data: [] };
         return { labels: response.labels, data: response.datasets };
     }
 
     async function buscarDadosGraficoStatus() {
-        const response = await fetchWithAuth('api/painel/ordens-status-chart');
+        const response = await fetchWithAuth('/api/painel/ordens-status-chart');
         if (!response) return { labels: [], data: [] };
         return { labels: response.labels, data: response.datasets };
     }
 
     async function buscarDadosParaCards() {
-        return await fetchWithAuth('api/painel/cards');
+        return await fetchWithAuth('/api/painel/cards');
     }
 
     // =================================================================================

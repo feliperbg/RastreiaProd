@@ -84,12 +84,14 @@
     function fazerLogout() {
       fetch("api/funcionarios/logout", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token: localStorage.getItem("authToken") }),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+        },
       })
       .then(res => {
         if (!res.ok){
-          throw new Error(exibirMensagem(`Erro na resposta do servidor: ${error.message}`, "erro"));
+          throw new Error(exibirMensagem(`Erro na resposta do servidor: ${res.msg}`, "erro"));
         }                                                                     
         return res.json();
       })
@@ -106,7 +108,7 @@
         }
       })
       .catch(error => {
-        exibirMensagem(`Erro ao fazer logout: ${error.message}`, "erro");
+        exibirMensagem(`Erro ao fazer logout: ${error}`, "erro");
       });
     }
     document.getElementById('btnPerfil').addEventListener('click', () => {

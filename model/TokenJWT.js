@@ -43,7 +43,7 @@ class TokenJWT {
         try {
             const decoded = jwt.verify(token, this._key, { algorithms: [this._alg] });
             this.payload = decoded;
-            return true;
+            return decoded;
         } catch (err) {
             // Lidar com diferentes tipos de erro
             if (err instanceof jwt.TokenExpiredError) {
