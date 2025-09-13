@@ -24,6 +24,7 @@ viewRouter.get('/:id/editar', (req, res) => { res.sendFile(path.join(viewPath, '
 // --- ROTAS DA API ---
 // Montadas em /api/funcionarios no arquivo principal da aplicação
 apiRouter.post('/login', FuncionarioMiddleware.validateLogin, FuncionarioController.login); // Rota de login pública
+apiRouter.post('/logout', jwtMiddleware.validate.bind(jwtMiddleware), FuncionarioController.logout); // Rota de logout protegida
 apiRouter.post('/', jwtMiddleware.validate.bind(jwtMiddleware), FuncionarioMiddleware.validateCreate, FuncionarioController.create);
 apiRouter.get('/', jwtMiddleware.validate.bind(jwtMiddleware), FuncionarioController.readAll);
 apiRouter.get('/:id', jwtMiddleware.validate.bind(jwtMiddleware), MongoIdMiddleware.validateParam('id'), FuncionarioController.readByID);

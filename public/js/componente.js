@@ -2,7 +2,7 @@
         try {
             showLoading();
             
-            const response = await fetch('api/componentes', {
+            const response = await fetch('/api/componentes', {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${localStorage.getItem('authToken')}`
@@ -67,7 +67,7 @@
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
-                window.location.href = `/componente/editar-componente/${id}`;
+                window.location.href = `/componentes/${id}/editar`;
             }
         });
     }
@@ -84,7 +84,7 @@
         if (isConfirmed) {
             try {
                 Swal.fire({ title: 'Deletando...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-                const response = await fetch(`api/api/componente/${id}`, {
+                const response = await fetch(`api/componentes/${id}`, {
                     method: 'DELETE',
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('authToken')}`
