@@ -13,7 +13,23 @@ const DepartamentoSchema = new Schema({
         trim: true,
     }
 }, {
-    timestamps: true
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true }
+});
+
+// Virtual para contar a quantidade de funcionários no departamento
+DepartamentoSchema.virtual('funcionariosCount', {
+    ref: 'Funcionario', // O nome do seu model de Funcionário
+    localField: '_id',
+    foreignField: 'departamento', // O campo no model Funcionario que guarda o ID do departamento
+    count: true // Apenas contar os documentos
+});
+DepartamentoSchema.virtual('etapasCount', {
+    ref: 'Etapa', // O nome do seu model de Funcionário
+    localField: '_id',
+    foreignField: 'departamentoResponsavel', // O campo no model Etapa que guarda o ID do departamento
+    count: true // Apenas contar os documentos
 });
 
 const Departamento = model('Departamento', DepartamentoSchema);
