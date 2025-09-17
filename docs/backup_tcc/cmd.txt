@@ -12,3 +12,5 @@ Restore:
 
 notebook ze
 & "C:\Program Files\MongoDB\Tools\100\bin\mongorestore.exe" --drop --uri="mongodb://localhost:27017/" --db="TCC" "C:\Users\josep\OneDrive\Área de Trabalho\TCC2025\RastreiaProd\docs\backup_tcc\TCC"
+
+& "/home/alberto/Downloads/mongodb-database-tools-amazon2-x86_64-100.13.0/bin/\mongorestore.exe" --drop --uri="mongodb://localhost:27017/" --db="TCC" "/home/alberto/Documentos/Github/RastreiaProd/docs/backup_tcc/TCC
