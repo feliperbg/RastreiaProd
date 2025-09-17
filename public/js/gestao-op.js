@@ -4,8 +4,14 @@ document.addEventListener('DOMContentLoaded', function () {
     
     let ordemProducao = null;
     let userData = null;
+    let qrCodeLabelModal = null;
 
     async function inicializar() {
+        const modalElement = document.getElementById('qrCodeLabelModal');
+        if (modalElement) {
+            qrCodeLabelModal = new bootstrap.Modal(modalElement);
+        }
+        
         const pathParts = window.location.pathname.split('/');
         const opId = pathParts[pathParts.length - 2];
 
@@ -33,288 +39,294 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             userData = JSON.parse(userDataString);
 
-            gerarQRCode();
             renderizarPagina();
 
         } catch (error) {
             console.error(error);
             Swal.fire('Erro', error.message, 'error');
+        } finally {
             spinner.classList.add('d-none');
+            conteudoPagina.classList.remove('d-none');
         }
     }
 
-    function gerarQRCode() {
-        const container = document.getElementById('qrcode-container');
+    function renderizarPagina() {
+        if (!ordemProducao || !userData) return;
+        
+        const opIdCurto = ordemProducao._id.slice(-6).toUpperCase();
+        const opTituloText = `Ordem de Produção #${opIdCurto}`;
+
+        document.getElementById('op-titulo').textContent = opTituloText;
+        document.getElementById('op-produto').textContent = ordemProducao.produto.nome;
+        document.getElementById('op-quantidade').textContent = ordemProducao.quantidade;
+        document.getElementById('op-data-entrega').textContent = formatarData(ordemProducao.dataEntrega);
+        document.getElementById('op-criado-por').textContent = ordemProducao.criadoPor ? ordemProducao.criadoPor.nome : 'N/A';
+        const tempoMedioOP = ordemProducao.tempoMedioOP ? `${ordemProducao.tempoMedioOP} min` : 'N/D';
+        document.getElementById('op-tempo-medio').textContent = tempoMedioOP;
+
+        const statusClasses = {
+            'Pendente': 'secondary', 'Em Andamento': 'primary', 'Pausada': 'warning',
+            'Concluída': 'success', 'Cancelada': 'danger'
+        };
+        const statusClass = statusClasses[ordemProducao.status] || 'secondary';
+        document.getElementById('op-status').innerHTML = `<span class="badge bg-${statusClass} fw-bold">${ordemProducao.status}</span>`;
+
+        renderizarTabelaComponentes(ordemProducao.produto.componentesNecessarios);
+        renderizarEtapas();
+
+        document.getElementById('btn-qrcode-modal').addEventListener('click', abrirModalQrCode);
+    }
+    
+    function abrirModalQrCode() {
+        if (!qrCodeLabelModal || !ordemProducao) return;
+
+        const opIdCurto = ordemProducao._id.slice(-6).toUpperCase();
+        document.getElementById('label-op-id').textContent = `OP #${opIdCurto}`;
+        document.getElementById('label-produto').textContent = ordemProducao.produto.nome;
+        document.getElementById('label-quantidade').textContent = ordemProducao.quantidade;
+
+        const qrContainer = document.getElementById('qrcode-container-modal');
+        gerarQRCode(qrContainer, 150);
+        qrCodeLabelModal.show();
+    }
+
+    function gerarQRCode(container, size) {
         container.innerHTML = '';
         new QRCode(container, {
             text: window.location.href,
-            width: 128,
-            height: 128,
+            width: size,
+            height: size,
             colorDark : "#000000",
             colorLight : "#ffffff",
             correctLevel : QRCode.CorrectLevel.H
         });
     }
 
-    function renderizarPagina() {
-        if (!ordemProducao || !userData) return;
+    window.gerarPdfParaImpressao = async function(modo) {
+        const { jsPDF } = window.jspdf;
+        let elementoOriginal, pdfOptions;
 
-        document.getElementById('op-titulo').textContent = `Ordem de Produção #${ordemProducao._id.slice(-6).toUpperCase()}`;
-        document.getElementById('op-produto').textContent = ordemProducao.produto.nome;
-        document.getElementById('op-quantidade').textContent = ordemProducao.quantidade;
-        document.getElementById('op-data-entrega').textContent = formatarData(ordemProducao.dataEntrega);
-        document.getElementById('op-criado-por').textContent = ordemProducao.criadoPor ? ordemProducao.criadoPor.nome : 'N/A';
-        const tempoMedioOP = ordemProducao.tempoMedioOP ? `${ordemProducao.tempoMedioOP} min` : 'Tempo indefinido';
-        document.getElementById('op-tempo-medio').textContent = tempoMedioOP;
+        if (modo === 'etiqueta') {
+            elementoOriginal = document.getElementById('printable-label');
+            pdfOptions = { width: 466, height: 367 };
+        } else { // modo 'qrcode'
+            const container = document.getElementById('qrcode-container-modal');
+            elementoOriginal = container.querySelector('canvas, img');
+            pdfOptions = { width: 150, height: 150 };
+        }
 
-        const statusClasses = {
-            'Pendente': { bg: 'secondary', text: 'Pendente'},
-            'Em Andamento': { bg: 'primary', text: 'Em Andamento'},
-            'Pausada': { bg: 'warning', text: 'Pausada' },
-            'Concluída': { bg: 'success', text: 'Concluída' },
-            'Cancelada': { bg: 'danger', text: 'Cancelada' }
-        };
-        const statusInfo = statusClasses[ordemProducao.status] || statusClasses['Pendente'];
-        document.getElementById('op-status').innerHTML = `<h1 class="badge bg-${statusInfo.bg}" fw-bold m-0>${statusInfo.text}</h1>`;
-        renderizarTabelaComponentes(ordemProducao.produto.componentesNecessarios);
+        if (!elementoOriginal) {
+            Swal.fire('Erro!', 'Não foi possível encontrar o conteúdo para gerar o PDF.', 'error');
+            return;
+        }
 
-        const etapasContainer = document.getElementById('etapas-container');
-        etapasContainer.innerHTML = '';
-
-        const ultimaEtapaConcluidaIndex = ordemProducao.produto.etapas.findIndex(etapaDef => {
-            const historicoEtapas = ordemProducao.historicoEtapas.find(e => e.etapa._id === etapaDef._id);
-            return !historicoEtapas || historicoEtapas.status !== 'Concluída';
+        Swal.fire({
+            title: 'Gerando PDF...',
+            text: 'Por favor, aguarde.',
+            allowOutsideClick: false,
+            didOpen: () => { Swal.showLoading(); }
         });
 
-        ordemProducao.produto.etapas.forEach((etapaDefinida, index) => {
-            const historicoEtapas = ordemProducao.historicoEtapas.find(e => e.etapa._id === etapaDefinida._id);
-            const status = historicoEtapas ? historicoEtapas.status : 'Pendente';
-            
-            // --- AQUI ESTÁ A CORREÇÃO ---
-            // A lógica de comparação e o console.log devem estar dentro da mesma função de callback.
-            const isFuncionarioResponsavel = etapaDefinida.funcionariosResponsaveis.some(f => {
-                console.log(`Comparando: ${f._id} === ${userData._id}`); // Log de debug opcional
-                return f._id === userData._id;
+        const captureContainer = document.createElement('div');
+        Object.assign(captureContainer.style, {
+            position: 'absolute',
+            top: '-9999px',
+            left: '-9999px',
+            width: modo === 'etiqueta' ? '400px' : '200px',
+            padding: '0',
+            margin: '0',
+            background: '#fff'
+        });
+        
+        const elementoParaCapturar = elementoOriginal.cloneNode(true);
+        Object.assign(elementoParaCapturar.style, {
+            margin: '0',
+            padding: '0',
+            display: 'block'
+        });
+        
+        captureContainer.appendChild(elementoParaCapturar);
+        document.body.appendChild(captureContainer);
+        
+        try {
+            const canvas = await html2canvas(elementoParaCapturar, {
+                scale: 3,
+                useCORS: true,
+                backgroundColor: '#ffffff'
             });
 
-            console.log(`Etapa: ${etapaDefinida.nome}, isFuncionarioResponsavel: ${isFuncionarioResponsavel}`);
+            const imgData = canvas.toDataURL('image/png');
             
-            const podeIniciar = (index === ultimaEtapaConcluidaIndex);
+            const pdf = new jsPDF({
+                orientation: pdfOptions.width > pdfOptions.height ? 'landscape' : 'portrait',
+                unit: 'mm',
+                format: [pdfOptions.width, pdfOptions.height]
+            });
+            
+            pdf.addImage(imgData, 'PNG', 0, 0, pdfOptions.width, pdfOptions.height);
+            
+            pdf.autoPrint();
+            const pdfUrl = pdf.output('bloburl');
+            window.open(pdfUrl, '_blank');
 
-            const podeInteragir = ordemProducao.status !== 'Concluída' && 
-                                  ordemProducao.status !== 'Cancelada';
+            Swal.fire({
+                title: 'Sucesso!',
+                text: 'Seu PDF foi gerado. Se uma nova aba não abriu, verifique se o navegador bloqueou o pop-up.',
+                icon: 'success',
+                timer: 4000
+            });
 
-            const showIniciarBtn = podeInteragir && status === 'Pendente' && isFuncionarioResponsavel && podeIniciar;
-            const showPausarBtn = podeInteragir && status === 'Em Andamento' && isFuncionarioResponsavel;
-            const showRetomarBtn = podeInteragir && status === 'Pausada' && isFuncionarioResponsavel;
-            const showFinalizarBtn = podeInteragir && status === 'Em Andamento' && isFuncionarioResponsavel;
+        } catch (error) {
+            console.error('Erro ao gerar PDF:', error);
+            Swal.fire('Erro!', `Não foi possível gerar o PDF. Detalhes: ${error.message}`, 'error');
+        } finally {
+            document.body.removeChild(captureContainer);
+        }
+    }
 
-            const cardHtml = criarCardEtapa(etapaDefinida, status, { showIniciarBtn, showPausarBtn, showRetomarBtn, showFinalizarBtn });
-            etapasContainer.innerHTML += cardHtml;
+    function renderizarEtapas() {
+        const etapasContainer = document.getElementById('etapas-container');
+        etapasContainer.innerHTML = '';
+        const ultimaEtapaNaoConcluidaIndex = ordemProducao.produto.etapas.findIndex(etapaDef => {
+            const historico = ordemProducao.historicoEtapas.find(h => h.etapa._id === etapaDef._id);
+            return !historico || historico.status !== 'Concluída';
         });
-
-        spinner.classList.add('d-none');
-        conteudoPagina.classList.remove('d-none');
+        ordemProducao.produto.etapas.forEach((etapaDefinida, index) => {
+            const historico = ordemProducao.historicoEtapas.find(e => e.etapa._id === etapaDefinida._id);
+            const status = historico ? historico.status : 'Pendente';
+            const isFuncionarioResponsavel = etapaDefinida.funcionariosResponsaveis.some(f => f._id === userData._id);
+            const podeIniciar = (index === ultimaEtapaNaoConcluidaIndex);
+            const podeInteragir = ordemProducao.status !== 'Concluída' && ordemProducao.status !== 'Cancelada';
+            const botoes = {
+                showIniciarBtn: podeInteragir && status === 'Pendente' && isFuncionarioResponsavel && podeIniciar,
+                showPausarBtn: podeInteragir && status === 'Em Andamento' && isFuncionarioResponsavel,
+                showRetomarBtn: podeInteragir && status === 'Pausada' && isFuncionarioResponsavel,
+                showFinalizarBtn: podeInteragir && status === 'Em Andamento' && isFuncionarioResponsavel
+            };
+            const cardHtml = criarCardEtapa(etapaDefinida, status, botoes);
+            etapasContainer.insertAdjacentHTML('beforeend', cardHtml);
+        });
     }
 
     function renderizarTabelaComponentes(componentes) {
         const tabelaBody = document.getElementById('componentes-tabela');
         tabelaBody.innerHTML = '';
         if (!componentes || componentes.length === 0) {
-            tabelaBody.innerHTML = '<tr><td colspan="3" class="text-center">Nenhum componente necessário para este produto.</td></tr>';
+            tabelaBody.innerHTML = '<tr><td colspan="3" class="text-center">Nenhum componente necessário.</td></tr>';
             return;
         }
         componentes.forEach(item => {
             const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${item.componente.nome}</td>
-                <td>${item.componente.codigo}</td>
-                <td>${item.quantidade}</td>
-            `;
+            tr.innerHTML = `<td>${item.componente.nome}</td><td>${item.componente.codigo}</td><td>${item.quantidade}</td>`;
             tabelaBody.appendChild(tr);
         });
     }
 
     function criarCardEtapa(etapa, status, botoesVisiveis) {
         const statusClasses = {
-            'Pendente':     { bg: 'secondary', text: 'Pendente',   timeline: 'etapa-pendente' },
-            'Em Andamento': { bg: 'primary',   text: 'Em Andamento', timeline: 'etapa-andamento' },
-            'Pausada':      { bg: 'warning',   text: 'Pausada',      timeline: 'etapa-pendente' },
-            'Concluída':    { bg: 'success',   text: 'Concluída',    timeline: 'etapa-concluida' },
+            'Pendente': { bg: 'secondary', timeline: 'etapa-pendente' },
+            'Em Andamento': { bg: 'primary', timeline: 'etapa-andamento' },
+            'Pausada': { bg: 'warning', timeline: 'etapa-pendente' },
+            'Concluída': { bg: 'success', timeline: 'etapa-concluida' },
         };
-
         const statusInfo = statusClasses[status] || statusClasses['Pendente'];
-        const funcionariosNomes = etapa.funcionariosResponsaveis.map(f => f.nome).join(', ');
-        const tempoMedioEtapa = etapa.tempoMedio ? `${etapa.tempoMedio} min` : 'Tempo indefinido';
-
-        let botoesHtml = `<p class="text-muted small m-0">Aguardando etapa anterior ou permissão.</p>`;
+        const funcionariosNomes = etapa.funcionariosResponsaveis.map(f => f.nome).join(', ') || 'Nenhum';
+        const tempoMedioEtapa = etapa.tempoMedio ? `${etapa.tempoMedio} min` : 'N/D';
+        let botoesHtml = `<p class="text-muted small m-0 text-end">Aguardando etapa anterior.</p>`;
         if (botoesVisiveis.showIniciarBtn) {
-            botoesHtml = `<button class="btn btn-primary btn-sm" onclick="iniciarEtapa('${ordemProducao._id}', '${etapa._id}')">
-                                <i class="bi bi-play-circle"></i> Iniciar
-                              </button>`;
+            botoesHtml = `<button class="btn btn-primary btn-sm" onclick="iniciarEtapa('${ordemProducao._id}', '${etapa._id}')"><i class="bi bi-play-circle"></i> Iniciar</button>`;
         } else if (botoesVisiveis.showPausarBtn || botoesVisiveis.showRetomarBtn || botoesVisiveis.showFinalizarBtn) {
             botoesHtml = '<div class="action-buttons">';
-            if (botoesVisiveis.showPausarBtn) {
-                botoesHtml += `<button class="btn btn-warning btn-sm" onclick="pausarEtapa('${ordemProducao._id}', '${etapa._id}')">
-                                    <i class="bi bi-pause-circle"></i> Pausar
-                                   </button>`;
-            }
-            if (botoesVisiveis.showRetomarBtn) {
-                botoesHtml += `<button class="btn btn-info btn-sm" onclick="retomarEtapa('${ordemProducao._id}', '${etapa._id}')">
-                                    <i class="bi bi-play-circle"></i> Retomar
-                                   </button>`;
-            }
-            if (botoesVisiveis.showFinalizarBtn) {
-                botoesHtml += `<button class="btn btn-success btn-sm" onclick="finalizarEtapa('${ordemProducao._id}', '${etapa._id}')">
-                                    <i class="bi bi-check-circle"></i> Finalizar
-                                   </button>`;
-            }
+            if (botoesVisiveis.showPausarBtn) botoesHtml += `<button class="btn btn-warning btn-sm" onclick="pausarEtapa('${ordemProducao._id}', '${etapa._id}')"><i class="bi bi-pause-circle"></i> Pausar</button>`;
+            if (botoesVisiveis.showRetomarBtn) botoesHtml += `<button class="btn btn-info btn-sm text-white" onclick="retomarEtapa('${ordemProducao._id}', '${etapa._id}')"><i class="bi bi-play-circle"></i> Retomar</button>`;
+            if (botoesVisiveis.showFinalizarBtn) botoesHtml += `<button class="btn btn-success btn-sm" onclick="finalizarEtapa('${ordemProducao._id}', '${etapa._id}')"><i class="bi bi-check-circle"></i> Finalizar</button>`;
             botoesHtml += '</div>';
         } else if (status === 'Concluída') {
-            botoesHtml = '<p class="text-success fw-bold m-0">Etapa finalizada.</p>';
+            botoesHtml = '<p class="text-success fw-bold m-0 text-end">Etapa finalizada.</p>';
         }
-
-        return `
-            <div class="etapa-card pb-4 ${statusInfo.timeline}">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="row align-items-center">
-                            <div class="col-md-3">
-                                <h5 class="card-title mb-1">Etapa ${etapa.sequencias}: ${etapa.nome}</h5>
-                                <span class="badge bg-${statusInfo.bg}">${statusInfo.text}</span>
-                            </div>
-                            <div class="col-md-6">
-                                <p class="mb-1"><strong>Tempo Médio da Etapa:</strong> ${tempoMedioEtapa}</p>
-                                <p class="mb-1"><strong>Departamento:</strong> ${etapa.departamentoResponsavel.nome || 'N/A'}</p>
-                                <p class="mb-0"><strong>Responsáveis:</strong> ${funcionariosNomes || 'Nenhum'}</p>
-                            </div>
-                            <div class="col-md-3 text-end">
-                                ${botoesHtml}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
+        return `<div class="etapa-card ${statusInfo.timeline}"><div class="card"><div class="card-body p-3"><div class="row align-items-center"><div class="col-md-4"><h5 class="card-title mb-1 fs-6">${etapa.sequencias}. ${etapa.nome}</h5><span class="badge bg-${statusInfo.bg}">${status}</span></div><div class="col-md-5 small text-muted"><strong>Tempo:</strong> ${tempoMedioEtapa} | <strong>Depto:</strong> ${etapa.departamentoResponsavel.nome || 'N/A'} | <strong>Responsáveis:</strong> ${funcionariosNomes}</div><div class="col-md-3">${botoesHtml}</div></div></div></div></div>`;
     }
 
     window.iniciarEtapa = async function(opId, etapaId) {
         const result = await Swal.fire({
-            title: 'Iniciar Etapa?',
-            text: "Você confirma o início desta etapa de produção?",
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonText: 'Sim, iniciar',
-            cancelButtonText: 'Cancelar'
+            title: 'Iniciar Etapa?', text: "Você confirma o início desta etapa de produção?", icon: 'question',
+            showCancelButton: true, confirmButtonText: 'Sim, iniciar', cancelButtonText: 'Cancelar'
         });
-
         if (result.isConfirmed) {
             try {
                 const response = await fetch(`/api/ordens-producao/${opId}/etapa/${etapaId}/iniciar`, {
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
+                    method: 'POST', headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
                 });
-                const result = await response.json();
-                if (!response.ok) throw new Error(result.msg);
-                
+                const resultData = await response.json();
+                if (!response.ok) throw new Error(resultData.msg);
                 Swal.fire('Iniciada!', 'A etapa foi iniciada com sucesso.', 'success');
                 inicializar();
-            } catch(error) {
-                Swal.fire('Erro!', error.message, 'error');
-            }
+            } catch(error) { Swal.fire('Erro!', error.message, 'error'); }
         }
     }
 
     window.finalizarEtapa = async function(opId, etapaId) {
         const result = await Swal.fire({
-            title: 'Finalizar Etapa?',
-            text: "Você confirma a conclusão desta etapa?",
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonText: 'Sim, finalizar',
-            cancelButtonText: 'Cancelar'
+            title: 'Finalizar Etapa?', text: "Você confirma a conclusão desta etapa?", icon: 'question',
+            showCancelButton: true, confirmButtonText: 'Sim, finalizar', cancelButtonText: 'Cancelar'
         });
-
         if (result.isConfirmed) {
             try {
                 const response = await fetch(`/api/ordens-producao/${opId}/etapa/${etapaId}/finalizar`, {
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
+                    method: 'POST', headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
                 });
-                const result = await response.json();
-                if (!response.ok) throw new Error(result.msg);
-
+                const resultData = await response.json();
+                if (!response.ok) throw new Error(resultData.msg);
                 Swal.fire('Concluída!', 'A etapa foi finalizada com sucesso.', 'success');
                 inicializar();
-            } catch(error) {
-                Swal.fire('Erro!', error.message, 'error');
-            }
+            } catch(error) { Swal.fire('Erro!', error.message, 'error'); }
         }
     }
 
     window.pausarEtapa = async function(opId, etapaId) {
         const { value: motivo } = await Swal.fire({
-            title: 'Pausar Produção',
-            input: 'text',
-            inputLabel: 'Motivo da Pausa',
-            inputPlaceholder: 'Ex: Falta de material, manutenção de máquina...',
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonText: 'Sim, pausar',
-            cancelButtonText: 'Cancelar',
-            inputValidator: (value) => {
-                if (!value) {
-                    return 'Você precisa informar um motivo para a pausa!'
-                }
-            }
+            title: 'Pausar Produção', input: 'text', inputLabel: 'Motivo da Pausa',
+            inputPlaceholder: 'Ex: Falta de material, manutenção...', icon: 'question',
+            showCancelButton: true, confirmButtonText: 'Sim, pausar', cancelButtonText: 'Cancelar',
+            inputValidator: (value) => { if (!value) { return 'Você precisa informar um motivo!' } }
         });
-
         if (motivo) {
             try {
                 const response = await fetch(`/api/ordens-producao/${opId}/etapa/${etapaId}/pausar`, {
                     method: 'PATCH',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('authToken')}` 
-                    },
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('authToken')}` },
                     body: JSON.stringify({ motivo: motivo })
                 });
-                const result = await response.json();
-                if (!response.ok) throw new Error(result.msg);
-
+                const resultData = await response.json();
+                if (!response.ok) throw new Error(resultData.msg);
                 Swal.fire('Pausada!', 'A produção foi pausada com sucesso.', 'success');
                 inicializar();
-            } catch(error) {
-                Swal.fire('Erro!', error.message, 'error');
-            }
+            } catch(error) { Swal.fire('Erro!', error.message, 'error'); }
         }
     }
 
     window.retomarEtapa = async function(opId, etapaId) {
         const result = await Swal.fire({
-            title: 'Retomar Produção?',
-            text: "Você confirma a retomada da produção desta ordem?",
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonText: 'Sim, retomar',
-            cancelButtonText: 'Cancelar'
+            title: 'Retomar Produção?', text: "Você confirma a retomada da produção?", icon: 'question',
+            showCancelButton: true, confirmButtonText: 'Sim, retomar', cancelButtonText: 'Cancelar'
         });
-
         if (result.isConfirmed) {
             try {
                 const response = await fetch(`/api/ordens-producao/${opId}/etapa/${etapaId}/retomar`, {
-                    method: 'PATCH',
-                    headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
+                    method: 'PATCH', headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
                 });
-                const result = await response.json();
-                if (!response.ok) throw new Error(result.msg);
-
+                const resultData = await response.json();
+                if (!response.ok) throw new Error(resultData.msg);
                 Swal.fire('Retomada!', 'A produção foi retomada com sucesso.', 'success');
                 inicializar();
-            } catch(error) {
-                Swal.fire('Erro!', error.message, 'error');
-            }
+            } catch(error) { Swal.fire('Erro!', error.message, 'error'); }
         }
+    }
+    
+    function formatarData(dataString) {
+        if (!dataString) return 'N/A';
+        const data = new Date(dataString);
+        return data.toLocaleDateString('pt-BR', { timeZone: 'UTC' });
     }
 
     inicializar();
