@@ -31,9 +31,9 @@ const viewPath = path.join(__dirname, '..', 'view');
 
 // --- ROTAS DE RENDERIZAÇÃO (VIEWS) ---
 viewRouter.get('/', (req, res) => res.render('main/funcionario'));
-viewRouter.get('/adicionar', (req, res) => { res.sendFile(path.join(viewPath, 'add', 'adicionar-funcionario.html')); });
-viewRouter.get('/:id/editar', (req, res) => { res.sendFile(path.join(viewPath, 'edit', 'editar-funcionario.html')); });
-viewRouter.get('/esqueceu-senha', (req, res) => { res.sendFile(path.join(viewPath, 'esqueceuSenha.html')); });
+viewRouter.get('/adicionar', (req, res) => { res.render('add/adicionar-funcionario'); });
+viewRouter.get('/:id/editar', (req, res) => { res.render('edit/editar-funcionario'); });
+viewRouter.get('/esqueceu-senha', (req, res) => { res.render('esqueceuSenha'); });
 
 // --- ROTAS DA API ---
 apiRouter.post('/login', FuncionarioMiddleware.validateLogin, FuncionarioController.login);

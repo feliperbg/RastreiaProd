@@ -30,8 +30,8 @@ viewRouter.get('/produtos/:produtoId', MongoIdMiddleware.validateParam('produtoI
         res.status(500).send('Erro ao carregar a página de etapas.');
     }
 });
-viewRouter.get('/:produtoId/adicionar', (req, res) => { res.sendFile(path.join(viewPath, 'add', 'adicionar-etapa.html')); });
-viewRouter.get('/:id/editar', (req, res) => { res.sendFile(path.join(viewPath, 'edit', 'editar-etapa.html')); });
+viewRouter.get('/:produtoId/adicionar', (req, res) => { res.render('add/adicionar-etapa'); });
+viewRouter.get('/:id/editar', (req, res) => { res.render('edit/editar-etapa'); });
 
 // --- ROTAS DA API ---
 // Adicionado .bind() para garantir o contexto (this) correto nos métodos do controller

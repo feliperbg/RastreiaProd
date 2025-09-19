@@ -17,9 +17,9 @@ const viewPath = path.join(__dirname, '..', 'view');
 
 // --- ROTAS DE RENDERIZAÇÃO (VIEWS) ---
 viewRouter.get('/', (req, res) => res.render('main/ordem-producao'));
-viewRouter.get('/adicionar', (req, res) => { res.sendFile(path.join(viewPath, 'add', 'adicionar-ordem-producao.html')); });
-viewRouter.get('/:id/editar', (req, res) => { res.sendFile(path.join(viewPath, 'edit', 'editar-ordem-producao.html')); });
-viewRouter.get('/:id/gestao', (req, res) => { res.sendFile(path.join(viewPath,'main', 'gestao-op.html')); });
+viewRouter.get('/adicionar', (req, res) => { res.render('add/adicionar-ordem-producao'); });
+viewRouter.get('/:id/editar', (req, res) => { res.render('edit/editar-ordem-producao'); });
+viewRouter.get('/:id/gestao', (req, res) => { res.render('main/gestao-op'); });
 
 
 // --- ROTAS DA API ---

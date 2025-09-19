@@ -27,7 +27,7 @@ const { viewRouter: departamentoViewRouter, apiRouter: departamentoApiRouter } =
 
 // Rota para a PÁGINA de login (pública)
 app.get('/login', (req, res) => {
-    res.sendFile(path.join(__dirname, 'view', 'login.html')); // Verifique o caminho/nome do seu arquivo
+    res.render('login');
 });
 
 app.use('/produtos', produtoViewRouter);

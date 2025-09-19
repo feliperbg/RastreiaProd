@@ -110,8 +110,7 @@ document.addEventListener('DOMContentLoaded', function () {
             elementoOriginal = document.getElementById('printable-label');
             pdfOptions = { width: 466, height: 367 };
         } else { // modo 'qrcode'
-            const container = document.getElementById('qrcode-container-modal');
-            elementoOriginal = container.querySelector('canvas, img');
+            elementoOriginal = document.getElementById('printable-label');
             pdfOptions = { width: 150, height: 150 };
         }
 
@@ -127,44 +126,41 @@ document.addEventListener('DOMContentLoaded', function () {
             didOpen: () => { Swal.showLoading(); }
         });
 
-        const captureContainer = document.createElement('div');
-        Object.assign(captureContainer.style, {
-            position: 'absolute',
-            top: '-9999px',
-            left: '-9999px',
-            width: modo === 'etiqueta' ? '400px' : '200px',
-            padding: '0',
-            margin: '0',
-            background: '#fff'
-        });
-        
-        const elementoParaCapturar = elementoOriginal.cloneNode(true);
-        Object.assign(elementoParaCapturar.style, {
-            margin: '0',
-            padding: '0',
-            display: 'block'
-        });
-        
-        captureContainer.appendChild(elementoParaCapturar);
-        document.body.appendChild(captureContainer);
-        
         try {
-            const canvas = await html2canvas(elementoParaCapturar, {
+            const canvas = await html2canvas(elementoOriginal, {
                 scale: 3,
                 useCORS: true,
                 backgroundColor: '#ffffff'
             });
 
-            const imgData = canvas.toDataURL('image/png');
-            
+            let finalCanvas = canvas;
+
+            // --- Se for qrcode, recorta o centro em 150x150 ---
+            if (modo === 'qrcode') {
+                const cropSize = 170 * 3; // 150px * escala (3x no html2canvas)
+                const startX = (canvas.width - cropSize) / 2;
+                const startY = (canvas.height - cropSize) / 2;
+
+                const croppedCanvas = document.createElement('canvas');
+                croppedCanvas.width = cropSize;
+                croppedCanvas.height = cropSize;
+
+                const ctx = croppedCanvas.getContext('2d');
+                ctx.drawImage(canvas, startX, startY, cropSize, cropSize, 0, 0, cropSize, cropSize);
+
+                finalCanvas = croppedCanvas;
+            }
+
+            const imgData = finalCanvas.toDataURL('image/png');
+
             const pdf = new jsPDF({
                 orientation: pdfOptions.width > pdfOptions.height ? 'landscape' : 'portrait',
                 unit: 'mm',
                 format: [pdfOptions.width, pdfOptions.height]
             });
-            
+
             pdf.addImage(imgData, 'PNG', 0, 0, pdfOptions.width, pdfOptions.height);
-            
+
             pdf.autoPrint();
             const pdfUrl = pdf.output('bloburl');
             window.open(pdfUrl, '_blank');
@@ -179,10 +175,9 @@ document.addEventListener('DOMContentLoaded', function () {
         } catch (error) {
             console.error('Erro ao gerar PDF:', error);
             Swal.fire('Erro!', `Não foi possível gerar o PDF. Detalhes: ${error.message}`, 'error');
-        } finally {
-            document.body.removeChild(captureContainer);
         }
-    }
+    };
+
 
     function renderizarEtapas() {
         const etapasContainer = document.getElementById('etapas-container');

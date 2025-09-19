@@ -18,8 +18,8 @@ const viewPath = path.join(__dirname, '..', 'view');
 // --- ROTAS DE RENDERIZAÇÃO (VIEWS) ---
 // Montadas em /componentes no arquivo principal da aplicação
 viewRouter.get('/', (req, res) => res.render('main/componente'));
-viewRouter.get('/adicionar', (req, res) => { res.sendFile(path.join(viewPath, 'add', 'adicionar-componente.html')); });
-viewRouter.get('/:id/editar', (req, res) => { res.sendFile(path.join(viewPath, 'edit', 'editar-componente.html')); });
+viewRouter.get('/adicionar', (req, res) => { res.render('add/adicionar-componente'); });
+viewRouter.get('/:id/editar', (req, res) => { res.render('edit/editar-componente'); });
 
 // --- ROTAS DA API ---
 // Montadas em /api/componentes no arquivo principal da aplicação
