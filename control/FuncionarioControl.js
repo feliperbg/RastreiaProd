@@ -75,7 +75,6 @@ module.exports = class FuncionarioController {
         }
     }
 
-
     static async login(req, res) {
         try {
             const { email, senha } = req.body;
