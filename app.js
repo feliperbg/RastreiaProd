@@ -21,7 +21,8 @@ const { viewRouter: funcionarioViewRouter, apiRouter: funcionarioApiRouter } = r
 const { viewRouter: ordemProducaoViewRouter, apiRouter: ordemProducaoApiRouter } = require('./router/OrdemProducaoRouter');
 const { apiRouter: painelApiRouter } = require('./router/PainelRouter');
 const { viewRouter: departamentoViewRouter, apiRouter: departamentoApiRouter } = require('./router/DepartamentoRouter');
-
+const { viewRouter: motivoViewRouter, apiRouter: motivoApiRouter } = require('./router/MotivoRouter');
+const reportRouter = require('./router/ReportRouter');
 
 // --- ROTAS DE VIEWS (FRONTEND) ---
 
@@ -36,6 +37,7 @@ app.use('/etapas', etapaViewRouter);
 app.use('/funcionarios', funcionarioViewRouter);
 app.use('/ordens-producao', ordemProducaoViewRouter);
 app.use('/departamentos', departamentoViewRouter);
+app.use('/motivos', motivoViewRouter);
 app.get('/painel', (req, res) => res.render('main/painel'));
 
 // Rota raiz redireciona para a página de login por padrão
@@ -50,7 +52,8 @@ app.use('/api/etapas', etapaApiRouter);
 app.use('/api/ordens-producao', ordemProducaoApiRouter);
 app.use('/api/departamentos', departamentoApiRouter);
 app.use('/api/painel', painelApiRouter);
-
+app.use('/api/motivos', motivoApiRouter);
+app.use('/relatorios', reportRouter);
 
 // --- INICIALIZAÇÃO DO SERVIDOR ---
 async function startServer() {

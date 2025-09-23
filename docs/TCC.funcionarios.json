@@ -6,7 +6,7 @@
   "turno": "Noite",
   "senha": "$2a$10$UqDQYZMD9lvTmQgICMSI0uA8VhJTIE1rOXD9JmpC0vyuoaG3Ydee.",
   "CPF": "257.669.008-49",
-  "email": "1111111111111111111111111@gmail.com",
+  "email": "felipe@gmail.com",
   "telefone": "+5512345678910",
   "dataNascimento": {
     "$date": "2025-08-27T00:00:00.000Z"
@@ -22,31 +22,84 @@
     "$date": "2025-08-17T02:24:50.241Z"
   },
   "credencial": 1,
-  "__v": 0
+  "__v": 0,
+  "imagem": "imagens\\funcionario\\68a13d728edc56a5ba8e112f.jpg"
 },
 {
   "_id": {
-    "$oid": "68a146d4b75c42e2b9cda01a"
+    "$oid": "653d6235b2c6a0c3e3a4e9a8"
   },
-  "nome": "Funcionário Teste API",
+  "nome": "Carlos Silva",
   "turno": "Manhã",
-  "senha": "$2b$10$4/F3D/9f2gciOtL9IyOKm.YEtFzKdjjgOEbvmSjG9.jLpq7fRxeeS",
-  "CPF": "553.998.921-31",
-  "email": "felipe@gmail.com",
+  "senha": "senha123",
+  "CPF": "111.222.333-44",
+  "email": "carlos.silva@empresa.com",
+  "telefone": "11987654321",
+  "credencial": 1001,
   "permissoes": [
-    "administrador"
+    "operador",
+    "montagem"
   ],
-  "role": "funcionario",
+  "role": "Operador",
+  "departamento": {
+    "$oid": "653d61a8b2c6a0c3e3a4e9a1"
+  },
   "createdAt": {
-    "$date": "2025-08-17T03:04:52.193Z"
+    "$date": "2025-08-29T23:09:13.974Z"
   },
   "updatedAt": {
-    "$date": "2025-08-21T01:41:06.452Z"
+    "$date": "2025-08-29T23:09:13.974Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "653d6235b2c6a0c3e3a4e9a9"
   },
-  "credencial": 3,
-  "__v": 0,
-  "dataNascimento": {
-    "$date": "2025-01-13T00:00:00.000Z"
+  "nome": "Ana Pereira",
+  "turno": "Tarde",
+  "senha": "senha456",
+  "CPF": "222.333.444-55",
+  "email": "ana.pereira@empresa.com",
+  "telefone": "11987654322",
+  "credencial": 1002,
+  "permissoes": [
+    "inspetor",
+    "qualidade"
+  ],
+  "role": "Inspetor de Qualidade",
+  "departamento": {
+    "$oid": "653d61a8b2c6a0c3e3a4e9a2"
   },
-  "telefone": "(11) 98765-4321"
+  "createdAt": {
+    "$date": "2025-08-29T23:09:13.974Z"
+  },
+  "updatedAt": {
+    "$date": "2025-08-29T23:09:13.974Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "653d6235b2c6a0c3e3a4e9aa"
+  },
+  "nome": "José Santos",
+  "turno": "Manhã",
+  "senha": "senha789",
+  "CPF": "333.444.555-66",
+  "email": "jose.santos@empresa.com",
+  "telefone": "11987654323",
+  "credencial": 1003,
+  "permissoes": [
+    "operador",
+    "embalagem"
+  ],
+  "role": "Operador de Expedição",
+  "departamento": {
+    "$oid": "653d61a8b2c6a0c3e3a4e9a3"
+  },
+  "createdAt": {
+    "$date": "2025-08-29T23:09:13.974Z"
+  },
+  "updatedAt": {
+    "$date": "2025-08-29T23:09:13.974Z"
+  }
 }]
