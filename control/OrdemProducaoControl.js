@@ -310,38 +310,62 @@ module.exports = class OrdemProducaoController {
         }
     }
 
-    static async pausarEtapa(req, res) {
+    static async atualizarRefugo(req, res) {
         try {
-            const { id, etapaId } = req.params;
-            const { motivo } = req.body;
+            const { id } = req.params;
+            const { quantidade_refugo } = req.body;
 
-            if (!motivo) {
-                return res.status(400).json({ status: false, msg: 'O motivo da pausa é obrigatório.' });
+            if (typeof quantidade_refugo !== 'number' || quantidade_refugo < 0) {
+                return res.status(400).json({ status: false, msg: 'A quantidade de refugo é inválida.' });
             }
 
             const ordem = await OrdemProducao.findById(id);
-            if (!ordem) return res.status(404).json({ status: false, msg: 'Ordem de produção não encontrada.' });
+            if (!ordem) {
+                return res.status(404).json({ status: false, msg: 'Ordem de produção não encontrada.' });
+            }
+            if (quantidade_refugo > ordem.quantidade) {
+                 return res.status(400).json({ status: false, msg: 'O refugo não pode ser maior que a quantidade total.' });
+            }
+            if (ordem.status === 'Concluída' || ordem.status === 'Cancelada'){
+                return res.status(403).json({ status: false, msg: 'Não é possível alterar o refugo de uma ordem finalizada.' });
+            }
+
+            ordem.quantidade_refugo = quantidade_refugo;
+            await ordem.save();
+            return res.status(200).json({ status: true, msg: 'Refugo atualizado!', ordem });
+        } catch (error) {
+            return res.status(500).json({ status: false, msg: 'Erro ao atualizar refugo.', error: error.message });
+        }
+    }
+
+    static async pausarEtapa(req, res) {
+        try {
+            const { id, etapaId } = req.params;
+            const { motivo, tipo } = req.body;
+
+            if (!motivo || !tipo) {
+                return res.status(400).json({ status: false, msg: 'Motivo e tipo da pausa são obrigatórios.' });
+            }
+            if (!['Planejada', 'NaoPlanejada'].includes(tipo)) {
+                return res.status(400).json({ status: false, msg: 'Tipo de pausa inválido.' });
+            }
+
+            const ordem = await OrdemProducao.findById(id);
+            if (!ordem) return res.status(404).json({ status: false, msg: 'Ordem não encontrada.' });
+            if (ordem.status !== 'Em Andamento') return res.status(400).json({ status: false, msg: 'A ordem não está em andamento.' });
 
             const etapaParaPausar = ordem.historicoEtapas.find(e => e.etapa.toString() === etapaId);
-            if (!etapaParaPausar) return res.status(404).json({ status: false, msg: 'Etapa não encontrada na ordem.' });
-
-            if (etapaParaPausar.status !== 'Em Andamento') {
-                return res.status(400).json({ status: false, msg: `Não é possível pausar uma etapa com status '${etapaParaPausar.status}'.` });
+            if (!etapaParaPausar || etapaParaPausar.status !== 'Em Andamento') {
+                return res.status(400).json({ status: false, msg: 'Esta etapa não está em andamento.' });
             }
-            
+
+            ordem.pausas.push({ motivo, inicio: new Date(), tipo });
             etapaParaPausar.status = 'Pausada';
             ordem.status = 'Pausada';
 
-            ordem.pausas.push({
-                motivo: motivo,
-                inicio: new Date()
-            });
-
             await ordem.save();
-            return res.status(200).json({ status: true, msg: 'Etapa pausada com sucesso.', ordem });
-
+            return res.status(200).json({ status: true, msg: 'Etapa pausada com sucesso!', ordem });
         } catch (error) {
-            console.error("ERRO AO PAUSAR ETAPA:", error);
             return res.status(500).json({ status: false, msg: 'Erro ao pausar etapa.', error: error.message });
         }
     }

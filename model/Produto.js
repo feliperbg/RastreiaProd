@@ -56,6 +56,11 @@ const ProdutoSchema = new Schema({
             default: 1
         }
     }],
+    tempo_ciclo_ideal_segundos: {
+        type: Number,
+        required: true,
+        default: 60 // Valor padrão, ex: 60 segundos
+    }
 }, {
     toJSON: { virtuals: true },
     toObject: { virtuals: true },

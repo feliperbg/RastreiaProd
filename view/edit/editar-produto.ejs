@@ -167,8 +167,9 @@
                   document.getElementById('dataEntrada').value = formatarDataParaInput(p.dataEntrada);
                   document.getElementById('dataValidade').value = formatarDataParaInput(p.dataValidade);
                   if (Array.isArray(p.componentesNecessarios)) {
-                    listaCompletaComponentes = p.componentesNecessarios.map(c => c.componente);
-                    componentesSelecionados = p.componentesNecessarios.map(c => ({
+                    const componentesValidos = p.componentesNecessarios.filter(c => c && c.componente);
+                    listaCompletaComponentes = componentesValidos.map(c => c.componente);
+                    componentesSelecionados = componentesValidos.map(c => ({
                         componente: c.componente._id,
                         quantidade: c.quantidade
                     }));

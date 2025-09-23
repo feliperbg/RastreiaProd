@@ -25,10 +25,8 @@
       }
 
       for (const prod of produtos) {
-        // Os dados dos componentes já estão aqui! Não precisa de Promise.all
         const componentesInfo = (prod.componentesNecessarios || [])
         .map(comp => {
-            // O 'comp.componente' agora é um objeto completo
             if (!comp.componente) {
                 return 'Componente não encontrado ou inválido.';
             }
@@ -37,20 +35,14 @@
             return `Código: ${codigo || "Desconhecido"} - Lote: ${Lote || "N/A"} - Qtd Necessária: ${quantidadeNecessaria}`;
         })
         .join("<br>");
-        const etapasInfo = (prod.etapas || [])
-        .map(etapa => {
-            if (!etapa.nome) {
-                return 'Etapa não encontrado ou inválido.';
-            }
-            return `Nome: ${etapa.nome || "Desconhecido"} - Departamento Responsável: ${etapa.departamentoResponsavel || "N/A"} - Sequência: ${etapa.sequencias}`;
-        })
-        .join("<br>");
         const tr = document.createElement("tr");
+        console.log(prod);
+        console.log(prod.descricao);
         tr.innerHTML = `
           <td data-label="Nome">${prod.nome}</td>
           <td data-label="Código">${prod.codigo}</td>
           <td data-label="Descrição">
-            <button class="btn btn-sm btn-outline-primary" onclick="verDescricao('Descrição do Produto','${escapeHtml(prod.descricao)}')">
+            <button class="btn btn-sm btn-outline-primary" onclick="verDescricao('Descrição do Produto','${escapeHtml(prod.descricao || '')}')">
               <i class="bi bi-file-earmark-text"></i>
             </button>
           </td>
