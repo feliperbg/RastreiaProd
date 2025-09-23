@@ -233,7 +233,11 @@
         });
     }
 
+
+
     function verDescricao(titulo, descricaoHtml){
+        console.log('Descrição HTML:', descricaoHtml);
+        console.log(typeof descricaoHtml);
         Swal.fire({
             title: titulo,
             html: descricaoHtml 

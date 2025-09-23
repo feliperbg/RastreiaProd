@@ -1,0 +1,78 @@
+[{
+  "_id": {
+    "$oid": "68d1e891352cff26f79a5005"
+  },
+  "nome": "Chapa de Aço",
+  "codigo": "CH-001",
+  "quantidade": 500,
+  "precoUnidade": 25
+},
+{
+  "_id": {
+    "$oid": "68d1e891352cff26f79a5006"
+  },
+  "nome": "Parafuso M6",
+  "codigo": "PF-006",
+  "quantidade": 10000,
+  "precoUnidade": 0.5
+},
+{
+  "_id": {
+    "$oid": "68d1f11ea7e3779cf7206054"
+  },
+  "nome": "Dobradiça Pinada 3 Polegadas",
+  "codigo": "AC-DOB-03",
+  "quantidade": 800,
+  "precoUnidade": 3.5,
+  "Lote": "LT-AC-2025-A1"
+},
+{
+  "_id": {
+    "$oid": "68d1f11ea7e3779cf7206055"
+  },
+  "nome": "Fechadura Yale com Chave",
+  "codigo": "AC-FEC-01",
+  "quantidade": 400,
+  "precoUnidade": 15.75,
+  "Lote": "LT-AC-2025-B2"
+},
+{
+  "_id": {
+    "$oid": "68d1f11ea7e3779cf7206056"
+  },
+  "nome": "Tinta Pó Poliéster (Azul)",
+  "codigo": "QT-TIN-01",
+  "quantidade": 150,
+  "precoUnidade": 45,
+  "Lote": "LT-QT-2025-C3"
+},
+{
+  "_id": {
+    "$oid": "68d1f11ea7e3779cf7206057"
+  },
+  "nome": "Placa de Circuito Impresso PNL-001",
+  "codigo": "EL-PCI-PNL01",
+  "quantidade": 250,
+  "precoUnidade": 85,
+  "Lote": "LT-EL-2025-D4"
+},
+{
+  "_id": {
+    "$oid": "68d1f11ea7e3779cf7206058"
+  },
+  "nome": "Display LCD 16x2",
+  "codigo": "EL-DSP-1602",
+  "quantidade": 300,
+  "precoUnidade": 22,
+  "Lote": "LT-EL-2025-E5"
+},
+{
+  "_id": {
+    "$oid": "68d1f11ea7e3779cf7206059"
+  },
+  "nome": "Botão Pulsador Verde 22mm",
+  "codigo": "EL-BOT-V22",
+  "quantidade": 1000,
+  "precoUnidade": 5.5,
+  "Lote": "LT-EL-2025-F6"
+}]

@@ -59,6 +59,11 @@ const FuncionarioSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Departamento'
     },
+    valor_hora: {
+        type: Number,
+        required: true,
+        default: 15 // Valor padrão, ex: R$15,00
+    }
 }, {
     timestamps: true,
 });

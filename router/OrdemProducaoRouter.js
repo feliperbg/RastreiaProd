@@ -38,5 +38,5 @@ apiRouter.post('/:id/etapa/:etapaId/iniciar', jwtMiddleware.validate.bind(jwtMid
 apiRouter.post('/:id/etapa/:etapaId/finalizar', jwtMiddleware.validate.bind(jwtMiddleware), MongoIdMiddleware.validateParams(['id', 'etapaId']), OrdemProducaoController.finalizarEtapa.bind(OrdemProducaoController));
 apiRouter.patch('/:id/etapa/:etapaId/pausar', jwtMiddleware.validate.bind(jwtMiddleware), MongoIdMiddleware.validateParams(['id', 'etapaId']), OrdemProducaoController.pausarEtapa.bind(OrdemProducaoController));
 apiRouter.patch('/:id/etapa/:etapaId/retomar', jwtMiddleware.validate.bind(jwtMiddleware), MongoIdMiddleware.validateParams(['id', 'etapaId']), OrdemProducaoController.retomarEtapa.bind(OrdemProducaoController));
-
+apiRouter.patch('/:id/refugo', jwtMiddleware.validate.bind(jwtMiddleware), MongoIdMiddleware.validateParam('id'), OrdemProducaoController.atualizarRefugo.bind(OrdemProducaoController));
 module.exports = { viewRouter, apiRouter };

@@ -33,7 +33,7 @@
             ordens.forEach(ordem => {
                 const tr = document.createElement("tr");
                 const nomeProduto = ordem.produto ? ordem.produto.nome : 'Produto não encontrado';
-
+                console.log('Ordem de Produção:', ordem);
                 const historicoEtapas = ordem.historicoEtapas && ordem.historicoEtapas.length > 0
                     ? `${ordem.historicoEtapas[0].etapa.nome} (${ordem.historicoEtapas[0].status})`
                     : 'Nenhuma';
