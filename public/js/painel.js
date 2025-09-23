@@ -200,7 +200,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         ordensResponse.ordens.forEach(ordem => {
             const column = kanbanData.find(b => b.id === statusMap[ordem.status]);
-
+            console.log(ordem);
             if (column) {
                 const etapaAtivaObj = ordem.historicoEtapas.find(e => e.status.toLowerCase() !== 'concluída');
                 const nomeEtapa = etapaAtivaObj && etapaAtivaObj.etapa ? etapaAtivaObj.etapa.nome : '';

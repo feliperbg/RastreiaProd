@@ -1,11 +1,12 @@
 // Arquivo: testes/testAPIFuncionarios.js
 const axios = require('axios');
+const { ObjectID } = require('mongodb');
 
 // --- CONFIGURAÇÕES ---
-const BASE_URL = 'http://localhost:8081/funcionario'; // A URL base da sua API de funcionários
+const BASE_URL = 'http://localhost:3000/api/funcionarios'; // A URL base da sua API de funcionários
 
 // !! IMPORTANTE !! Cole aqui o seu token JWT válido (de um usuário admin, se necessário para criar outros)
-const TOKEN_JWT = 'COLE_SEU_TOKEN_AQUI';
+const TOKEN_JWT = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdCIsInN1YiI6ImFjZXNzb19zaXN0ZW1hIiwiaWF0IjoxNzU4NjMxODc1LCJleHAiOjE3NjEyMjM4NzUsIm5iZiI6MTc1ODYzMTg3NSwianRpIjoiOTU3Y2E3MGUwMTBjODBhNzQzZWFlZWM2MTIxY2I2YzkiLCJlbWFpbEZ1bmNpb25hcmlvIjoiZmVsaXBlQGdtYWlsLmNvbSIsIl9pZCI6IjY4YTEzZDcyOGVkYzU2YTViYThlMTEyZiIsInJvbGUiOiJhZG1pbmlzdHJhZG9yIn0.PXUzy09XCP1NGPKqna7HZdbqQBVWe8I1B7EFVdi_ank';
 const AUTH_HEADER = {
     headers: { 'Authorization': `Bearer ${TOKEN_JWT}` }
 };
@@ -16,8 +17,11 @@ const novoFuncionarioData = {
     nome: "Funcionário Teste API",
     email: emailUnico,
     senha: "senha123",
-    CPF: `${Date.now()}`.slice(-11), // CPF único para teste
-    role: "operador",
+    telefone: "12981692265",
+    CPF: `45618685850`, // CPF único para teste
+    dataNascimento: "2000-01-01",
+    departamento: ObjectID("68d29cdc1062caa0d7c7e0b4"),
+    role: "administrador",
     turno: "Manhã"
 };
 
@@ -123,7 +127,7 @@ async function rodarTodosOsTestes() {
     }
 
     const idDoNovoFuncionario = await testarCriacao();
-    //await testarLogin(); // Testa o login com o usuário recém-criado
+    await testarLogin(); // Testa o login com o usuário recém-criado
     //await testarLeituraTodos();
     //await testarLeituraPorId(idDoNovoFuncionario);
     //await testarAtualizacao(idDoNovoFuncionario);
