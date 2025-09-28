@@ -17,7 +17,7 @@
         </div>
 
         <div id="conteudo-pagina" class="d-none">
-            <!-- CABEÇALHO (do primeiro exemplo) -->
+            <!-- CABEÇALHO -->
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <div class="d-flex align-items-center">
                     <button class="btn btn-outline-secondary me-3 no-print" onclick="location.href = document.referrer || '/ordens-producao';">
@@ -36,7 +36,7 @@
             </div>
 
             <div class="printable-area">
-                <!-- DETALHES DA OP (do segundo exemplo, com refugo) -->
+                <!-- DETALHES DA OP -->
                 <div class="card mb-3">
                     <div class="card-header d-flex justify-content-between align-items-center py-2">
                         <h5 class="mb-0 fs-6">Detalhes da Ordem de Produção</h5>
@@ -93,6 +93,21 @@
                         <div class="card mb-3">
                             <div class="card-header py-2"><h5 class="mb-0 fs-6">Histórico de Pausas</h5></div>
                             <div class="card-body p-0"><div class="table-responsive"><table class="table table-striped mb-0"><thead class="table-light"><tr><th>Motivo</th><th>Tipo</th><th>Início</th><th>Duração</th></tr></thead><tbody id="pausas-tabela"></tbody></table></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card de Histórico de Refugo -->
+                <div class="card mb-3">
+                    <div class="card-header py-2">
+                        <h5 class="mb-0 fs-6">Histórico de Refugo</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-striped mb-0">
+                                <thead class="table-light"><tr><th>Quantidade</th><th>Motivo</th><th>Lançado por</th><th>Data</th></tr></thead>
+                                <tbody id="refugo-tabela"></tbody>
+                            </table>
                         </div>
                     </div>
                 </div>

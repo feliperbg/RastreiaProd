@@ -1,0 +1,90 @@
+[{
+  "_id": {
+    "$oid": "68d8d7187e174613587568c2"
+  },
+  "descricao": "Falta de material",
+  "tipo": "PAUSA",
+  "ativo": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.232Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.232Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587568c3"
+  },
+  "descricao": "Pausa para almoço",
+  "tipo": "PAUSA",
+  "ativo": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.232Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.232Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587568c4"
+  },
+  "descricao": "Pedido do cliente cancelado",
+  "tipo": "CANCELAMENTO",
+  "ativo": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.232Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.232Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587568c5"
+  },
+  "descricao": "Erro na especificação",
+  "tipo": "CANCELAMENTO",
+  "ativo": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.232Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.232Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587568c6"
+  },
+  "descricao": "Peça danificada",
+  "tipo": "REFUGO",
+  "ativo": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.232Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.232Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587568c7"
+  },
+  "descricao": "Falha no teste de qualidade",
+  "tipo": "REFUGO",
+  "ativo": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.232Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.232Z"
+  }
+}]

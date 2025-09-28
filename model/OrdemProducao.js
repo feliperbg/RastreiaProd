@@ -24,6 +24,10 @@ const OrdemProducaoSchema = new Schema({
         required: true,
         default: 0
     },
+    prioridade: {
+        texto: { type: String, default: 'Normal' },
+        cor: { type: String, default: '#6c757d' }
+    },
     dataEntrega: {
         type: Date,
         required: [true, 'A data de entrega é obrigatória.'],
@@ -33,6 +37,20 @@ const OrdemProducaoSchema = new Schema({
         status: { type: String, required: true, enum: ['Pendente', 'Em Andamento', 'Pausada', 'Concluída'], default: 'Pendente' },
         dataInicio: Date,
         dataFim: Date,
+    }],
+    historico_refugo: [{
+        motivo: { type: Schema.Types.ObjectId, ref: 'Motivo', required: true },
+        quantidade: { type: Number, required: true },
+        funcionario: { type: Schema.Types.ObjectId, ref: 'Funcionario', required: true },
+        data: { type: Date, required: true, default: Date.now }
+    }],
+    historico_prioridade: [{
+        prioridade: {
+            texto: { type: String },
+            cor: { type: String }
+        },
+        funcionario: { type: Schema.Types.ObjectId, ref: 'Funcionario', required: true },
+        data: { type: Date, required: true, default: Date.now }
     }],
     funcionarioAtivo: [{
         funcionario: { type: Schema.Types.ObjectId, ref: 'Funcionario' },

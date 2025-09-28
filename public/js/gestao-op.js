@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let userData = null;
     let qrCodeLabelModal = null;
     let motivosDePausa = []; // Armazena os motivos de pausa buscados da API
+    let motivosDeRefugo = []; // Armazena os motivos de refugo buscados da API
 
     async function inicializar() {
         const modalElement = document.getElementById('qrCodeLabelModal');
@@ -21,9 +22,10 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         try {
-            const [opResponse, motivosResponse] = await Promise.all([
+            const [opResponse, motivosPausaResponse, motivosRefugoResponse] = await Promise.all([
                 fetch(`/api/ordens-producao/${opId}`, { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } }),
-                fetch('/api/motivos/tipo/PAUSA', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } })
+                fetch('/api/motivos/tipo/PAUSA', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } }),
+                fetch('/api/motivos/tipo/REFUGO', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } })
             ]);
 
             if (!opResponse.ok) {
@@ -32,8 +34,11 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             ordemProducao = (await opResponse.json()).ordem;
 
-            if (motivosResponse.ok) {
-                motivosDePausa = await motivosResponse.json();
+            if (motivosPausaResponse.ok) {
+                motivosDePausa = (await motivosPausaResponse.json()).data || [];
+            }
+            if (motivosRefugoResponse.ok) {
+                motivosDeRefugo = (await motivosRefugoResponse.json()).data || [];
             }
 
             const userDataString = localStorage.getItem('userData');
@@ -71,6 +76,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         renderizarTabelaComponentes(ordemProducao.produto.componentesNecessarios);
         renderizarHistoricoPausas();
+        renderizarHistoricoRefugo();
         renderizarEtapas();
 
         document.getElementById('btn-qrcode-modal').addEventListener('click', abrirModalQrCode);
@@ -85,7 +91,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         componentes.forEach(item => {
             const tr = document.createElement('tr');
-            tr.innerHTML = `<td>${item.componente.nome}</td><td>${item.componente.codigo}</td><td>${item.quantidade}</td>`;
+            tr.innerHTML = `<td>${item.componente ? item.componente.nome : 'N/A'}</td><td>${item.componente ? item.componente.codigo : 'N/A'}</td><td>${item.quantidade ? item.quantidade : 'N/A'}</td>`;
             tabelaBody.appendChild(tr);
         });
     }
@@ -100,7 +106,23 @@ document.addEventListener('DOMContentLoaded', function () {
         ordemProducao.pausas.forEach(pausa => {
             const duracao = pausa.fim ? calcularDuracao(pausa.inicio, pausa.fim) : 'Em andamento';
             const tipoBadge = pausa.tipo === 'Planejada' ? 'bg-primary' : 'bg-warning text-dark';
-            tabelaPausas.innerHTML += `<tr><td>${pausa.motivo}</td><td><span class="badge ${tipoBadge}">${pausa.tipo}</span></td><td>${formatarDataHora(pausa.inicio)}</td><td>${duracao}</td></tr>`;
+            const tipoTexto = pausa.tipo === 'NaoPlanejada' ? 'Não Planejada' : pausa.tipo;
+            tabelaPausas.innerHTML += `<tr><td>${pausa.motivo}</td><td><span class="badge ${tipoBadge}">${tipoTexto}</span></td><td>${formatarDataHora(pausa.inicio)}</td><td>${duracao}</td></tr>`;
+        });
+    }
+
+    function renderizarHistoricoRefugo() {
+        const tabelaRefugo = document.getElementById('refugo-tabela');
+        tabelaRefugo.innerHTML = '';
+        if (!ordemProducao.historico_refugo || ordemProducao.historico_refugo.length === 0) {
+            tabelaRefugo.innerHTML = '<tr><td colspan="4" class="text-center text-muted">Nenhum refugo lançado.</td></tr>';
+            return;
+        }
+        // Popula a tabela com o histórico de refugo
+        ordemProducao.historico_refugo.forEach(refugo => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td>${refugo.quantidade}</td><td>${refugo.motivo ? refugo.motivo.descricao : 'N/A'}</td><td>${refugo.funcionario ? refugo.funcionario.nome : 'N/A'}</td><td>${formatarDataHora(refugo.data)}</td>`;
+            tabelaRefugo.appendChild(tr);
         });
     }
 
@@ -255,31 +277,63 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- FUNÇÕES GLOBAIS DE AÇÃO ---
     window.atualizarRefugo = async function() {
-        const { value: novaQuantidade } = await Swal.fire({
-            title: 'Lançar Refugo', input: 'number', inputLabel: 'Informe a quantidade total de peças refugadas',
-            inputValue: ordemProducao.quantidade_refugo || 0, showCancelButton: true, confirmButtonText: 'Salvar',
-            inputValidator: (v) => {
-                const numValue = Number(v);
-                if (v === '' || v === null || numValue < 0 || numValue > ordemProducao.quantidade) return 'Valor inválido!';
+        if (!motivosDeRefugo || motivosDeRefugo.length === 0) {
+            return Swal.fire('Atenção!', 'Não há motivos de refugo cadastrados. Por favor, cadastre um motivo antes de lançar o refugo.', 'warning');
+        }
+
+        const optionsMotivo = motivosDeRefugo.reduce((acc, motivo) => {
+            acc[motivo._id] = motivo.descricao;
+            return acc;
+        }, {});
+
+        const { value: formValues } = await Swal.fire({
+            title: 'Lançar Refugo',
+            html:
+                '<label for="swal-quantidade" class="swal2-label">Quantidade</label>' +
+                '<input id="swal-quantidade" type="number" min="1" class="swal2-input">' +
+                '<label for="swal-motivo" class="swal2-label">Motivo do Refugo</label>' +
+                '<select id="swal-motivo" class="swal2-select"></select>',
+            focusConfirm: false,
+            showCancelButton: true,
+            confirmButtonText: 'Lançar',
+            cancelButtonText: 'Cancelar',
+            didOpen: () => {
+                const select = document.getElementById('swal-motivo');
+                for (const [id, descricao] of Object.entries(optionsMotivo)) {
+                    select.add(new Option(descricao, id));
+                }
+            },
+            preConfirm: () => {
+                const quantidade = document.getElementById('swal-quantidade').value;
+                const motivoId = document.getElementById('swal-motivo').value;
+                if (!quantidade || quantidade <= 0 || !motivoId) {
+                    Swal.showValidationMessage('Por favor, preencha a quantidade e selecione um motivo.');
+                    return false;
+                }
+                return { quantidade: parseInt(quantidade), motivoId: motivoId };
             }
         });
-        if (novaQuantidade !== undefined && novaQuantidade !== null) {
+
+        if (formValues) {
             try {
                 const response = await fetch(`/api/ordens-producao/${ordemProducao._id}/refugo`, {
                     method: 'PATCH',
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('authToken')}` },
-                    body: JSON.stringify({ quantidade_refugo: parseInt(novaQuantidade) })
+                    body: JSON.stringify(formValues)
                 });
                 const result = await response.json();
                 if (!response.ok) throw new Error(result.msg);
                 Swal.fire('Sucesso!', 'Quantidade de refugo atualizada.', 'success');
-                inicializar();
+                // Chama a função de inicialização para recarregar todos os dados da OP
+                spinner.classList.remove('d-none');
+                conteudoPagina.classList.add('d-none');
+                await inicializar();
             } catch(error) { Swal.fire('Erro!', error.message, 'error'); }
         }
     }
     
     window.pausarEtapa = async function(opId, etapaId) {
-        if (motivosDePausa.length === 0) return Swal.fire('Atenção!', 'Não há motivos de pausa cadastrados.', 'warning');
+        if (!motivosDePausa || motivosDePausa.length === 0) return Swal.fire('Atenção!', 'Não há motivos de pausa cadastrados.', 'warning');
         const optionsMotivo = motivosDePausa.map(m => `<option value="${m.descricao}">${m.descricao}</option>`).join('');
 
         const { value: formValues } = await Swal.fire({
