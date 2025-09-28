@@ -24,11 +24,11 @@ viewRouter.get('/:id/gestao', (req, res) => { res.render('main/gestao-op'); });
 
 // --- ROTAS DA API ---
 // Montadas em /api/ordens-producao no arquivo principal da aplicação
-// Adicionado .bind(OrdemProducaoController) a todos os métodos estáticos do controller
 apiRouter.post('/', jwtMiddleware.validate.bind(jwtMiddleware), OrdemProducaoMiddleware.validateCreate, OrdemProducaoController.create.bind(OrdemProducaoController));
 apiRouter.get('/', jwtMiddleware.validate.bind(jwtMiddleware), OrdemProducaoController.readAll.bind(OrdemProducaoController));
-apiRouter.get('/:id', jwtMiddleware.validate.bind(jwtMiddleware), MongoIdMiddleware.validateParam('id'), OrdemProducaoController.readByID.bind(OrdemProducaoController));
+apiRouter.get('/:id', jwtMiddleware.validate.bind(jwtMiddleware),OrdemProducaoController.readByID.bind(OrdemProducaoController));
 apiRouter.put('/:id', jwtMiddleware.validate.bind(jwtMiddleware), MongoIdMiddleware.validateParam('id'), OrdemProducaoController.update.bind(OrdemProducaoController));
+apiRouter.patch('/:id/prioridade', jwtMiddleware.validate.bind(jwtMiddleware), MongoIdMiddleware.validateParam('id'), OrdemProducaoController.updatePrioridade.bind(OrdemProducaoController));  
 
 // --- ROTAS DE AÇÃO (CANCELAR) ---
 apiRouter.patch('/:id/cancelar', jwtMiddleware.validate.bind(jwtMiddleware), MongoIdMiddleware.validateParam('id'), OrdemProducaoController.cancelar.bind(OrdemProducaoController));

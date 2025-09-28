@@ -20,7 +20,7 @@ module.exports = class MotivoController {
     static async readAll(req, res) {
         try {
             const motivos = await Motivo.find().sort('descricao');
-            return res.status(200).json(motivos);
+             return res.status(200).json({ status: true, data: motivos }); 
         } catch (error) {
             return res.status(500).json({ status: false, msg: 'Erro ao listar motivos.' });
         }
@@ -30,7 +30,7 @@ module.exports = class MotivoController {
         try {
             const { tipo } = req.params;
             const motivos = await Motivo.find({ tipo: tipo.toUpperCase() }).sort('descricao');
-            return res.status(200).json(motivos);
+             return res.status(200).json({ status: true, data: motivos }); 
         } catch (error) {
             return res.status(500).json({ status: false, msg: `Erro ao listar motivos do tipo ${tipo}.` });
         }

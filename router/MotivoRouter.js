@@ -15,10 +15,7 @@ const jwtMiddleware = new TokenJWTMiddleware();
 
 // --- ROTAS DE RENDERIZAÇÃO (VIEWS) ---
 // Montadas em /motivos no arquivo principal da aplicação
-// TODO: Criar as views correspondentes se necessário
 viewRouter.get('/', (req, res) => res.render('main/motivo'));
-viewRouter.get('/adicionar', (req, res) => { res.render('add/adicionar-motivo'); });
-viewRouter.get('/:id/editar', (req, res) => { res.render('edit/editar-motivo'); });
 
 // --- ROTAS DA API ---
 // Montadas em /api/motivos no arquivo principal da aplicação

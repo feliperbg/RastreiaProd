@@ -1,6 +1,9 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
+<!doctype html>
+<html lang="pt-BR">
+<head>
   <meta charset="utf-8" />
   <title>Relatórios de Produção - RastreiaProd</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,15 +13,27 @@
   <link rel="stylesheet" href="/css/adminlte.min.css" />
   
   <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
-  <style>
-      #loading-overlay {
-          position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-          background: rgba(255, 255, 255, 0.8); z-index: 1050; display: flex;
-          align-items: center; justify-content: center; border-radius: .25rem;
-      }
-      .small-box .icon { font-size: 55px; top: 15px; padding-left: 10px; }
-      .small-box h3 { font-size: 2rem; }
-  </style>
+    <style>
+    #loading-overlay {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(255, 255, 255, 0.8); z-index: 1050; display: flex;
+        align-items: center; justify-content: center; border-radius: .25rem;
+    }
+    .small-box .icon {
+        font-size: 60px;
+        position: absolute;
+        top: 50%;
+        right: 15px;
+        transform: translateY(-50%);
+        padding: 0;
+        left: auto;
+    }
+    .small-box h3 { font-size: 2rem; }
+
+    .small-box .btn-outline-light {
+        border: none !important;
+    }
+    </style>
 </head>
 
 <body class="layout-fluid sidebar-expand-lg bg-body-tertiary">
@@ -73,10 +88,54 @@
               </div>
 
               <div class="row">
-                  <div class="col-lg-3 col-6"><div class="small-box bg-info"><div class="inner"><h3 id="kpi-oee">0%</h3><p>OEE Geral</p></div><div class="icon"><i class="bi bi-speedometer2"></i></div></div></div>
-                  <div class="col-lg-3 col-6"><div class="small-box" style="background-color: #0d6efd; color: white;"><div class="inner"><h3 id="kpi-disponibilidade">0%</h3><p>Disponibilidade</p></div><div class="icon"><i class="bi bi-clock-history"></i></div></div></div>
-                  <div class="col-lg-3 col-6"><div class="small-box" style="background-color: #198754; color: white;"><div class="inner"><h3 id="kpi-qualidade">0%</h3><p>Qualidade</p></div><div class="icon"><i class="bi bi-patch-check"></i></div></div></div>
-                  <div class="col-lg-3 col-6"><div class="small-box" style="background-color: #6c757d; color: white;"><div class="inner"><h3 id="kpi-performance">0%</h3><p>Performance</p></div><div class="icon"><i class="bi bi-rocket-takeoff"></i></div></div></div>
+                  <div class="col-lg-3 col-6">
+                    <div class="small-box bg-info position-relative">
+                      <div class="inner ps-3">
+                        <h3 id="kpi-oee">0%</h3>
+                        <p>OEE Geral</p>
+                      </div>
+                      <div class="icon"><i class="bi bi-speedometer2"></i></div>
+                      <button class="btn btn-sm btn-outline-light position-absolute top-0 end-0 m-2" data-kpi="oee" data-bs-toggle="modal" data-bs-target="#kpiModal" title="O que é isso?">
+                        <i class="bi bi-info-circle"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="col-lg-3 col-6">
+                    <div class="small-box position-relative" style="background-color: #0d6efd; color: white;">
+                      <div class="inner ps-3">
+                        <h3 id="kpi-disponibilidade">0%</h3>
+                        <p>Disponibilidade</p>
+                      </div>
+                      <div class="icon"><i class="bi bi-clock-history"></i></div>
+                      <button class="btn btn-sm btn-outline-light position-absolute top-0 end-0 m-2" data-kpi="disponibilidade" data-bs-toggle="modal" data-bs-target="#kpiModal" title="O que é isso?">
+                        <i class="bi bi-info-circle"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="col-lg-3 col-6">
+                    <div class="small-box position-relative" style="background-color: #198754; color: white;">
+                      <div class="inner ps-3">
+                        <h3 id="kpi-qualidade">0%</h3>
+                        <p>Qualidade</p>
+                      </div>
+                      <div class="icon"><i class="bi bi-patch-check"></i></div>
+                      <button class="btn btn-sm btn-outline-light position-absolute top-0 end-0 m-2" data-kpi="qualidade" data-bs-toggle="modal" data-bs-target="#kpiModal" title="O que é isso?">
+                        <i class="bi bi-info-circle"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="col-lg-3 col-6">
+                    <div class="small-box position-relative" style="background-color: #6c757d; color: white;">
+                      <div class="inner ps-3">
+                        <h3 id="kpi-performance">0%</h3>
+                        <p>Performance</p>
+                      </div>
+                      <div class="icon"><i class="bi bi-rocket-takeoff"></i></div>
+                      <button class="btn btn-sm btn-outline-light position-absolute top-0 end-0 m-2" data-kpi="performance" data-bs-toggle="modal" data-bs-target="#kpiModal" title="O que é isso?">
+                        <i class="bi bi-info-circle"></i>
+                      </button>
+                    </div>
+                  </div>
               </div>
 
               <div class="row">
@@ -107,6 +166,22 @@
     </main>
 
     <%- include('../partials/footer.ejs') %>
+
+    <!-- Modal de Explicação do KPI (movido para fora do #report-content) -->
+    <div class="modal fade" id="kpiModal" tabindex="-1" aria-labelledby="kpiModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="kpiModalLabel">Explicação do KPI</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body" id="kpiModalBody"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -122,10 +197,10 @@
   
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  
-  <script src="/js/relatorios.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+
+<script src="/js/relatorios.js"></script>
 
 
 </body>

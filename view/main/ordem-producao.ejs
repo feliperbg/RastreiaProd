@@ -3,74 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de Ordem de Produções</title>
-    <!-- Bootstrap CSS -->
+    <title>Lista de Ordens de Produção</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <!-- SweetAlert2 CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <link rel="stylesheet" href="/css/adminlte.min.css">
-    <link rel="stylesheet" href="css/tabela.css">
-</head>
-  <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
+    <link rel="stylesheet" href="/css/tabela.css"> </head>
+<body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
     <div class="app-wrapper">
         <%- include('../partials/header.ejs') %>
         <%- include('../partials/sidebar.ejs') %>
-            <main class="app-main">
-                <div class="app-content">
-                    <div class="container-fluid">
-                <h1 class="mb-4 text-center">Ordem de Produções</h1>    
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <input type="text" id="filtro" class="form-control" placeholder="Pesquisar ordem de produção...">
-                            </div>
-                            <div class="col-md-6 text-end">
-                                <button class="btn btn-primary" onclick="window.location.href='/ordens-producao/adicionar'">
-                                    <i class="bi bi-plus-circle"></i> Adicionar Ordem de Produção
-                                </button>
+        <main class="app-main">
+            <div class="app-content">
+                <div class="container-fluid">
+                    <h1 class="mb-4 text-center">Ordens de Produção</h1>
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div class="row g-3 align-items-end">
+                                <div class="col-md-4">
+                                    <label for="filtro-texto" class="form-label">Pesquisa Rápida</label>
+                                    <input type="text" id="filtro-texto" class="form-control" placeholder="Produto, código, etapa...">
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="filtro-status" class="form-label">Status</label>
+                                    <select id="filtro-status" class="form-select">
+                                        <option value="">Todos</option>
+                                        <option value="Pendente">Pendente</option>
+                                        <option value="Em Andamento">Em Andamento</option>
+                                        <option value="Pausada">Pausada</option>
+                                        <option value="Concluída">Concluída</option>
+                                        <option value="Cancelada">Cancelada</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-5 text-md-end">
+                                    <button class="btn btn-primary" onclick="window.location.href='/ordens-producao/adicionar'">
+                                        <i class="bi bi-plus-circle"></i> Adicionar Ordem de Produção
+                                    </button>
+                                    <a href="/motivos" class="btn btn-secondary">
+                                        <i class="bi bi-tags"></i> Gerenciar Motivos
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                
-                <div class="table-responsive">
-                    <table class="table table-striped table-hover table-bordered">
-                       <thead class="table-dark">
-                            <tr>
-                                <th>Código</th>
-                                <th>Status</th>
-                                <th>Produto</th>
-                                <th>Criado Por</th>
-                                <th>Etapa Atual</th>
-                                <th>Funcionário Ativo</th>
-                                <th>Data de Entrega</th>
-                                <th>Horário de Início</th>
-                                <th>Horário de Fim</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabela-ordem-producoes">
-                            <tr>
-                                <td colspan="12">Carregando dados...</td>
-                            </tr>
-                        </tbody>
-                    </table>
+
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover table-bordered">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th class="sortable" data-column="0" data-sort-type="text">Código <i class="bi bi-arrow-down-up"></i></th>
+                                    <th class="sortable" data-column="1" data-sort-type="text">Prioridade <i class="bi bi-arrow-down-up"></i></th>
+                                    <th class="sortable" data-column="2" data-sort-type="text">Criado Por <i class="bi bi-arrow-down-up"></i></th>
+                                    <th class="sortable" data-column="3" data-sort-type="text">Status <i class="bi bi-arrow-down-up"></i></th>
+                                    <th class="sortable" data-column="4" data-sort-type="text">Produto <i class="bi bi-arrow-down-up"></i></th>
+                                    <th class="sortable" data-column="5" data-sort-type="number">Qtd. <i class="bi bi-arrow-down-up"></i></th>
+                                    <th class="sortable" data-column="6" data-sort-type="number">Refugo <i class="bi bi-arrow-down-up"></i></th>
+                                    <th class="sortable" data-column="7" data-sort-type="number">Qualidade <i class="bi bi-arrow-down-up"></i></th>
+                                    <th class="sortable" data-column="8" data-sort-type="number">Performance <i class="bi bi-arrow-down-up"></i></th>
+                                    <th class="sortable" data-column="9" data-sort-type="number">OEE <i class="bi bi-arrow-down-up"></i></th>
+                                    <th class="sortable" data-column="10" data-sort-type="text">Etapa Atual <i class="bi bi-arrow-down-up"></i></th>
+                                    <th class="sortable" data-column="11" data-sort-type="text">Funcionário <i class="bi bi-arrow-down-up"></i></th>
+                                    <th class="sortable" data-column="12" data-sort-type="date">Data Entrega <i class="bi bi-arrow-down-up"></i></th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabela-ordem-producoes">
+                                <tr>
+                                    <td colspan="11" class="text-center">Carregando dados...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </main>
     </div>
-        <!-- Container de Toasts -->
     <%- include('../partials/toast.ejs') %>
-  </body>
-    <!-- Bootstrap JS Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- SweetAlert2 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="/js/adminlte.min.js"></script>
-    <script src ="/js/toast.js"></script>
-    <script src="/js/ordem-producao.js"></script>
-    <script src="/js/tabela.js"></script>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="/js/adminlte.min.js"></script>
+<script src="/js/toast.js"></script>
+<script src="/js/ordem-producao.js"></script>
+<script src="/js/tabela.js"></script>
 </html>

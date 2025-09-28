@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão de Motivos</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="/css/adminlte.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="/css/tabela.css">
+</head>
+
+<body class="layout-fluid sidebar-expand-lg bg-body-tertiary">
+    <div class="app-wrapper">
+        <%- include('../partials/header.ejs') %>
+        <%- include('../partials/sidebar.ejs') %>
+        <main class="app-main">
+            <div class="app-content">
+                <div class="container-fluid">
+                    <h1 class="mb-4 text-center">Gestão de Motivos</h1>
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <input type="text" id="filtro-motivo" class="form-control"
+                                        placeholder="Pesquisar por descrição do motivo...">
+                                </div>
+                                <div class="col-md-6 text-end">
+                                    <button id="btn-adicionar" class="btn btn-primary" data-bs-toggle="modal"
+                                        data-bs-target="#motivoModal">
+                                        <i class="bi bi-plus-circle"></i> Adicionar Motivo
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover table-bordered">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Descrição</th>
+                                    <th>Tipo</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabela-motivos">
+                                <tr>
+                                    <td colspan="3" class="text-center">Carregando dados...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal fade" id="motivoModal" tabindex="-1" aria-labelledby="motivoModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="motivoModalLabel">Adicionar Motivo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="motivoForm">
+                        <input type="hidden" id="motivoId">
+                        <div class="mb-3">
+                            <label for="descricao" class="form-label">Descrição do Motivo</label>
+                            <input type="text" class="form-control" id="descricao" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="tipo" class="form-label">Tipo</label>
+                            <select class="form-select" id="tipo" required>
+                                <option value="" disabled selected>Selecione um tipo</option>
+                                <option value="PAUSA">Pausa</option>
+                                <option value="CANCELAMENTO">Cancelamento</option>
+                                <option value="REFUGO">Refugo</option>
+                            </select>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                            <button type="submit" class="btn btn-primary">Salvar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/js/adminlte.min.js"></script>
+    <script src="/js/motivo.js"></script>
+    <script src="/js/tabela.js"></script>
+</body>
+</html>

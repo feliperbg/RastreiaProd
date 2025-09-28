@@ -1,78 +1,1050 @@
 [{
   "_id": {
-    "$oid": "68d1e891352cff26f79a5005"
+    "$oid": "68d8d7187e174613587568c9"
   },
-  "nome": "Chapa de Aço",
-  "codigo": "CH-001",
-  "quantidade": 500,
-  "precoUnidade": 25
+  "nome": "Prático Metal Calças",
+  "codigo": "COMP-O3SUF9ZO",
+  "descricao": "Introducing the Latvia-inspired Frango, blending oco style with local craftsmanship",
+  "quantidade": 3556,
+  "Lote": "TEHLW0OUXK",
+  "precoUnidade": 131.35,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.241Z"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  }
 },
 {
   "_id": {
-    "$oid": "68d1e891352cff26f79a5006"
+    "$oid": "68d8d7187e174613587568ca"
   },
-  "nome": "Parafuso M6",
-  "codigo": "PF-006",
-  "quantidade": 10000,
-  "precoUnidade": 0.5
+  "nome": "Ergonômico Borracha Salada",
+  "codigo": "COMP-BFRHRYXV",
+  "descricao": "Introducing the Hong Kong-inspired Camiseta, blending visível style with local craftsmanship",
+  "quantidade": 650,
+  "Lote": "GDY4X5KQB6",
+  "precoUnidade": 142.29,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.241Z"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  }
 },
 {
   "_id": {
-    "$oid": "68d1f11ea7e3779cf7206054"
+    "$oid": "68d8d7187e174613587568cb"
   },
-  "nome": "Dobradiça Pinada 3 Polegadas",
-  "codigo": "AC-DOB-03",
-  "quantidade": 800,
-  "precoUnidade": 3.5,
-  "Lote": "LT-AC-2025-A1"
+  "nome": "Lindo Concreto Cadeira",
+  "codigo": "COMP-HLDV1QE5",
+  "descricao": "New vermelho Cadeira with ergonomic design for nervoso comfort",
+  "quantidade": 2037,
+  "Lote": "UZYCMZDRG7",
+  "precoUnidade": 10.95,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.241Z"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  }
 },
 {
   "_id": {
-    "$oid": "68d1f11ea7e3779cf7206055"
+    "$oid": "68d8d7187e174613587568cc"
   },
-  "nome": "Fechadura Yale com Chave",
-  "codigo": "AC-FEC-01",
-  "quantidade": 400,
-  "precoUnidade": 15.75,
-  "Lote": "LT-AC-2025-B2"
+  "nome": "Pequeno Plástico Salgadinhos",
+  "codigo": "COMP-CPPYGBIW",
+  "descricao": "Stylish Salada designed to make you stand out with triangular looks",
+  "quantidade": 1180,
+  "Lote": "FI45SMDDOE",
+  "precoUnidade": 188.09,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.241Z"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  }
 },
 {
   "_id": {
-    "$oid": "68d1f11ea7e3779cf7206056"
+    "$oid": "68d8d7187e174613587568cd"
   },
-  "nome": "Tinta Pó Poliéster (Azul)",
-  "codigo": "QT-TIN-01",
-  "quantidade": 150,
-  "precoUnidade": 45,
-  "Lote": "LT-QT-2025-C3"
+  "nome": "Inteligente Aço Salada",
+  "codigo": "COMP-YHGXW2WN",
+  "descricao": "The Vicente Teclado is the latest in a series of monocromático products from Barros Comércio",
+  "quantidade": 4160,
+  "Lote": "JTKBI91KPZ",
+  "precoUnidade": 68.45,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.242Z"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  }
 },
 {
   "_id": {
-    "$oid": "68d1f11ea7e3779cf7206057"
+    "$oid": "68d8d7187e174613587568ce"
   },
-  "nome": "Placa de Circuito Impresso PNL-001",
-  "codigo": "EL-PCI-PNL01",
-  "quantidade": 250,
-  "precoUnidade": 85,
-  "Lote": "LT-EL-2025-D4"
+  "nome": "Gostoso Granito Salada",
+  "codigo": "COMP-UATBV9AV",
+  "descricao": "Oliveira-Silva's most advanced Mesa technology increases otimista capabilities",
+  "quantidade": 2863,
+  "Lote": "WHSGFQDAPD",
+  "precoUnidade": 170.79,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.242Z"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  }
 },
 {
   "_id": {
-    "$oid": "68d1f11ea7e3779cf7206058"
+    "$oid": "68d8d7187e174613587568cf"
   },
-  "nome": "Display LCD 16x2",
-  "codigo": "EL-DSP-1602",
-  "quantidade": 300,
-  "precoUnidade": 22,
-  "Lote": "LT-EL-2025-E5"
+  "nome": "Feito à mão Madeira Queijo",
+  "codigo": "COMP-Q5KPEO9T",
+  "descricao": "New Frango model with 17 GB RAM, 429 GB storage, and insatisfeito features",
+  "quantidade": 4100,
+  "Lote": "AEK91RUCK3",
+  "precoUnidade": 81.59,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.242Z"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  }
 },
 {
   "_id": {
-    "$oid": "68d1f11ea7e3779cf7206059"
+    "$oid": "68d8d7187e174613587568d0"
   },
-  "nome": "Botão Pulsador Verde 22mm",
-  "codigo": "EL-BOT-V22",
-  "quantidade": 1000,
-  "precoUnidade": 5.5,
-  "Lote": "LT-EL-2025-F6"
+  "nome": "Feito à mão Macio Bacon",
+  "codigo": "COMP-G7SV9ZXA",
+  "descricao": "Ergonomic Peixe made with Concreto for all-day transparente support",
+  "quantidade": 4313,
+  "Lote": "0JK9RMS8LU",
+  "precoUnidade": 173.12,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.242Z"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587568d1"
+  },
+  "nome": "Pequeno Fresco Mouse",
+  "codigo": "COMP-HHTHALT0",
+  "descricao": "Stylish Carro designed to make you stand out with terrestre looks",
+  "quantidade": 3577,
+  "Lote": "LSQFCWTCYY",
+  "precoUnidade": 5.25,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.242Z"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587568d2"
+  },
+  "nome": "Gostoso Granito Frango",
+  "codigo": "COMP-5SIIVR8Z",
+  "descricao": "Ergonomic Queijo made with Granito for all-day sólido support",
+  "quantidade": 621,
+  "Lote": "ZN5ZQ3P4EV",
+  "precoUnidade": 162.29,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.242Z"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587568d3"
+  },
+  "nome": "Rústico Aço Frango",
+  "codigo": "COMP-TQA3KUQ5",
+  "descricao": "Experience the lilás brilliance of our Teclado, perfect for chato environments",
+  "quantidade": 614,
+  "Lote": "JECEDWOAUP",
+  "precoUnidade": 117.99,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.242Z"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587568d4"
+  },
+  "nome": "Feito à mão Madeira Atum",
+  "codigo": "COMP-OAN41HJ4",
+  "descricao": "The fuligem Sabonete combines Taiwan aesthetics with Einsteinium-based durability",
+  "quantidade": 3682,
+  "Lote": "Y8OEIUEBLL",
+  "precoUnidade": 141.75,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.242Z"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587568d5"
+  },
+  "nome": "Fantástico Granito Mesa",
+  "codigo": "COMP-MCLMMHB1",
+  "descricao": "Professional-grade Mouse perfect for simples training and recreational use",
+  "quantidade": 695,
+  "Lote": "K0XUBRYZ9Y",
+  "precoUnidade": 94.9,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.242Z"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587568d6"
+  },
+  "nome": "Rústico Metal Camiseta",
+  "codigo": "COMP-GEIJQOLT",
+  "descricao": "Discover the gorilla-like agility of our Camiseta, perfect for egoísta users",
+  "quantidade": 363,
+  "Lote": "NMFA011BA1",
+  "precoUnidade": 169.09,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.242Z"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587568d7"
+  },
+  "nome": "Lindo Borracha Bacon",
+  "codigo": "COMP-THNKJBOO",
+  "descricao": "Professional-grade Bola perfect for egoísta training and recreational use",
+  "quantidade": 454,
+  "Lote": "AGRAIZXJGR",
+  "precoUnidade": 135.09,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.242Z"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587568d8"
+  },
+  "nome": "Rústico Congelado Salada",
+  "codigo": "COMP-WFT8FX6S",
+  "descricao": "Our savory-inspired Frango brings a taste of luxury to your fosco lifestyle",
+  "quantidade": 1632,
+  "Lote": "MUNFRJOXYY",
+  "precoUnidade": 3.55,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.242Z"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587568d9"
+  },
+  "nome": "Ergonômico Granito Queijo",
+  "codigo": "COMP-SOUQDZSF",
+  "descricao": "Featuring Neon-enhanced technology, our Cadeira offers unparalleled seguro performance",
+  "quantidade": 2257,
+  "Lote": "ZHSLVH3QAL",
+  "precoUnidade": 65.6,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.242Z"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587568da"
+  },
+  "nome": "Prático Congelado Sabonete",
+  "codigo": "COMP-VLBRJOAR",
+  "descricao": "The Innovative AI-powered standardization Mesa offers reliable performance and alto design",
+  "quantidade": 3405,
+  "Lote": "GIG8QBGADP",
+  "precoUnidade": 188.89,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.242Z"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587568db"
+  },
+  "nome": "Genérico Aço Pizza",
+  "codigo": "COMP-L23LSLZU",
+  "descricao": "Innovative Sabonete featuring generoso technology and Macio construction",
+  "quantidade": 2893,
+  "Lote": "SWTIGLLU9H",
+  "precoUnidade": 18.45,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.242Z"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587568dc"
+  },
+  "nome": "Sem marca Madeira Cadeira",
+  "codigo": "COMP-XQYOKNP5",
+  "descricao": "Professional-grade Bola perfect for falso training and recreational use",
+  "quantidade": 2350,
+  "Lote": "AY2ZHUPFES",
+  "precoUnidade": 177.19,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.242Z"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587568dd"
+  },
+  "nome": "Inteligente Concreto Computador",
+  "codigo": "COMP-CLWDRXAE",
+  "descricao": "Ergonomic Sapatos made with Concreto for all-day quadrado support",
+  "quantidade": 936,
+  "Lote": "JXUJZDBWM7",
+  "precoUnidade": 68.5,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.242Z"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587568de"
+  },
+  "nome": "Impressionante Metal Salgadinhos",
+  "codigo": "COMP-RUWRWFVW",
+  "descricao": "New Mesa model with 1 GB RAM, 618 GB storage, and corajoso features",
+  "quantidade": 4720,
+  "Lote": "MCYKDFEMY2",
+  "precoUnidade": 64.39,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.243Z"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587568df"
+  },
+  "nome": "Rústico Borracha Luvas",
+  "codigo": "COMP-JWFVYFZE",
+  "descricao": "Stylish Camiseta designed to make you stand out with azedo looks",
+  "quantidade": 4302,
+  "Lote": "0YILBID9J3",
+  "precoUnidade": 131.65,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.243Z"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587568e0"
+  },
+  "nome": "Lustroso Plástico Sapatos",
+  "codigo": "COMP-BF4PGBDU",
+  "descricao": "The Robust fresh-thinking encryption Carro offers reliable performance and seco design",
+  "quantidade": 4691,
+  "Lote": "P0G3XBP93H",
+  "precoUnidade": 185.95,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.243Z"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587568e1"
+  },
+  "nome": "Ergonômico Granito Bicicleta",
+  "codigo": "COMP-CZ2IH4PO",
+  "descricao": "Our zesty-inspired Chapéu brings a taste of luxury to your difícil lifestyle",
+  "quantidade": 1541,
+  "Lote": "J3XQX6YJH9",
+  "precoUnidade": 38.19,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.243Z"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587568e2"
+  },
+  "nome": "Inteligente Plástico Carro",
+  "codigo": "COMP-LM6ACAFR",
+  "descricao": "Featuring Holmium-enhanced technology, our Luvas offers unparalleled pessimista performance",
+  "quantidade": 2337,
+  "Lote": "JIVFASIF7Y",
+  "precoUnidade": 125.15,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.243Z"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587568e3"
+  },
+  "nome": "Genérico Aço Teclado",
+  "codigo": "COMP-6MFKVFBB",
+  "descricao": "Experience the madeira brilliance of our Bacon, perfect for gentil environments",
+  "quantidade": 1154,
+  "Lote": "5LKUC8UGJO",
+  "precoUnidade": 70.35,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.243Z"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587568e4"
+  },
+  "nome": "Refinado Fresco Carro",
+  "codigo": "COMP-VYZCEU4S",
+  "descricao": "New limão Atum with ergonomic design for triangular comfort",
+  "quantidade": 2685,
+  "Lote": "TAGZOMO5WC",
+  "precoUnidade": 49.85,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.243Z"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587568e5"
+  },
+  "nome": "Sem marca Plástico Bacon",
+  "codigo": "COMP-ALKYIDMX",
+  "descricao": "Silva, Carvalho e Moraes's most advanced Teclado technology increases musculoso capabilities",
+  "quantidade": 3675,
+  "Lote": "NENMJNOGMN",
+  "precoUnidade": 78.25,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.243Z"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587568e6"
+  },
+  "nome": "Licenciado Congelado Mouse",
+  "codigo": "COMP-MZZTZADQ",
+  "descricao": "The sleek and científico Frango comes with preto LED lighting for smart functionality",
+  "quantidade": 4126,
+  "Lote": "BDKS4FJZSU",
+  "precoUnidade": 186.19,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.243Z"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587568e7"
+  },
+  "nome": "Fantástico Metal Queijo",
+  "codigo": "COMP-IGTF9BTZ",
+  "descricao": "Our fluffy-inspired Salada brings a taste of luxury to your seco lifestyle",
+  "quantidade": 836,
+  "Lote": "733RLM8UT8",
+  "precoUnidade": 173.89,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.243Z"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587568e8"
+  },
+  "nome": "Genérico Concreto Camiseta",
+  "codigo": "COMP-CSWLRPYC",
+  "descricao": "Experience the coral brilliance of our Calças, perfect for fraco environments",
+  "quantidade": 2185,
+  "Lote": "BMLPJO8IDL",
+  "precoUnidade": 156.49,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.243Z"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587568e9"
+  },
+  "nome": "Sem marca Borracha Chapéu",
+  "codigo": "COMP-AYYT0Z0H",
+  "descricao": "Stylish Toalhas designed to make you stand out with paciente looks",
+  "quantidade": 1529,
+  "Lote": "LU7QBHTA4A",
+  "precoUnidade": 182.09,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.243Z"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587568ea"
+  },
+  "nome": "Prático Borracha Cadeira",
+  "codigo": "COMP-XCPZXL3P",
+  "descricao": "New verde Mesa with ergonomic design for bom comfort",
+  "quantidade": 4648,
+  "Lote": "HULFQBGXZV",
+  "precoUnidade": 17.95,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.243Z"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587568eb"
+  },
+  "nome": "Refinado Metal Salada",
+  "codigo": "COMP-L0NYG5TZ",
+  "descricao": "Innovative Camiseta featuring forte technology and Metal construction",
+  "quantidade": 1165,
+  "Lote": "GQVIYHXQTJ",
+  "precoUnidade": 92.35,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.244Z"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587568ec"
+  },
+  "nome": "Refinado Madeira Frango",
+  "codigo": "COMP-M1TV3GUB",
+  "descricao": "Professional-grade Computador perfect for redondo training and recreational use",
+  "quantidade": 2498,
+  "Lote": "KOMCJQ92EG",
+  "precoUnidade": 93.73,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.244Z"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587568ed"
+  },
+  "nome": "Feito à mão Madeira Peixe",
+  "codigo": "COMP-TJQAUDUT",
+  "descricao": "New Queijo model with 89 GB RAM, 670 GB storage, and cheio features",
+  "quantidade": 2224,
+  "Lote": "8ZJJZRH0GG",
+  "precoUnidade": 129.05,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.244Z"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587568ee"
+  },
+  "nome": "Licenciado Borracha Sapatos",
+  "codigo": "COMP-Q4QQXECE",
+  "descricao": "Introducing the Jamaica-inspired Calças, blending frágil style with local craftsmanship",
+  "quantidade": 1938,
+  "Lote": "PEFDNKZVKV",
+  "precoUnidade": 157.05,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.244Z"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587568ef"
+  },
+  "nome": "Inteligente Aço Luvas",
+  "codigo": "COMP-M2YVNETV",
+  "descricao": "Discover the fosco new Bola with an exciting mix of Concreto ingredients",
+  "quantidade": 1564,
+  "Lote": "T1MTTMCKAE",
+  "precoUnidade": 177.55,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.244Z"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587568f0"
+  },
+  "nome": "Prático Plástico Camiseta",
+  "codigo": "COMP-TEKPYFCM",
+  "descricao": "New laranja Salsicha with ergonomic design for energético comfort",
+  "quantidade": 3811,
+  "Lote": "FQPZUAQOCF",
+  "precoUnidade": 28.45,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.244Z"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587568f1"
+  },
+  "nome": "Impressionante Algodão Chapéu",
+  "codigo": "COMP-AH1WOXGE",
+  "descricao": "The Digitized national capability Salada offers reliable performance and paciente design",
+  "quantidade": 2723,
+  "Lote": "TAI8BYGS9N",
+  "precoUnidade": 176.99,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.244Z"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587568f2"
+  },
+  "nome": "Fantástico Aço Cadeira",
+  "codigo": "COMP-JOMQ9XOV",
+  "descricao": "The violeta Teclado combines Santa Helena aesthetics with Meitnerium-based durability",
+  "quantidade": 621,
+  "Lote": "PGSMTMI067",
+  "precoUnidade": 54.19,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.244Z"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587568f3"
+  },
+  "nome": "Lustroso Madeira Toalhas",
+  "codigo": "COMP-XSQA9C1B",
+  "descricao": "New Bicicleta model with 62 GB RAM, 254 GB storage, and mal-educado features",
+  "quantidade": 3441,
+  "Lote": "WVCMK8KJ27",
+  "precoUnidade": 158.79,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.244Z"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.248Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587568f4"
+  },
+  "nome": "Lustroso Borracha Atum",
+  "codigo": "COMP-C3LFJDFJ",
+  "descricao": "Featuring Thorium-enhanced technology, our Peixe offers unparalleled doce performance",
+  "quantidade": 3115,
+  "Lote": "10ARC18EN3",
+  "precoUnidade": 195.56,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.244Z"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.249Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.249Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587568f5"
+  },
+  "nome": "Inteligente Plástico Bacon",
+  "codigo": "COMP-TTUGIJ2T",
+  "descricao": "Discover the cego new Bacon with an exciting mix of Aço ingredients",
+  "quantidade": 4502,
+  "Lote": "I0PNIZIX9U",
+  "precoUnidade": 177.07,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.244Z"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.249Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.249Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587568f6"
+  },
+  "nome": "Rústico Concreto Mesa",
+  "codigo": "COMP-4TVWPPUC",
+  "descricao": "Our creamy-inspired Calças brings a taste of luxury to your alegre lifestyle",
+  "quantidade": 4775,
+  "Lote": "LVLDVUMWFH",
+  "precoUnidade": 31.79,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.244Z"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.249Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.249Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587568f7"
+  },
+  "nome": "Fantástico Metal Calças",
+  "codigo": "COMP-QZC2Y4BA",
+  "descricao": "Xavier S.A.'s most advanced Mesa technology increases invisível capabilities",
+  "quantidade": 1572,
+  "Lote": "HZHLAXDXRE",
+  "precoUnidade": 119.27,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.244Z"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.249Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.249Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587568f8"
+  },
+  "nome": "Gostoso Metal Camiseta",
+  "codigo": "COMP-U1CRTPUB",
+  "descricao": "Experience the esmeralda brilliance of our Atum, perfect for nervoso environments",
+  "quantidade": 1742,
+  "Lote": "5J5EP6K4R2",
+  "precoUnidade": 71.58,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.245Z"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.249Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.249Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587568f9"
+  },
+  "nome": "Gostoso Metal Mesa",
+  "codigo": "COMP-05CRUDN0",
+  "descricao": "Discover the polar bear-like agility of our Chapéu, perfect for impaciente users",
+  "quantidade": 1153,
+  "Lote": "NCGKMWMWDJ",
+  "precoUnidade": 112.09,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.245Z"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.249Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.249Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587568fa"
+  },
+  "nome": "Pequeno Congelado Toalhas",
+  "codigo": "COMP-GYD8BPF5",
+  "descricao": "Pequeno Camiseta designed with Metal for limpo performance",
+  "quantidade": 577,
+  "Lote": "SNYIJBTOQM",
+  "precoUnidade": 185.99,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.245Z"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.249Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.249Z"
+  }
 }]

@@ -1,58 +1,1879 @@
 [{
   "_id": {
-    "$oid": "68ae6b24a13eb9b5f0b6dfa7"
+    "$oid": "68d8d7187e17461358756a0f"
   },
-  "nome": "Montagem",
+  "nome": "Etapa 1 - Ergonômico Aço",
   "sequencias": 1,
   "departamentoResponsavel": {
-    "$oid": "68ae64069a4922d443aa89e4"
-  },
-  "procedimentos": "Montar peça A\nMontar peça B",
-  "componenteConclusao": {
-    "$oid": "68a11d73991a1db43b72e4f2"
+    "$oid": "68d8d7187e174613587568c0"
   },
   "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e17461358756922"
+    },
     {
       "$oid": "68a13d728edc56a5ba8e112f"
     }
   ],
   "produto": {
-    "$oid": "68a66ed746f31d570bdd15ef"
+    "$oid": "68d8d7187e1746135875699c"
   },
+  "__v": 0,
   "createdAt": {
-    "$date": "2025-08-27T02:19:16.463Z"
+    "$date": "2025-09-28T06:35:04.935Z"
   },
   "updatedAt": {
-    "$date": "2025-08-27T02:19:16.463Z"
-  },
-  "__v": 0
+    "$date": "2025-09-28T06:35:04.935Z"
+  }
 },
 {
   "_id": {
-    "$oid": "68ae729499e3886da8c2bf1d"
+    "$oid": "68d8d7187e17461358756a10"
   },
-  "nome": "Preparacoes iniciais",
-  "sequencias": 1,
+  "nome": "Etapa 2 - Ergonômico Aço",
+  "sequencias": 2,
   "departamentoResponsavel": {
-    "$oid": "68ae64069a4922d443aa89e4"
-  },
-  "procedimentos": "dasda",
-  "componenteConclusao": {
-    "$oid": "68a11d73991a1db43b72e4f2"
+    "$oid": "68d8d7187e174613587568bd"
   },
   "funcionariosResponsaveis": [
     {
-      "$oid": "68a146d4b75c42e2b9cda01a"
+      "$oid": "68d8d7187e17461358756912"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
     }
   ],
   "produto": {
-    "$oid": "68a66ed746f31d570bdd15ef"
+    "$oid": "68d8d7187e1746135875699c"
   },
+  "__v": 0,
   "createdAt": {
-    "$date": "2025-08-27T02:51:00.735Z"
+    "$date": "2025-09-28T06:35:04.936Z"
   },
   "updatedAt": {
-    "$date": "2025-08-27T02:51:00.735Z"
+    "$date": "2025-09-28T06:35:04.936Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a11"
   },
-  "__v": 0
+  "nome": "Etapa 3 - Ergonômico Aço",
+  "sequencias": 3,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568c0"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e1746135875690e"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e1746135875699c"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.936Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.936Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a12"
+  },
+  "nome": "Etapa 4 - Ergonômico Aço",
+  "sequencias": 4,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568bc"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e17461358756904"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e1746135875699c"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.936Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.936Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a14"
+  },
+  "nome": "Etapa 1 - Rústico Algodão",
+  "sequencias": 1,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568bd"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e17461358756916"
+    },
+    {
+      "$oid": "68d8d7187e1746135875691b"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569a1"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.939Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.939Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a15"
+  },
+  "nome": "Etapa 2 - Rústico Algodão",
+  "sequencias": 2,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568bf"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e1746135875691f"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569a1"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.939Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.939Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a16"
+  },
+  "nome": "Etapa 3 - Rústico Algodão",
+  "sequencias": 3,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568be"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e174613587568fc"
+    },
+    {
+      "$oid": "68d8d7187e17461358756903"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569a1"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.939Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.939Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a17"
+  },
+  "nome": "Etapa 4 - Rústico Algodão",
+  "sequencias": 4,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568be"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e1746135875690c"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569a1"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.939Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.939Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a18"
+  },
+  "nome": "Etapa 5 - Rústico Algodão",
+  "sequencias": 5,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568bd"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e174613587568fe"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569a1"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.939Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.939Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a1a"
+  },
+  "nome": "Etapa 1 - Fantástico Made",
+  "sequencias": 1,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568bf"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e17461358756905"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569a8"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.942Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.942Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a1b"
+  },
+  "nome": "Etapa 2 - Fantástico Made",
+  "sequencias": 2,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568c0"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e1746135875690a"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569a8"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.942Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.942Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a1c"
+  },
+  "nome": "Etapa 3 - Fantástico Made",
+  "sequencias": 3,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568bc"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e1746135875691e"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569a8"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.942Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.942Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a1d"
+  },
+  "nome": "Etapa 4 - Fantástico Made",
+  "sequencias": 4,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568bf"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e17461358756921"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569a8"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.942Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.942Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a1e"
+  },
+  "nome": "Etapa 5 - Fantástico Made",
+  "sequencias": 5,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568be"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e17461358756903"
+    },
+    {
+      "$oid": "68d8d7187e1746135875690d"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569a8"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.942Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.942Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a20"
+  },
+  "nome": "Etapa 1 - Lustroso Macio",
+  "sequencias": 1,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568be"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e17461358756903"
+    },
+    {
+      "$oid": "68d8d7187e1746135875690c"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569b1"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.944Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.944Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a21"
+  },
+  "nome": "Etapa 2 - Lustroso Macio",
+  "sequencias": 2,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568be"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e1746135875690c"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569b1"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.944Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.944Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a22"
+  },
+  "nome": "Etapa 3 - Lustroso Macio",
+  "sequencias": 3,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568c0"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e1746135875690a"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569b1"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.944Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.944Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a23"
+  },
+  "nome": "Etapa 4 - Lustroso Macio",
+  "sequencias": 4,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568c0"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e17461358756918"
+    },
+    {
+      "$oid": "68d8d7187e17461358756911"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569b1"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.944Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.944Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a24"
+  },
+  "nome": "Etapa 5 - Lustroso Macio",
+  "sequencias": 5,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568c0"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e1746135875691a"
+    },
+    {
+      "$oid": "68d8d7187e17461358756911"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569b1"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.944Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.944Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a26"
+  },
+  "nome": "Etapa 1 - Feito à mão Aço",
+  "sequencias": 1,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568bf"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e17461358756900"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569b8"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.946Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.946Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a27"
+  },
+  "nome": "Etapa 2 - Feito à mão Aço",
+  "sequencias": 2,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568bc"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e1746135875691e"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569b8"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.946Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.946Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a28"
+  },
+  "nome": "Etapa 3 - Feito à mão Aço",
+  "sequencias": 3,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568be"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e1746135875690d"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569b8"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.946Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.946Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a29"
+  },
+  "nome": "Etapa 4 - Feito à mão Aço",
+  "sequencias": 4,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568bf"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e1746135875691f"
+    },
+    {
+      "$oid": "68d8d7187e17461358756920"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569b8"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.946Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.946Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a2b"
+  },
+  "nome": "Etapa 1 - Pequeno Macio T",
+  "sequencias": 1,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568c0"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e17461358756917"
+    },
+    {
+      "$oid": "68d8d7187e17461358756923"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569be"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.948Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.948Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a2c"
+  },
+  "nome": "Etapa 2 - Pequeno Macio T",
+  "sequencias": 2,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568c0"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e17461358756919"
+    },
+    {
+      "$oid": "68d8d7187e1746135875690e"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569be"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.948Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.948Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a2d"
+  },
+  "nome": "Etapa 3 - Pequeno Macio T",
+  "sequencias": 3,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568c0"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e1746135875691a"
+    },
+    {
+      "$oid": "68d8d7187e17461358756919"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569be"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.948Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.948Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a2e"
+  },
+  "nome": "Etapa 4 - Pequeno Macio T",
+  "sequencias": 4,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568bc"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e17461358756909"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569be"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.948Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.948Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a2f"
+  },
+  "nome": "Etapa 5 - Pequeno Macio T",
+  "sequencias": 5,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568bc"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e17461358756913"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569be"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.948Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.948Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a31"
+  },
+  "nome": "Etapa 1 - Refinado Metal",
+  "sequencias": 1,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568be"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e174613587568fc"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569c6"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.951Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.951Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a32"
+  },
+  "nome": "Etapa 2 - Refinado Metal",
+  "sequencias": 2,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568be"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e174613587568fc"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569c6"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.951Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.951Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a33"
+  },
+  "nome": "Etapa 3 - Refinado Metal",
+  "sequencias": 3,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568be"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e174613587568fc"
+    },
+    {
+      "$oid": "68d8d7187e174613587568fd"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569c6"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.951Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.951Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a34"
+  },
+  "nome": "Etapa 4 - Refinado Metal",
+  "sequencias": 4,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568be"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e174613587568fc"
+    },
+    {
+      "$oid": "68d8d7187e17461358756903"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569c6"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.951Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.951Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a36"
+  },
+  "nome": "Etapa 1 - Ergonômico Fres",
+  "sequencias": 1,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568c0"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e17461358756908"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569cc"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.953Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.953Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a37"
+  },
+  "nome": "Etapa 2 - Ergonômico Fres",
+  "sequencias": 2,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568be"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e1746135875690c"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569cc"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.953Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.953Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a38"
+  },
+  "nome": "Etapa 3 - Ergonômico Fres",
+  "sequencias": 3,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568be"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e1746135875690c"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569cc"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.953Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.953Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a39"
+  },
+  "nome": "Etapa 4 - Ergonômico Fres",
+  "sequencias": 4,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568bc"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e17461358756913"
+    },
+    {
+      "$oid": "68d8d7187e1746135875691c"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569cc"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.953Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.953Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a3b"
+  },
+  "nome": "Etapa 1 - Rústico Algodão",
+  "sequencias": 1,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568c0"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e17461358756917"
+    },
+    {
+      "$oid": "68d8d7187e17461358756922"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569d5"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.956Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.956Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a3c"
+  },
+  "nome": "Etapa 2 - Rústico Algodão",
+  "sequencias": 2,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568bc"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e1746135875691c"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569d5"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.956Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.956Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a3d"
+  },
+  "nome": "Etapa 3 - Rústico Algodão",
+  "sequencias": 3,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568c0"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e1746135875690e"
+    },
+    {
+      "$oid": "68d8d7187e1746135875690a"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569d5"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.956Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.956Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a3e"
+  },
+  "nome": "Etapa 4 - Rústico Algodão",
+  "sequencias": 4,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568bf"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e17461358756900"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569d5"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.956Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.956Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a3f"
+  },
+  "nome": "Etapa 5 - Rústico Algodão",
+  "sequencias": 5,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568be"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e174613587568fc"
+    },
+    {
+      "$oid": "68d8d7187e1746135875690d"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569d5"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.956Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.956Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a41"
+  },
+  "nome": "Etapa 1 - Refinado Aço Pe",
+  "sequencias": 1,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568bd"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e17461358756906"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569d9"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.958Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.958Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a42"
+  },
+  "nome": "Etapa 2 - Refinado Aço Pe",
+  "sequencias": 2,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568be"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e1746135875690c"
+    },
+    {
+      "$oid": "68d8d7187e17461358756903"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569d9"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.958Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.958Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a43"
+  },
+  "nome": "Etapa 3 - Refinado Aço Pe",
+  "sequencias": 3,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568bd"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e1746135875691d"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569d9"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.958Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.958Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a44"
+  },
+  "nome": "Etapa 4 - Refinado Aço Pe",
+  "sequencias": 4,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568bd"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e17461358756907"
+    },
+    {
+      "$oid": "68d8d7187e17461358756906"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569d9"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.958Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.958Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a46"
+  },
+  "nome": "Etapa 1 - Inteligente Met",
+  "sequencias": 1,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568be"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e1746135875690c"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569e0"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.961Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.961Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a47"
+  },
+  "nome": "Etapa 2 - Inteligente Met",
+  "sequencias": 2,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568bf"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e17461358756900"
+    },
+    {
+      "$oid": "68d8d7187e17461358756905"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569e0"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.961Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.961Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a48"
+  },
+  "nome": "Etapa 3 - Inteligente Met",
+  "sequencias": 3,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568bd"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e17461358756907"
+    },
+    {
+      "$oid": "68d8d7187e1746135875691d"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569e0"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.961Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.961Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a49"
+  },
+  "nome": "Etapa 4 - Inteligente Met",
+  "sequencias": 4,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568c0"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e17461358756919"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569e0"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.961Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.961Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a4b"
+  },
+  "nome": "Etapa 1 - Rústico Madeira",
+  "sequencias": 1,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568be"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e174613587568fd"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    },
+    {
+      "$oid": "68d8d7187e1746135875690c"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569e5"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.963Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:56:55.399Z"
+  },
+  "componenteConclusao": null,
+  "procedimentos": ""
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a4c"
+  },
+  "nome": "Etapa 2 - Rústico Madeira",
+  "sequencias": 2,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568be"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e17461358756903"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    },
+    {
+      "$oid": "68d8d7187e1746135875690c"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569e5"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.963Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:57:01.762Z"
+  },
+  "componenteConclusao": null,
+  "procedimentos": ""
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a4d"
+  },
+  "nome": "Etapa 3 - Rústico Madeira",
+  "sequencias": 3,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568bd"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    },
+    {
+      "$oid": "68d8d7187e17461358756906"
+    },
+    {
+      "$oid": "68d8d7187e1746135875691b"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569e5"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.963Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:57:08.579Z"
+  },
+  "componenteConclusao": null,
+  "procedimentos": ""
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a4f"
+  },
+  "nome": "Etapa 1 - Refinado Macio",
+  "sequencias": 1,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568bd"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e174613587568fe"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569eb"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.964Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.964Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a50"
+  },
+  "nome": "Etapa 2 - Refinado Macio",
+  "sequencias": 2,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568bf"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e17461358756905"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569eb"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.964Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.964Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a51"
+  },
+  "nome": "Etapa 3 - Refinado Macio",
+  "sequencias": 3,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568bd"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e17461358756916"
+    },
+    {
+      "$oid": "68d8d7187e174613587568fe"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569eb"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.964Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.964Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a53"
+  },
+  "nome": "Etapa 1 - Incrível Fresco",
+  "sequencias": 1,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568c0"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e17461358756917"
+    },
+    {
+      "$oid": "68d8d7187e17461358756911"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569f1"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.966Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.966Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a54"
+  },
+  "nome": "Etapa 2 - Incrível Fresco",
+  "sequencias": 2,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568be"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e17461358756903"
+    },
+    {
+      "$oid": "68d8d7187e1746135875690d"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569f1"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.966Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.966Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a55"
+  },
+  "nome": "Etapa 3 - Incrível Fresco",
+  "sequencias": 3,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568c0"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e17461358756923"
+    },
+    {
+      "$oid": "68d8d7187e1746135875690a"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569f1"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.966Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.966Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a56"
+  },
+  "nome": "Etapa 4 - Incrível Fresco",
+  "sequencias": 4,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568c0"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e1746135875690e"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569f1"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.966Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.966Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a58"
+  },
+  "nome": "Etapa 1 - Pequeno Fresco",
+  "sequencias": 1,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568bd"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e17461358756912"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569f9"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.968Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.968Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a59"
+  },
+  "nome": "Etapa 2 - Pequeno Fresco",
+  "sequencias": 2,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568bf"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e17461358756900"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569f9"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.968Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.968Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a5a"
+  },
+  "nome": "Etapa 3 - Pequeno Fresco",
+  "sequencias": 3,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568bc"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e17461358756904"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569f9"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.968Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.968Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a5b"
+  },
+  "nome": "Etapa 4 - Pequeno Fresco",
+  "sequencias": 4,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568be"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e17461358756903"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569f9"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.968Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.968Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756a5c"
+  },
+  "nome": "Etapa 5 - Pequeno Fresco",
+  "sequencias": 5,
+  "departamentoResponsavel": {
+    "$oid": "68d8d7187e174613587568bf"
+  },
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "68d8d7187e1746135875690f"
+    },
+    {
+      "$oid": "68a13d728edc56a5ba8e112f"
+    }
+  ],
+  "produto": {
+    "$oid": "68d8d7187e174613587569f9"
+  },
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.968Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.968Z"
+  }
 }]

@@ -69,9 +69,19 @@
           </div>
 
           <!-- Kanban com Bootstrap -->
+
           <div class="card mb-3">
-            <div class="card-header bg-dark text-white">
-              <h5 class="card-title mb-0"></h5>
+            <div class="card-header bg-dark text-white d-flex align-items-center py-2">
+              <h5 class="card-title mb-0">
+                  <i class="bi bi-kanban-fill me-2"></i>Quadro de Produção
+              </h5>
+              <div class="form-check form-switch ms-auto">
+                  <input class="form-check-input" type="checkbox" role="switch" id="filtro-meu-painel">
+                  <label class="form-check-label" for="filtro-meu-painel">
+                      <i class="bi bi-person-check-fill me-1"></i>
+                      Mostrar apenas minhas ordens
+                  </label>
+              </div>
             </div>
             <div class="card-body">
               <div id="kanban-container" class="row g-3"></div>
@@ -112,6 +122,21 @@
         </div>
       </div>
     </div>
+  <div class="modal fade" id="modalDetalhes" tabindex="-1" aria-labelledby="modalDetalhesLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalDetalhesLabel">Detalhes da Ordem de Produção</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="modalDetalhesBody">
+          </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+        </div>
+      </div>
+    </div>
+  </div>
     <%- include('../partials/footer.ejs') %>
 
   </div>

@@ -1,4 +1,4 @@
-const mongoose = require('mongoose'); // <-- PASSO 1: IMPORTAR MONGOOSE
+const mongoose = require('mongoose');
 const OrdemProducao = require('../model/OrdemProducao');
 const Produto = require('../model/Produto');
 const Departamento = require('../model/Departamento');
