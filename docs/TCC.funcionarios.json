@@ -1,5 +1,925 @@
 [{
   "_id": {
+    "$oid": "68d8d7187e174613587568fc"
+  },
+  "nome": "Silas Nogueira",
+  "senha": "$2b$10$VgbIV3bdmOpXhi8B5KlKHOu2nl.ovtZ3qnOop7w7VmtcKhQhClfLW",
+  "CPF": "38832898181",
+  "email": "roberto.costa33@produsys.local",
+  "permissoes": [],
+  "role": "Operador",
+  "departamento": {
+    "$oid": "68d8d7187e174613587568be"
+  },
+  "valor_hora": 39,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.271Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.271Z"
+  },
+  "credencial": 161,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587568fd"
+  },
+  "nome": "Dra. Lavínia Braga",
+  "senha": "$2b$10$S6Cb3wqsBNybTc86X.nBbu9WDY9zfT5YcCXDA13qc.xeUyEhnQmF6",
+  "CPF": "94072097766",
+  "email": "noah.batista@produsys.local",
+  "permissoes": [],
+  "role": "Operador",
+  "departamento": {
+    "$oid": "68d8d7187e174613587568be"
+  },
+  "valor_hora": 32,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.272Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.272Z"
+  },
+  "credencial": 162,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587568ff"
+  },
+  "nome": "Feliciano Braga",
+  "senha": "$2b$10$mqa1sD75Faofja5zBasBHeEE/SyaPoOKT/wwar4JVhOMtnDgWnTbq",
+  "CPF": "55042638093",
+  "email": "ofelia_batista@produsys.local",
+  "permissoes": [],
+  "role": "Supervisor",
+  "departamento": {
+    "$oid": "68d8d7187e174613587568bc"
+  },
+  "valor_hora": 36,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.272Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.272Z"
+  },
+  "credencial": 163,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587568fe"
+  },
+  "nome": "Guilherme Souza",
+  "senha": "$2b$10$TgBd3teBykEKl/AlhRKhp.er9P6EZNNZp/lys9Hrz2FrwI/bFzT6i",
+  "CPF": "12380498706",
+  "email": "benjamin20@produsys.local",
+  "permissoes": [],
+  "role": "Operador",
+  "departamento": {
+    "$oid": "68d8d7187e174613587568bd"
+  },
+  "valor_hora": 25,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.272Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.272Z"
+  },
+  "credencial": 164,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756900"
+  },
+  "nome": "Yango Saraiva",
+  "senha": "$2b$10$Hks8yiDcrI63aLW5T56e6.Cjv5mcgyBKfh0vWmkN2OSjx3TMmPfOm",
+  "CPF": "81779319925",
+  "email": "isadora99@produsys.local",
+  "permissoes": [],
+  "role": "Operador",
+  "departamento": {
+    "$oid": "68d8d7187e174613587568bf"
+  },
+  "valor_hora": 44,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.272Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.272Z"
+  },
+  "credencial": 165,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756901"
+  },
+  "nome": "Valentina Costa",
+  "senha": "$2b$10$8jwewvVw40A3EO7GGb3pg.AP5/vh3L8TyOTSCrzt9Mn7HCKE7UJTm",
+  "CPF": "08339189819",
+  "email": "cecilia.costa97@produsys.local",
+  "permissoes": [],
+  "role": "Operador",
+  "departamento": {
+    "$oid": "68d8d7187e174613587568bf"
+  },
+  "valor_hora": 43,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.272Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.272Z"
+  },
+  "credencial": 166,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756902"
+  },
+  "nome": "Warley Saraiva",
+  "senha": "$2b$10$IFbLbuE7CiU3pvuj27Ktf.9xELnxIN2yS0aV6lpjqjw3qKKgIONCa",
+  "CPF": "58229403800",
+  "email": "carla_silva73@produsys.local",
+  "permissoes": [],
+  "role": "Operador",
+  "departamento": {
+    "$oid": "68d8d7187e174613587568bf"
+  },
+  "valor_hora": 49,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.272Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.272Z"
+  },
+  "credencial": 167,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756903"
+  },
+  "nome": "Bernardo Albuquerque",
+  "senha": "$2b$10$Bq/VYnxTtqKTAXNr2jsu1O9UzOiyFwWqUekwrBuwfgp114QNbKpFa",
+  "CPF": "34063945640",
+  "email": "lavinia_melo@produsys.local",
+  "permissoes": [],
+  "role": "Gerente",
+  "departamento": {
+    "$oid": "68d8d7187e174613587568be"
+  },
+  "valor_hora": 47,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.272Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.272Z"
+  },
+  "credencial": 168,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756904"
+  },
+  "nome": "Paulo Macedo",
+  "senha": "$2b$10$LeRF4B5zKXRsxrEqYoJjA.UatawBrKls/Dx01IVAemfs3ezPQVL6C",
+  "CPF": "80184781244",
+  "email": "talita17@produsys.local",
+  "permissoes": [],
+  "role": "Operador",
+  "departamento": {
+    "$oid": "68d8d7187e174613587568bc"
+  },
+  "valor_hora": 19,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.272Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.272Z"
+  },
+  "credencial": 169,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756905"
+  },
+  "nome": "Núbia Albuquerque",
+  "senha": "$2b$10$zHdXmNJjJOI9Prv1tbPXlOdEUxT2WDG1IRNS8QicXgGeCWyP/V.4e",
+  "CPF": "26044189695",
+  "email": "yuri_barros@produsys.local",
+  "permissoes": [],
+  "role": "Operador",
+  "departamento": {
+    "$oid": "68d8d7187e174613587568bf"
+  },
+  "valor_hora": 50,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.272Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.272Z"
+  },
+  "credencial": 170,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756906"
+  },
+  "nome": "Hélio Franco",
+  "senha": "$2b$10$HDvI210sz13aR6DtAL7R/uih4/owfWAZl1RiyycLEqk16yt1i8Te6",
+  "CPF": "48247784357",
+  "email": "carla.silva17@produsys.local",
+  "permissoes": [],
+  "role": "Operador",
+  "departamento": {
+    "$oid": "68d8d7187e174613587568bd"
+  },
+  "valor_hora": 49,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.272Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.272Z"
+  },
+  "credencial": 171,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756907"
+  },
+  "nome": "Caio Costa",
+  "senha": "$2b$10$8gYyipQ8qbh5eQ3g5sdnQea9cRgeHt6LeKpqQ.GUfdmQr0vwqkz4a",
+  "CPF": "77084778959",
+  "email": "larissa.moreira@produsys.local",
+  "permissoes": [],
+  "role": "Gerente",
+  "departamento": {
+    "$oid": "68d8d7187e174613587568bd"
+  },
+  "valor_hora": 30,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.272Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.272Z"
+  },
+  "credencial": 172,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756909"
+  },
+  "nome": "Dra. Paula Xavier",
+  "senha": "$2b$10$DWEhHkvNf3S4zhizTr4f7OCq.vk82UEl1PbUyoCNnQ1gyzYI6YOr2",
+  "CPF": "88289387425",
+  "email": "miguel_pereira42@produsys.local",
+  "permissoes": [],
+  "role": "Supervisor",
+  "departamento": {
+    "$oid": "68d8d7187e174613587568bc"
+  },
+  "valor_hora": 33,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.272Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.272Z"
+  },
+  "credencial": 173,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756908"
+  },
+  "nome": "Marli Melo",
+  "senha": "$2b$10$IPDRoJnmxC5Qc1Df0kw9uecJsCFiVc8OYvHGHh4XozBohNB8x/5Z6",
+  "CPF": "17337861861",
+  "email": "fabricia63@produsys.local",
+  "permissoes": [],
+  "role": "Operador",
+  "departamento": {
+    "$oid": "68d8d7187e174613587568c0"
+  },
+  "valor_hora": 35,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.272Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.272Z"
+  },
+  "credencial": 174,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e1746135875690a"
+  },
+  "nome": "Norberto Melo",
+  "senha": "$2b$10$l0EpbR31t2NGv0UNqMUeW.wGUEapEgTIPT7Cp9/CI0DsQGsZp53ea",
+  "CPF": "03159388829",
+  "email": "norberto.moraes74@produsys.local",
+  "permissoes": [],
+  "role": "Operador",
+  "departamento": {
+    "$oid": "68d8d7187e174613587568c0"
+  },
+  "valor_hora": 25,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.272Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.272Z"
+  },
+  "credencial": 175,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e1746135875690b"
+  },
+  "nome": "Nataniel Saraiva",
+  "senha": "$2b$10$Jm5xHQaG/nJWS5ESYvcWJuLIKXrx7Lr5L.14/YXlHV4RgTQ.F9suu",
+  "CPF": "27885993960",
+  "email": "esther.saraiva@produsys.local",
+  "permissoes": [],
+  "role": "Operador",
+  "departamento": {
+    "$oid": "68d8d7187e174613587568bc"
+  },
+  "valor_hora": 27,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.272Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.272Z"
+  },
+  "credencial": 176,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e1746135875690c"
+  },
+  "nome": "Sra. Helena Oliveira",
+  "senha": "$2b$10$P9YQPHpD6Kxm3JJMkfPr2.LWwVRPDohGMVk8KWQUp4.czq82LZ7..",
+  "CPF": "87023391609",
+  "email": "vicente_batista86@produsys.local",
+  "permissoes": [],
+  "role": "Supervisor",
+  "departamento": {
+    "$oid": "68d8d7187e174613587568be"
+  },
+  "valor_hora": 37,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.272Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.272Z"
+  },
+  "credencial": 177,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e1746135875690d"
+  },
+  "nome": "Norberto Franco",
+  "senha": "$2b$10$n2wf/y0KJMCtugej/cSPOO9zJDCXdiyI2M.Xw3CD6FktPvxfEe4ve",
+  "CPF": "51137325554",
+  "email": "mercia.silva@produsys.local",
+  "permissoes": [],
+  "role": "Gerente",
+  "departamento": {
+    "$oid": "68d8d7187e174613587568be"
+  },
+  "valor_hora": 44,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.272Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.272Z"
+  },
+  "credencial": 178,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e1746135875690f"
+  },
+  "nome": "Sr. Joaquim Moraes",
+  "senha": "$2b$10$Muf0ge2T8zvrx7ubh5cCJe/tAUycreXBl/9tmZeDIZC1qpIIyiVMO",
+  "CPF": "62873024541",
+  "email": "isabelly34@produsys.local",
+  "permissoes": [],
+  "role": "Supervisor",
+  "departamento": {
+    "$oid": "68d8d7187e174613587568bf"
+  },
+  "valor_hora": 19,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.272Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.272Z"
+  },
+  "credencial": 179,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756910"
+  },
+  "nome": "Deneval Oliveira",
+  "senha": "$2b$10$h04IpVJfGakwIvnZe3lV8OhR3gjsgORmwQv6g82DGu9RuU2.jh8rS",
+  "CPF": "65601971012",
+  "email": "danilo_nogueira@produsys.local",
+  "permissoes": [],
+  "role": "Gerente",
+  "departamento": {
+    "$oid": "68d8d7187e174613587568bd"
+  },
+  "valor_hora": 16,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.272Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.272Z"
+  },
+  "credencial": 180,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756911"
+  },
+  "nome": "Lorena Xavier",
+  "senha": "$2b$10$6TxT3miZtGYhMfenGqeNcuGwaJ4qDVMJLouK.mWFT96b.Lc5SC5FC",
+  "CPF": "64270735024",
+  "email": "silvia.braga@produsys.local",
+  "permissoes": [],
+  "role": "Supervisor",
+  "departamento": {
+    "$oid": "68d8d7187e174613587568c0"
+  },
+  "valor_hora": 27,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.272Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.272Z"
+  },
+  "credencial": 181,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e1746135875690e"
+  },
+  "nome": "Dr. Frederico Moraes",
+  "senha": "$2b$10$0Qq6GC/GM8t//0OyZEENNeLFxM1efuH4mzA.BatBs3nRp0jl4H9Ae",
+  "CPF": "77499376265",
+  "email": "alessandra_costa@produsys.local",
+  "permissoes": [],
+  "role": "Supervisor",
+  "departamento": {
+    "$oid": "68d8d7187e174613587568c0"
+  },
+  "valor_hora": 46,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.272Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.272Z"
+  },
+  "credencial": 182,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756912"
+  },
+  "nome": "Lorenzo Xavier",
+  "senha": "$2b$10$PLXNvBuMD7BLoIZbkKCv1uIi1PieTGSVfKguhjVmbav1WNKEqygE2",
+  "CPF": "55088261049",
+  "email": "gael.franco@produsys.local",
+  "permissoes": [],
+  "role": "Gerente",
+  "departamento": {
+    "$oid": "68d8d7187e174613587568bd"
+  },
+  "valor_hora": 34,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.272Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.272Z"
+  },
+  "credencial": 183,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756913"
+  },
+  "nome": "Dra. Emanuelly Saraiva",
+  "senha": "$2b$10$JXB8xOJX9maJ9.51c.8EtejS6NVjnmbjIVuc./SV1Ze/cIF6s3x6O",
+  "CPF": "48985392350",
+  "email": "lucca.macedo95@produsys.local",
+  "permissoes": [],
+  "role": "Operador",
+  "departamento": {
+    "$oid": "68d8d7187e174613587568bc"
+  },
+  "valor_hora": 20,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.272Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.272Z"
+  },
+  "credencial": 184,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756914"
+  },
+  "nome": "Isaac Xavier",
+  "senha": "$2b$10$9goSUphMJS0f66mOULInbu8.sm5JeYi/NdZ6f7o9eHW05eH5ARCIu",
+  "CPF": "09587598756",
+  "email": "mariaeduarda.moreira32@produsys.local",
+  "permissoes": [],
+  "role": "Operador",
+  "departamento": {
+    "$oid": "68d8d7187e174613587568bc"
+  },
+  "valor_hora": 30,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.272Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.272Z"
+  },
+  "credencial": 185,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756916"
+  },
+  "nome": "Paulo Santos",
+  "senha": "$2b$10$HkWHmEysWfAaHcfqPKO9z.lNjL54ibc78aEpIWKVuKc6wJSVzN3zK",
+  "CPF": "58087695531",
+  "email": "nubia.santos98@produsys.local",
+  "permissoes": [],
+  "role": "Gerente",
+  "departamento": {
+    "$oid": "68d8d7187e174613587568bd"
+  },
+  "valor_hora": 28,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.272Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.272Z"
+  },
+  "credencial": 186,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756915"
+  },
+  "nome": "Bryan Franco",
+  "senha": "$2b$10$fBSaLSKySWX/LR6mZ/oEpeLLEaALz8EiNT1Ooq2p0t4QvtCqNCRFu",
+  "CPF": "56365739939",
+  "email": "yasmin.nogueira@produsys.local",
+  "permissoes": [],
+  "role": "Operador",
+  "departamento": {
+    "$oid": "68d8d7187e174613587568bf"
+  },
+  "valor_hora": 34,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.272Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.272Z"
+  },
+  "credencial": 187,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756917"
+  },
+  "nome": "Norberto Moreira Jr.",
+  "senha": "$2b$10$.w1gVq8cuki20eEtP5QHWeSOwj3hsOhSDHQ3zD/wuPxZuAxlzMGQ2",
+  "CPF": "75167207029",
+  "email": "mariaalice_silva12@produsys.local",
+  "permissoes": [],
+  "role": "Operador",
+  "departamento": {
+    "$oid": "68d8d7187e174613587568c0"
+  },
+  "valor_hora": 15,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.272Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.272Z"
+  },
+  "credencial": 188,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756919"
+  },
+  "nome": "Elisa Oliveira",
+  "senha": "$2b$10$kMqkityMYvWLDzSlFJqqg.mMCJxjrvkxjgRVg/maK3TR7Y3RIfzQ6",
+  "CPF": "90800255179",
+  "email": "davilucca.franco@produsys.local",
+  "permissoes": [],
+  "role": "Operador",
+  "departamento": {
+    "$oid": "68d8d7187e174613587568c0"
+  },
+  "valor_hora": 19,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.273Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.273Z"
+  },
+  "credencial": 189,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756918"
+  },
+  "nome": "Beatriz Souza",
+  "senha": "$2b$10$Uzu65G2HcHAmXgqKJIfox.BrVm2gppXq8DGJjzGcvSL1LpZlsB46y",
+  "CPF": "95423167729",
+  "email": "guilherme_franco@produsys.local",
+  "permissoes": [],
+  "role": "Operador",
+  "departamento": {
+    "$oid": "68d8d7187e174613587568c0"
+  },
+  "valor_hora": 28,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.273Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.273Z"
+  },
+  "credencial": 190,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e1746135875691a"
+  },
+  "nome": "Giovanna Moreira",
+  "senha": "$2b$10$dk2tRuioC4mQYN1cLoVELeVcvpe6q4fX/xq2vGa6danQeHqop5HLK",
+  "CPF": "23112574085",
+  "email": "miguel70@produsys.local",
+  "permissoes": [],
+  "role": "Supervisor",
+  "departamento": {
+    "$oid": "68d8d7187e174613587568c0"
+  },
+  "valor_hora": 32,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.273Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.273Z"
+  },
+  "credencial": 191,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e1746135875691b"
+  },
+  "nome": "Yango Carvalho",
+  "senha": "$2b$10$wSNMAMOUDdQzyPeGOoX8buuc1KfAyAUdOrlzkWNw6npHKx9KsaM7u",
+  "CPF": "73495418942",
+  "email": "miguel46@produsys.local",
+  "permissoes": [],
+  "role": "Supervisor",
+  "departamento": {
+    "$oid": "68d8d7187e174613587568bd"
+  },
+  "valor_hora": 15,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.273Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.273Z"
+  },
+  "credencial": 192,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e1746135875691d"
+  },
+  "nome": "Félix Pereira",
+  "senha": "$2b$10$KvKEXEN3v3DljQj6lf6zo.aCYHpmbqvinPMujkKLvgHc6da.mHtly",
+  "CPF": "16430369759",
+  "email": "liz.martins@produsys.local",
+  "permissoes": [],
+  "role": "Gerente",
+  "departamento": {
+    "$oid": "68d8d7187e174613587568bd"
+  },
+  "valor_hora": 35,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.273Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.273Z"
+  },
+  "credencial": 193,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e1746135875691c"
+  },
+  "nome": "Helena Nogueira",
+  "senha": "$2b$10$A0f0Y6hOWT1cwXAgIY8qr.1MmcNTJaDyVceWGSGAlmca/0pHIpsgq",
+  "CPF": "56694596793",
+  "email": "bruna_moreira@produsys.local",
+  "permissoes": [],
+  "role": "Supervisor",
+  "departamento": {
+    "$oid": "68d8d7187e174613587568bc"
+  },
+  "valor_hora": 49,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.273Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.273Z"
+  },
+  "credencial": 194,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e1746135875691e"
+  },
+  "nome": "Valentina Moreira",
+  "senha": "$2b$10$vJcGDefM1kClK.8fHRocv.cuBlZOXJ3QTSfhuLhoOFLQsQC31ngie",
+  "CPF": "16344227724",
+  "email": "pablo.martins25@produsys.local",
+  "permissoes": [],
+  "role": "Gerente",
+  "departamento": {
+    "$oid": "68d8d7187e174613587568bc"
+  },
+  "valor_hora": 36,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.273Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.273Z"
+  },
+  "credencial": 195,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e1746135875691f"
+  },
+  "nome": "Dalila Oliveira",
+  "senha": "$2b$10$FBmmNuQPvea/u2bs3JAlneD/OnTke.c4jBY9mbOYcCZ5oOlgU6w.K",
+  "CPF": "93406076321",
+  "email": "matheus_santos@produsys.local",
+  "permissoes": [],
+  "role": "Gerente",
+  "departamento": {
+    "$oid": "68d8d7187e174613587568bf"
+  },
+  "valor_hora": 45,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.273Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.273Z"
+  },
+  "credencial": 196,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756920"
+  },
+  "nome": "Fabrício Martins",
+  "senha": "$2b$10$0CmEqdTjRgj/GdHubFzoleah9tLAhK2SqvBwXmcixtv5zjmeGv8YW",
+  "CPF": "87210732941",
+  "email": "marialuiza_oliveira@produsys.local",
+  "permissoes": [],
+  "role": "Supervisor",
+  "departamento": {
+    "$oid": "68d8d7187e174613587568bf"
+  },
+  "valor_hora": 34,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.273Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.273Z"
+  },
+  "credencial": 197,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756921"
+  },
+  "nome": "Nataniel Albuquerque",
+  "senha": "$2b$10$uH2EsUCx7vVniS0tNRNglOGWEJVTvhKs1qRw/P2Ongj6rOI3UC3B6",
+  "CPF": "19546808076",
+  "email": "mariacecilia.nogueira@produsys.local",
+  "permissoes": [],
+  "role": "Gerente",
+  "departamento": {
+    "$oid": "68d8d7187e174613587568bf"
+  },
+  "valor_hora": 38,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.273Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.273Z"
+  },
+  "credencial": 198,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756922"
+  },
+  "nome": "Elisa Batista",
+  "senha": "$2b$10$YY8CUYqwp9vlLpj2Vlb2KOrBWmflJhtK1eYGzN0I/Rx3iKGVFXwAO",
+  "CPF": "19640144829",
+  "email": "mariaalice52@produsys.local",
+  "permissoes": [],
+  "role": "Gerente",
+  "departamento": {
+    "$oid": "68d8d7187e174613587568c0"
+  },
+  "valor_hora": 36,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.273Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.273Z"
+  },
+  "credencial": 199,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e17461358756923"
+  },
+  "nome": "Miguel Saraiva",
+  "senha": "$2b$10$6d0QoySsYnkGiVctlmnRiO/CjlAIH6Eb9dFIS6HvWT9DnQJ06hEWq",
+  "CPF": "73457980559",
+  "email": "mercia50@produsys.local",
+  "permissoes": [],
+  "role": "Gerente",
+  "departamento": {
+    "$oid": "68d8d7187e174613587568c0"
+  },
+  "valor_hora": 35,
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.273Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.273Z"
+  },
+  "credencial": 200,
+  "__v": 0
+},
+{
+  "_id": {
     "$oid": "68a13d728edc56a5ba8e112f"
   },
   "nome": "Felipe Rio Branco Gonçalves",
@@ -21,85 +941,7 @@
   "updatedAt": {
     "$date": "2025-08-17T02:24:50.241Z"
   },
-  "credencial": 1,
+  "credencial": 0,
   "__v": 0,
   "imagem": "imagens\\funcionario\\68a13d728edc56a5ba8e112f.jpg"
-},
-{
-  "_id": {
-    "$oid": "653d6235b2c6a0c3e3a4e9a8"
-  },
-  "nome": "Carlos Silva",
-  "turno": "Manhã",
-  "senha": "senha123",
-  "CPF": "111.222.333-44",
-  "email": "carlos.silva@empresa.com",
-  "telefone": "11987654321",
-  "credencial": 1001,
-  "permissoes": [
-    "operador",
-    "montagem"
-  ],
-  "role": "Operador",
-  "departamento": {
-    "$oid": "653d61a8b2c6a0c3e3a4e9a1"
-  },
-  "createdAt": {
-    "$date": "2025-08-29T23:09:13.974Z"
-  },
-  "updatedAt": {
-    "$date": "2025-08-29T23:09:13.974Z"
-  }
-},
-{
-  "_id": {
-    "$oid": "653d6235b2c6a0c3e3a4e9a9"
-  },
-  "nome": "Ana Pereira",
-  "turno": "Tarde",
-  "senha": "senha456",
-  "CPF": "222.333.444-55",
-  "email": "ana.pereira@empresa.com",
-  "telefone": "11987654322",
-  "credencial": 1002,
-  "permissoes": [
-    "inspetor",
-    "qualidade"
-  ],
-  "role": "Inspetor de Qualidade",
-  "departamento": {
-    "$oid": "653d61a8b2c6a0c3e3a4e9a2"
-  },
-  "createdAt": {
-    "$date": "2025-08-29T23:09:13.974Z"
-  },
-  "updatedAt": {
-    "$date": "2025-08-29T23:09:13.974Z"
-  }
-},
-{
-  "_id": {
-    "$oid": "653d6235b2c6a0c3e3a4e9aa"
-  },
-  "nome": "José Santos",
-  "turno": "Manhã",
-  "senha": "senha789",
-  "CPF": "333.444.555-66",
-  "email": "jose.santos@empresa.com",
-  "telefone": "11987654323",
-  "credencial": 1003,
-  "permissoes": [
-    "operador",
-    "embalagem"
-  ],
-  "role": "Operador de Expedição",
-  "departamento": {
-    "$oid": "653d61a8b2c6a0c3e3a4e9a3"
-  },
-  "createdAt": {
-    "$date": "2025-08-29T23:09:13.974Z"
-  },
-  "updatedAt": {
-    "$date": "2025-08-29T23:09:13.974Z"
-  }
 }]

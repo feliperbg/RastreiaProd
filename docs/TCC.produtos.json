@@ -1,32 +1,1125 @@
 [{
   "_id": {
-    "$oid": "68d1e891352cff26f79a5007"
+    "$oid": "68d8d7187e174613587569a1"
   },
-  "nome": "Gabinete Metálico Padrão",
-  "codigo": "GAB-001",
+  "nome": "Rústico Algodão Sabonete",
+  "codigo": "PROD-W5AOU9",
+  "descricao": "Rústico",
+  "quantidade": 121,
+  "precoMontagem": 146.09,
+  "precoVenda": 1659.38,
   "componentesNecessarios": [
     {
       "componente": {
-        "$oid": "68d1e891352cff26f79a5005"
+        "$oid": "68d8d7187e174613587568f3"
       },
-      "quantidade": 1
+      "quantidade": 4,
+      "_id": {
+        "$oid": "68d8d7187e174613587569a2"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568df"
+      },
+      "quantidade": 1,
+      "_id": {
+        "$oid": "68d8d7187e174613587569a3"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568e5"
+      },
+      "quantidade": 5,
+      "_id": {
+        "$oid": "68d8d7187e174613587569a4"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568f6"
+      },
+      "quantidade": 2,
+      "_id": {
+        "$oid": "68d8d7187e174613587569a5"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568f5"
+      },
+      "quantidade": 4,
+      "_id": {
+        "$oid": "68d8d7187e174613587569a6"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568d8"
+      },
+      "quantidade": 5,
+      "_id": {
+        "$oid": "68d8d7187e174613587569a7"
+      }
     }
   ],
-  "tempo_ciclo_ideal_segundos": 600
+  "tempo_ciclo_ideal_segundos": 208,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.888Z"
+  },
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.911Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.911Z"
+  },
+  "__v": 0
 },
 {
   "_id": {
-    "$oid": "68d1e891352cff26f79a5008"
+    "$oid": "68d8d7187e1746135875699c"
   },
-  "nome": "Painel Eletrônico Simples",
-  "codigo": "PNL-001",
+  "nome": "Ergonômico Aço Chapéu",
+  "codigo": "PROD-M7PHTE",
+  "descricao": "Refinado",
+  "quantidade": 107,
+  "precoMontagem": 173.75,
+  "precoVenda": 2609.89,
   "componentesNecessarios": [
     {
       "componente": {
-        "$oid": "68d1e891352cff26f79a5006"
+        "$oid": "68d8d7187e174613587568db"
       },
-      "quantidade": 4
+      "quantidade": 1,
+      "_id": {
+        "$oid": "68d8d7187e1746135875699d"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568dc"
+      },
+      "quantidade": 5,
+      "_id": {
+        "$oid": "68d8d7187e1746135875699e"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568ee"
+      },
+      "quantidade": 2,
+      "_id": {
+        "$oid": "68d8d7187e1746135875699f"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568d7"
+      },
+      "quantidade": 1,
+      "_id": {
+        "$oid": "68d8d7187e174613587569a0"
+      }
     }
   ],
-  "tempo_ciclo_ideal_segundos": 300
+  "tempo_ciclo_ideal_segundos": 128,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.887Z"
+  },
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.911Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.911Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587569a8"
+  },
+  "nome": "Fantástico Madeira Bicicleta",
+  "codigo": "PROD-3QCSKU",
+  "descricao": "Rústico",
+  "quantidade": 117,
+  "precoMontagem": 164.79,
+  "precoVenda": 2085.05,
+  "componentesNecessarios": [
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568d7"
+      },
+      "quantidade": 3,
+      "_id": {
+        "$oid": "68d8d7187e174613587569a9"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568e1"
+      },
+      "quantidade": 1,
+      "_id": {
+        "$oid": "68d8d7187e174613587569aa"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568ec"
+      },
+      "quantidade": 1,
+      "_id": {
+        "$oid": "68d8d7187e174613587569ab"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568d3"
+      },
+      "quantidade": 1,
+      "_id": {
+        "$oid": "68d8d7187e174613587569ac"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568e2"
+      },
+      "quantidade": 3,
+      "_id": {
+        "$oid": "68d8d7187e174613587569ad"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568f9"
+      },
+      "quantidade": 1,
+      "_id": {
+        "$oid": "68d8d7187e174613587569ae"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568ee"
+      },
+      "quantidade": 1,
+      "_id": {
+        "$oid": "68d8d7187e174613587569af"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568e8"
+      },
+      "quantidade": 1,
+      "_id": {
+        "$oid": "68d8d7187e174613587569b0"
+      }
+    }
+  ],
+  "tempo_ciclo_ideal_segundos": 132,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.889Z"
+  },
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.911Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.911Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587569b1"
+  },
+  "nome": "Lustroso Macio Bola",
+  "codigo": "PROD-EQIV5X",
+  "descricao": "Sem marca",
+  "quantidade": 60,
+  "precoMontagem": 282.89,
+  "precoVenda": 2540.55,
+  "componentesNecessarios": [
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568eb"
+      },
+      "quantidade": 3,
+      "_id": {
+        "$oid": "68d8d7187e174613587569b2"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568e7"
+      },
+      "quantidade": 4,
+      "_id": {
+        "$oid": "68d8d7187e174613587569b3"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568ef"
+      },
+      "quantidade": 1,
+      "_id": {
+        "$oid": "68d8d7187e174613587569b4"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568ec"
+      },
+      "quantidade": 4,
+      "_id": {
+        "$oid": "68d8d7187e174613587569b5"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568e5"
+      },
+      "quantidade": 3,
+      "_id": {
+        "$oid": "68d8d7187e174613587569b6"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568d5"
+      },
+      "quantidade": 1,
+      "_id": {
+        "$oid": "68d8d7187e174613587569b7"
+      }
+    }
+  ],
+  "tempo_ciclo_ideal_segundos": 274,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.890Z"
+  },
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.911Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.911Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587569b8"
+  },
+  "nome": "Feito à mão Aço Mouse",
+  "codigo": "PROD-58IP87",
+  "descricao": "Gostoso",
+  "quantidade": 152,
+  "precoMontagem": 279.39,
+  "precoVenda": 2225.69,
+  "componentesNecessarios": [
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568e3"
+      },
+      "quantidade": 4,
+      "_id": {
+        "$oid": "68d8d7187e174613587569b9"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568eb"
+      },
+      "quantidade": 2,
+      "_id": {
+        "$oid": "68d8d7187e174613587569ba"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568f6"
+      },
+      "quantidade": 1,
+      "_id": {
+        "$oid": "68d8d7187e174613587569bb"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568f8"
+      },
+      "quantidade": 1,
+      "_id": {
+        "$oid": "68d8d7187e174613587569bc"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568d0"
+      },
+      "quantidade": 1,
+      "_id": {
+        "$oid": "68d8d7187e174613587569bd"
+      }
+    }
+  ],
+  "tempo_ciclo_ideal_segundos": 145,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.891Z"
+  },
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.911Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.911Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587569be"
+  },
+  "nome": "Pequeno Macio Toalhas",
+  "codigo": "PROD-TU51OH",
+  "descricao": "Incrível",
+  "quantidade": 168,
+  "precoMontagem": 196.25,
+  "precoVenda": 1659.05,
+  "componentesNecessarios": [
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568cc"
+      },
+      "quantidade": 3,
+      "_id": {
+        "$oid": "68d8d7187e174613587569bf"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568cd"
+      },
+      "quantidade": 4,
+      "_id": {
+        "$oid": "68d8d7187e174613587569c0"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568d3"
+      },
+      "quantidade": 5,
+      "_id": {
+        "$oid": "68d8d7187e174613587569c1"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568f5"
+      },
+      "quantidade": 3,
+      "_id": {
+        "$oid": "68d8d7187e174613587569c2"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568f7"
+      },
+      "quantidade": 5,
+      "_id": {
+        "$oid": "68d8d7187e174613587569c3"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568dc"
+      },
+      "quantidade": 2,
+      "_id": {
+        "$oid": "68d8d7187e174613587569c4"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568d4"
+      },
+      "quantidade": 5,
+      "_id": {
+        "$oid": "68d8d7187e174613587569c5"
+      }
+    }
+  ],
+  "tempo_ciclo_ideal_segundos": 109,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.892Z"
+  },
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.911Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.911Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587569d5"
+  },
+  "nome": "Rústico Algodão Mouse",
+  "codigo": "PROD-23KXD6",
+  "descricao": "Inteligente",
+  "quantidade": 177,
+  "precoMontagem": 170.99,
+  "precoVenda": 1073.69,
+  "componentesNecessarios": [
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568c9"
+      },
+      "quantidade": 5,
+      "_id": {
+        "$oid": "68d8d7187e174613587569d6"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568d5"
+      },
+      "quantidade": 2,
+      "_id": {
+        "$oid": "68d8d7187e174613587569d7"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568dc"
+      },
+      "quantidade": 5,
+      "_id": {
+        "$oid": "68d8d7187e174613587569d8"
+      }
+    }
+  ],
+  "tempo_ciclo_ideal_segundos": 48,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.894Z"
+  },
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.912Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.912Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587569d9"
+  },
+  "nome": "Refinado Aço Peixe",
+  "codigo": "PROD-H64JP9",
+  "descricao": "Pequeno",
+  "quantidade": 90,
+  "precoMontagem": 286.59,
+  "precoVenda": 1468.25,
+  "componentesNecessarios": [
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568de"
+      },
+      "quantidade": 3,
+      "_id": {
+        "$oid": "68d8d7187e174613587569da"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568d7"
+      },
+      "quantidade": 3,
+      "_id": {
+        "$oid": "68d8d7187e174613587569db"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568f2"
+      },
+      "quantidade": 1,
+      "_id": {
+        "$oid": "68d8d7187e174613587569dc"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568d0"
+      },
+      "quantidade": 2,
+      "_id": {
+        "$oid": "68d8d7187e174613587569dd"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568f8"
+      },
+      "quantidade": 5,
+      "_id": {
+        "$oid": "68d8d7187e174613587569de"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568d9"
+      },
+      "quantidade": 1,
+      "_id": {
+        "$oid": "68d8d7187e174613587569df"
+      }
+    }
+  ],
+  "tempo_ciclo_ideal_segundos": 178,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.896Z"
+  },
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.912Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.912Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587569e0"
+  },
+  "nome": "Inteligente Metal Mesa",
+  "codigo": "PROD-FQNHZA",
+  "descricao": "Lindo",
+  "quantidade": 80,
+  "precoMontagem": 257.85,
+  "precoVenda": 2664.65,
+  "componentesNecessarios": [
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568cf"
+      },
+      "quantidade": 4,
+      "_id": {
+        "$oid": "68d8d7187e174613587569e1"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568f3"
+      },
+      "quantidade": 2,
+      "_id": {
+        "$oid": "68d8d7187e174613587569e2"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568da"
+      },
+      "quantidade": 5,
+      "_id": {
+        "$oid": "68d8d7187e174613587569e3"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568e4"
+      },
+      "quantidade": 4,
+      "_id": {
+        "$oid": "68d8d7187e174613587569e4"
+      }
+    }
+  ],
+  "tempo_ciclo_ideal_segundos": 93,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.896Z"
+  },
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.912Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.912Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587569e5"
+  },
+  "nome": "Rústico Madeira Chapéu",
+  "codigo": "PROD-S3N3Q9",
+  "descricao": "Licenciado",
+  "quantidade": 180,
+  "precoMontagem": 259.39,
+  "precoVenda": 861.85,
+  "componentesNecessarios": [
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568ed"
+      },
+      "quantidade": 3,
+      "_id": {
+        "$oid": "68d8d7187e174613587569e6"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568d8"
+      },
+      "quantidade": 4,
+      "_id": {
+        "$oid": "68d8d7187e174613587569e7"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568ce"
+      },
+      "quantidade": 4,
+      "_id": {
+        "$oid": "68d8d7187e174613587569e8"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568d6"
+      },
+      "quantidade": 4,
+      "_id": {
+        "$oid": "68d8d7187e174613587569e9"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568df"
+      },
+      "quantidade": 4,
+      "_id": {
+        "$oid": "68d8d7187e174613587569ea"
+      }
+    }
+  ],
+  "tempo_ciclo_ideal_segundos": 202,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.897Z"
+  },
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.912Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.912Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587569eb"
+  },
+  "nome": "Refinado Macio Pizza",
+  "codigo": "PROD-RVA5XG",
+  "descricao": "Pequeno",
+  "quantidade": 52,
+  "precoMontagem": 212.09,
+  "precoVenda": 2225.19,
+  "componentesNecessarios": [
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568dc"
+      },
+      "quantidade": 2,
+      "_id": {
+        "$oid": "68d8d7187e174613587569ec"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568e9"
+      },
+      "quantidade": 3,
+      "_id": {
+        "$oid": "68d8d7187e174613587569ed"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568eb"
+      },
+      "quantidade": 4,
+      "_id": {
+        "$oid": "68d8d7187e174613587569ee"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568f4"
+      },
+      "quantidade": 1,
+      "_id": {
+        "$oid": "68d8d7187e174613587569ef"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568da"
+      },
+      "quantidade": 4,
+      "_id": {
+        "$oid": "68d8d7187e174613587569f0"
+      }
+    }
+  ],
+  "tempo_ciclo_ideal_segundos": 117,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.898Z"
+  },
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.912Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.912Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587569f1"
+  },
+  "nome": "Incrível Fresco Frango",
+  "codigo": "PROD-KHBI0V",
+  "descricao": "Licenciado",
+  "quantidade": 87,
+  "precoMontagem": 143.39,
+  "precoVenda": 704.19,
+  "componentesNecessarios": [
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568f7"
+      },
+      "quantidade": 2,
+      "_id": {
+        "$oid": "68d8d7187e174613587569f2"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568da"
+      },
+      "quantidade": 1,
+      "_id": {
+        "$oid": "68d8d7187e174613587569f3"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568e0"
+      },
+      "quantidade": 5,
+      "_id": {
+        "$oid": "68d8d7187e174613587569f4"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568ec"
+      },
+      "quantidade": 1,
+      "_id": {
+        "$oid": "68d8d7187e174613587569f5"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568d0"
+      },
+      "quantidade": 1,
+      "_id": {
+        "$oid": "68d8d7187e174613587569f6"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568df"
+      },
+      "quantidade": 3,
+      "_id": {
+        "$oid": "68d8d7187e174613587569f7"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568e9"
+      },
+      "quantidade": 3,
+      "_id": {
+        "$oid": "68d8d7187e174613587569f8"
+      }
+    }
+  ],
+  "tempo_ciclo_ideal_segundos": 96,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.899Z"
+  },
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.912Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.912Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587569f9"
+  },
+  "nome": "Pequeno Fresco Mesa",
+  "codigo": "PROD-PFBDPG",
+  "descricao": "Incrível",
+  "quantidade": 178,
+  "precoMontagem": 175.29,
+  "precoVenda": 2193.09,
+  "componentesNecessarios": [
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568dc"
+      },
+      "quantidade": 4,
+      "_id": {
+        "$oid": "68d8d7187e174613587569fa"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568e6"
+      },
+      "quantidade": 4,
+      "_id": {
+        "$oid": "68d8d7187e174613587569fb"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568f9"
+      },
+      "quantidade": 1,
+      "_id": {
+        "$oid": "68d8d7187e174613587569fc"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568e3"
+      },
+      "quantidade": 2,
+      "_id": {
+        "$oid": "68d8d7187e174613587569fd"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568ee"
+      },
+      "quantidade": 3,
+      "_id": {
+        "$oid": "68d8d7187e174613587569fe"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568fa"
+      },
+      "quantidade": 3,
+      "_id": {
+        "$oid": "68d8d7187e174613587569ff"
+      }
+    }
+  ],
+  "tempo_ciclo_ideal_segundos": 286,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.900Z"
+  },
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.912Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.912Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587569c6"
+  },
+  "nome": "Refinado Metal Sapatos",
+  "codigo": "PROD-Z9VQAP",
+  "descricao": "Inteligente",
+  "quantidade": 106,
+  "precoMontagem": 155.95,
+  "precoVenda": 1037.69,
+  "componentesNecessarios": [
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568f2"
+      },
+      "quantidade": 5,
+      "_id": {
+        "$oid": "68d8d7187e174613587569c7"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568de"
+      },
+      "quantidade": 4,
+      "_id": {
+        "$oid": "68d8d7187e174613587569c8"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568da"
+      },
+      "quantidade": 5,
+      "_id": {
+        "$oid": "68d8d7187e174613587569c9"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568f9"
+      },
+      "quantidade": 5,
+      "_id": {
+        "$oid": "68d8d7187e174613587569ca"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568ce"
+      },
+      "quantidade": 1,
+      "_id": {
+        "$oid": "68d8d7187e174613587569cb"
+      }
+    }
+  ],
+  "tempo_ciclo_ideal_segundos": 111,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.893Z"
+  },
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.911Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.911Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68d8d7187e174613587569cc"
+  },
+  "nome": "Ergonômico Fresco Camiseta",
+  "codigo": "PROD-XYMYBM",
+  "descricao": "Impressionante",
+  "quantidade": 66,
+  "precoMontagem": 246.29,
+  "precoVenda": 2583.7,
+  "componentesNecessarios": [
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568f3"
+      },
+      "quantidade": 2,
+      "_id": {
+        "$oid": "68d8d7187e174613587569cd"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568f0"
+      },
+      "quantidade": 4,
+      "_id": {
+        "$oid": "68d8d7187e174613587569ce"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568eb"
+      },
+      "quantidade": 3,
+      "_id": {
+        "$oid": "68d8d7187e174613587569cf"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568f2"
+      },
+      "quantidade": 2,
+      "_id": {
+        "$oid": "68d8d7187e174613587569d0"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568d2"
+      },
+      "quantidade": 3,
+      "_id": {
+        "$oid": "68d8d7187e174613587569d1"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568dc"
+      },
+      "quantidade": 4,
+      "_id": {
+        "$oid": "68d8d7187e174613587569d2"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568f8"
+      },
+      "quantidade": 4,
+      "_id": {
+        "$oid": "68d8d7187e174613587569d3"
+      }
+    },
+    {
+      "componente": {
+        "$oid": "68d8d7187e174613587568f5"
+      },
+      "quantidade": 4,
+      "_id": {
+        "$oid": "68d8d7187e174613587569d4"
+      }
+    }
+  ],
+  "tempo_ciclo_ideal_segundos": 136,
+  "dataEntrada": {
+    "$date": "2025-09-28T06:35:04.894Z"
+  },
+  "createdAt": {
+    "$date": "2025-09-28T06:35:04.912Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-28T06:35:04.912Z"
+  },
+  "__v": 0
 }]
