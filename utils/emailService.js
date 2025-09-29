@@ -22,6 +22,7 @@ const sendEmail = async (options) => {
     // 3. Envie o e-mail
     try {
         await transporter.sendMail(mailOptions);
+        console.log(`E-mail enviado com sucesso para: ${options.email} com o assunto: "${options.subject}"`);
     } catch (error) {
         console.error('Erro ao enviar e-mail:', error);
         throw new Error('Houve um erro ao enviar o e-mail de redefinição de senha. Tente novamente mais tarde.');

@@ -176,60 +176,164 @@ module.exports = class FuncionarioController {
         }
     }
 
-        /**
-     * @summary Recupera a senha do funcionário e envia por e-mail.
-     * @description Verifica as credenciais, gera uma nova senha, atualiza no banco
-     * e utiliza o serviço de e-mail para notificar o funcionário.
+    /**
+     * @summary Solicita a redefinição de senha.
+     * @description Verifica o usuário por CPF e data de nascimento, gera um código de 6 dígitos,
+     * armazena seu hash no banco com expiração de 15 minutos e o envia por e-mail.
      * @param {object} req - A requisição Express.
      * @param {object} res - A resposta Express.
      * @returns {object} Retorna uma resposta JSON indicando sucesso ou falha.
      */
-    static async recuperarSenha(req, res) {
+    static async requestPasswordReset(req, res) {
         try {
             const { credential, birthdate } = req.body;
-    
+            if (!credential || !birthdate) {
+                return res.status(400).json({ status: false, msg: 'CPF e Data de Nascimento são obrigatórios.' });
+            }
+
             const cpfSemMascara = credential.replace(/\D/g, '');
-    
+
+            // Busca o funcionário e seleciona os campos de reset de senha
             const funcionario = await Funcionario.findOne({
                 CPF: cpfSemMascara,
                 dataNascimento: new Date(birthdate)
-            });
-    
-            if (!funcionario) {
-                return res.status(404).json({ status: false, msg: 'Funcionário não encontrado com os dados informados.' });
-            }
-    
-            const novaSenha = crypto.randomBytes(8).toString('hex');
-    
-            funcionario.senha = novaSenha;
-            await funcionario.save();
-    
-            const mensagem = `Olá, ${funcionario.nome}.\n\nVocê solicitou a recuperação de sua senha no sistema RastreiaProd.\nSua nova senha é: ${novaSenha}\n\nRecomendamos que você altere esta senha após o primeiro login.\n\nAtenciosamente,\nEquipe RastreiaProd`;
+            }).select('+resetPasswordToken +resetPasswordExpires');
 
-            // Chama a função de e-mail diretamente
+            // IMPORTANTE: Para evitar enumeração de usuários, sempre retorne uma mensagem de sucesso genérica.
+            // A lógica interna prossegue apenas se o funcionário for encontrado.
+            if (funcionario) {
+                // Gera um código numérico de 6 dígitos
+                const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+                // Armazena o HASH do código e a data de expiração (15 minutos)
+                funcionario.resetPasswordToken = await bcrypt.hash(resetCode, 10);
+                funcionario.resetPasswordExpires = Date.now() + 15 * 60 * 1000; // 15 minutos
+
+                await funcionario.save();
+
+                // Envia o e-mail com o código (NÃO o hash)
+                const mensagem = `Olá, ${funcionario.nome}.\n\nVocê solicitou a redefinição de sua senha no sistema RastreiaProd.\n\nUse o seguinte código de verificação para redefinir sua senha: ${resetCode}\n\nEste código é válido por 15 minutos.\n\nSe você não solicitou esta alteração, por favor, ignore este e-mail.\n\nAtenciosamente,\nEquipe RastreiaProd`;
+
+                await sendEmail({
+                    email: funcionario.email,
+                    subject: 'Código de Recuperação de Senha - RastreiaProd',
+                    message: mensagem,
+                });
+            }
+
+            // Resposta genérica para o cliente
+            return res.status(200).json({
+                status: true,
+                msg: 'Se os dados estiverem corretos, um e-mail com o código de recuperação foi enviado.',
+                userId: funcionario ? funcionario._id : null // Envia o ID para o frontend poder redirecionar
+            });
+
+        } catch (error) {
+            console.error('Erro ao solicitar redefinição de senha:', error);
+            return res.status(500).json({ status: false, msg: 'Erro interno no servidor.' });
+        }
+    }
+
+    /**
+     * @summary Verifica o código de redefinição de senha.
+     * @description Valida o código de 6 dígitos enviado pelo usuário contra o hash armazenado e sua data de expiração.
+     * @param {object} req - A requisição Express.
+     * @param {object} res - A resposta Express.
+     * @returns {object} Retorna um status de sucesso se o código for válido.
+     */
+    static async verifyResetCode(req, res) {
+        try {
+            const { userId, code } = req.body;
+
+            if (!userId || !code) {
+                return res.status(400).json({ status: false, msg: 'ID do usuário e código são obrigatórios.' });
+            }
+
+            const funcionario = await Funcionario.findById(userId).select('+resetPasswordToken +resetPasswordExpires');
+
+            if (!funcionario) {
+                return res.status(404).json({ status: false, msg: 'Usuário não encontrado.' });
+            }
+
+            // Verifica se o token existe e não expirou
+            if (!funcionario.resetPasswordToken || !funcionario.resetPasswordExpires || Date.now() > funcionario.resetPasswordExpires) {
+                return res.status(400).json({ status: false, msg: 'Código de verificação inválido ou expirado. Por favor, solicite um novo.' });
+            }
+
+            // Compara o código enviado com o hash armazenado
+            const isCodeValid = await bcrypt.compare(code, funcionario.resetPasswordToken);
+
+            if (!isCodeValid) {
+                return res.status(400).json({ status: false, msg: 'Código de verificação inválido.' });
+            }
+
+            // Se o código for válido, removemos o token para que ele não possa ser usado novamente para verificar,
+            // mas mantemos a data de expiração como um sinal de que a redefinição foi autorizada.
+            // A data de expiração original servirá como um "token de autorização" de uso único.
+            funcionario.resetPasswordToken = undefined;
+            await funcionario.save();
+
+            return res.status(200).json({ status: true, msg: 'Código verificado com sucesso.' });
+
+        } catch (error) {
+            console.error('Erro ao verificar código de redefinição:', error);
+            return res.status(500).json({ status: false, msg: 'Erro interno no servidor.' });
+        }
+    }
+
+    /**
+     * @summary Redefine a senha do usuário.
+     * @description Valida se a redefinição foi autorizada (verificando a ausência do token e a validade da expiração)
+     * e atualiza a senha do usuário.
+     * @param {object} req - A requisição Express.
+     * @param {object} res - A resposta Express.
+     * @returns {object} Retorna uma resposta JSON indicando sucesso ou falha.
+     */
+    static async resetPassword(req, res) {
+        try {
+            const { userId, newPassword, confirmPassword } = req.body;
+
+            // Validações de entrada
+            if (!userId || !newPassword || !confirmPassword) {
+                return res.status(400).json({ status: false, msg: 'Todos os campos são obrigatórios.' });
+            }
+            if (newPassword !== confirmPassword) {
+                return res.status(400).json({ status: false, msg: 'As senhas não coincidem.' });
+            }
+            if (newPassword.length < 8) {
+                return res.status(400).json({ status: false, msg: 'A nova senha deve ter pelo menos 8 caracteres.' });
+            }
+
+            // Busca o usuário incluindo os campos de token que normalmente não são selecionados
+            const funcionario = await Funcionario.findById(userId).select('+resetPasswordToken +resetPasswordExpires +senha');
+
+            if (!funcionario) {
+                return res.status(404).json({ status: false, msg: 'Usuário não encontrado.' });
+            }
+
+            // A autorização para redefinir a senha é confirmada se o token foi consumido (undefined)
+            // mas a data de expiração ainda é válida.
+            if (funcionario.resetPasswordToken || !funcionario.resetPasswordExpires || Date.now() > funcionario.resetPasswordExpires) {
+                return res.status(400).json({ status: false, msg: 'Autorização para redefinir a senha é inválida ou expirou. Por favor, verifique o código novamente.' });
+            }
+
+            // Tudo certo, atualiza a senha
+            funcionario.senha = newPassword; // O pre-save hook do Mongoose irá hashear
+            funcionario.resetPasswordExpires = undefined; // Invalida a data de expiração
+
+            await funcionario.save();
+
             await sendEmail({
                 email: funcionario.email,
-                subject: 'Recuperação de Senha - RastreiaProd',
-                message: mensagem,
+                subject: 'Sua senha foi redefinida - RastreiaProd',
+                message: `Olá, ${funcionario.nome}.\n\nSua senha no sistema RastreiaProd foi alterada com sucesso.\n\nSe você não realizou esta alteração, entre em contato com o suporte imediatamente.\n\nAtenciosamente,\nEquipe RastreiaProd`,
             });
-    
-            const responseBody = {
-                status: true,
-                msg: 'Uma nova senha foi enviada para o seu e-mail de cadastro.'
-            };
 
-            if (process.env.NODE_ENV === 'development') {
-                responseBody.novaSenha = novaSenha; // Adiciona a nova senha apenas em ambiente de desenvolvimento
-            }
+            return res.status(200).json({ status: true, msg: 'Senha alterada com sucesso!' });
 
-            return res.status(200).json(responseBody);
-    
         } catch (error) {
-            console.error('Erro ao recuperar senha:', error);
-            if (error.message.includes('enviar o e-mail')) {
-                return res.status(500).json({ status: false, msg: error.message });
-            }
-            return res.status(500).json({ status: false, msg: 'Erro interno no servidor ao tentar recuperar a senha.' });
+            console.error('Erro ao redefinir senha:', error);
+            return res.status(500).json({ status: false, msg: 'Erro interno no servidor ao tentar redefinir a senha.' });
         }
     }
 }

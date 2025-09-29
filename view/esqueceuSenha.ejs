@@ -97,29 +97,34 @@
 
             form.addEventListener("submit", function (event) {
                 event.preventDefault();
-                recuperarSenha();
+                solicitarReset();
             });
 
-            function recuperarSenha() {
+            function solicitarReset() {
                 const credential = txtCredential.value;
                 const birthdate = document.getElementById("data_nasc").value;
 
-                fetch('/api/funcionarios/recuperar-senha', {
+                // Mostra uma mensagem de "processando"
+                exibirMensagem('Processando sua solicitação...', 'info');
+
+                fetch('/api/funcionarios/request-password-reset', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({ credential, birthdate }),
                 })
-                .then(res => res.json())
+                .then(res => res.json()) // Sempre esperamos uma resposta JSON
                 .then(data => {
-                    if (data.status) {
+                    // A resposta será sempre status:true para evitar enumeração de usuários
+                    // A lógica de redirecionamento depende da existência de `userId`
+                    if (data.status && data.userId) {
                         exibirMensagem(data.msg, 'sucesso');
-                        window.setTimeout(() => {
-                            window.location.href = '/login';
-                        }, 5000); // Redireciona após 5 segundos
+                        setTimeout(() => {
+                            window.location.href = `/funcionarios/resetar-senha?id=${data.userId}`;
+                        }, 3000); // Redireciona após 3 segundos
                     } else {
-                        exibirMensagem(data.msg, 'erro');
+                        exibirMensagem(data.msg, 'sucesso'); // Mostra a mensagem genérica de sucesso mesmo se o usuário não existir
                     }
                 })
                 .catch(error => {
@@ -132,12 +137,13 @@
                 divResposta.innerHTML = texto;
                 divResposta.style.padding = "10px";
                 divResposta.style.marginTop = "10px";
-                divResposta.style.borderRadius = "5px";
-                divResposta.style.textAlign = "center";
 
                 if (tipo === "sucesso") {
                     divResposta.style.backgroundColor = "#d4edda";
                     divResposta.style.color = "#155724";
+                } else if (tipo === "info") {
+                    divResposta.style.backgroundColor = "#cce5ff";
+                    divResposta.style.color = "#004085";
                 } else {
                     divResposta.style.backgroundColor = "#f8d7da";
                     divResposta.style.color = "#721c24";

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redefinir Senha</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .container { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); width: 100%; max-width: 400px; }
+        .container h1 { font-size: 24px; margin-bottom: 20px; text-align: center; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; box-sizing: border-box; }
+        .form-group input:focus { border-color: #007BFF; outline: none; }
+        .btn { width: 100%; padding: 10px; background-color: #007BFF; color: #fff; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; }
+        .btn:hover { background-color: #0056b3; }
+        #divResposta { margin-top: 15px; padding: 10px; border-radius: 5px; text-align: center; }
+        .password-strength { font-size: 12px; margin-top: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Redefinir Senha</h1>
+
+        <!-- Passo 1: Verificação do Código -->
+        <form id="form-verificar-codigo">
+            <div class="form-group">
+                <label for="code">Código de Verificação</label>
+                <input type="text" id="code" name="code" placeholder="Digite o código de 6 dígitos" required>
+            </div>
+            <button type="submit" class="btn">Verificar Código</button>
+        </form>
+
+        <!-- Passo 2: Redefinição de Senha (inicialmente oculto) -->
+        <form id="form-resetar-senha" style="display: none;">
+            <input type="hidden" id="userId" value="<%= userId || '' %>">
+
+            <div class="form-group">
+                <label for="newPassword">Nova Senha</label>
+                <input type="password" id="newPassword" name="newPassword" required>
+                <div id="password-strength" class="password-strength"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="confirmPassword">Confirmar Nova Senha</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" required>
+            </div>
+
+            <button type="submit" class="btn">Redefinir Senha</button>
+        </form>
+
+        <div id="divResposta"></div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const formVerificar = document.getElementById("form-verificar-codigo");
+            const formResetar = document.getElementById("form-resetar-senha");
+            const divResposta = document.getElementById("divResposta");
+            const userIdInput = document.getElementById("userId");
+            const newPasswordInput = document.getElementById("newPassword");
+            const confirmPasswordInput = document.getElementById("confirmPassword");
+
+            if (!userIdInput.value) {
+                exibirMensagem('ID de usuário não encontrado. Por favor, inicie o processo de recuperação novamente.', 'erro');
+                formVerificar.style.display = 'none';
+            }
+
+            // Evento para o formulário de verificação de código
+            formVerificar.addEventListener("submit", function (event) {
+                event.preventDefault();
+                verificarCodigo();
+            });
+
+            function verificarCodigo() {
+                const payload = {
+                    userId: userIdInput.value,
+                    code: document.getElementById("code").value
+                };
+
+                fetch('/api/funcionarios/verify-reset-code', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload),
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status) {
+                        exibirMensagem(data.msg, 'sucesso');
+                        // Esconde o formulário de verificação e mostra o de redefinição
+                        formVerificar.style.display = 'none';
+                        formResetar.style.display = 'block';
+                    } else {
+                        exibirMensagem(data.msg, 'erro');
+                    }
+                })
+                .catch(error => exibirMensagem('Ocorreu um erro ao verificar o código.', 'erro'));
+            }
+
+            // Evento para o formulário de redefinição de senha
+            formResetar.addEventListener("submit", function (event) {
+                event.preventDefault();
+
+                const newPassword = newPasswordInput.value;
+                const confirmPassword = confirmPasswordInput.value;
+
+                if (newPassword.length < 8) {
+                    exibirMensagem('A nova senha deve ter pelo menos 8 caracteres.', 'erro');
+                    return;
+                }
+                if (newPassword !== confirmPassword) {
+                    exibirMensagem('As senhas não coincidem.', 'erro');
+                    return;
+                }
+
+                resetarSenha();
+            });
+
+            function resetarSenha() {
+                const payload = {
+                    userId: userIdInput.value,
+                    newPassword: newPasswordInput.value,
+                    confirmPassword: confirmPasswordInput.value
+                };
+
+                fetch('/api/funcionarios/reset-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload),
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status) {
+                        exibirMensagem(data.msg, 'sucesso');
+                        formResetar.style.display = 'none'; // Esconde o formulário
+                        setTimeout(() => {
+                            window.location.href = '/login';
+                        }, 5000);
+                    } else {
+                        exibirMensagem(data.msg, 'erro');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                    exibirMensagem('Ocorreu um erro ao tentar redefinir a senha.', 'erro');
+                });
+            }
+
+            function exibirMensagem(texto, tipo) {
+                divResposta.innerHTML = texto;
+                divResposta.style.padding = "10px";
+                divResposta.style.borderRadius = "5px";
+                divResposta.style.textAlign = "center";
+
+                if (tipo === "sucesso") {
+                    divResposta.style.backgroundColor = "#d4edda";
+                    divResposta.style.color = "#155724";
+                } else {
+                    divResposta.style.backgroundColor = "#f8d7da";
+                    divResposta.style.color = "#721c24";
+                }
+            }
+        });
+    </script>
+</body>
+</html>

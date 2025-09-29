@@ -63,7 +63,15 @@ const FuncionarioSchema = new Schema({
         type: Number,
         required: true,
         default: 15 // Valor padrão, ex: R$15,00
-    }
+    },
+    resetPasswordToken: {
+        type: String,
+        select: false // Não retorna este campo em queries por padrão
+    },
+    resetPasswordExpires: {
+        type: Date,
+        select: false // Não retorna este campo em queries por padrão
+    },
 }, {
     timestamps: true,
 });

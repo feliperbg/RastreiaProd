@@ -33,6 +33,7 @@ const viewPath = path.join(__dirname, '..', 'view');
 viewRouter.get('/', (req, res) => res.render('main/funcionario'));
 viewRouter.get('/adicionar', (req, res) => { res.render('add/adicionar-funcionario'); });
 viewRouter.get('/:id/editar', (req, res) => { res.render('edit/editar-funcionario'); });
+viewRouter.get('/resetar-senha', (req, res) => { res.render('resetarSenha', { userId: req.query.id }); });
 viewRouter.get('/esqueceu-senha', (req, res) => { res.render('esqueceuSenha'); });
 
 // --- ROTAS DA API ---
@@ -49,6 +50,8 @@ apiRouter.get('/', jwtMiddleware.validate.bind(jwtMiddleware), FuncionarioContro
 apiRouter.get('/:id', jwtMiddleware.validate.bind(jwtMiddleware), MongoIdMiddleware.validateParam('id'), FuncionarioController.readByID);
 apiRouter.put('/:id', jwtMiddleware.validate.bind(jwtMiddleware), MongoIdMiddleware.validateParam('id'), FuncionarioMiddleware.validateUpdate, FuncionarioController.update);
 apiRouter.delete('/:id', jwtMiddleware.validate.bind(jwtMiddleware), MongoIdMiddleware.validateParam('id'), FuncionarioController.delete);
-apiRouter.post('/recuperar-senha', FuncionarioController.recuperarSenha);
+apiRouter.post('/request-password-reset', FuncionarioController.requestPasswordReset);
+apiRouter.post('/verify-reset-code', FuncionarioController.verifyResetCode);
+apiRouter.post('/reset-password', FuncionarioController.resetPassword);
 
 module.exports = { viewRouter, apiRouter };
