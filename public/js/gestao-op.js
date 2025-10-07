@@ -234,28 +234,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    window.pausarEtapa = async function(opId, etapaId) {
-        const { value: motivo } = await Swal.fire({
-            title: 'Pausar Produção', input: 'text', inputLabel: 'Motivo da Pausa',
-            inputPlaceholder: 'Ex: Falta de material, manutenção...', icon: 'question',
-            showCancelButton: true, confirmButtonText: 'Sim, pausar', cancelButtonText: 'Cancelar',
-            inputValidator: (value) => { if (!value) { return 'Você precisa informar um motivo!' } }
-        });
-        if (motivo) {
-            try {
-                const response = await fetch(`/api/ordens-producao/${opId}/etapa/${etapaId}/pausar`, {
-                    method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('authToken')}` },
-                    body: JSON.stringify({ motivo: motivo })
-                });
-                const resultData = await response.json();
-                if (!response.ok) throw new Error(resultData.msg);
-                Swal.fire('Pausada!', 'A produção foi pausada com sucesso.', 'success');
-                inicializar();
-            } catch(error) { Swal.fire('Erro!', error.message, 'error'); }
-        }
-    }
-
     window.retomarEtapa = async function(opId, etapaId) {
         const result = await Swal.fire({
             title: 'Retomar Produção?', text: "Você confirma a retomada da produção?", icon: 'question',
@@ -359,7 +337,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-
     // --- FUNÇÕES DO QR CODE E PDF ---
     function abrirModalQrCode() {
         if (!qrCodeLabelModal || !ordemProducao) return;
@@ -375,82 +352,6 @@ document.addEventListener('DOMContentLoaded', function () {
         container.innerHTML = '';
         new QRCode(container, { text: window.location.href, width: size, height: size });
     }
-
-    window.gerarPdfParaImpressao = async function(modo) {
-        const { jsPDF } = window.jspdf;
-        let elementoOriginal, pdfOptions;
-
-        if (modo === 'etiqueta') {
-            elementoOriginal = document.getElementById('printable-label');
-            pdfOptions = { width: 466, height: 367 };
-        } else { // modo 'qrcode'
-            elementoOriginal = document.getElementById('printable-label');
-            pdfOptions = { width: 150, height: 150 };
-        }
-
-        if (!elementoOriginal) {
-            Swal.fire('Erro!', 'Não foi possível encontrar o conteúdo para gerar o PDF.', 'error');
-            return;
-        }
-
-        Swal.fire({
-            title: 'Gerando PDF...',
-            text: 'Por favor, aguarde.',
-            allowOutsideClick: false,
-            didOpen: () => { Swal.showLoading(); }
-        });
-
-        try {
-            const canvas = await html2canvas(elementoOriginal, {
-                scale: 3,
-                useCORS: true,
-                backgroundColor: '#ffffff'
-            });
-
-            let finalCanvas = canvas;
-
-            // --- Se for qrcode, recorta o centro em 150x150 ---
-            if (modo === 'qrcode') {
-                const cropSize = 170 * 3; // 150px * escala (3x no html2canvas)
-                const startX = (canvas.width - cropSize) / 2;
-                const startY = (canvas.height - cropSize) / 2;
-
-                const croppedCanvas = document.createElement('canvas');
-                croppedCanvas.width = cropSize;
-                croppedCanvas.height = cropSize;
-
-                const ctx = croppedCanvas.getContext('2d');
-                ctx.drawImage(canvas, startX, startY, cropSize, cropSize, 0, 0, cropSize, cropSize);
-
-                finalCanvas = croppedCanvas;
-            }
-
-            const imgData = finalCanvas.toDataURL('image/png');
-
-            const pdf = new jsPDF({
-                orientation: pdfOptions.width > pdfOptions.height ? 'landscape' : 'portrait',
-                unit: 'mm',
-                format: [pdfOptions.width, pdfOptions.height]
-            });
-
-            pdf.addImage(imgData, 'PNG', 0, 0, pdfOptions.width, pdfOptions.height);
-
-            pdf.autoPrint();
-            const pdfUrl = pdf.output('bloburl');
-            window.open(pdfUrl, '_blank');
-
-            Swal.fire({
-                title: 'Sucesso!',
-                text: 'Seu PDF foi gerado. Se uma nova aba não abriu, verifique se o navegador bloqueou o pop-up.',
-                icon: 'success',
-                timer: 4000
-            });
-
-        } catch (error) {
-            console.error('Erro ao gerar PDF:', error);
-            Swal.fire('Erro!', `Não foi possível gerar o PDF. Detalhes: ${error.message}`, 'error');
-        }
-    };
 
     // --- FUNÇÕES UTILITÁRIAS ---
     function formatarData(dataString) {
@@ -470,6 +371,53 @@ document.addEventListener('DOMContentLoaded', function () {
         const minutos = Math.floor((diffMs % 3600000) / 60000);
         return `${horas.toString().padStart(2, '0')}h ${minutos.toString().padStart(2, '0')}min`;
     }
+
+    // --- FUNÇÕES GLOBAIS (disponíveis no escopo da janela) ---
+    window.gerarRelatorioOPCompletoPDF = function() {
+        if (window.pdfGenerator) {
+            const utils = { formatarData, formatarDataHora, calcularDuracao };
+            pdfGenerator.gerarRelatorioOPCompletoPDF(ordemProducao, utils);
+        }
+    };
+
+    window.gerarPdfParaImpressao = function(modo) {
+        if (window.pdfGenerator) {
+            pdfGenerator.gerarPdfParaImpressao(modo);
+        }
+    };
+
+    window.verProcedimentos = function(titulo, procedimentos) {
+        const procedimentosFormatados = procedimentos.replace(/(\s*)(\d+\.)/g, (match, p1, p2, offset) => {
+            return offset > 0 ? `<br>${p2}` : p2;
+        });
+        Swal.fire({ title: titulo, html: `<div style="text-align: left; white-space: pre-wrap; word-wrap: break-word;">${procedimentosFormatados}</div>`, icon: 'info', confirmButtonText: 'Fechar' });
+    };
+
+    async function executarAcao(titulo, texto, url, method = 'POST', body = null) {
+        const result = await Swal.fire({ title: titulo, text: texto, icon: 'question', showCancelButton: true, confirmButtonText: 'Sim', cancelButtonText: 'Cancelar' });
+        if (result.isConfirmed) {
+            try {
+                const options = { method, headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } };
+                if (body) {
+                    options.headers['Content-Type'] = 'application/json';
+                    options.body = JSON.stringify(body);
+                }
+                const response = await fetch(url, options);
+                const resultData = await response.json();
+                if (!response.ok) throw new Error(resultData.msg);
+                Swal.fire('Sucesso!', resultData.msg || 'Ação realizada com sucesso.', 'success');
+                inicializar(); // Recarrega a página
+            } catch (error) {
+                Swal.fire('Erro!', error.message, 'error');
+            }
+        }
+    }
+
+    // window.iniciarEtapa = (opId, etapaId) => executarAcao('Iniciar Etapa?', 'Você confirma o início desta etapa?', `/api/ordens-producao/${opId}/etapa/${etapaId}/iniciar`);
+    // window.finalizarEtapa = (opId, etapaId) => executarAcao('Finalizar Etapa?', 'Você confirma a conclusão desta etapa?', `/api/ordens-producao/${opId}/etapa/${etapaId}/finalizar`);
+    // window.retomarEtapa = (opId, etapaId) => executarAcao('Retomar Produção?', 'Você confirma a retomada da produção?', `/api/ordens-producao/${opId}/etapa/${etapaId}/retomar`, 'PATCH');
+    // window.atualizarRefugo = () => showModalRefugo();
+    // window.pausarEtapa = (opId, etapaId) => showModalPausa(opId, etapaId);
 
     inicializar();
 });

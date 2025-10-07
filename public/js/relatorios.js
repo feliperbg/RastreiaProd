@@ -161,109 +161,43 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Substitua a sua função generatePdf antiga por esta versão ajustada
-    function generatePdf() {
-        Swal.fire({ title: 'Gerando Relatório PDF...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-
-        try {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
-            let finalY = 20;
-
-            // === TÍTULO E CABEÇALHO ===
-            doc.setFontSize(18);
-            doc.text('Relatório de Desempenho da Produção', 105, finalY, { align: 'center' });
-            finalY += 10;
-
-            const dateRange = $('#daterange').data('daterangepicker');
-            const periodoStr = `Período de Análise: ${dateRange.startDate.format('DD/MM/YYYY')} a ${dateRange.endDate.format('DD/MM/YYYY')}`;
-            doc.setFontSize(12);
-            doc.text(periodoStr, 105, finalY, { align: 'center' });
-            finalY += 15;
-
-            // === INDICADORES (KPIs) ===
-            doc.setFontSize(14);
-            doc.text('Indicadores Chave de Desempenho (KPIs)', 14, finalY);
-            finalY += 8;
-
-            doc.setFontSize(11);
-            const oee = document.getElementById('kpi-oee').textContent;
-            const disponibilidade = document.getElementById('kpi-disponibilidade').textContent;
-            const qualidade = document.getElementById('kpi-qualidade').textContent;
-            const performance = document.getElementById('kpi-performance').textContent;
-
-            doc.text(`- OEE Geral: ${oee}`, 16, finalY);
-            doc.text(`- Qualidade: ${qualidade}`, 110, finalY);
-            finalY += 7;
-            doc.text(`- Disponibilidade: ${disponibilidade}`, 16, finalY);
-            doc.text(`- Performance: ${performance}`, 110, finalY);
-            finalY += 15;
-
-            // === GRÁFICOS ===
-            doc.setFontSize(14);
-            doc.text('Gráficos de Análise', 14, finalY);
-            finalY += 8;
-
-            // Gráfico de Evolução do OEE
-            const oeeChartCanvas = document.getElementById('oeeEvolutionChart');
-            const oeeChartImg = oeeChartCanvas.toDataURL('image/png', 1.0);
-            doc.addImage(oeeChartImg, 'PNG', 14, finalY, 160, 70);
-            finalY += 80;
-
-            // Gráfico de Pareto (Causas de Parada)
-            const paretoChartCanvas = document.getElementById('paretoChart');
-            const paretoChartImg = paretoChartCanvas.toDataURL('image/png', 1.0);
-            doc.addImage(paretoChartImg, 'PNG', 14, finalY, 160, 70);
-            finalY += 80;
-
-            if (finalY > 220) {
-                doc.addPage();
-                finalY = 20;
+    async function generatePdf() {
+        // 1. Coletar todos os dados necessários da página
+        const daterange = $('#daterange').data('daterangepicker');
+        
+        const reportData = {
+            periodo: `${daterange.startDate.format('DD/MM/YYYY')} a ${daterange.endDate.format('DD/MM/YYYY')}`,
+            kpis: {
+                oee: document.getElementById('kpi-oee').textContent,
+                disponibilidade: document.getElementById('kpi-disponibilidade').textContent,
+                qualidade: document.getElementById('kpi-qualidade').textContent,
+                performance: document.getElementById('kpi-performance').textContent,
+            },
+            charts: {
+                oeeEvolution: document.getElementById('oeeEvolutionChart').toDataURL('image/png', 1.0),
+                pareto: document.getElementById('paretoChart').toDataURL('image/png', 1.0),
+                productionByProduct: document.getElementById('productionChart').toDataURL('image/png', 1.0),
+            },
+            paretoData: {
+                head: ['Motivo da Parada', 'Duração Total (minutos)'],
+                body: []
             }
+        };
 
-            // --- AJUSTE NO GRÁFICO DE PRODUÇÃO POR PRODUTO ---
-            const productionChartCanvas = document.getElementById('productionChart');
-            const productionChartImg = productionChartCanvas.toDataURL('image/png', 1.0);
+        // Extrai dados da instância do gráfico de Pareto para a tabela
+        if (paretoChartInstance && paretoChartInstance.data.labels.length > 0) {
+            reportData.paretoData.body = paretoChartInstance.data.labels.map((label, index) => {
+                return [label, paretoChartInstance.data.datasets[0].data[index]];
+            });
+        }
 
-            // Lógica para manter a proporção e evitar distorção
-            const chartWidth = 180; // Aumenta a largura para melhor legibilidade
-            const chartHeight = chartWidth * (productionChartCanvas.height / productionChartCanvas.width); // Calcula a altura proporcionalmente
-
-            doc.addImage(productionChartImg, 'PNG', 14, finalY, chartWidth, chartHeight);
-            finalY += chartHeight + 10; // Adiciona a altura do gráfico + 10mm de margem
-
-            if (finalY > 220) {
-                doc.addPage();
-                finalY = 20;
-            }
-
-            // === TABELA DE DADOS (USANDO AUTOTABLE) ===
-            if (paretoChartInstance && paretoChartInstance.data.labels.length > 0) {
-                doc.setFontSize(14);
-                doc.text('Dados - Principais Causas de Parada', 14, finalY);
-                finalY += 8;
-
-                const tableHead = [['Motivo da Parada', 'Duração Total (minutos)']];
-                const tableBody = paretoChartInstance.data.labels.map((label, index) => {
-                    return [label, paretoChartInstance.data.datasets[0].data[index]];
-                });
-
-                doc.autoTable({
-                    head: tableHead,
-                    body: tableBody,
-                    startY: finalY,
-                    theme: 'striped',
-                    headStyles: { fillColor: [41, 128, 186] }
-                });
-            }
-
-            // === ABRIR O PDF EM NOVA ABA ===
-            window.open(doc.output('bloburl'), '_blank');
-
-            Swal.close();
-
-        } catch (error) {
-            console.error("Erro ao gerar PDF:", error);
-            Swal.fire('Erro!', `Não foi possível gerar o relatório. Detalhe: ${error.message}`, 'error');
+        // 2. Chamar o novo gerador de PDF
+        // Garante que o módulo foi carregado
+        if (window.relatorioPdfGenerator) {
+            await window.relatorioPdfGenerator.gerarRelatorioDesempenho(reportData);
+        } else {
+            Swal.fire('Erro!', 'O gerador de PDF de relatórios não foi carregado corretamente.', 'error');
+            console.error("Módulo relatorioPdfGenerator não encontrado no objeto window.");
         }
     }
 
