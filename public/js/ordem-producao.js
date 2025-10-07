@@ -194,15 +194,6 @@
     }
 
     function renderizarTabela(ordens) {
-        console.log('Renderizando tabela...');
-        const ordensEmAndamento = ordens.filter(ordem => ordem.status === 'Em Andamento');
-        console.log('Ordens em Andamento:', ordensEmAndamento);
-        console.log('')
-        const ordensConcluidas = ordens.filter(ordem => ordem.status === 'Concluída');
-        console.log('Ordens concluidas:', ordensConcluidas);
-        console.log('')
-
-
         tabela = document.getElementById("tabela-ordem-producoes");
         tabela.innerHTML = "";
 
@@ -349,7 +340,7 @@
     }
 
     // Garante que a função de formatação esteja disponível globalmente se necessário
-    window.formatarData = window.formatarData || function(data) {
+    window.formatarData = function(data) {
         if (!data) return 'N/A';
         return new Date(data).toLocaleDateString('pt-BR', { timeZone: 'UTC' });
     };
