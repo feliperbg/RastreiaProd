@@ -21,10 +21,19 @@ const EtapaSchema = new Schema({
         type: String,
         trim: true,
     },
-    componenteConclusao: {
-        type: Schema.Types.ObjectId,
-        ref: 'Componente',
-    },
+    componentesConclusao: [{
+        componente: {
+            type: Schema.Types.ObjectId,
+            ref: 'Componente',
+            required: true,
+        },
+        quantidade: {
+            type: Number,
+            required: true,
+            min: [1, 'A quantidade mínima de um componente é 1.'],
+            default: 1
+        }
+    }],
     funcionariosResponsaveis: [{
         type: Schema.Types.ObjectId,
         ref: 'Funcionario',

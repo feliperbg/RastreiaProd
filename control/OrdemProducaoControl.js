@@ -1,11 +1,10 @@
 const OrdemProducao = require('../model/OrdemProducao');
 const mongoose = require('mongoose');
 const Produto = require('../model/Produto');
-// Importe os outros models necessários para o populate no getDetalhesOrdem
 const Funcionario = require('../model/Funcionario');
 const Motivo = require('../model/Motivo');
 const Etapa = require('../model/Etapa');
-
+const Componente = require('../model/Componente');
 
 module.exports = class OrdemProducaoController {
     static async create(req, res) {
@@ -49,27 +48,15 @@ module.exports = class OrdemProducaoController {
         }
     }
 
-    // MÉTODO readAll TOTALMENTE REFEITO - MAIS SIMPLES E CORRETO
     static async readAll(req, res) {
         try {
             const { meuPainel } = req.query;
-            const funcionarioId = req.user ? req.user._id : null; // Garante que req.user exista
-
-            if(process.env.NODE_ENV === 'development'){
-                // --- CONSOLE LOGS PARA DEPURAÇÃO ---
-                console.log('--- DEBUG: Filtro "Minhas Ordens" ---');
-                console.log('Parâmetro meuPainel:', meuPainel);
-                console.log('Payload do Usuário (req.user):', req.user);
-                console.log('ID do Funcionário:', funcionarioId);
-                // ------------------------------------
-            }
+            const funcionarioId = req.user ? req.user._id : null;
 
             let query = {};
             if (meuPainel === 'true' && funcionarioId) {
-                // Filtra ordens onde o ID do funcionário logado está no array 'funcionarioAtivo.funcionario'
                 query = { 'funcionarioAtivo.funcionario': funcionarioId };
             }
-            console.log('Query final para o MongoDB:', query);
 
             let ordens = await OrdemProducao.find(query).populate({
                     path: 'produto',
@@ -107,7 +94,6 @@ module.exports = class OrdemProducaoController {
                 return ordemA - ordemB;
             });
             
-            // Converte para objetos simples APÓS a população para garantir que os virtuais funcionem
             const ordensObj = ordens.map(ordem => ordem.toObject({ virtuals: true }));
 
             return res.status(200).json({ status: true, ordens: ordensObj });
@@ -145,7 +131,7 @@ module.exports = class OrdemProducaoController {
                 .populate('historicoEtapas.etapa')
                 .populate('funcionarioAtivo.funcionario')
                 .populate('criadoPor', 'nome')
-                .populate('motivoCancelamento', 'descricao') // Populando o motivo do cancelamento
+                .populate('motivoCancelamento', 'descricao')
                 .populate({
                     path: 'historico_refugo.motivo',
                     select: 'descricao'
@@ -213,14 +199,11 @@ module.exports = class OrdemProducaoController {
         }
     }
 
-    /**
-     * Atualiza a prioridade de uma Ordem de Produção manualmente.
-     */
     static async updatePrioridade(req, res) {
         try {
             const { id } = req.params;
             const { prioridade: prioridadeTexto } = req.body;
-            const funcionarioId = req.user._id; // Captura o ID do usuário logado
+            const funcionarioId = req.user._id;
 
             if (!prioridadeTexto || !['Urgente', 'Alta', 'Normal'].includes(prioridadeTexto)) {
                 return res.status(400).json({ status: false, msg: 'Prioridade inválida.' });
@@ -238,10 +221,8 @@ module.exports = class OrdemProducaoController {
             const ordem = await OrdemProducao.findById(id);
             if (!ordem) return res.status(404).json({ status: false, msg: 'Ordem de produção não encontrada.' });
 
-            // Define a nova prioridade atual
             ordem.prioridade = novaPrioridade;
 
-            // Adiciona o registro ao histórico
             ordem.historico_prioridade.push({
                 prioridade: novaPrioridade,
                 funcionario: funcionarioId,
@@ -259,10 +240,8 @@ module.exports = class OrdemProducaoController {
     static async cancelar(req, res) {
         try {
             const { id } = req.params;
-            // CORREÇÃO: Pega a propriedade 'motivoCancelamento' diretamente do req.body
             const { motivoCancelamento } = req.body;
 
-            // A verificação agora usa a variável correta
             if (!motivoCancelamento) {
                 return res.status(400).json({ status: false, msg: 'O motivo do cancelamento é obrigatório.' });
             }
@@ -279,7 +258,6 @@ module.exports = class OrdemProducaoController {
             return res.status(200).json({ status: true, msg: 'Ordem de produção cancelada com sucesso!', ordem: ordemCancelada });
 
         } catch (error) {
-            // Mensagem de erro mais específica para o contexto
             return res.status(500).json({ status: false, msg: 'Erro ao cancelar a ordem de produção.' });
         }
     }
@@ -328,17 +306,52 @@ module.exports = class OrdemProducaoController {
         }
     }
 
+    static async #verificarEstoque(produtoId, quantidadeProducao) {
+        const produto = await Produto.findById(produtoId).populate('componentesNecessarios.componente');
+        if (!produto) throw new Error('Produto não encontrado para verificação de estoque.');
+
+        const componentesInsuficientes = [];
+
+        for (const item of produto.componentesNecessarios) {
+            const componenteDB = item.componente;
+            const quantidadeNecessaria = item.quantidade * quantidadeProducao;
+
+            if (!componenteDB || componenteDB.quantidade < quantidadeNecessaria) {
+                componentesInsuficientes.push({
+                    nome: componenteDB ? componenteDB.nome : 'Componente não encontrado',
+                    estoqueAtual: componenteDB ? componenteDB.quantidade : 0,
+                    quantidadeNecessaria: quantidadeNecessaria
+                });
+            }
+        }
+
+        return componentesInsuficientes;
+    }
+
     static async iniciarEtapa(req, res) {
         try {
             const { id, etapaId } = req.params;
+            const { force } = req.body; // Forçar início mesmo sem estoque
             const funcionarioId = req.user._id;
 
-            const ordem = await OrdemProducao.findById(id);
+            const ordem = await OrdemProducao.findById(id).populate('produto');
             if (!ordem) return res.status(404).json({ status: false, msg: 'Ordem de produção não encontrada.' });
 
             const etapaExistente = ordem.historicoEtapas.find(e => e.etapa.toString() === etapaId);
             if (etapaExistente) {
                 return res.status(400).json({ status: false, msg: 'Esta etapa já foi iniciada.' });
+            }
+
+            // Verifica o estoque apenas na primeira etapa e se não for forçado
+            if (ordem.historicoEtapas.length === 0 && !force) {
+                const componentesInsuficientes = await this.#verificarEstoque(ordem.produto._id, ordem.quantidade);
+                if (componentesInsuficientes.length > 0) {
+                    return res.status(409).json({ 
+                        status: 'estoque_insuficiente', 
+                        msg: 'Estoque insuficiente para iniciar a produção.', 
+                        componentes: componentesInsuficientes 
+                    });
+                }
             }
 
             if (ordem.historicoEtapas.length === 0) {
@@ -369,6 +382,18 @@ module.exports = class OrdemProducaoController {
         }
     }
 
+    static async #deduzirEstoque(etapaId, quantidadeProducao) {
+        const etapa = await Etapa.findById(etapaId).populate('componentesConclusao.componente');
+        if (!etapa) return;
+
+        for (const item of etapa.componentesConclusao) {
+            const quantidadeADeduzir = item.quantidade * quantidadeProducao;
+            await Componente.findByIdAndUpdate(item.componente._id, { 
+                $inc: { quantidade: -quantidadeADeduzir } 
+            });
+        }
+    }
+
     static async finalizarEtapa(req, res) {
         try {
             const { id, etapaId } = req.params;
@@ -394,6 +419,9 @@ module.exports = class OrdemProducaoController {
              if (etapaParaFinalizar.status === 'Pausada') {
                 return res.status(400).json({ status: false, msg: 'Não é possível finalizar uma etapa pausada. Retome-a primeiro.' });
             }
+
+            // Deduz o estoque ANTES de salvar a finalização
+            await this.#deduzirEstoque(etapaId, ordem.quantidade);
 
             etapaParaFinalizar.status = 'Concluída';
             etapaParaFinalizar.dataFim = new Date();
@@ -518,7 +546,6 @@ module.exports = class OrdemProducaoController {
                 data: new Date()
             });
 
-            // Atualiza o total de refugo
             ordem.quantidade_refugo = novoTotalRefugo;
 
             await ordem.save();
