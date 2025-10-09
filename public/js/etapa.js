@@ -55,7 +55,12 @@ document.addEventListener('DOMContentLoaded', async function () {
                             <i class="bi bi-list-check"></i>
                         </button>
                     </td>
-                    <td>${etapa.componenteConclusao ? etapa.componenteConclusao.nome : 'N/A'}</td>
+                    <td>
+                        ${etapa.componentesConclusao && etapa.componentesConclusao.length > 0 ?
+                            etapa.componentesConclusao.map(c => `${c.componente ? c.componente.nome : 'N/A'} (Qtd: ${c.quantidade})`).join('<br>') :
+                            'Nenhum'
+                        }
+                    </td>
                     <td>${nomesFuncionarios}</td>
                     <td>
                         <button class="btn btn-sm btn-primary mb-1" onclick="editarEtapa('${etapa._id}', '${etapa.nome}')">

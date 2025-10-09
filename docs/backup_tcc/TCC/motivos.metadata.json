@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"},{"v":{"$numberInt":"2"},"key":{"descricao":{"$numberInt":"1"}},"name":"descricao_1","background":true,"unique":true}],"uuid":"f8fc5771fd074e5092ed607db19c6189","collectionName":"motivos","type":"collection"}

@@ -77,7 +77,10 @@ module.exports = class EtapaController {
             const { produtoId } = req.params;
             const etapas = await Etapa.find({ produto: produtoId })
                 .populate('departamentoResponsavel', 'nome')
-                .populate('componenteConclusao', 'nome')
+                .populate({
+                    path: 'componentesConclusao.componente',
+                    select: 'nome'
+                })
                 .populate('funcionariosResponsaveis', 'nome')
                 .sort('sequencias');
             return res.status(200).json({ status: true, etapas });
@@ -93,7 +96,10 @@ module.exports = class EtapaController {
         try {
             const { id } = req.params;
             const etapa = await Etapa.findById(id)
-                .populate('componenteConclusao', 'nome')
+                .populate({
+                    path: 'componentesConclusao.componente',
+                    select: 'nome'
+                })
                 .populate('funcionariosResponsaveis', 'nome')
                 .populate('departamentoResponsavel', 'nome');
 

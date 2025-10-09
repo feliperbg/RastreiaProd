@@ -38,10 +38,10 @@
                 <textarea id="procedimentos" class="form-control" rows="3"></textarea>
             </div>
             <div class="mb-3">
-                <label class="form-label">Componente de Conclusão</label>
+                <label class="form-label">Componentes de Conclusão</label>
                 <div class="input-group">
-                    <input type="text" id="componenteConclusao" class="form-control" placeholder="Nenhum" readonly />
-                    <button type="button" class="btn btn-outline-secondary" id="btnSelecionarComponente">Selecionar</button>
+                    <input type="text" id="componentesConclusao" class="form-control" placeholder="Nenhum componente selecionado" readonly />
+                    <button type="button" class="btn btn-outline-secondary" id="btnSelecionarComponentesConclusao">Selecionar</button>
                 </div>
             </div>
             <div class="mb-3">
@@ -70,7 +70,7 @@
 
         // --- ESTRUTURA DE DADOS ---
         let produtoIdParaRedirecionar = null;
-        let componenteConclusaoId = null;
+        let componentesConclusaoSelecionados = [];
         let funcionariosSelecionadosIds = [];
         let departamentoResponsavelId = null;
         let listaCompletaComponentes = [];
@@ -86,6 +86,8 @@
                     const etapa = dados.etapa;
                     produtoIdParaRedirecionar = etapa.produto;
 
+                    await carregarListasCompletas();
+
                     document.querySelector('.btn-secondary').onclick = () => window.location.href = `/etapas/produtos/${produtoIdParaRedirecionar}`;
 
                     document.getElementById('nome').value = etapa.nome;
@@ -97,9 +99,13 @@
                         document.getElementById('departamentoResponsavel').value = etapa.departamentoResponsavel.nome;
                     }
 
-                    if (etapa.componenteConclusao) {
-                        componenteConclusaoId = etapa.componenteConclusao._id;
-                        document.getElementById('componenteConclusao').value = etapa.componenteConclusao.nome;
+                    if (etapa.componentesConclusao && etapa.componentesConclusao.length > 0) {
+                        componentesConclusaoSelecionados = etapa.componentesConclusao.map(c => ({
+                            componente: c.componente._id,
+                            quantidade: c.quantidade,
+                            nome: c.componente.nome
+                        }));
+                        atualizarDisplayComponentesConclusao();
                     }
 
                     if (etapa.funcionariosResponsaveis?.length > 0) {
@@ -114,29 +120,89 @@
                 exibirMensagem('Erro ao carregar informações da etapa.', 'erro');
             }
         }
-         async function carregarListasCompletas() {
+
+        async function carregarListasCompletas() {
             if (listaCompletaComponentes.length > 0 && listaCompletaFuncionarios.length > 0 && listaCompletaDepartamentos.length > 0) return;
             try {
-                const [compRes, funcRes, depRes] = await Promise.all([
-                    fetch('/api/componentes', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } }),
+                const [produtoRes, funcRes, depRes] = await Promise.all([
+                    fetch(`/api/produtos/${produtoIdParaRedirecionar}`, { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } }),
                     fetch('/api/funcionarios', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } }),
                     fetch('/api/departamentos', { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } })
                 ]);
-                if (!compRes.ok || !funcRes.ok || !depRes.ok) throw new Error("Falha ao carregar dados de seleção.");
+                if (!produtoRes.ok || !funcRes.ok || !depRes.ok) throw new Error("Falha ao carregar dados de seleção.");
 
-                const compJson = await compRes.json();
+                const produtoJson = await produtoRes.json();
                 const funcJson = await funcRes.json();
                 const depJson = await depRes.json();
 
-                listaCompletaComponentes = compJson.componentes || [];
+                listaCompletaComponentes = produtoJson.produto.componentesNecessarios.map(c => c.componente) || [];
                 listaCompletaFuncionarios = funcJson.funcionarios || [];
                 listaCompletaDepartamentos = depJson.departamentos || [];
             } catch (error) {
                 exibirMensagem("Não foi possível carregar as opções de seleção.", "erro");
             }
         }
+        
+        function atualizarDisplayComponentesConclusao() {
+            const input = document.getElementById('componentesConclusao');
+            if (componentesConclusaoSelecionados.length === 0) {
+                input.value = '';
+                return;
+            }
+            const nomes = componentesConclusaoSelecionados.map(sel => {
+                const comp = listaCompletaComponentes.find(c => c._id === sel.componente);
+                return `${comp ? comp.nome : sel.nome} (Qtd: ${sel.quantidade})`;
+            });
+            input.value = nomes.join(', ');
+        }
 
-        // --- EVENT LISTENERS PARA SELEÇÃO ---
+        document.getElementById('btnSelecionarComponentesConclusao').addEventListener('click', async function () {
+            await carregarListasCompletas();
+            const idsAtuais = componentesConclusaoSelecionados.map(c => c.componente);
+            const selecaoResult = await selecionarMultiplos('Selecionar Componentes de Conclusão', listaCompletaComponentes, idsAtuais);
+
+            if (selecaoResult.isConfirmed) {
+                const novosIdsSelecionados = selecaoResult.value;
+                const novosComponentesInfo = [];
+                let processoCancelado = false;
+
+                for (const id of novosIdsSelecionados) {
+                    const componente = listaCompletaComponentes.find(c => c._id === id);
+                    if (!componente) continue;
+
+                    const componenteExistente = componentesConclusaoSelecionados.find(c => c.componente === id);
+                    const quantidadeSugerida = componenteExistente ? componenteExistente.quantidade : 1;
+
+                    const quantidadeResult = await Swal.fire({
+                        title: `Quantidade para ${componente.nome}`,
+                        input: 'number',
+                        inputValue: quantidadeSugerida,
+                        inputAttributes: { min: 1 },
+                        showCancelButton: true,
+                        confirmButtonText: 'Próximo →',
+                        cancelButtonText: 'Cancelar processo',
+                        inputValidator: (value) => !value || parseInt(value, 10) < 1 ? 'Insira uma quantidade válida (mínimo 1)' : null
+                    });
+
+                    if (quantidadeResult.isConfirmed && quantidadeResult.value) {
+                        novosComponentesInfo.push({
+                            componente: id,
+                            quantidade: parseInt(quantidadeResult.value, 10),
+                            nome: componente.nome
+                        });
+                    } else {
+                        processoCancelado = true;
+                        break;
+                    }
+                }
+
+                if (!processoCancelado) {
+                    componentesConclusaoSelecionados = novosComponentesInfo;
+                    atualizarDisplayComponentesConclusao();
+                    exibirMensagem('Componentes de conclusão atualizados!', 'sucesso');
+                }
+            }
+        });
 
         document.getElementById('btnSelecionarDepartamento').addEventListener('click', async function () {
             await carregarListasCompletas();
@@ -145,16 +211,6 @@
                 departamentoResponsavelId = result.value;
                 const depto = listaCompletaDepartamentos.find(d => d._id === departamentoResponsavelId);
                 document.getElementById('departamentoResponsavel').value = depto ? depto.nome : '';
-            }
-        });
-
-        document.getElementById('btnSelecionarComponente').addEventListener('click', async function () {
-            await carregarListasCompletas();
-            const result = await selecionarUnico('Selecionar Componente de Conclusão', listaCompletaComponentes, componenteConclusaoId);
-            if (result.isConfirmed && result.value) {
-                componenteConclusaoId = result.value;
-                const componente = listaCompletaComponentes.find(c => c._id === componenteConclusaoId);
-                document.getElementById('componenteConclusao').value = componente ? componente.nome : '';
             }
         });
 
@@ -170,64 +226,61 @@
             }
         });
 
-        // --- FUNÇÕES DE MODAL (SweetAlert2) ---
         async function selecionarMultiplos(titulo, lista, selecionados) {
             return Swal.fire({
                 title: titulo,
                 html: `
-                    <input type="text" id="swal-filtro" class="form-control mb-2" placeholder="Filtrar...">
-                    <div id="swal-lista" style="max-height:300px;overflow:auto;text-align:left">
+                    <input type="text" id="swal-filtro" class="form-control mb-2" placeholder="Filtrar por nome...">
+                    <div id="swal-lista" style="max-height: 300px; overflow-y: auto; text-align: left; border: 1px solid #ddd; padding: 10px; border-radius: 5px;">
                         ${lista.map(item => `
-                            <div>
-                                <input type="checkbox" id="swal-${item._id}" value="${item._id}" ${selecionados.includes(item._id) ? 'checked' : ''}>
-                                <label for="swal-${item._id}">${item.nome}</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="swal-${item._id}" value="${item._id}" ${selecionados.includes(item._id) ? 'checked' : ''}>
+                                <label class="form-check-label" for="swal-${item._id}">
+                                    ${item.nome}
+                                </label>
                             </div>
                         `).join('')}
                     </div>`,
                 showCancelButton: true,
-                confirmButtonText: 'Selecionar',
+                confirmButtonText: 'Confirmar Seleção',
                 cancelButtonText: 'Cancelar',
-                preConfirm: () => Array.from(document.querySelectorAll('#swal-lista input[type=checkbox]:checked')).map(cb => cb.value),
+                width: '500px',
+                preConfirm: () => {
+                    const checkedBoxes = document.querySelectorAll('#swal-lista input[type=checkbox]:checked');
+                    return Array.from(checkedBoxes).map(cb => cb.value);
+                },
                 didOpen: () => {
-                    document.getElementById('swal-filtro').addEventListener('input', function() {
-                        const val = this.value.toLowerCase();
-                        document.querySelectorAll('#swal-lista label').forEach(label => {
-                            label.parentElement.style.display = label.textContent.toLowerCase().includes(val) ? '' : 'none';
+                    const filtro = document.getElementById('swal-filtro');
+                    filtro.addEventListener('input', function() {
+                        const termoBusca = this.value.toLowerCase();
+                        document.querySelectorAll('#swal-lista .form-check').forEach(div => {
+                            const label = div.querySelector('label');
+                            const nomeItem = label.textContent.toLowerCase();
+                            div.style.display = nomeItem.includes(termoBusca) ? '' : 'none';
                         });
                     });
+                    filtro.focus();
                 }
             });
         }
 
         async function selecionarUnico(titulo, lista, selecionadoId) {
+            const inputOptions = {};
+            lista.forEach(item => {
+                inputOptions[item._id] = item.nome;
+            });
+
             return Swal.fire({
                 title: titulo,
-                html: `
-                    <input type="text" id="swal-filtro" class="form-control mb-2" placeholder="Filtrar...">
-                    <div id="swal-lista" style="max-height:300px;overflow:auto;text-align:left">
-                        ${lista.map(item => `
-                            <div>
-                                <input type="radio" id="swal-${item._id}" value="${item._id}" name="selecaoUnica" ${selecionadoId === item._id ? 'checked' : ''}>
-                                <label for="swal-${item._id}">${item.nome}</label>
-                            </div>
-                        `).join('')}
-                    </div>`,
+                input: 'select',
+                inputOptions: inputOptions,
+                inputValue: selecionadoId,
                 showCancelButton: true,
                 confirmButtonText: 'Selecionar',
-                preConfirm: () => {
-                    const checked = document.querySelector('#swal-lista input[type=radio]:checked');
-                    return checked ? checked.value : null;
-                },
-                didOpen: () => { 
-                    document.getElementById('swal-filtro').addEventListener('input', function() {
-                        const val = this.value.toLowerCase();
-                        document.querySelectorAll('#swal-lista label').forEach(label => {
-                            label.parentElement.style.display = label.textContent.toLowerCase().includes(val) ? '' : 'none';
-                        });
-                    });
-                    }
+                cancelButtonText: 'Cancelar',
             });
         }
+
         document.getElementById('form-editar-etapa').addEventListener('submit', async function(event) {
             event.preventDefault();
             
@@ -236,10 +289,12 @@
                 sequencias: parseInt(document.getElementById('sequencias').value, 10),
                 departamentoResponsavel: departamentoResponsavelId,
                 procedimentos: document.getElementById('procedimentos').value,
-                componenteConclusao: componenteConclusaoId,
+                componentesConclusao: componentesConclusaoSelecionados.map(c => ({ componente: c.componente, quantidade: c.quantidade })),
                 funcionariosResponsaveis: funcionariosSelecionadosIds,
             };
+
             if (!dadosAtualizados.nome || !dadosAtualizados.sequencias) return exibirMensagem("Nome e Sequência são obrigatórios.", "erro");
+
             try {
                 const response = await fetch(`/api/etapas/${id}`, {
                     method: 'PUT',
@@ -253,7 +308,7 @@
                 if (produtoIdParaRedirecionar) {
                     window.location.href = `/etapas/produtos/${produtoIdParaRedirecionar}`;
                 } else {
-                    window.location.href = '/produtos'; // Fallback caso o ID não seja encontrado
+                    window.location.href = '/produtos'; // Fallback
                 }
             } catch (error) {
                 console.error("Erro ao atualizar etapa:", error);
@@ -264,6 +319,5 @@
         carregarEtapa();
     });
 </script>
-
 </body>
 </html>
