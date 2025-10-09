@@ -209,9 +209,36 @@ document.addEventListener('DOMContentLoaded', function () {
                     method: 'POST', headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
                 });
                 const resultData = await response.json();
-                if (!response.ok) throw new Error(resultData.msg);
-                Swal.fire('Iniciada!', 'A etapa foi iniciada com sucesso.', 'success');
-                inicializar();
+                if (!response.ok) {
+                    if (resultData.status === 'estoque_insuficiente') {
+                        const componentesList = resultData.componentes.map(c => `<li>${c.nome} (Necessário: ${c.quantidadeNecessaria}, Em Estoque: ${c.estoqueAtual})</li>`).join('');
+                        const { isConfirmed } = await Swal.fire({
+                            title: 'Estoque Insuficiente',
+                            html: `Os seguintes componentes não possuem estoque suficiente:<ul>${componentesList}</ul>Deseja continuar mesmo assim?`,
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonText: 'Sim, continuar',
+                            cancelButtonText: 'Cancelar'
+                        });
+
+                        if (isConfirmed) {
+                            const forceResponse = await fetch(`/api/ordens-producao/${opId}/etapa/${etapaId}/iniciar`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('authToken')}` },
+                                body: JSON.stringify({ force: true })
+                            });
+                            const forceResultData = await forceResponse.json();
+                            if (!forceResponse.ok) throw new Error(forceResultData.msg);
+                            Swal.fire('Iniciada!', 'A etapa foi iniciada com sucesso (forçado).', 'success');
+                            inicializar();
+                        }
+                    } else {
+                        throw new Error(resultData.msg);
+                    }
+                } else {
+                    Swal.fire('Iniciada!', 'A etapa foi iniciada com sucesso.', 'success');
+                    inicializar();
+                }
             } catch(error) { Swal.fire('Erro!', error.message, 'error'); }
         }
     }
@@ -413,11 +440,11 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // window.iniciarEtapa = (opId, etapaId) => executarAcao('Iniciar Etapa?', 'Você confirma o início desta etapa?', `/api/ordens-producao/${opId}/etapa/${etapaId}/iniciar`);
-    // window.finalizarEtapa = (opId, etapaId) => executarAcao('Finalizar Etapa?', 'Você confirma a conclusão desta etapa?', `/api/ordens-producao/${opId}/etapa/${etapaId}/finalizar`);
-    // window.retomarEtapa = (opId, etapaId) => executarAcao('Retomar Produção?', 'Você confirma a retomada da produção?', `/api/ordens-producao/${opId}/etapa/${etapaId}/retomar`, 'PATCH');
-    // window.atualizarRefugo = () => showModalRefugo();
-    // window.pausarEtapa = (opId, etapaId) => showModalPausa(opId, etapaId);
+    window.iniciarEtapa = (opId, etapaId) => executarAcao('Iniciar Etapa?', 'Você confirma o início desta etapa?', `/api/ordens-producao/${opId}/etapa/${etapaId}/iniciar`);
+    window.finalizarEtapa = (opId, etapaId) => executarAcao('Finalizar Etapa?', 'Você confirma a conclusão desta etapa?', `/api/ordens-producao/${opId}/etapa/${etapaId}/finalizar`);
+    window.retomarEtapa = (opId, etapaId) => executarAcao('Retomar Produção?', 'Você confirma a retomada da produção?', `/api/ordens-producao/${opId}/etapa/${etapaId}/retomar`, 'PATCH');
+    window.atualizarRefugo = () => showModalRefugo();
+    window.pausarEtapa = (opId, etapaId) => showModalPausa(opId, etapaId);
 
     inicializar();
 });
