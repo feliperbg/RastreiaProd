@@ -97,7 +97,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 board.items.forEach(item => {
                     const taskCard = document.createElement('div');
                     taskCard.className = `task-card ${borderClass}`;
-                    const prioridade = item.prioridade || { texto: 'Normal', cor: '#6c757d' };
+                    const prioridade = item.prioridade;
                     taskCard.innerHTML = `
                         <div class="task-card-body" role="button" onclick="window.location.href='${item.link}'">
                             <div class="d-flex justify-content-between align-items-start">
@@ -106,7 +106,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             </div>
                             <div class="task-meta small text-muted">
                                 <span data-bs-toggle="tooltip" data-bs-placement="top" title="Quantidade a produzir"><i class="fas fa-box fa-fw me-1"></i> ${item.quantidade || 'N/A'}</span>
-                                <span class="ms-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Data de Entrega"><i class="fas fa-calendar-alt fa-fw me-1"></i> ${new Date(item.dataEntrega).toLocaleDateString()}</span>
+                                <span class="ms-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Data de Entrega"><i class="fas fa-calendar-alt fa-fw me-1"></i> ${new Date(item.dataEntrega).toLocaleDateString('pt-BR')}</span>
                             </div>
                             <div class="task-subtitle mt-2">
                                 ${item.etapa ? `<span data-bs-toggle="tooltip" data-bs-placement="top" title="Etapa: ${item.etapa}"><i class="fas fa-cogs fa-fw me-1"></i> ${item.etapa}</span>` : ''}
@@ -294,6 +294,28 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
             }
         });
+
+        const prioridadeOrdem = {
+            'Urgente': 1,
+            'Alta': 2,
+            'Normal': 3
+        };
+
+        kanbanData.forEach(board => {
+            board.items.sort((a, b) => {
+                const prioridadeA = prioridadeOrdem[a.prioridade.texto] || 99;
+                const prioridadeB = prioridadeOrdem[b.prioridade.texto] || 99;
+
+                if (prioridadeA !== prioridadeB) {
+                    return prioridadeA - prioridadeB;
+                }
+
+                const dataA = new Date(a.dataEntrega);
+                const dataB = new Date(b.dataEntrega);
+                return dataA - dataB;
+            });
+        });
+
         return kanbanData;
     }
     
