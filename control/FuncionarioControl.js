@@ -6,6 +6,24 @@ const path = require('path');
 const crypto = require('crypto');
 const sendEmail = require('../utils/emailService.js');
 
+// Função auxiliar para tratar erros de forma padronizada
+function handleErrors(res, error) {
+  if (error.name === 'ValidationError') {
+    let messages = [];
+    for (let field in error.errors) {
+      messages.push(error.errors[field].message);
+    }
+    return res.status(400).json({ status: false, msg: `Erro de validação: ${messages.join(' ')}` });
+  } else if (error.code === 11000) {
+    const field = Object.keys(error.keyPattern)[0];
+    const value = error.keyValue[field];
+    return res.status(409).json({ status: false, msg: `O campo '${field}' com valor '${value}' já está em uso.` });
+  } else {
+    console.error(error);
+    return res.status(500).json({ status: false, msg: 'Ocorreu um erro interno no servidor.' });
+  }
+}
+
 module.exports = class FuncionarioController {
     static async create(req, res) {
         let novoFuncionario;
@@ -68,10 +86,7 @@ module.exports = class FuncionarioController {
                 await Funcionario.findByIdAndDelete(novoFuncionario._id);
             }
 
-            if (error.code === 11000) {
-                return res.status(400).json({ status: false, msg: 'O e-mail ou CPF informado já está em uso.' });
-            }
-            return res.status(500).json({ status: false, msg: 'Erro interno no servidor.', error: error.message });
+            return handleErrors(res, error);
         }
     }
 
@@ -100,8 +115,7 @@ module.exports = class FuncionarioController {
             });
 
         } catch (error) {
-            console.error(error);
-            return res.status(500).json({ status: false, msg: 'Erro interno no servidor.' });
+            return handleErrors(res, error);
         }
     }
 
@@ -112,11 +126,7 @@ module.exports = class FuncionarioController {
                 message: "Logout realizado com sucesso.",
             });
         }catch(e){
-            return res.status(500).json({
-                status: false,
-                message: 'Logout não foi realizado com sucesso.',
-                error: e
-            })
+            return handleErrors(res, e);
         } 
     }
 
@@ -125,7 +135,7 @@ module.exports = class FuncionarioController {
             const funcionarios = await Funcionario.find().populate('departamento', 'nome').sort('nome');
             return res.status(200).json({ status: true, funcionarios });
         } catch (error) {
-            return res.status(500).json({ status: false, msg: 'Erro ao listar funcionários.' });
+            return handleErrors(res, error);
         }
     }
 
@@ -140,7 +150,7 @@ module.exports = class FuncionarioController {
 
             return res.status(200).json({ status: true, funcionario });
         } catch (error) {
-            return res.status(500).json({ status: false, msg: 'Erro ao buscar funcionário.' });
+            return handleErrors(res, error);
         }
     }
 
@@ -159,7 +169,7 @@ module.exports = class FuncionarioController {
 
             return res.status(200).json({ status: true, msg: 'Funcionário atualizado!', funcionario: funcionarioAtualizado });
         } catch (error) {
-            return res.status(400).json({ status: false, msg: error.message });
+            return handleErrors(res, error);
         }
     }
 
@@ -172,7 +182,7 @@ module.exports = class FuncionarioController {
             }
             return res.status(200).json({ status: true, msg: 'Funcionário removido!' });
         } catch (error) {
-            return res.status(500).json({ status: false, msg: 'Erro ao remover funcionário.' });
+            return handleErrors(res, error);
         }
     }
 
@@ -229,8 +239,7 @@ module.exports = class FuncionarioController {
             });
 
         } catch (error) {
-            console.error('Erro ao solicitar redefinição de senha:', error);
-            return res.status(500).json({ status: false, msg: 'Erro interno no servidor.' });
+            return handleErrors(res, error);
         }
     }
 
@@ -276,8 +285,7 @@ module.exports = class FuncionarioController {
             return res.status(200).json({ status: true, msg: 'Código verificado com sucesso.' });
 
         } catch (error) {
-            console.error('Erro ao verificar código de redefinição:', error);
-            return res.status(500).json({ status: false, msg: 'Erro interno no servidor.' });
+            return handleErrors(res, error);
         }
     }
 
@@ -332,8 +340,7 @@ module.exports = class FuncionarioController {
             return res.status(200).json({ status: true, msg: 'Senha alterada com sucesso!' });
 
         } catch (error) {
-            console.error('Erro ao redefinir senha:', error);
-            return res.status(500).json({ status: false, msg: 'Erro interno no servidor ao tentar redefinir a senha.' });
+            return handleErrors(res, error);
         }
     }
 }

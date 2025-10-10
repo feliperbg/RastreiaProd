@@ -78,10 +78,17 @@ document.addEventListener('DOMContentLoaded', function () {
             data: { 
                 labels: data.map(item => formatarDataParaGrafico(item._id)), 
                 datasets: [{ 
-                    label: 'OEE (%)', 
-                    data: data.map(item => item.oee), 
-                    borderColor: '#17a2b8', 
-                    backgroundColor: 'rgba(23, 162, 184, 0.2)', 
+                    label: 'OEE (%)',
+                    data: data.map(item => item.oee),
+                    segment: {
+                        borderColor: ctx => {
+                            const value = ctx.p1.raw;
+                            if (value < 40) return '#dc3545'; // Vermelho para OEE baixo
+                            if (value < 70) return '#ffc107'; // Amarelo para OEE médio
+                            return '#28a745'; // Verde para OEE alto
+                        },
+                    },
+                    backgroundColor: 'rgba(23, 162, 184, 0.1)',
                     fill: true, 
                     tension: 0.3 
                 }] 
@@ -89,16 +96,22 @@ document.addEventListener('DOMContentLoaded', function () {
             options: { 
                 responsive: true, 
                 maintainAspectRatio: false, 
-                scales: { 
-                    y: { 
-                        beginAtZero: true, 
-                        max: 100,
-                        ticks: { font: { size: 14 } } // Aumenta a fonte do eixo Y
+                scales: {
+                    y: {
+                        suggestedMin: Math.max(0, Math.min(...data.map(item => item.oee)) - 5),
+                        suggestedMax: Math.min(100, Math.max(...data.map(item => item.oee)) + 5),
+                        ticks: {
+                            font: { size: 14 },
+                            // Adiciona o símbolo de % aos valores do eixo Y
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
                     },
                     x: {
                         ticks: { font: { size: 14 } } // Aumenta a fonte do eixo X
                     }
-                } 
+                }
             }
         });
     }

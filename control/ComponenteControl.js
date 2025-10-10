@@ -1,6 +1,24 @@
 // Arquivo: control/ComponenteControl.js
 const Componente = require('../model/Componente');
 
+// Função auxiliar para tratar erros de forma padronizada
+function handleErrors(res, error) {
+  if (error.name === 'ValidationError') {
+    let messages = [];
+    for (let field in error.errors) {
+      messages.push(error.errors[field].message);
+    }
+    return res.status(400).json({ status: false, msg: `Erro de validação: ${messages.join(' ')}` });
+  } else if (error.code === 11000) {
+    const field = Object.keys(error.keyPattern)[0];
+    const value = error.keyValue[field];
+    return res.status(409).json({ status: false, msg: `O campo '${field}' com valor '${value}' já existe.` });
+  } else {
+    console.error(error);
+    return res.status(500).json({ status: false, msg: 'Ocorreu um erro interno no servidor.' });
+  }
+}
+
 module.exports = class ComponenteController {
     static async create(req, res) {
         try {
@@ -11,7 +29,7 @@ module.exports = class ComponenteController {
                 componente: novoComponente,
             });
         } catch (error) {
-            return res.status(400).json({ status: false, msg: error.message });
+            return handleErrors(res, error);
         }
     }
 
@@ -20,7 +38,7 @@ module.exports = class ComponenteController {
             const componentes = await Componente.find().sort('nome');
             return res.status(200).json({ status: true, componentes: componentes });
         } catch (error) {
-            return res.status(500).json({ status: false, msg: 'Erro ao listar componentes.' });
+            return handleErrors(res, error);
         }
     }
 
@@ -33,7 +51,7 @@ module.exports = class ComponenteController {
             }
             return res.status(200).json({ status: true, componente });
         } catch (error) {
-            return res.status(500).json({ status: false, msg: 'Erro ao buscar componente.' });
+            return handleErrors(res, error);
         }
     }
 
@@ -53,7 +71,7 @@ module.exports = class ComponenteController {
                 componente: componenteAtualizado,
             });
         } catch (error) {
-            return res.status(400).json({ status: false, msg: error.message });
+            return handleErrors(res, error);
         }
     }
 
@@ -66,7 +84,7 @@ module.exports = class ComponenteController {
             }
             return res.status(200).json({ status: true, msg: 'Componente removido com sucesso!' });
         } catch (error) {
-            return res.status(500).json({ status: false, msg: 'Erro ao remover componente.' });
+            return handleErrors(res, error);
         }
     }
 };

@@ -154,9 +154,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         
         modalTitle.textContent = `Detalhes da OP-${ordem._id.slice(-6).toUpperCase()}`;
-
-        // --- CORREÇÃO APLICADA AQUI ---
-        // 1. Defina os mapeadores de classe fora da string principal.
         const statusClasses = {
             'Pendente': 'etapa-pendente',
             'Em Andamento': 'etapa-andamento',
@@ -187,7 +184,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 </div>
             </div>`;
         }).join('');
-        // --- FIM DA CORREÇÃO ---
 
         // 3. Insira a variável com o HTML gerado na string principal.
         modalBody.innerHTML = `

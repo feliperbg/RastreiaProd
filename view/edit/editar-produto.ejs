@@ -93,6 +93,11 @@
       </div>
 
       <div class="mb-3">
+        <label for="tempo_ciclo_ideal_segundos" class="form-label">Tempo de Ciclo Ideal (segundos)</label>
+        <input type="number" id="tempo_ciclo_ideal_segundos" name="tempo_ciclo_ideal_segundos" class="form-control" />
+      </div>
+
+      <div class="mb-3">
         <label class="form-label">Etapas de Montagem</label>
         <div class="input-group">
           <input type="text" id="etapas" name="etapas" class="form-control" readonly data-ids="" />
@@ -163,6 +168,7 @@
                   document.getElementById('precoMontagem').value = p.precoMontagem || '';
                   document.getElementById('precoVenda').value = p.precoVenda || '';
                   document.getElementById('quantidade').value = p.quantidade || '';
+                  document.getElementById('tempo_ciclo_ideal_segundos').value = p.tempo_ciclo_ideal_segundos || '';
                   const formatarDataParaInput = (data) => data ? new Date(data).toISOString().substring(0, 10) : '';
                   document.getElementById('dataEntrada').value = formatarDataParaInput(p.dataEntrada);
                   document.getElementById('dataValidade').value = formatarDataParaInput(p.dataValidade);
@@ -292,6 +298,7 @@
               precoMontagem: parseFloat(document.getElementById('precoMontagem').value),
               precoVenda: parseFloat(document.getElementById('precoVenda').value),
               quantidade: parseInt(document.getElementById('quantidade').value),
+              tempo_ciclo_ideal_segundos: parseInt(document.getElementById('tempo_ciclo_ideal_segundos').value),
               etapas: (document.getElementById('etapas').dataset.ids || '').split(',').filter(Boolean),
           };
           // Validação simples
