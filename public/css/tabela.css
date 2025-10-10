@@ -42,6 +42,10 @@
         border-bottom: 0;
         text-align: center;
     }
+    .table-responsive {
+        max-height: 50vh; /* Ou o valor que preferir */
+        overflow: auto;
+    }
 }
 
 .swal-componentes {
@@ -56,35 +60,48 @@
 }
 
 /* Estilos para a barra de rolagem horizontal flutuante */
-.floating-scrollbar-wrapper {
-    position: sticky; /* Fica "colado" na base da tela */
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 18px; /* Altura da área da barra de rolagem */
-    overflow-x: auto; /* Cria a barra de rolagem horizontal */
-    overflow-y: hidden; /* Esconde a barra vertical */
-    z-index: 9999; /* Garante que fique sobre outros elementos */
-    background-color: #e9ecef; /* Um fundo sutil */
-    visibility: hidden; /* Começa invisível por padrão */
+
+/* Adicione isso para garantir que o container principal tenha um contexto de posicionamento,
+   caso você precise posicionar outros elementos relativos a ele no futuro.
+   Para este caso com `position: fixed`, não é estritamente necessário, mas é uma boa prática. */
+.app-content {
+    position: relative;
 }
 
-/* Um elemento interno que terá a mesma largura da tabela */
+.floating-scrollbar-wrapper {
+    position: fixed; /* Fixo em relação à janela (viewport) */
+    bottom: 0;       /* Colado na base da janela */
+    height: 18px;    /* Altura da área da barra */
+    overflow-x: auto;
+    overflow-y: hidden;
+    z-index: 1040; /* Um z-index alto, mas abaixo de modais (Bootstrap usa ~1050+) */
+    background-color: rgba(233, 236, 239, 0.95); /* Fundo com leve transparência */
+    visibility: hidden; /* Começa invisível, JS controla a visibilidade */
+
+}
+
+/* Um elemento interno que terá a mesma largura do conteúdo da tabela */
 .floating-scrollbar-inner {
     height: 1px;
 }
 
 /* Estilização da própria barra (opcional, mas melhora a aparência) */
 .floating-scrollbar-wrapper::-webkit-scrollbar {
-    height: 10px;
+    height: 12px;
 }
 .floating-scrollbar-wrapper::-webkit-scrollbar-track {
     background: #f1f1f1;
+    border-radius: 6px;
 }
 .floating-scrollbar-wrapper::-webkit-scrollbar-thumb {
     background: #888;
-    border-radius: 5px;
+    border-radius: 6px;
 }
 .floating-scrollbar-wrapper::-webkit-scrollbar-thumb:hover {
     background: #555;
+}
+/* Aplique este estilo apenas ao container da tabela */
+.table-responsive {
+    max-height: 70vh; /* Ou o valor que preferir */
+    overflow: auto;
 }

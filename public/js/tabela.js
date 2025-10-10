@@ -1,26 +1,36 @@
     document.addEventListener('DOMContentLoaded', function() {
+        // Seleciona os elementos principais
+        const appContent = document.querySelector('.app-content');
         const tableWrapper = document.querySelector('.table-responsive');
-        if (!tableWrapper) return;
+
+        if (!tableWrapper || !appContent) return;
 
         let floatingScrollbarWrapper;
         let floatingScrollbarInner;
         let isSyncing = false;
 
+        // Função para atualizar a posição e largura da barra flutuante
+        function updateScrollbarPosition() {
+            if (!floatingScrollbarWrapper) return;
+
+            // getBoundingClientRect() nos dá a posição e o tamanho do elemento na tela
+            const tableRect = tableWrapper.getBoundingClientRect();
+
+            // Define a posição e a largura da barra flutuante para corresponder à da tabela
+            floatingScrollbarWrapper.style.left = `${tableRect.left}px`;
+            floatingScrollbarWrapper.style.width = `${tableRect.width}px`;
+        }
+
+        // Função principal para criar ou atualizar a barra de rolagem
         function setupFloatingScrollbar() {
             // Remove a barra antiga se existir, para recalcular
             if (floatingScrollbarWrapper) {
                 floatingScrollbarWrapper.remove();
+                floatingScrollbarWrapper = null; // Limpa a referência
             }
-
-            console.log('Configurando barra de rolagem flutuante...');
-            console.log('Largura do conteúdo da tabela:', tableWrapper.scrollWidth);
-            console.log('Largura visível da tabela:', tableWrapper.clientWidth);
 
             // Verifica se a barra de rolagem horizontal é necessária
             const needsScrollbar = tableWrapper.scrollWidth > tableWrapper.clientWidth;
-
-            console.log('Necessita de barra de rolagem?', needsScrollbar);
-
             if (!needsScrollbar) {
                 return; // Se não precisa, não faz nada
             }
@@ -32,11 +42,16 @@
             floatingScrollbarInner = document.createElement('div');
             floatingScrollbarInner.className = 'floating-scrollbar-inner';
 
-            // Ajusta a largura interna para corresponder ao conteúdo da tabela
-            floatingScrollbarInner.style.width = tableWrapper.scrollWidth + 'px';
+            // Ajusta a largura interna para corresponder ao conteúdo TOTAL da tabela
+            floatingScrollbarInner.style.width = `${tableWrapper.scrollWidth}px`;
 
             floatingScrollbarWrapper.appendChild(floatingScrollbarInner);
-            document.body.appendChild(floatingScrollbarWrapper);
+
+            // MUDANÇA PRINCIPAL: Anexa a barra ao container do conteúdo, não ao body.
+            appContent.appendChild(floatingScrollbarWrapper);
+
+            // ATUALIZAÇÃO: Define a posição e largura iniciais
+            updateScrollbarPosition();
 
             // Sincroniza a rolagem da barra flutuante para a tabela
             floatingScrollbarWrapper.addEventListener('scroll', () => {
@@ -59,32 +74,43 @@
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (floatingScrollbarWrapper) {
-                    // Mostra se 1% ou mais da tabela estiver visível
-                    if (entry.isIntersecting && entry.intersectionRatio > 0.01) {
+                    // Se a tabela estiver visível, mostra a barra e atualiza sua posição
+                    if (entry.isIntersecting) {
                         floatingScrollbarWrapper.style.visibility = 'visible';
+                        updateScrollbarPosition(); // Garante que a posição esteja correta ao reaparecer
                     } else {
                         floatingScrollbarWrapper.style.visibility = 'hidden';
                     }
                 }
             });
-        }, { threshold: [0, 0.01, 1] }); // Observa quando a visibilidade muda
+        }, { threshold: 0.01 }); // Observa quando pelo menos 1% da tabela está visível
 
         // Começa a observar o contêiner da tabela
         observer.observe(tableWrapper);
-        
-        // Configuração inicial e ao redimensionar a janela
-        setupFloatingScrollbar();
-        window.addEventListener('resize', setupFloatingScrollbar);
 
-        // Bônus: Recalcular se o conteúdo da tabela mudar (ex: após carregar dados AJAX)
-        // Você pode chamar `setupFloatingScrollbar()` manualmente após carregar os dados na tabela.
-        const observerConteudoTabela = new MutationObserver(setupFloatingScrollbar);
+        // --- Event Listeners ---
+
+        // Roda a configuração inicial
+        setupFloatingScrollbar();
+
+        // Recalcula tudo ao redimensionar a janela
+        window.addEventListener('resize', () => {
+            // A função setup já remove e recria, garantindo que tudo seja recalculado
+            setupFloatingScrollbar();
+            // A função updateScrollbarPosition é chamada dentro de setupFloatingScrollbar
+        });
+        
+        // Recalcula se o conteúdo da tabela mudar (ex: após carregar dados AJAX)
         const tabelaBody = document.getElementById('tabela-ordem-producoes');
         if (tabelaBody) {
-            observerConteudoTabela.observe(tabelaBody, { childList: true, subtree: true });
+            const mutationObserver = new MutationObserver(() => {
+                console.log('Conteúdo da tabela modificado, reconfigurando a barra de rolagem.');
+                setupFloatingScrollbar();
+            });
+            mutationObserver.observe(tabelaBody, { childList: true, subtree: true });
         }
     });
-
+    
     const formatarData = (data) => {
         if (!data) return 'N/A';
         const dateObj = new Date(data);
