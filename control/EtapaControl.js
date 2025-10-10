@@ -69,6 +69,33 @@ module.exports = class EtapaController {
         }
     }
 
+    static async getComponentesUtilizados(req, res) {
+        try {
+            const { produtoId } = req.params;
+            const ObjectId = require('mongoose').Types.ObjectId;
+
+            const resultado = await Etapa.aggregate([
+                { $match: { produto: new ObjectId(produtoId) } },
+                { $unwind: '$componentesConclusao' },
+                {
+                    $group: {
+                        _id: '$componentesConclusao.componente',
+                        quantidadeTotal: { $sum: '$componentesConclusao.quantidade' }
+                    }
+                }
+            ]);
+
+            const componentesUtilizados = resultado.reduce((acc, item) => {
+                acc[item._id.toString()] = item.quantidadeTotal;
+                return acc;
+            }, {});
+
+            return res.status(200).json({ status: true, componentesUtilizados });
+        } catch (error) {
+            return handleErrors(res, error);
+        }
+    }
+
     /**
      * Lista todas as etapas de todos os produtos.
      */

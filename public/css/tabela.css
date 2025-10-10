@@ -54,3 +54,37 @@
 .swal-selecionar {
   width: 700px !important; /* Ajuste a largura conforme sua necessidade */
 }
+
+/* Estilos para a barra de rolagem horizontal flutuante */
+.floating-scrollbar-wrapper {
+    position: sticky; /* Fica "colado" na base da tela */
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 18px; /* Altura da área da barra de rolagem */
+    overflow-x: auto; /* Cria a barra de rolagem horizontal */
+    overflow-y: hidden; /* Esconde a barra vertical */
+    z-index: 9999; /* Garante que fique sobre outros elementos */
+    background-color: #e9ecef; /* Um fundo sutil */
+    visibility: hidden; /* Começa invisível por padrão */
+}
+
+/* Um elemento interno que terá a mesma largura da tabela */
+.floating-scrollbar-inner {
+    height: 1px;
+}
+
+/* Estilização da própria barra (opcional, mas melhora a aparência) */
+.floating-scrollbar-wrapper::-webkit-scrollbar {
+    height: 10px;
+}
+.floating-scrollbar-wrapper::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+.floating-scrollbar-wrapper::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 5px;
+}
+.floating-scrollbar-wrapper::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}

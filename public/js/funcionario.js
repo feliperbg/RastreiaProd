@@ -120,7 +120,7 @@
         if (isConfirmed) {
             try {
                 showLoading();
-                const response = await fetch(`api/funcionarios/${id}`, {
+                const response = await fetch(`/api/funcionarios/${id}`, {
                     method: 'DELETE',
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('authToken')}`

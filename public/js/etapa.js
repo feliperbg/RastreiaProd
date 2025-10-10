@@ -107,38 +107,39 @@ document.addEventListener('DOMContentLoaded', async function () {
             }
         });
     }
-    async function deletarEtapa(id) {
-      const { isConfirmed } = await Swal.fire({
-          title: 'Confirmar Exclusão',
-          text: "Tem certeza que deseja deletar esta etapa?",
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonText: 'Sim, deletar',
-          cancelButtonText: 'Cancelar'
-      });
+    window.deletarEtapa = function(id) {
+        Swal.fire({
+            title: 'Confirmar Exclusão',
+            text: "Tem certeza que deseja deletar esta etapa?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sim, deletar',
+            cancelButtonText: 'Cancelar'
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    Swal.fire({ title: 'Deletando...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+                    const response = await fetch(`/api/etapas/${id}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                        }
+                    });
 
-      if (isConfirmed) {
-          try {
-              Swal.fire({ title: 'Deletando...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-              const response = await fetch(`api/etapas/${id}`, {
-                  method: 'DELETE',
-                  headers: {
-                      'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-                  }
-              });
+                    if (!response.ok) throw new Error("Erro ao deletar");
 
-              if (!response.ok) throw new Error("Erro ao deletar");
-
-              exibirMensagem('Etapa removido com sucesso.', 'sucesso');
-              carregarEtapas();
-          } catch (error) {
-              console.error(error);
-             exibirMensagem('Não foi possível deletar a etapa.', 'erro');
-          } finally {
-              hideLoading();
-          }
-      }
-  }
-    // Carga inicial dos dados
+                    exibirMensagem('Etapa removido com sucesso.', 'sucesso');
+                    carregarEtapas();
+                } catch (error) {
+                    console.error(error);
+                    exibirMensagem('Não foi possível deletar a etapa.', 'erro');
+                } finally {
+                    hideLoading();
+                }
+            }
+        });
+    }
+    // Carga inicial dos dados.
     carregarEtapas();
-}); 
+});
+    
