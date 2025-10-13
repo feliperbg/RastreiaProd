@@ -128,14 +128,6 @@ window.pdfGenerator = (function() {
                 });
             }
 
-            // Adiciona o rodapé na última página, garantindo que todas as margens sejam passadas
-            addFooter({
-                pageNumber: doc.internal.getNumberOfPages(),
-                settings: {
-                    margin: { left: margin, right: margin, bottom: 10 }
-                }
-            }, doc, true);
-
             window.open(doc.output('bloburl'), '_blank');
             Swal.close();
         } catch (error) {
