@@ -157,7 +157,7 @@
                 };
 
                 try {
-                    const response = await fetch(`api/ordens-producao/${id}`, { // URL com ID
+                    const response = await fetch(`/api/ordens-producao/${id}`, { // URL com ID
                         method: 'PUT', // Método PUT
                         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('authToken')}` },
                         body: JSON.stringify(dadosAtualizados)

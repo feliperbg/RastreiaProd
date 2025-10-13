@@ -42,6 +42,8 @@ apiRouter.get('/', jwtMiddleware.validate.bind(jwtMiddleware), EtapaController.r
 // Rota para buscar o próximo número de sequência disponível para um produto.
 apiRouter.get('/produtos/:produtoId/proxima-sequencia', jwtMiddleware.validate.bind(jwtMiddleware), MongoIdMiddleware.validateParam('produtoId'), EtapaController.getProximaSequencia.bind(EtapaController));
 
+apiRouter.get('/produtos/:produtoId/componentes-utilizados', jwtMiddleware.validate.bind(jwtMiddleware), MongoIdMiddleware.validateParam('produtoId'), EtapaController.getComponentesUtilizados.bind(EtapaController));
+
 apiRouter.get('/produtos/:produtoId', jwtMiddleware.validate.bind(jwtMiddleware), MongoIdMiddleware.validateParam('produtoId'), EtapaController.readByProduto.bind(EtapaController));
 apiRouter.get('/:id', jwtMiddleware.validate.bind(jwtMiddleware), MongoIdMiddleware.validateParam('id'), EtapaController.readByID.bind(EtapaController));
 apiRouter.put('/:id', jwtMiddleware.validate.bind(jwtMiddleware), MongoIdMiddleware.validateParam('id'), EtapaMiddleware.validateUpdate, EtapaController.update.bind(EtapaController));

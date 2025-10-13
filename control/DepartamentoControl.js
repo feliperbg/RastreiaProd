@@ -1,5 +1,23 @@
 const Departamento = require('../model/Departamento');
 
+// Função auxiliar para tratar erros de forma padronizada
+function handleErrors(res, error) {
+  if (error.name === 'ValidationError') {
+    let messages = [];
+    for (let field in error.errors) {
+      messages.push(error.errors[field].message);
+    }
+    return res.status(400).json({ status: false, msg: `Erro de validação: ${messages.join(' ')}` });
+  } else if (error.code === 11000) {
+    const field = Object.keys(error.keyPattern)[0];
+    const value = error.keyValue[field];
+    return res.status(409).json({ status: false, msg: `O campo '${field}' com valor '${value}' já existe.` });
+  } else {
+    console.error(error);
+    return res.status(500).json({ status: false, msg: 'Ocorreu um erro interno no servidor.' });
+  }
+}
+
 module.exports = class DepartamentoController {
     static async create(req, res) {
         try {
@@ -7,7 +25,7 @@ module.exports = class DepartamentoController {
             const departamento = await Departamento.create({ nome, descricao });
             res.status(201).json(departamento);
         } catch (error) {
-            res.status(500).json({ error: 'Erro ao criar departamento' });
+            return handleErrors(res, error);
         }
     }
 
@@ -21,8 +39,7 @@ module.exports = class DepartamentoController {
             return res.status(200).json({ status: true, departamentos: departamentos });
 
         } catch (error) {
-            console.error("Erro ao buscar departamentos:", error); // Log do erro no servidor
-            return res.status(500).json({ status: false, msg: 'Erro interno ao buscar departamentos.' });
+            return handleErrors(res, error);
         }
     }
 
@@ -36,7 +53,7 @@ module.exports = class DepartamentoController {
             }
             res.status(200).json(departamentos);
         } catch (error) {
-            res.status(500).json({ error: 'Erro ao buscar departamentos' });
+            return handleErrors(res, error);
         }
     }
 
@@ -44,13 +61,13 @@ module.exports = class DepartamentoController {
         try {
             const { id } = req.params;
             const { nome, descricao } = req.body;
-            const departamento = await Departamento.findByIdAndUpdate(id, { nome, descricao }, { new: true });
+            const departamento = await Departamento.findByIdAndUpdate(id, { nome, descricao }, { new: true, runValidators: true });
             if (!departamento) {
                 return res.status(404).json({ error: 'Departamento não encontrado' });
             }
             res.status(200).json(departamento);
         } catch (error) {
-            res.status(500).json({ error: 'Erro ao atualizar departamento' });
+            return handleErrors(res, error);
         }
     }
 
@@ -63,8 +80,7 @@ module.exports = class DepartamentoController {
             }
             res.status(204).send();
         } catch (error) {
-            res.status(500).json({ error: 'Erro ao deletar departamento' });
+            return handleErrors(res, error);
         }
     }
 };
-

@@ -1,6 +1,30 @@
 const Etapa = require('../model/Etapa');
 const Produto = require('../model/Produto');
 
+// Função auxiliar para tratar erros de forma padronizada
+function handleErrors(res, error) {
+  if (error.name === 'ValidationError') {
+    let messages = [];
+    for (let field in error.errors) {
+      messages.push(error.errors[field].message);
+    }
+    return res.status(400).json({ status: false, msg: `Erro de validação: ${messages.join(' ')}` });
+  } else if (error.code === 11000) {
+    const field = Object.keys(error.keyPattern)[0];
+    const value = error.keyValue[field];
+    if (field === 'sequencias') {
+        return res.status(409).json({
+            status: false,
+            msg: `Erro: O número de sequência '${value}' já está em uso para este produto. Por favor, escolha outro.`
+        });
+    }
+    return res.status(409).json({ status: false, msg: `O campo '${field}' com valor '${value}' já existe.` });
+  } else {
+    console.error(error);
+    return res.status(500).json({ status: false, msg: 'Ocorreu um erro interno no servidor.' });
+  }
+}
+
 module.exports = class EtapaController {
 
     /**
@@ -21,18 +45,7 @@ module.exports = class EtapaController {
 
             return res.status(201).json({ status: true, msg: 'Etapa criada e associada ao produto com sucesso!', etapa: novaEtapa });
         }catch (error) {
-            // Verifica se o erro é de chave duplicada
-            if (error.code === 11000) {
-                // Retorna um status 409 Conflict, que é apropriado para este caso
-                return res.status(409).json({
-                    status: false,
-                    msg: `Erro: O número de sequência '${req.body.sequencias}' já está em uso para este produto. Por favor, escolha outro.`
-                });
-            }
-
-            // Para outros erros, mantém a resposta genérica
-            console.error("Erro ao criar etapa:", error);
-            return res.status(500).json({ status: false, msg: "Erro interno ao criar etapa." });
+            return handleErrors(res, error);
         }
     }
     
@@ -52,8 +65,34 @@ module.exports = class EtapaController {
             
             return res.status(200).json({ status: true, proximaSequencia });
         } catch (error) {
-            console.error("Erro ao buscar próxima sequência:", error);
-            return res.status(500).json({ status: false, msg: "Erro ao buscar a próxima sequência." });
+            return handleErrors(res, error);
+        }
+    }
+
+    static async getComponentesUtilizados(req, res) {
+        try {
+            const { produtoId } = req.params;
+            const ObjectId = require('mongoose').Types.ObjectId;
+
+            const resultado = await Etapa.aggregate([
+                { $match: { produto: new ObjectId(produtoId) } },
+                { $unwind: '$componentesConclusao' },
+                {
+                    $group: {
+                        _id: '$componentesConclusao.componente',
+                        quantidadeTotal: { $sum: '$componentesConclusao.quantidade' }
+                    }
+                }
+            ]);
+
+            const componentesUtilizados = resultado.reduce((acc, item) => {
+                acc[item._id.toString()] = item.quantidadeTotal;
+                return acc;
+            }, {});
+
+            return res.status(200).json({ status: true, componentesUtilizados });
+        } catch (error) {
+            return handleErrors(res, error);
         }
     }
 
@@ -65,7 +104,7 @@ module.exports = class EtapaController {
             const etapas = await Etapa.find().populate('produto', 'nome');
             return res.status(200).json({ status: true, etapas });
         } catch (error) {
-            return res.status(500).json({ status: false, msg: 'Erro ao listar etapas.' });
+            return handleErrors(res, error);
         }
     }
 
@@ -85,7 +124,7 @@ module.exports = class EtapaController {
                 .sort('sequencias');
             return res.status(200).json({ status: true, etapas });
         } catch (error) {
-            return res.status(500).json({ status: false, msg: 'Erro ao listar etapas do produto.' });
+            return handleErrors(res, error);
         }
     }
 
@@ -108,7 +147,7 @@ module.exports = class EtapaController {
             }
             return res.status(200).json({ status: true, etapa });
         } catch (error) {
-            return res.status(500).json({ status: false, msg: 'Erro ao buscar etapa.', error: error.message });
+            return handleErrors(res, error);
         }
     }
 
@@ -131,17 +170,7 @@ module.exports = class EtapaController {
 
             return res.status(200).json({ status: true, msg: 'Etapa atualizada com sucesso!', etapa: etapaAtualizada });
         } catch (error) {
-            console.error("Erro ao atualizar etapa:", error);
-            if (error.code === 11000) {
-                 return res.status(409).json({
-                    status: false,
-                    msg: `Erro: O número de sequência '${req.body.sequencias}' já está em uso para este produto. Por favor, escolha outro.`
-                });
-            }
-            if (error.name === 'ValidationError') {
-                return res.status(400).json({ status: false, msg: error.message });
-            }
-            return res.status(500).json({ status: false, msg: 'Erro interno no servidor.' });
+            return handleErrors(res, error);
         }
     }
 
@@ -159,7 +188,7 @@ module.exports = class EtapaController {
             await Produto.findByIdAndUpdate(etapaDeletada.produto, { $pull: { etapas: id } });
             return res.status(200).json({ status: true, msg: 'Etapa removida com sucesso!' });
         } catch (error) {
-            return res.status(500).json({ status: false, msg: 'Erro ao remover etapa.' });
+            return handleErrors(res, error);
         }
     }
 }

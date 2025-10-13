@@ -449,7 +449,7 @@
         if (motivoId) {
             try {
                 showLoading();
-                const response = await fetch(`api/ordens-producao/${id}/cancelar`, {
+                const response = await fetch(`/api/ordens-producao/${id}/cancelar`, {
                     method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/json',

@@ -100,6 +100,11 @@
                 <label for="quantidade" class="form-label">Quantidade em Estoque</label>
                 <input type="number" id="quantidade" name="quantidade" class="form-control" />
             </div>
+
+            <div class="mb-3">
+                <label for="tempo_ciclo_ideal_segundos" class="form-label">Tempo de Ciclo Ideal (segundos)</label>
+                <input type="number" id="tempo_ciclo_ideal_segundos" name="tempo_ciclo_ideal_segundos" class="form-control" />
+            </div>
             
             <button type="submit" class="btn btn-primary">Adicionar Produto</button>
             <button type="button" class="btn btn-secondary" onclick="window.location.href='/produtos'">Cancelar</button>
@@ -222,6 +227,7 @@
                   precoMontagem: parseFloat(document.getElementById('precoMontagem').value),
                   precoVenda: parseFloat(document.getElementById('precoVenda').value),
                   quantidade: parseInt(document.getElementById('quantidade').value),
+                  tempo_ciclo_ideal_segundos: parseInt(document.getElementById('tempo_ciclo_ideal_segundos').value),
                   etapas: [], // Não há seleção de etapas nesta tela
               };
 

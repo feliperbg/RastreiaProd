@@ -1,6 +1,25 @@
 // Arquivo: control/ProdutoControl.js
 const Produto = require('../model/Produto');
 
+// Função auxiliar para tratar erros de forma padronizada
+function handleErrors(res, error) {
+  if (error.name === 'ValidationError') {
+    let messages = [];
+    for (let field in error.errors) {
+      messages.push(error.errors[field].message);
+    }
+    return res.status(400).json({ status: false, msg: `Erro de validação: ${messages.join(' ')}` });
+  } else if (error.code === 11000) {
+    // Trata erros de chave duplicada (ex: código de produto único)
+    const field = Object.keys(error.keyPattern)[0];
+    const value = error.keyValue[field];
+    return res.status(409).json({ status: false, msg: `O campo '${field}' com valor '${value}' já existe.` });
+  } else {
+    console.error(error); // Log do erro no servidor para depuração
+    return res.status(500).json({ status: false, msg: 'Ocorreu um erro interno no servidor.' });
+  }
+}
+
 module.exports = class ProdutoController {
   static async create(request, response) {
     try {
@@ -11,7 +30,7 @@ module.exports = class ProdutoController {
         produto: produtoCriado,
       });
     } catch (error) {
-      return response.status(400).json({ status: false, msg: error.message });
+      return handleErrors(response, error);
     }
   }
 
@@ -20,7 +39,7 @@ module.exports = class ProdutoController {
       const produtos = await Produto.find().sort('nome').populate('componentesNecessarios.componente').populate('etapas');
       return response.status(200).json({ status: true, produtos });
     } catch (error) {
-      return response.status(500).json({ status: false, msg: 'Erro ao listar produtos.' });
+      return handleErrors(response, error);
     }
   }
 
@@ -35,7 +54,7 @@ module.exports = class ProdutoController {
       }
       return response.status(200).json({ status: true, produto });
     } catch (error) {
-      return response.status(500).json({ status: false, msg: 'Erro ao buscar produto.' });
+      return handleErrors(response, error);
     }
   }
 
@@ -56,7 +75,7 @@ module.exports = class ProdutoController {
         produto: produtoAtualizado,
       });
     } catch (error) {
-      return response.status(400).json({ status: false, msg: error.message });
+      return handleErrors(response, error);
     }
   }
 
@@ -69,7 +88,7 @@ module.exports = class ProdutoController {
       }
       return response.status(200).json({ status: true, msg: 'Produto removido com sucesso!' });
     } catch (error) {
-      return response.status(500).json({ status: false, msg: 'Erro ao remover produto.' });
+      return handleErrors(response, error);
     }
   }
 };

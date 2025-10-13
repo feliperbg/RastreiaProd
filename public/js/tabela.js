@@ -1,10 +1,97 @@
-  const formatarData = (data) => {
-    if (!data) return 'N/A';
-    const dateObj = new Date(data);
-    const userTimezoneOffset = dateObj.getTimezoneOffset() * 60000;
-    const correctedDate = new Date(dateObj.getTime() + userTimezoneOffset);
-    return correctedDate.toLocaleDateString('pt-BR');
-  };
+    document.addEventListener('DOMContentLoaded', function() {
+        const tableWrapper = document.querySelector('.table-responsive');
+        if (!tableWrapper) return;
+
+        let floatingScrollbarWrapper;
+        let floatingScrollbarInner;
+        let isSyncing = false;
+
+        function setupFloatingScrollbar() {
+            // Remove a barra antiga se existir, para recalcular
+            if (floatingScrollbarWrapper) {
+                floatingScrollbarWrapper.remove();
+            }
+
+            console.log('Configurando barra de rolagem flutuante...');
+            console.log('Largura do conteúdo da tabela:', tableWrapper.scrollWidth);
+            console.log('Largura visível da tabela:', tableWrapper.clientWidth);
+
+            // Verifica se a barra de rolagem horizontal é necessária
+            const needsScrollbar = tableWrapper.scrollWidth > tableWrapper.clientWidth;
+
+            console.log('Necessita de barra de rolagem?', needsScrollbar);
+
+            if (!needsScrollbar) {
+                return; // Se não precisa, não faz nada
+            }
+
+            // Cria os elementos da barra flutuante
+            floatingScrollbarWrapper = document.createElement('div');
+            floatingScrollbarWrapper.className = 'floating-scrollbar-wrapper';
+
+            floatingScrollbarInner = document.createElement('div');
+            floatingScrollbarInner.className = 'floating-scrollbar-inner';
+
+            // Ajusta a largura interna para corresponder ao conteúdo da tabela
+            floatingScrollbarInner.style.width = tableWrapper.scrollWidth + 'px';
+
+            floatingScrollbarWrapper.appendChild(floatingScrollbarInner);
+            document.body.appendChild(floatingScrollbarWrapper);
+
+            // Sincroniza a rolagem da barra flutuante para a tabela
+            floatingScrollbarWrapper.addEventListener('scroll', () => {
+                if (isSyncing) return;
+                isSyncing = true;
+                tableWrapper.scrollLeft = floatingScrollbarWrapper.scrollLeft;
+                isSyncing = false;
+            });
+
+            // Sincroniza a rolagem da tabela para a barra flutuante
+            tableWrapper.addEventListener('scroll', () => {
+                if (isSyncing) return;
+                isSyncing = true;
+                floatingScrollbarWrapper.scrollLeft = tableWrapper.scrollLeft;
+                isSyncing = false;
+            });
+        }
+
+        // Intersection Observer para mostrar/esconder a barra
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (floatingScrollbarWrapper) {
+                    // Mostra se 1% ou mais da tabela estiver visível
+                    if (entry.isIntersecting && entry.intersectionRatio > 0.01) {
+                        floatingScrollbarWrapper.style.visibility = 'visible';
+                    } else {
+                        floatingScrollbarWrapper.style.visibility = 'hidden';
+                    }
+                }
+            });
+        }, { threshold: [0, 0.01, 1] }); // Observa quando a visibilidade muda
+
+        // Começa a observar o contêiner da tabela
+        observer.observe(tableWrapper);
+        
+        // Configuração inicial e ao redimensionar a janela
+        setupFloatingScrollbar();
+        window.addEventListener('resize', setupFloatingScrollbar);
+
+        // Bônus: Recalcular se o conteúdo da tabela mudar (ex: após carregar dados AJAX)
+        // Você pode chamar `setupFloatingScrollbar()` manualmente após carregar os dados na tabela.
+        const observerConteudoTabela = new MutationObserver(setupFloatingScrollbar);
+        const tabelaBody = document.getElementById('tabela-ordem-producoes');
+        if (tabelaBody) {
+            observerConteudoTabela.observe(tabelaBody, { childList: true, subtree: true });
+        }
+    });
+
+    const formatarData = (data) => {
+        if (!data) return 'N/A';
+        const dateObj = new Date(data);
+        const userTimezoneOffset = dateObj.getTimezoneOffset() * 60000;
+        const correctedDate = new Date(dateObj.getTime() + userTimezoneOffset);
+        return correctedDate.toLocaleDateString('pt-BR');
+    };
     function showLoading() {
         Swal.fire({
             title: 'Carregando...',
@@ -146,7 +233,7 @@
 
     async function buscarNomePorId(id, urlBase, atributo) {
         try {
-            const response = await fetch(`api/${urlBase}/${id}`, {
+            const response = await fetch(`/api/${urlBase}/${id}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
