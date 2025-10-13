@@ -283,7 +283,11 @@ document.addEventListener('DOMContentLoaded', function () {
     // --- FUNÇÕES GLOBAIS DE AÇÃO ---
     window.atualizarRefugo = async function() {
         if (!motivosDeRefugo || motivosDeRefugo.length === 0) {
-            return Swal.fire('Atenção!', 'Não há motivos de refugo cadastrados. Por favor, cadastre um motivo antes de lançar o refugo.', 'warning');
+            return Swal.fire(
+                'Atenção!',
+                'Não há motivos de refugo cadastrados. Por favor, cadastre um motivo antes de lançar o refugo.',
+                'warning'
+            );
         }
 
         const optionsMotivo = motivosDeRefugo.reduce((acc, motivo) => {
@@ -293,11 +297,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const { value: formValues } = await Swal.fire({
             title: 'Lançar Refugo',
-            html:
-                '<label for="swal-quantidade" class="swal2-label">Quantidade</label>' +
-                '<input id="swal-quantidade" type="number" min="1" class="swal2-input">' +
-                '<label for="swal-motivo" class="swal2-label">Motivo do Refugo</label>' +
-                '<select id="swal-motivo" class="swal2-select"></select>',
+            width: '600px', // <-- Aumenta a largura do modal
+            html: `
+                <label for="swal-quantidade" class="swal2-label">Quantidade</label>
+                <input id="swal-quantidade" type="number" min="1" class="swal2-input">
+                <label for="swal-motivo" class="swal2-label">Motivo do Refugo</label>
+                <select id="swal-motivo" class="swal2-select"></select>
+            `,
             focusConfirm: false,
             showCancelButton: true,
             confirmButtonText: 'Lançar',
@@ -318,12 +324,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 return { quantidade: parseInt(quantidade), motivoId: motivoId };
             }
         });
-
         if (formValues) {
             try {
                 const response = await fetch(`/api/ordens-producao/${ordemProducao._id}/refugo`, {
                     method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('authToken')}` },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                    },
                     body: JSON.stringify(formValues)
                 });
                 const result = await response.json();
@@ -333,7 +341,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 spinner.classList.remove('d-none');
                 conteudoPagina.classList.add('d-none');
                 await inicializar();
-            } catch(error) { Swal.fire('Erro!', error.message, 'error'); }
+            } catch (error) {
+                Swal.fire('Erro!', error.message, 'error');
+            }
         }
     }
     
@@ -443,8 +453,6 @@ document.addEventListener('DOMContentLoaded', function () {
     window.iniciarEtapa = (opId, etapaId) => executarAcao('Iniciar Etapa?', 'Você confirma o início desta etapa?', `/api/ordens-producao/${opId}/etapa/${etapaId}/iniciar`);
     window.finalizarEtapa = (opId, etapaId) => executarAcao('Finalizar Etapa?', 'Você confirma a conclusão desta etapa?', `/api/ordens-producao/${opId}/etapa/${etapaId}/finalizar`);
     window.retomarEtapa = (opId, etapaId) => executarAcao('Retomar Produção?', 'Você confirma a retomada da produção?', `/api/ordens-producao/${opId}/etapa/${etapaId}/retomar`, 'PATCH');
-    window.atualizarRefugo = () => showModalRefugo();
-    window.pausarEtapa = (opId, etapaId) => showModalPausa(opId, etapaId);
 
     inicializar();
 });
