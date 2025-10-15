@@ -8,26 +8,13 @@ window.relatorioPdfGenerator = (function() {
 
     /**
      * Função auxiliar privada para adicionar cabeçalho com título em cada página do PDF.
+     * ✅ CORREÇÃO: Cabeçalho removido de todas as páginas (não é necessário)
      */
     function addHeader(doc, pageNumber, title, subtitle) {
-        const margin = 15;
-        const pageWidth = doc.internal.pageSize.getWidth();
-
-        // Adiciona apenas a partir da segunda página para não sobrescrever o título principal
-        if (pageNumber > 1) {
-            doc.setFontSize(16);
-            doc.setFont('helvetica', 'bold');
-            doc.text(title, margin, 20);
-
-            doc.setFontSize(10);
-            doc.setFont('helvetica', 'normal');
-            doc.text(subtitle, margin, 27);
-        }
-        
-        doc.setLineWidth(0.5);
-        doc.line(margin, 32, pageWidth - margin, 32);
+        // Função mantida por compatibilidade, mas não adiciona mais cabeçalho
+        // O cabeçalho principal já está na primeira página
+        return;
     }
-
 
     /**
      * Função auxiliar privada para adicionar rodapé com data e número de página.
@@ -82,7 +69,6 @@ window.relatorioPdfGenerator = (function() {
             doc.text(subtitle, pageWidth / 2, 28, { align: 'center' });
             finalY = 35;
 
-
             // --- SEÇÃO DE KPIs ---
             doc.setFontSize(14);
             doc.setFont('helvetica', 'bold');
@@ -106,7 +92,6 @@ window.relatorioPdfGenerator = (function() {
             doc.text(reportData.kpis.performance, (pageWidth / 2) + 40, kpiY + 7);
             finalY += 20;
 
-            
             // --- SEÇÃO DE GRÁFICOS ---
             doc.setFontSize(14);
             doc.setFont('helvetica', 'bold');
@@ -116,8 +101,7 @@ window.relatorioPdfGenerator = (function() {
             const addChartToPdf = (title, chartImgData) => {
                 if (finalY > 180) { // Verifica se há espaço para o gráfico
                     doc.addPage();
-                    finalY = 20;
-                    addHeader(doc, doc.internal.getNumberOfPages(), mainTitle, subtitle);
+                    finalY = 20;  // ✅ CORREÇÃO: Volta para 20 pois não há mais cabeçalho
                 }
                 doc.setFontSize(12);
                 doc.setFont('helvetica', 'bold');
@@ -133,14 +117,12 @@ window.relatorioPdfGenerator = (function() {
             addChartToPdf('Evolução do OEE', reportData.charts.oeeEvolution);
             addChartToPdf('Principais Causas de Parada (Pareto)', reportData.charts.pareto);
             addChartToPdf('Produção Total por Produto', reportData.charts.productionByProduct);
-            
 
             // --- SEÇÃO DE TABELA DE DADOS ---
             if (reportData.paretoData.body.length > 0) {
-                 if (finalY > 220) {
+                if (finalY > 220) {
                     doc.addPage();
-                    finalY = 20;
-                    addHeader(doc, doc.internal.getNumberOfPages(), mainTitle, subtitle);
+                    finalY = 20;  // ✅ CORREÇÃO: Volta para 20 pois não há mais cabeçalho
                 }
                 doc.setFontSize(14);
                 doc.setFont('helvetica', 'bold');
@@ -153,9 +135,9 @@ window.relatorioPdfGenerator = (function() {
                     startY: finalY,
                     theme: 'striped',
                     headStyles: { fillColor: [41, 128, 186] },
+                    margin: { top: 20, bottom: 15 },  // ✅ CORREÇÃO: top mudado de 40 para 20
                     didDrawPage: (data) => {
-                        // Adiciona cabeçalho e rodapé em novas páginas criadas pela tabela
-                        addHeader(doc, data.pageNumber, mainTitle, subtitle);
+                        // ✅ CORREÇÃO: addHeader removido (não é mais necessário)
                         addFooter(data, doc);
                     }
                 });
@@ -168,7 +150,7 @@ window.relatorioPdfGenerator = (function() {
                 doc.setPage(i);
                 // Evita redesenhar o rodapé se a autotable já o fez
                 if (!doc.lastAddedPage || doc.lastAddedPage < i) {
-                     addFooter({ 
+                    addFooter({ 
                         pageNumber: i, 
                         settings: { margin: { left: margin, right: margin } }
                     }, doc);
