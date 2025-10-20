@@ -1,0 +1,156 @@
+[{
+  "_id": {
+    "$oid": "67223b0f1a9b8e0a3f789c01"
+  },
+  "nome": "Corte",
+  "sequencias": 1,
+  "departamentoResponsavel": {
+    "$oid": "67223b0f1a9b8e0a3f789d01"
+  },
+  "procedimentos": "Cortar as chapas de MDF conforme o plano de corte para o GABS-HOSP-001.",
+  "componentesConclusao": [
+    {
+      "componente": {
+        "$oid": "67223b0f1a9b8e0a3f789b01"
+      },
+      "quantidade": 2
+    }
+  ],
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "651c3c0a3f3b9a5d5a8e3b04"
+    }
+  ],
+  "produto": {
+    "$oid": "67223b0f1a9b8e0a3f789a01"
+  }
+},
+{
+  "_id": {
+    "$oid": "67223b0f1a9b8e0a3f789c02"
+  },
+  "nome": "Furação",
+  "sequencias": 2,
+  "departamentoResponsavel": {
+    "$oid": "67223b0f1a9b8e0a3f789d01"
+  },
+  "procedimentos": "Realizar todas as furações nas peças cortadas para Rastex, cavilhas, dobradiças e corrediças, conforme vistas do projeto.",
+  "componentesConclusao": [
+    {
+      "componente": {
+        "$oid": "67223b0f1a9b8e0a3f789b08"
+      },
+      "quantidade": 16
+    },
+    {
+      "componente": {
+        "$oid": "67223b0f1a9b8e0a3f789b09"
+      },
+      "quantidade": 16
+    },
+    {
+      "componente": {
+        "$oid": "67223b0f1a9b8e0a3f789b0a"
+      },
+      "quantidade": 12
+    }
+  ],
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "651c3c0a3f3b9a5d5a8e3b04"
+    }
+  ],
+  "produto": {
+    "$oid": "67223b0f1a9b8e0a3f789a01"
+  }
+},
+{
+  "_id": {
+    "$oid": "67223b0f1a9b8e0a3f789c03"
+  },
+  "nome": "Acabamento topo",
+  "sequencias": 3,
+  "departamentoResponsavel": {
+    "$oid": "67223b0f1a9b8e0a3f789d02"
+  },
+  "procedimentos": "Aplicar fita de borda em todas as arestas especificadas. Iniciar a pré-montagem e instalação das ferragens (corrediças, dobradiças, puxadores).",
+  "componentesConclusao": [
+    {
+      "componente": {
+        "$oid": "67223b0f1a9b8e0a3f789b02"
+      },
+      "quantidade": 1
+    },
+    {
+      "componente": {
+        "$oid": "67223b0f1a9b8e0a3f789b03"
+      },
+      "quantidade": 2
+    },
+    {
+      "componente": {
+        "$oid": "67223b0f1a9b8e0a3f789b04"
+      },
+      "quantidade": 2
+    },
+    {
+      "componente": {
+        "$oid": "67223b0f1a9b8e0a3f789b05"
+      },
+      "quantidade": 1
+    },
+    {
+      "componente": {
+        "$oid": "67223b0f1a9b8e0a3f789b06"
+      },
+      "quantidade": 2
+    },
+    {
+      "componente": {
+        "$oid": "67223b0f1a9b8e0a3f789b07"
+      },
+      "quantidade": 1.5
+    }
+  ],
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "651c3c0a3f3b9a5d5a8e3b04"
+    }
+  ],
+  "produto": {
+    "$oid": "67223b0f1a9b8e0a3f789a01"
+  }
+},
+{
+  "_id": {
+    "$oid": "67223b0f1a9b8e0a3f789c04"
+  },
+  "nome": "Embalagem",
+  "sequencias": 4,
+  "departamentoResponsavel": {
+    "$oid": "67223b0f1a9b8e0a3f789d03"
+  },
+  "procedimentos": "Envolver o móvel montado em plástico bolha e acondicionar na caixa de papelão identificada.",
+  "componentesConclusao": [
+    {
+      "componente": {
+        "$oid": "67223b0f1a9b8e0a3f789b0b"
+      },
+      "quantidade": 1
+    },
+    {
+      "componente": {
+        "$oid": "67223b0f1a9b8e0a3f789b0c"
+      },
+      "quantidade": 2.5
+    }
+  ],
+  "funcionariosResponsaveis": [
+    {
+      "$oid": "651c3c0a3f3b9a5d5a8e3b04"
+    }
+  ],
+  "produto": {
+    "$oid": "67223b0f1a9b8e0a3f789a01"
+  }
+}]

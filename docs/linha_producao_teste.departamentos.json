@@ -1,0 +1,21 @@
+[{
+  "_id": {
+    "$oid": "67223b0f1a9b8e0a3f789d01"
+  },
+  "nome": "Marcenaria",
+  "descricao": "Departamento responsável pelo corte e furação das chapas de MDF."
+},
+{
+  "_id": {
+    "$oid": "67223b0f1a9b8e0a3f789d02"
+  },
+  "nome": "Montagem",
+  "descricao": "Departamento responsável pela aplicação de fita de borda e montagem final das ferragens."
+},
+{
+  "_id": {
+    "$oid": "67223b0f1a9b8e0a3f789d03"
+  },
+  "nome": "Expedição",
+  "descricao": "Departamento responsável pela conferência, embalagem e envio dos produtos."
+}]

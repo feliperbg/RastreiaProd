@@ -1,0 +1,59 @@
+[{
+  "_id": {
+    "$oid": "651c3c0a3f3b9a5d5a8e3b01"
+  },
+  "nome": "Carlos Silva",
+  "email": "carlos.silva@empresa.com",
+  "senha": "$2b$10$D8.Abg1m2j3k4L5N6O7P8u9Q0R1S2T3U4V5W6X7Y8Z9a0b1c2d3e",
+  "departamento": {
+    "$oid": "651c3b7d3f3b9a5d5a8e3a01"
+  },
+  "valor_hora": 22.5
+},
+{
+  "_id": {
+    "$oid": "651c3c0a3f3b9a5d5a8e3b02"
+  },
+  "nome": "Mariana Oliveira",
+  "email": "mariana.oliveira@empresa.com",
+  "senha": "$2b$10$E9.Fgh2n3k4l5m6n7o8p9q0r1s2t3u4v5w6x7y8z9a0b1c2d3e4",
+  "departamento": {
+    "$oid": "651c3b7d3f3b9a5d5a8e3a02"
+  },
+  "valor_hora": 25
+},
+{
+  "_id": {
+    "$oid": "651c3c0a3f3b9a5d5a8e3b03"
+  },
+  "nome": "João Pereira",
+  "email": "joao.pereira@empresa.com",
+  "senha": "$2b$10$G0.Hij3o4p5q6r7s8t9u0v1w2x3y4z5a6b7c8d9e0f1g2h3i4",
+  "departamento": {
+    "$oid": "651c3b7d3f3b9a5d5a8e3a03"
+  },
+  "valor_hora": 30
+},
+{
+  "_id": {
+    "$oid": "651c3c0a3f3b9a5d5a8e3b04"
+  },
+  "nome": "Admin",
+  "email": "admin@empresa.com",
+  "senha": "$2a$10$UqDQYZMD9lvTmQgICMSI0uA8VhJTIE1rOXD9JmpC0vyuoaG3Ydee.",
+  "departamento": {
+    "$oid": "67223b0f1a9b8e0a3f789d02"
+  },
+  "valor_hora": 50,
+  "CPF": "45618685850",
+  "dataNascimento": {
+    "$date": "2008-03-31T00:00:00.000Z"
+  },
+  "permissoes": [],
+  "role": "administrador",
+  "telefone": "12981692265",
+  "turno": "Manhã",
+  "updatedAt": {
+    "$date": "2025-10-19T16:12:53.929Z"
+  }
+}]

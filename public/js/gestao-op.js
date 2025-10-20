@@ -391,6 +391,11 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // --- FUNÇÕES UTILITÁRIAS ---
+    function formatarData(dataString) {
+        if (!dataString) return 'N/A';
+        return new Date(dataString).toLocaleDateString('pt-BR', { timeZone: 'UTC' });
+    }
+    
     function formatarDataHora(dataString) {
         if (!dataString) return 'N/A';
         return new Date(dataString).toLocaleString('pt-BR');

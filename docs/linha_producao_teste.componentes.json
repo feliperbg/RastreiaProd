@@ -1,0 +1,120 @@
+[{
+  "_id": {
+    "$oid": "67223b0f1a9b8e0a3f789b01"
+  },
+  "nome": "CHAPA MDF CARVALHO TREVISO DESIGN",
+  "codigo": "MDF-CARV-TREV-18MM",
+  "descricao": "Chapa de MDF de 18mm, padrão Carvalho Treviso, 2750x1840mm.",
+  "quantidade": 100,
+  "precoUnidade": 350
+},
+{
+  "_id": {
+    "$oid": "67223b0f1a9b8e0a3f789b02"
+  },
+  "nome": "ROLO FITA DE BORDA CARVALHO TREVISO",
+  "codigo": "FITA-CARV-TREV-22MM",
+  "descricao": "Rolo de fita de borda PVC, 22mm x 1mm, padrão Carvalho Treviso. Rolo com 50m.",
+  "quantidade": 50,
+  "precoUnidade": 120
+},
+{
+  "_id": {
+    "$oid": "67223b0f1a9b8e0a3f789b03"
+  },
+  "nome": "CORREDIÇA OCULTA UNIHIDE SLOW",
+  "codigo": "CORR-UNI-SLOW-450MM",
+  "descricao": "Par de corrediça oculta (invisível) com amortecedor slow, 450mm.",
+  "quantidade": 200,
+  "precoUnidade": 65
+},
+{
+  "_id": {
+    "$oid": "67223b0f1a9b8e0a3f789b04"
+  },
+  "nome": "DOBRADIÇA RETA SLOW CLICK",
+  "codigo": "DOB-RETA-SLOW-CLICK-35MM",
+  "descricao": "Dobradiça caneco 35mm, reta, com amortecedor (slow) e sistema click.",
+  "quantidade": 500,
+  "precoUnidade": 8.5
+},
+{
+  "_id": {
+    "$oid": "67223b0f1a9b8e0a3f789b05"
+  },
+  "nome": "KIT ARTICULADOR BVO",
+  "codigo": "ART-BVO-GAS-80N",
+  "descricao": "Kit articulador para porta basculante (BVO) com pistão a gás 80N.",
+  "quantidade": 150,
+  "precoUnidade": 45
+},
+{
+  "_id": {
+    "$oid": "67223b0f1a9b8e0a3f789b06"
+  },
+  "nome": "SUPORTE INVISIVEL P/PRATELEIRA FERRO T",
+  "codigo": "SUP-INV-T-150MM",
+  "descricao": "Suporte invisível para prateleira, modelo Ferro T, 150mm, acabamento zincado.",
+  "quantidade": 300,
+  "precoUnidade": 12
+},
+{
+  "_id": {
+    "$oid": "67223b0f1a9b8e0a3f789b07"
+  },
+  "nome": "PUXADOR PERFIL",
+  "codigo": "PUX-PERFIL-AL-NAT-METRO",
+  "descricao": "Perfil de alumínio para puxador, cor natural. (Vendido por metro linear)",
+  "quantidade": 100,
+  "precoUnidade": 30
+},
+{
+  "_id": {
+    "$oid": "67223b0f1a9b8e0a3f789b08"
+  },
+  "nome": "PARAFUSO RASTEX",
+  "codigo": "FIX-RASTEX-PARAF-25MM",
+  "descricao": "Parafuso de montagem do sistema Rastex / Minifix, 25mm.",
+  "quantidade": 5000,
+  "precoUnidade": 0.3
+},
+{
+  "_id": {
+    "$oid": "67223b0f1a9b8e0a3f789b09"
+  },
+  "nome": "TAMBOR RASTEX",
+  "codigo": "FIX-RASTEX-TAMBOR-15MM",
+  "descricao": "Tambor (castanha) do sistema Rastex / Minifix, 15mm.",
+  "quantidade": 5000,
+  "precoUnidade": 0.45
+},
+{
+  "_id": {
+    "$oid": "67223b0f1a9b8e0a3f789b0a"
+  },
+  "nome": "CAVILHA DE MADEIRA",
+  "codigo": "FIX-CAVILHA-8MM",
+  "descricao": "Cavilha de madeira estriada, 8mm x 30mm.",
+  "quantidade": 10000,
+  "precoUnidade": 0.1
+},
+{
+  "_id": {
+    "$oid": "67223b0f1a9b8e0a3f789b0b"
+  },
+  "nome": "Caixa de Papelão Ondulado",
+  "codigo": "EMB-CAIXA-GAB-001",
+  "descricao": "Caixa de papelão onda dupla para gabinete GABS-HOSP-001.",
+  "quantidade": 200,
+  "precoUnidade": 15
+},
+{
+  "_id": {
+    "$oid": "67223b0f1a9b8e0a3f789b0c"
+  },
+  "nome": "Plástico Bolha (Metro)",
+  "codigo": "EMB-PLAST-BOLHA-METRO",
+  "descricao": "Plástico bolha para proteção, 1.2m de largura (vendido por metro).",
+  "quantidade": 500,
+  "precoUnidade": 1.5
+}]
