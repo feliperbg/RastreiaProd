@@ -73,10 +73,10 @@ module.exports = class OrdemProducaoController {
         try {
             const { meuPainel } = req.query;
             const funcionarioId = req.user ? req.user._id : null;
-
+            console.log("meuPainel:", meuPainel, "funcionarioId:", funcionarioId);
             let query = {};
             if (meuPainel === 'true' && funcionarioId) {
-                query = { 'funcionarioAtivo.funcionario': funcionarioId };
+                query = { 'criadoPor': funcionarioId };
             }
 
             let ordens = await OrdemProducao.find(query).populate({
