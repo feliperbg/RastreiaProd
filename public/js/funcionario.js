@@ -145,7 +145,7 @@
                 Swal.fire({
                     icon: 'error',
                     title: 'Erro ao deletar',
-                    text: 'Ocorreu um erro ao tentar deletar o funcionário.',
+                    text: error.message,
                     confirmButtonText: 'Ok'
                 });
             }

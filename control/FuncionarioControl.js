@@ -1,4 +1,5 @@
 const Funcionario = require('../model/Funcionario');
+const OrdemProducao = require('../model/OrdemProducao'); // Adicionado
 const TokenJWT = require('../model/TokenJWT');
 const bcrypt = require('bcrypt');
 const fs = require('fs').promises;
@@ -176,6 +177,16 @@ module.exports = class FuncionarioController {
     static async delete(req, res) {
         try {
             const { id } = req.params;
+
+            // Verificação de integridade referencial
+            const ordemEmUso = await OrdemProducao.findOne({
+                $or: [
+                    { 'funcionarioAtivo.funcionario': id },
+                    { 'criadoPor': id }
+                ]
+            });
+            if (ordemEmUso) return res.status(409).json({ status: false, msg: 'Este funcionário não pode ser excluído pois está associado a uma ou mais Ordens de Produção.' });
+
             const funcionarioDeletado = await Funcionario.findByIdAndDelete(id);
             if (!funcionarioDeletado) {
                 return res.status(404).json({ status: false, msg: 'Funcionário não encontrado.' });

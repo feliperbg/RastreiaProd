@@ -14,8 +14,11 @@ function handleErrors(res, error) {
     const value = error.keyValue[field];
     return res.status(409).json({ status: false, msg: `O campo '${field}' com valor '${value}' já existe.` });
   } else {
-    console.error(error);
-    return res.status(500).json({ status: false, msg: 'Ocorreu um erro interno no servidor.' });
+    // Captura erros de integridade referencial dos hooks e outros erros não tratados especificamente
+    console.error(error); // Log do erro no servidor para depuração
+    // Retorna a mensagem do erro, se houver, ou uma mensagem padrão com status 409 (Conflict)
+    const errorMessage = error.message || 'Ocorreu um erro interno no servidor.';
+    return res.status(409).json({ status: false, msg: errorMessage });
   }
 }
 
