@@ -157,7 +157,7 @@ document.addEventListener('DOMContentLoaded', function () {
         
         const deptoNome = etapa.departamentoResponsavel ? etapa.departamentoResponsavel.nome : 'N/A';
 
-        let botoesHtml = `<p class="text-muted small m-0 text-center text-lg-end">Aguardando etapa anterior.</p>`;
+        let botoesHtml = `<p class="text-muted small m-0 text-center text-lg-end">Aguardando etapa anterior ou permissão do responsável.</p>`;
         if (botoesVisiveis.showIniciarBtn) {
             botoesHtml = `<div class="d-flex justify-content-center justify-content-lg-end"><button class="btn btn-primary btn-sm" onclick="iniciarEtapa('${ordemProducao._id}', '${etapa._id}')"><i class="bi bi-play-circle"></i> Iniciar</button></div>`;
         } else if (botoesVisiveis.showPausarBtn || botoesVisiveis.showRetomarBtn || botoesVisiveis.showFinalizarBtn) {
@@ -204,6 +204,7 @@ document.addEventListener('DOMContentLoaded', function () {
             showCancelButton: true, confirmButtonText: 'Sim, iniciar', cancelButtonText: 'Cancelar'
         });
         if (result.isConfirmed) {
+            showLoading();
             try {
                 const response = await fetch(`/api/ordens-producao/${opId}/etapa/${etapaId}/iniciar`, {
                     method: 'POST', headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
@@ -211,7 +212,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const resultData = await response.json();
                 if (!response.ok) {
                     if (resultData.status === 'estoque_insuficiente') {
-                        const componentesList = resultData.componentes.map(c => `<li>${c.nome} (Necessário: ${c.quantidadeNecessaria}, Em Estoque: ${c.estoqueAtual})</li>`).join('');
+                        const componentesList = resultData.componentesInsuficientes.map(c => `<li>${c.nome} (Necessário: ${c.quantidadeNecessaria}, Em Estoque: ${c.estoqueAtual})</li>`).join('');
                         const { isConfirmed } = await Swal.fire({
                             title: 'Estoque Insuficiente',
                             html: `Os seguintes componentes não possuem estoque suficiente:<ul>${componentesList}</ul>Deseja continuar mesmo assim?`,
@@ -222,6 +223,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         });
 
                         if (isConfirmed) {
+                            showLoading(); // Adicionado para a segunda requisição
                             const forceResponse = await fetch(`/api/ordens-producao/${opId}/etapa/${etapaId}/iniciar`, {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('authToken')}` },
@@ -420,6 +422,23 @@ document.addEventListener('DOMContentLoaded', function () {
     function formatarDataHora(dataString) {
         if (!dataString) return 'N/A';
         return new Date(dataString).toLocaleString('pt-BR');
+    }
+
+    // --- FUNÇÕES DE LOADING (Adicionadas para corrigir o erro) ---
+    function showLoading() {
+        Swal.fire({
+            title: 'Carregando...',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading()
+            }
+        });
+    }
+
+    function hideLoading() {
+        if (Swal.isVisible()) {
+            Swal.close();
+        }
     }
 
     function calcularDuracao(inicio, fim) {

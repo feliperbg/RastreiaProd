@@ -352,7 +352,6 @@ module.exports = class OrdemProducaoController {
         return componentesInsuficientes;
     }
 
-    // --- Convertido para operação atômica ---
     static async iniciarEtapa(req, res) {
         try {
             const { id, etapaId } = req.params;
@@ -360,51 +359,66 @@ module.exports = class OrdemProducaoController {
             const funcionarioId = req.user._id;
 
             // 1. Busca para verificações prévias
+            // Seleciona os campos necessários para as validações
             const ordem = await OrdemProducao.findById(id).select('produto quantidade historicoEtapas status');
-            if (!ordem) return res.status(404).json({ status: false, msg: 'Ordem de produção não encontrada.' });
+            if (!ordem) {
+                return res.status(404).json({ status: false, msg: 'Ordem de produção não encontrada.' });
+            }
 
-            if (ordem.status === 'Pausada' || ordem.status === 'Concluída' || ordem.status === 'Cancelada') {
+            // 2. Verificações de Status da Ordem e da Etapa
+            if (ordem.status === 'Concluída' || ordem.status === 'Cancelada') {
                  return res.status(400).json({ status: false, msg: `Não é possível iniciar etapas. A ordem está ${ordem.status}.` });
             }
-
+            console.log("etapaId:", etapaId);
+            console.log("Ordem encontrada:", ordem);
+            console.log("ordem.historicoEtapas:", ordem.historicoEtapas);
             const etapaExistente = ordem.historicoEtapas.find(e => e.etapa.toString() === etapaId);
-            if (etapaExistente) {
-                return res.status(400).json({ status: false, msg: 'Esta etapa já foi iniciada.' });
-            }
+            console.log("etapaExistente:", etapaExistente);
 
-            // 2. Verificação de estoque (gate)
-            if (ordem.historicoEtapas.length === 0 && !force) {
+            // Adicionada verificação de 'etapaExistente' para evitar 'TypeError'
+            if (!etapaExistente) {
+                return res.status(404).json({ status: false, msg: 'Etapa não encontrada no histórico desta ordem.' });
+            }
+            
+            if (etapaExistente.status === 'Em Andamento') {
+                return res.status(400).json({ status: false, msg: 'Esta etapa já está em andamento.' });
+            }
+            if (etapaExistente.status === 'Concluída') {
+                return res.status(400).json({ status: false, msg: 'Esta etapa já foi concluída.' });
+            }
+            // Só podemos iniciar se estiver Pendente (ou Pausada, se for o caso)
+            if (etapaExistente.status !== 'Pendente') {
+                 return res.status(400).json({ status: false, msg: `Não é possível iniciar uma etapa com status '${etapaExistente.status}'.` });
+            }
+            
+            const nenhumaEtapaIniciada = ordem.historicoEtapas.every(e => e.status === 'Pendente');
+            if (nenhumaEtapaIniciada && !force) {
                 const componentesInsuficientes = await this.#verificarEstoque(ordem.produto._id, ordem.quantidade);
                 if (componentesInsuficientes.length > 0) {
-                    return res.status(409).json({ 
-                        status: 'estoque_insuficiente', 
-                        msg: 'Estoque insuficiente para iniciar a produção.', 
-                        componentes: componentesInsuficientes 
-                    });
+                   return res.status(409).json({ status: 'estoque_insuficiente', msg: 'Estoque insuficiente para iniciar a produção.', componentesInsuficientes});
                 }
             }
 
             // 3. Preparação da atualização atômica
-            const novaEtapaHistorico = {
-                etapa: etapaId,
-                status: 'Em Andamento',
-                dataInicio: new Date()
-            };
             const novoFuncionarioAtivo = {
                 funcionario: funcionarioId,
                 dataEntrada: new Date()
             };
 
             let updatePayload = {
-                $push: { 
-                    historicoEtapas: novaEtapaHistorico,
-                    funcionarioAtivo: novoFuncionarioAtivo 
+                $set: { 
+                    status: 'Em Andamento', // Status global da OP
+                    // Usa o identificador 'elem' do arrayFilters para atualizar a etapa correta
+                    'historicoEtapas.$[elem].status': 'Em Andamento', 
+                    'historicoEtapas.$[elem].dataInicio': new Date()
                 },
-                $set: { status: 'Em Andamento' }
+                $push: { // Adiciona o funcionário à lista de ativos (isso está correto)
+                    funcionarioAtivo: novoFuncionarioAtivo 
+                }
             };
 
             // Define o início da produção APENAS se for a primeira etapa
-            if (ordem.historicoEtapas.length === 0) {
+            if (nenhumaEtapaIniciada) {
                 updatePayload.$set['timestampProducao.inicio'] = new Date();
             }
 
@@ -412,15 +426,24 @@ module.exports = class OrdemProducaoController {
             const result = await OrdemProducao.updateOne(
                 { 
                     _id: id,
-                    // Condição para prevenir "lost update": etapa não pode ter sido adicionada por outra requisição
-                    'historicoEtapas.etapa': { $nin: [etapaId] } 
+                    // Condição: A etapa específica deve estar 'Pendente'
+                    // Isso previne o "lost update"
+                    'historicoEtapas.etapa': etapaId,
+                    'historicoEtapas.status': 'Pendente' 
                 }, 
-                updatePayload
+                updatePayload,
+                {
+                    // Define que '[elem]' se refere ao item do array onde a 'etapa' bate com o 'etapaId'
+                    arrayFilters: [ 
+                        { 'elem.etapa': new mongoose.Types.ObjectId(etapaId) } 
+                    ]
+                }
             );
 
             // 5. Verificação de sucesso
             if (result.modifiedCount === 0) {
-                const err = new Error('Conflito: A etapa já foi iniciada por outra operação. Tente novamente.');
+                // Se nada foi modificado, é porque a condição falhou (ex: outro usuário já iniciou)
+                const err = new Error('Conflito: A etapa não pôde ser iniciada (status não era "Pendente"). Tente novamente.');
                 err.name = 'ConflictError';
                 return handleErrors(res, err);
             }
