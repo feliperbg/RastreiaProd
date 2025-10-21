@@ -205,12 +205,12 @@ async function salvarDepartamento(event) {
         modal.hide();
 
         carregarTabelaDepartamentos(); // Recarrega a tabela
+        hideLoading(); // Mover para o final do try
 
     } catch (error) {
         console.error("Erro ao salvar departamento:", error);
+        hideLoading(); // Adicionar aqui para fechar o loading antes do alerta de erro
         Swal.fire('Erro', error.message, 'error');
-    } finally {
-        hideLoading();
     }
 }
 
@@ -249,13 +249,13 @@ async function deletarDepartamento(id) {
                 );
                 carregarTabelaDepartamentos(); // Recarrega a tabela
             } else {
+                hideLoading(); // Fecha o loading antes de mostrar o erro
                 throw new Error("Falha ao deletar o departamento. Verifique se não há funcionários vinculados.");
             }
         } catch (error) {
             console.error("Erro ao deletar departamento:", error);
+            // O hideLoading() já foi chamado no else, ou não é necessário aqui pois o Swal de erro o substitui.
             Swal.fire('Erro', error.message, 'error');
-        } finally {
-            hideLoading();
         }
     }
 }

@@ -135,6 +135,7 @@
                     );
                     carregarTabela(); // Recarrega a tabela após exclusão
                 } else {
+                    hideLoading(); // Fecha o loading antes de mostrar o erro
                     throw new Error("Falha ao excluir funcionário");
                 }
             } catch (error) {
@@ -145,8 +146,6 @@
                     text: 'Ocorreu um erro ao tentar deletar o funcionário.',
                     confirmButtonText: 'Ok'
                 });
-            } finally {
-                hideLoading();
             }
         }
     }
