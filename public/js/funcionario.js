@@ -118,8 +118,8 @@
         });
 
         if (isConfirmed) {
+            showLoading();
             try {
-                showLoading();
                 const response = await fetch(`/api/funcionarios/${id}`, {
                     method: 'DELETE',
                     headers: {
@@ -128,6 +128,7 @@
                 });
 
                 if (response.ok) {
+                    hideLoading(); // Fecha o loading antes de mostrar o sucesso
                     await Swal.fire(
                         'Deletado!',
                         'O funcionário foi deletado com sucesso.',
@@ -135,11 +136,12 @@
                     );
                     carregarTabela(); // Recarrega a tabela após exclusão
                 } else {
-                    hideLoading(); // Fecha o loading antes de mostrar o erro
-                    throw new Error("Falha ao excluir funcionário");
+                    const errorData = await response.json();
+                    throw new Error(errorData.msg || "Falha ao excluir funcionário");
                 }
             } catch (error) {
                 console.error("Erro ao excluir funcionário:", error);
+                hideLoading(); // Fecha o loading antes de mostrar o erro
                 Swal.fire({
                     icon: 'error',
                     title: 'Erro ao deletar',

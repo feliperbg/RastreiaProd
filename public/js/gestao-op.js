@@ -230,6 +230,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             const forceResultData = await forceResponse.json();
                             if (!forceResponse.ok) throw new Error(forceResultData.msg);
                             Swal.fire('Iniciada!', 'A etapa foi iniciada com sucesso (forçado).', 'success');
+                    hideLoading();
                             inicializar();
                         }
                     } else {
@@ -237,10 +238,14 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 } else {
                     Swal.fire('Iniciada!', 'A etapa foi iniciada com sucesso.', 'success');
+                    hideLoading();
                     inicializar();
                 }
-            } catch(error) { Swal.fire('Erro!', error.message, 'error'); }
-        }
+            } catch(error) { 
+                hideLoading();
+                Swal.fire('Erro!', error.message, 'error'); 
+            }
+        } 
     }
 
     window.finalizarEtapa = async function(opId, etapaId) {
@@ -249,15 +254,20 @@ document.addEventListener('DOMContentLoaded', function () {
             showCancelButton: true, confirmButtonText: 'Sim, finalizar', cancelButtonText: 'Cancelar'
         });
         if (result.isConfirmed) {
+            showLoading();
             try {
                 const response = await fetch(`/api/ordens-producao/${opId}/etapa/${etapaId}/finalizar`, {
                     method: 'POST', headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
                 });
                 const resultData = await response.json();
                 if (!response.ok) throw new Error(resultData.msg);
+                hideLoading();
                 Swal.fire('Concluída!', 'A etapa foi finalizada com sucesso.', 'success');
                 inicializar();
-            } catch(error) { Swal.fire('Erro!', error.message, 'error'); }
+            } catch(error) { 
+                hideLoading();
+                Swal.fire('Erro!', error.message, 'error'); 
+            }
         }
     }
 
@@ -267,15 +277,20 @@ document.addEventListener('DOMContentLoaded', function () {
             showCancelButton: true, confirmButtonText: 'Sim, retomar', cancelButtonText: 'Cancelar'
         });
         if (result.isConfirmed) {
+            showLoading();
             try {
                 const response = await fetch(`/api/ordens-producao/${opId}/etapa/${etapaId}/retomar`, {
                     method: 'PATCH', headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
                 });
                 const resultData = await response.json();
                 if (!response.ok) throw new Error(resultData.msg);
+                hideLoading();
                 Swal.fire('Retomada!', 'A produção foi retomada com sucesso.', 'success');
                 inicializar();
-            } catch(error) { Swal.fire('Erro!', error.message, 'error'); }
+            } catch(error) { 
+                hideLoading();
+                Swal.fire('Erro!', error.message, 'error'); 
+            }
         }
     }
 
@@ -326,6 +341,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
         if (formValues) {
             try {
+                showLoading();
                 const response = await fetch(`/api/ordens-producao/${ordemProducao._id}/refugo`, {
                     method: 'PATCH',
                     headers: {
@@ -336,13 +352,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
                 const result = await response.json();
                 if (!response.ok) throw new Error(result.msg);
+                hideLoading();
                 Swal.fire('Sucesso!', 'Quantidade de refugo atualizada.', 'success');
                 // Chama a função de inicialização para recarregar todos os dados da OP
-                spinner.classList.remove('d-none');
-                conteudoPagina.classList.add('d-none');
                 await inicializar();
             } catch (error) {
-                Swal.fire('Erro!', error.message, 'error');
+                hideLoading();
+                Swal.fire('Erro!', error.message, 'error'); 
             }
         }
     }
@@ -361,6 +377,7 @@ document.addEventListener('DOMContentLoaded', function () {
         
         if (formValues) {
             try {
+                showLoading();
                 const response = await fetch(`/api/ordens-producao/${opId}/etapa/${etapaId}/pausar`, {
                     method: 'PATCH',
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('authToken')}` },
@@ -368,9 +385,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
                 const resultData = await response.json();
                 if (!response.ok) throw new Error(resultData.msg);
+                hideLoading();
                 Swal.fire('Pausada!', 'A produção foi pausada com sucesso.', 'success');
                 inicializar();
-            } catch(error) { Swal.fire('Erro!', error.message, 'error'); }
+            } catch(error) { 
+                hideLoading();
+                Swal.fire('Erro!', error.message, 'error'); 
+            }
         }
     }
 
@@ -433,6 +454,7 @@ document.addEventListener('DOMContentLoaded', function () {
     async function executarAcao(titulo, texto, url, method = 'POST', body = null) {
         const result = await Swal.fire({ title: titulo, text: texto, icon: 'question', showCancelButton: true, confirmButtonText: 'Sim', cancelButtonText: 'Cancelar' });
         if (result.isConfirmed) {
+            showLoading();
             try {
                 const options = { method, headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` } };
                 if (body) {
@@ -442,15 +464,21 @@ document.addEventListener('DOMContentLoaded', function () {
                 const response = await fetch(url, options);
                 const resultData = await response.json();
                 if (!response.ok) throw new Error(resultData.msg);
-                Swal.fire('Sucesso!', resultData.msg || 'Ação realizada com sucesso.', 'success');
-                inicializar(); // Recarrega a página
+                hideLoading();
+                await Swal.fire('Sucesso!', resultData.msg || 'Ação realizada com sucesso.', 'success');
+                
+                // Recarrega a página APÓS o usuário fechar o alerta de sucesso
+                inicializar(); 
             } catch (error) {
+                hideLoading();
                 Swal.fire('Erro!', error.message, 'error');
             }
         }
     }
 
-    window.iniciarEtapa = (opId, etapaId) => executarAcao('Iniciar Etapa?', 'Você confirma o início desta etapa?', `/api/ordens-producao/${opId}/etapa/${etapaId}/iniciar`);
+    // A função de iniciar etapa tem uma lógica complexa de estoque, então não usaremos a genérica para ela.
+    // window.iniciarEtapa = (opId, etapaId) => executarAcao('Iniciar Etapa?', 'Você confirma o início desta etapa?', `/api/ordens-producao/${opId}/etapa/${etapaId}/iniciar`);
+    
     window.finalizarEtapa = (opId, etapaId) => executarAcao('Finalizar Etapa?', 'Você confirma a conclusão desta etapa?', `/api/ordens-producao/${opId}/etapa/${etapaId}/finalizar`);
     window.retomarEtapa = (opId, etapaId) => executarAcao('Retomar Produção?', 'Você confirma a retomada da produção?', `/api/ordens-producao/${opId}/etapa/${etapaId}/retomar`, 'PATCH');
 

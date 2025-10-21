@@ -192,12 +192,12 @@ async function salvarMotivo(event) {
             timer: 1500,
             showConfirmButton: false
         });
+        hideLoading(); // Fecha o loading APÓS o Swal de sucesso ser exibido
 
         const modal = bootstrap.Modal.getInstance(document.getElementById('motivoModal'));
         modal.hide();
 
         carregarTabelaMotivos(); // Recarrega a tabela
-        hideLoading(); // Mover para o final do try
 
     } catch (error) {
         console.error("Erro ao salvar motivo:", error);
@@ -231,15 +231,16 @@ async function deletarMotivo(id) {
             });
 
             if (response.ok) {
+                hideLoading(); // Fecha o loading antes de mostrar o sucesso
                 Swal.fire('Deletado!', 'O motivo foi deletado com sucesso.', 'success');
                 carregarTabelaMotivos(); // Recarrega a tabela
             } else {
-                hideLoading(); // Fecha o loading antes de mostrar o erro
                 const errorData = await response.json();
                 throw new Error(errorData.msg || "Falha ao deletar o motivo.");
             }
         } catch (error) {
             console.error("Erro ao deletar motivo:", error);
+            hideLoading(); // Fecha o loading antes de mostrar o erro
             Swal.fire('Erro', error.message, 'error');
         }
     }

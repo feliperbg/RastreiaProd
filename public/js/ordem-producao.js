@@ -447,8 +447,8 @@
         });
 
         if (motivoId) {
+            showLoading();
             try {
-                showLoading();
                 const response = await fetch(`/api/ordens-producao/${id}/cancelar`, {
                     method: 'PATCH',
                     headers: {
@@ -461,6 +461,7 @@
                 const result = await response.json();
 
                 if (response.ok) {
+                    hideLoading();
                     await Swal.fire('Cancelada!', 'A ordem de produção foi cancelada.', 'success');
                     carregarTabela();
                 } else {
@@ -468,9 +469,8 @@
                 }
             } catch (error) {
                 console.error("Erro ao cancelar ordem de produção:", error);
-                Swal.fire('Erro!', error.message, 'error');
-            } finally {
                 hideLoading();
+                Swal.fire('Erro!', error.message, 'error');
             }
         }
     }

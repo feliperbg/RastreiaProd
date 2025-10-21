@@ -200,12 +200,12 @@ async function salvarDepartamento(event) {
             timer: 1500,
             showConfirmButton: false
         });
+        hideLoading(); // Fecha o loading APÓS o Swal de sucesso ser exibido
 
         const modal = bootstrap.Modal.getInstance(document.getElementById('departamentoModal'));
         modal.hide();
 
         carregarTabelaDepartamentos(); // Recarrega a tabela
-        hideLoading(); // Mover para o final do try
 
     } catch (error) {
         console.error("Erro ao salvar departamento:", error);
