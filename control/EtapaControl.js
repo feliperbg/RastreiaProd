@@ -1,3 +1,4 @@
+// Arquivo: control/EtapaControl.js (Corrigido)
 const Etapa = require('../model/Etapa');
 const Produto = require('../model/Produto');
 
@@ -20,8 +21,9 @@ function handleErrors(res, error) {
     }
     return res.status(409).json({ status: false, msg: `O campo '${field}' com valor '${value}' já existe.` });
   } else {
+    // Erros vindos dos hooks de 'pre' delete cairão aqui
     console.error(error);
-    return res.status(500).json({ status: false, msg: 'Ocorreu um erro interno no servidor.' });
+    return res.status(409).json({ status: false, msg: error.message }); // 409 Conflict é bom para falhas de integridade
   }
 }
 
@@ -39,20 +41,12 @@ module.exports = class EtapaController {
             }
             
             const novaEtapa = await Etapa.create({ ...etapaData, produto: produtoId });
-
-            // Adiciona a nova etapa ao array de etapas do produto correspondente
-            await Produto.findByIdAndUpdate(produtoId, { $push: { etapas: novaEtapa._id } });
-
             return res.status(201).json({ status: true, msg: 'Etapa criada e associada ao produto com sucesso!', etapa: novaEtapa });
         }catch (error) {
             return handleErrors(res, error);
         }
     }
-    
-    // --- NOVO MÉTODO ---
-    /**
-     * Calcula e retorna o próximo número de sequência disponível para um produto.
-     */
+
     static async getProximaSequencia(req, res) {
         try {
             const { produtoId } = req.params;
@@ -180,12 +174,11 @@ module.exports = class EtapaController {
     static async delete(req, res) {
         try {
             const { id } = req.params;
-            const etapaDeletada = await Etapa.findByIdAndDelete(id);
+            const etapaDeletada = await Etapa.findOneAndDelete({ _id: id });
 
             if (!etapaDeletada) {
                 return res.status(404).json({ status: false, msg: 'Etapa não encontrada.' });
             }
-            await Produto.findByIdAndUpdate(etapaDeletada.produto, { $pull: { etapas: id } });
             return res.status(200).json({ status: true, msg: 'Etapa removida com sucesso!' });
         } catch (error) {
             return handleErrors(res, error);

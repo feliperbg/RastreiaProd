@@ -49,11 +49,11 @@
                     <td data-label="Email">${emailHtml}</td>
                     <td data-label="Telefone">${formatarTelefone(func.telefone)}</td>
                     <td data-label="Data Nasc.">${formatarData(func.dataNascimento)}</td>
-                    <td data-label="Permissões">
+                    <!-- <td data-label="Permissões">
                         <button class="btn btn-sm btn-warning" onclick='mostrarPermissoesModal(${JSON.stringify(func.permissoes)})'>
                             <i class="bi bi-shield-lock"></i>
                         </button>
-                    </td>
+                    </td> -->
                     <td data-label="Ações">
                         <button class="btn btn-sm btn-primary mb-1" onclick="editarFuncionario('${func._id}', '${func.credencial}')">
                             <i class="bi bi-pencil"></i>
@@ -166,9 +166,9 @@
         if (telefoneInput && telefoneInput.inputmask) {
             formData.set('telefone', telefoneInput.inputmask.unmaskedvalue());
         }
-        const permissoes = Array.from(document.querySelectorAll('input[name="permissoes"]:checked'))
-                                .map(checkbox => checkbox.value);
-        formData.set('permissoes', permissoes);
+        // const permissoes = Array.from(document.querySelectorAll('input[name="permissoes"]:checked'))
+        //                         .map(checkbox => checkbox.value);
+        // formData.set('permissoes', permissoes);
         try {
             const resposta = await fetch(`/api/funcionarios`, {
                 method: 'POST',
@@ -193,8 +193,8 @@
     }
     async function atualizarFuncionario(event) {
         event.preventDefault();
-        const permissoes = Array.from(document.querySelectorAll('input[name="permissoes"]:checked'))
-                                .map(checkbox => checkbox.value);
+        // const permissoes = Array.from(document.querySelectorAll('input[name="permissoes"]:checked'))
+        //                         .map(checkbox => checkbox.value);
 
         // Remove a máscara dos campos antes de enviar
         const cpfInput = document.getElementById('CPF');
@@ -213,7 +213,7 @@
             telefone: unmaskedTelefone,
             turno: document.getElementById('turno').value,
             dataNascimento: document.getElementById('dataNascimento').value,
-            permissoes: permissoes,
+            // permissoes: permissoes,
             role: document.getElementById('role').value,
             departamento: document.getElementById('departamento').value
         };

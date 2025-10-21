@@ -1,4 +1,4 @@
-// Arquivo: model/Etapa.js
+// Arquivo: model/Etapa.js (Corrigido)
 const mongoose = require('mongoose');
 const { Schema, model } = mongoose;
 
@@ -46,7 +46,29 @@ const EtapaSchema = new Schema({
 }, {
     timestamps: true,
 });
-EtapaSchema.index({ produto: 1, sequencias: 1 }, { unique: true });
-const Etapa = model('Etapa', EtapaSchema);
 
+EtapaSchema.index({ produto: 1, sequencias: 1 }, { unique: true });
+// Impede a exclusão de uma Etapa se ela estiver sendo usada em uma Ordem de Produção
+EtapaSchema.pre('findOneAndDelete', async function (next) {
+    try {
+        const etapaId = this.getQuery()['_id'];
+        
+        // Usamos mongoose.model() para evitar problemas de importação circular
+        const OrdemProducao = mongoose.model('OrdemProducao'); 
+        
+        // Verifica se alguma OP tem essa etapa em seu histórico
+        const ordemEmUso = await OrdemProducao.findOne({ 'historicoEtapas.etapa': etapaId });
+
+        if (ordemEmUso) {
+            // Impede a exclusão e envia o erro
+            throw new Error('Esta etapa não pode ser excluída pois está registrada no histórico de uma Ordem de Produção.');
+        }
+        
+        // Se não houver ordens, permite a exclusão
+        next();
+    } catch (error) {
+        next(error); // Encaminha o erro para o controller
+    }
+});
+const Etapa = model('Etapa', EtapaSchema);
 module.exports = Etapa;

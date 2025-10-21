@@ -3,6 +3,7 @@ const express = require('express');
 const path = require('path');
 const multer = require('multer');
 const fs = require('fs'); // Importe o módulo 'fs'
+const AuthMiddleware = require('../middleware/AuthMiddleware');
 
 // --- Configuração do Multer ---
 // Define o diretório de destino para os uploads temporários
@@ -42,14 +43,15 @@ apiRouter.post('/logout', jwtMiddleware.validate.bind(jwtMiddleware), Funcionari
 apiRouter.post(
     '/',
     jwtMiddleware.validate.bind(jwtMiddleware),
+    AuthMiddleware.checkRole(['administrador']),
     upload.single('imagem'), // O multer agora salva o arquivo em 'public/imagens/temp'
     FuncionarioMiddleware.validateCreate,
     FuncionarioController.create
 );
 apiRouter.get('/', jwtMiddleware.validate.bind(jwtMiddleware), FuncionarioController.readAll);
 apiRouter.get('/:id', jwtMiddleware.validate.bind(jwtMiddleware), MongoIdMiddleware.validateParam('id'), FuncionarioController.readByID);
-apiRouter.put('/:id', jwtMiddleware.validate.bind(jwtMiddleware), MongoIdMiddleware.validateParam('id'), FuncionarioMiddleware.validateUpdate, FuncionarioController.update);
-apiRouter.delete('/:id', jwtMiddleware.validate.bind(jwtMiddleware), MongoIdMiddleware.validateParam('id'), FuncionarioController.delete);
+apiRouter.put('/:id', jwtMiddleware.validate.bind(jwtMiddleware), AuthMiddleware.checkRole(['administrador']), MongoIdMiddleware.validateParam('id'), FuncionarioMiddleware.validateUpdate, FuncionarioController.update);
+apiRouter.delete('/:id', jwtMiddleware.validate.bind(jwtMiddleware), AuthMiddleware.checkRole(['administrador']), MongoIdMiddleware.validateParam('id'), FuncionarioController.delete);
 apiRouter.post('/request-password-reset', FuncionarioController.requestPasswordReset);
 apiRouter.post('/verify-reset-code', FuncionarioController.verifyResetCode);
 apiRouter.post('/reset-password', FuncionarioController.resetPassword);

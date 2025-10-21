@@ -72,12 +72,12 @@
                 </div>
             </div>
 
-            <div class="mb-3">
+            <!-- <div class="mb-3">
                 <label class="form-label">Permissões</label>
                 <div class="border p-2 rounded" id="permissoes-container">
-                    <!-- Checkboxes de permissões serão inseridos aqui -->
+                    
                 </div>
-            </div>
+            </div> -->
             
             <button type="submit" class="btn btn-primary">Salvar Alterações</button>
             <button type="button" class="btn btn-secondary" onclick="window.location.href='/funcionarios'">Cancelar</button>
@@ -103,14 +103,14 @@
             Inputmask("(99) 99999-9999").mask(document.getElementById('telefone'));
 
             // Lista de todas as permissões possíveis no sistema
-            const todasAsPermissoes = [
-                { value: 'editar_conteudos', label: 'Editar Conteúdo' },
-                { value: 'excluir_conteudos', label: 'Excluir Conteúdo' },
-                { value: 'gerenciar_usuarios', label: 'Gerenciar Usuários' },
-                { value: 'gerar_relatorios', label: 'Gerar Relatórios' },
-                { value: 'visualizar_dados', label: 'Visualizar Dados' },
-                { value: 'configurar_sistema', label: 'Configurar Sistema' }
-            ];
+            // const todasAsPermissoes = [
+            //     { value: 'editar_conteudos', label: 'Editar Conteúdo' },
+            //     { value: 'excluir_conteudos', label: 'Excluir Conteúdo' },
+            //     { value: 'gerenciar_usuarios', label: 'Gerenciar Usuários' },
+            //     { value: 'gerar_relatorios', label: 'Gerar Relatórios' },
+            //     { value: 'visualizar_dados', label: 'Visualizar Dados' },
+            //     { value: 'configurar_sistema', label: 'Configurar Sistema' }
+            // ];
 
             /**
              * Carrega os dados do funcionário e preenche o formulário.
@@ -155,12 +155,12 @@
                     document.getElementById('departamento').value = func.departamento ? func.departamento._id : '';
 
                     // 3. Preenche as permissões
-                    const permissoesContainer = document.getElementById('permissoes-container');
-                    permissoesContainer.innerHTML = '';
-                    todasAsPermissoes.forEach(p => {
-                        const isChecked = func.permissoes && func.permissoes.includes(p.value);
-                        permissoesContainer.innerHTML += `<div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="perm_${p.value}" name="permissoes" value="${p.value}" ${isChecked ? 'checked' : ''}><label class="form-check-label" for="perm_${p.value}">${p.label}</label></div>`;
-                    });
+                    // const permissoesContainer = document.getElementById('permissoes-container');
+                    // permissoesContainer.innerHTML = '';
+                    // todasAsPermissoes.forEach(p => {
+                    //     const isChecked = func.permissoes && func.permissoes.includes(p.value);
+                    //     permissoesContainer.innerHTML += `<div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="perm_${p.value}" name="permissoes" value="${p.value}" ${isChecked ? 'checked' : ''}><label class="form-check-label" for="perm_${p.value}">${p.label}</label></div>`;
+                    // });
 
                 } catch (error) {
                     exibirMensagem(`Erro ao carregar dados: ${error.message}`, 'erro');

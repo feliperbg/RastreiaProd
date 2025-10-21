@@ -11,9 +11,11 @@ class BancoMongoose {
     this.database = process.env.DB_DATABASE;
 
     // Constrói a URI de conexão completa
-    if(process.env.MONGO_URI_ATLAS){
+    if(process.env.MONGO_URI_LOCAL === 'true'){
+      console.log("Conectando ao MongoDB Local");
       this.connectionString = process.env.MONGO_URI;
     }else{
+      console.log("Conectando ao MongoDB Atlas");
       this.connectionString = `mongodb+srv://${this.user}:${this.pass}@${this.cluster}/${this.database}?retryWrites=true&w=majority`;
     }
   }

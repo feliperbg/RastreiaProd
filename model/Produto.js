@@ -73,5 +73,21 @@ ProdutoSchema.virtual('etapas', {
   foreignField: 'produto'
 });
 
+ProdutoSchema.pre('findOneAndDelete', async function(next) {
+    try {
+        const produtoId = this.getQuery()['_id'];
+        // 1. Verifica se há Ordens de Produção usando este produto
+        const ordemPendente = await mongoose.model('OrdemProducao').findOne({ produto: produtoId });
+        if (ordemPendente) {
+            // Se houver, impede a exclusão
+            throw new Error('Este produto não pode ser excluído pois está associado a Ordens de Produção.');
+        }
+        // 2. Se não houver ordens, exclui as Etapas associadas (Delete Cascade)
+        await mongoose.model('Etapa').deleteMany({ produto: produtoId });
+        next(); // Permite a exclusão do produto
+    } catch (error) {
+        next(error); // Envia o erro para o controller
+    }
+});
 const Produto = model('Produto', ProdutoSchema);
 module.exports = Produto;

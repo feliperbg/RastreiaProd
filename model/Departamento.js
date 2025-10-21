@@ -32,6 +32,22 @@ DepartamentoSchema.virtual('etapasCount', {
     foreignField: 'departamentoResponsavel', // O campo no model Etapa que guarda o ID do departamento
     count: true // Apenas contar os documentos
 });
+DepartamentoSchema.pre('findOneAndDelete', async function(next) {
+    try {
+        const depId = this.getQuery()['_id'];
 
+        // Verifica se há funcionários ou etapas usando este departamento
+        const funcionario = await mongoose.model('Funcionario').findOne({ departamento: depId });
+        const etapa = await mongoose.model('Etapa').findOne({ departamentoResponsavel: depId });
+
+        if (funcionario || etapa) {
+            throw new Error('Este departamento não pode ser excluído pois está em uso por Funcionários ou Etapas.');
+        }
+        
+        next();
+    } catch (error) {
+        next(error);
+    }
+});
 const Departamento = model('Departamento', DepartamentoSchema);
 module.exports = Departamento;

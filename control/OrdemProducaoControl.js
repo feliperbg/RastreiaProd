@@ -6,7 +6,28 @@ const Motivo = require('../model/Motivo');
 const Etapa = require('../model/Etapa');
 const Componente = require('../model/Componente');
 
+// --- ADICIONADO: Handler de erros padronizado ---
+function handleErrors(res, error, customMsg = 'Ocorreu um erro no servidor.') {
+    if (error.name === 'ValidationError') {
+        let messages = Object.values(error.errors).map(e => e.message);
+        return res.status(400).json({ status: false, msg: `Erro de validação: ${messages.join(' ')}` });
+    }
+    // Erro customizado (ex: estoque, conflito)
+    if (error.name === 'ConflictError') { 
+        return res.status(409).json({ status: false, msg: error.message });
+    }
+    // Erro de permissão
+    if (error.name === 'ForbiddenError') { 
+        return res.status(403).json({ status: false, msg: error.message });
+    }
+
+    console.error("ERRO DETALHADO:", error);
+    return res.status(500).json({ status: false, msg: customMsg, error: error.message });
+}
+
 module.exports = class OrdemProducaoController {
+    
+    // Nenhuma alteração necessária
     static async create(req, res) {
         try {
             const { produto, quantidade, dataEntrega } = req.body;
@@ -43,11 +64,11 @@ module.exports = class OrdemProducaoController {
             
             return res.status(201).json({ status: true, msg: 'Ordem de produção criada!', ordem: novaOrdem });
         } catch (error) {
-            console.error("ERRO AO CRIAR ORDEM:", error); 
-            return res.status(400).json({ status: false, msg: error.message });
+            return handleErrors(res, error, 'Erro ao criar ordem de produção.');
         }
     }
 
+    // Nenhuma alteração necessária
     static async readAll(req, res) {
         try {
             const { meuPainel } = req.query;
@@ -99,11 +120,11 @@ module.exports = class OrdemProducaoController {
             return res.status(200).json({ status: true, ordens: ordensObj });
             
         } catch (error) {
-            console.error("Erro ao listar ordens:", error);
-            return res.status(500).json({ status: false, msg: 'Erro ao listar ordens de produção.', error: error.message });
+            return handleErrors(res, error, 'Erro ao listar ordens de produção.');
         }
     }
     
+    // Nenhuma alteração necessária
     static async readByID(req, res) {
         try {
             const { id } = req.params;
@@ -145,12 +166,9 @@ module.exports = class OrdemProducaoController {
                 return res.status(404).json({ status: false, msg: 'Ordem de produção não encontrada.' });
             }
             if (!ordem.produto) {
-                console.error(`Inconsistência de dados: Ordem de Produção ${id} não possui um produto associado.`);
-                return res.status(409).json({
-                    status: false,
-                    msg: 'Conflito de dados: O produto associado a esta Ordem de Produção não foi encontrado.',
-                    ordem 
-                });
+                const err = new Error('Conflito de dados: O produto associado a esta Ordem de Produção não foi encontrado.');
+                err.name = 'ConflictError';
+                return handleErrors(res, err);
             }
             const tempoMedioOP = (await this.#getTempoMedioOP(ordem.produto._id)) || 0;
             
@@ -173,15 +191,11 @@ module.exports = class OrdemProducaoController {
             return res.status(200).json({ status: true, ordem: ordemObj });
 
         } catch (error) {
-            console.error(`Erro inesperado ao buscar a ordem de produção ID [${req.params.id}]:`, error);
-            return res.status(500).json({
-                status: false,
-                msg: 'Ocorreu um erro interno no servidor ao processar sua solicitação.',
-                error: process.env.NODE_ENV === 'development' ? error.message : undefined
-            });
+            return handleErrors(res, error, 'Erro ao buscar ordem de produção.');
         }
     }
 
+    // Nenhuma alteração necessária (já usa findByIdAndUpdate)
     static async update(req, res) {
         try {
             const { id } = req.params;
@@ -195,10 +209,11 @@ module.exports = class OrdemProducaoController {
 
             return res.status(200).json({ status: true, msg: 'Ordem atualizada!', ordem: ordemAtualizada });
         } catch (error) {
-            return res.status(400).json({ status: false, msg: error.message });
+            return handleErrors(res, error, 'Erro ao atualizar ordem.');
         }
     }
 
+    // --- Convertido para operação atômica ---
     static async updatePrioridade(req, res) {
         try {
             const { id } = req.params;
@@ -218,25 +233,33 @@ module.exports = class OrdemProducaoController {
                 novaPrioridade = { texto: 'Normal', cor: '#6c757d' };
             }
 
-            const ordem = await OrdemProducao.findById(id);
-            if (!ordem) return res.status(404).json({ status: false, msg: 'Ordem de produção não encontrada.' });
-
-            ordem.prioridade = novaPrioridade;
-
-            ordem.historico_prioridade.push({
+            const historico = {
                 prioridade: novaPrioridade,
                 funcionario: funcionarioId,
                 data: new Date()
-            });
+            };
 
-            await ordem.save();
+            // Operação atômica: define a nova prioridade e insere no histórico
+            const ordemAtualizada = await OrdemProducao.findByIdAndUpdate(
+                id,
+                { 
+                    $set: { prioridade: novaPrioridade },
+                    $push: { historico_prioridade: historico }
+                },
+                { new: true } // Retorna o documento atualizado
+            );
+            
+            if (!ordemAtualizada) {
+                return res.status(404).json({ status: false, msg: 'Ordem de produção não encontrada.' });
+            }
 
-            return res.status(200).json({ status: true, msg: 'Prioridade atualizada com sucesso!', ordem });
+            return res.status(200).json({ status: true, msg: 'Prioridade atualizada com sucesso!', ordem: ordemAtualizada });
         } catch (error) {
-            return res.status(500).json({ status: false, msg: 'Erro ao atualizar a prioridade.', error: error.message });
+            return handleErrors(res, error, 'Erro ao atualizar a prioridade.');
         }
     }
 
+    // Nenhuma alteração necessária (já usa findByIdAndUpdate)
     static async cancelar(req, res) {
         try {
             const { id } = req.params;
@@ -248,7 +271,7 @@ module.exports = class OrdemProducaoController {
 
             const ordemCancelada = await OrdemProducao.findByIdAndUpdate(id, 
                 { status: 'Cancelada', motivoCancelamento: motivoCancelamento }, 
-                { new: true }
+                { new: true, runValidators: true } // Adicionado runValidators
             );
 
             if (!ordemCancelada) {
@@ -258,10 +281,11 @@ module.exports = class OrdemProducaoController {
             return res.status(200).json({ status: true, msg: 'Ordem de produção cancelada com sucesso!', ordem: ordemCancelada });
 
         } catch (error) {
-            return res.status(500).json({ status: false, msg: 'Erro ao cancelar a ordem de produção.' });
+            return handleErrors(res, error, 'Erro ao cancelar a ordem de produção.');
         }
     }
 
+    // Métodos privados (Helpers) - Sem alterações
     static async #getTempoMedioPorEtapa(etapaId) {
         try {
             const result = await OrdemProducao.aggregate([
@@ -328,21 +352,27 @@ module.exports = class OrdemProducaoController {
         return componentesInsuficientes;
     }
 
+    // --- Convertido para operação atômica ---
     static async iniciarEtapa(req, res) {
         try {
             const { id, etapaId } = req.params;
-            const { force } = req.body; // Forçar início mesmo sem estoque
+            const { force } = req.body;
             const funcionarioId = req.user._id;
 
-            const ordem = await OrdemProducao.findById(id).populate('produto');
+            // 1. Busca para verificações prévias
+            const ordem = await OrdemProducao.findById(id).select('produto quantidade historicoEtapas status');
             if (!ordem) return res.status(404).json({ status: false, msg: 'Ordem de produção não encontrada.' });
+
+            if (ordem.status === 'Pausada' || ordem.status === 'Concluída' || ordem.status === 'Cancelada') {
+                 return res.status(400).json({ status: false, msg: `Não é possível iniciar etapas. A ordem está ${ordem.status}.` });
+            }
 
             const etapaExistente = ordem.historicoEtapas.find(e => e.etapa.toString() === etapaId);
             if (etapaExistente) {
                 return res.status(400).json({ status: false, msg: 'Esta etapa já foi iniciada.' });
             }
 
-            // Verifica o estoque apenas na primeira etapa e se não for forçado
+            // 2. Verificação de estoque (gate)
             if (ordem.historicoEtapas.length === 0 && !force) {
                 const componentesInsuficientes = await this.#verificarEstoque(ordem.produto._id, ordem.quantidade);
                 if (componentesInsuficientes.length > 0) {
@@ -354,61 +384,102 @@ module.exports = class OrdemProducaoController {
                 }
             }
 
-            if (ordem.historicoEtapas.length === 0) {
-                ordem.status = 'Em Andamento';
-                if (!ordem.timestampProducao) {
-                    ordem.timestampProducao = {};
-                }
-                ordem.timestampProducao.inicio = new Date();
-            }
-
-            ordem.historicoEtapas.push({
+            // 3. Preparação da atualização atômica
+            const novaEtapaHistorico = {
                 etapa: etapaId,
                 status: 'Em Andamento',
                 dataInicio: new Date()
-            });
-
-            ordem.funcionarioAtivo.push({
+            };
+            const novoFuncionarioAtivo = {
                 funcionario: funcionarioId,
                 dataEntrada: new Date()
-            });
+            };
 
-            await ordem.save();
-            return res.status(200).json({ status: true, msg: 'Etapa iniciada com sucesso!', ordem });
+            let updatePayload = {
+                $push: { 
+                    historicoEtapas: novaEtapaHistorico,
+                    funcionarioAtivo: novoFuncionarioAtivo 
+                },
+                $set: { status: 'Em Andamento' }
+            };
+
+            // Define o início da produção APENAS se for a primeira etapa
+            if (ordem.historicoEtapas.length === 0) {
+                updatePayload.$set['timestampProducao.inicio'] = new Date();
+            }
+
+            // 4. Execução da atualização atômica
+            const result = await OrdemProducao.updateOne(
+                { 
+                    _id: id,
+                    // Condição para prevenir "lost update": etapa não pode ter sido adicionada por outra requisição
+                    'historicoEtapas.etapa': { $nin: [etapaId] } 
+                }, 
+                updatePayload
+            );
+
+            // 5. Verificação de sucesso
+            if (result.modifiedCount === 0) {
+                const err = new Error('Conflito: A etapa já foi iniciada por outra operação. Tente novamente.');
+                err.name = 'ConflictError';
+                return handleErrors(res, err);
+            }
+
+            const ordemAtualizada = await OrdemProducao.findById(id); // Busca o documento atualizado para retornar
+            return res.status(200).json({ status: true, msg: 'Etapa iniciada com sucesso!', ordem: ordemAtualizada });
 
         } catch (error) {
-            console.error("ERRO DETALHADO AO INICIAR ETAPA:", error);
-            return res.status(500).json({ status: false, msg: 'Erro ao iniciar etapa.', error: error.message });
+            return handleErrors(res, error, 'Erro ao iniciar etapa.');
         }
     }
 
+    // --- Adicionada proteção atômica contra estoque negativo ---
     static async #deduzirEstoque(etapaId, quantidadeProducao) {
         const etapa = await Etapa.findById(etapaId).populate('componentesConclusao.componente');
-        if (!etapa) return;
+        if (!etapa) {
+             throw new Error('Etapa não encontrada para deduzir estoque.');
+        }
 
         for (const item of etapa.componentesConclusao) {
             const quantidadeADeduzir = item.quantidade * quantidadeProducao;
-            await Componente.findByIdAndUpdate(item.componente._id, { 
-                $inc: { quantidade: -quantidadeADeduzir } 
-            });
+
+            // Operação atômica condicional
+            const updateResult = await Componente.updateOne(
+                { 
+                    _id: item.componente._id, 
+                    quantidade: { $gte: quantidadeADeduzir } // SÓ atualiza SE a quantidade for suficiente
+                },
+                { 
+                    $inc: { quantidade: -quantidadeADeduzir } 
+                }
+            );
+
+            // Se modifiedCount for 0, a condição (quantidade >= ...) falhou
+            if (updateResult.modifiedCount === 0) {
+                const err = new Error(`Estoque insuficiente para o componente "${item.componente.nome}" no momento da finalização.`);
+                err.name = 'ConflictError'; // Usamos um nome customizado para o handleErrors
+                throw err;
+            }
         }
     }
 
+    // --- Convertido para operação atômica ---
     static async finalizarEtapa(req, res) {
         try {
             const { id, etapaId } = req.params;
             const funcionarioId = req.user._id;
 
-           const ordem = await OrdemProducao.findById(id)
+            // 1. Busca para verificações prévias
+            const ordem = await OrdemProducao.findById(id)
+                .select('produto quantidade historicoEtapas status')
                 .populate({
                     path: 'produto',
-                    populate: {
-                        path: 'etapas',
-                     }
+                    select: '_id', // Seleciona o ID para a população virtual funcionar
+                    populate: { path: 'etapas', select: '_id' } // Popula o campo virtual 'etapas'
                 });
 
             if (!ordem) return res.status(404).json({ status: false, msg: 'Ordem de produção não encontrada.' });
-            
+
             const etapaParaFinalizar = ordem.historicoEtapas.find(e => e.etapa.toString() === etapaId);
             if (!etapaParaFinalizar) {
                 return res.status(404).json({ status: false, msg: 'Etapa não encontrada nesta ordem de produção.' });
@@ -416,38 +487,57 @@ module.exports = class OrdemProducaoController {
             if (etapaParaFinalizar.status === 'Concluída') {
                 return res.status(400).json({ status: false, msg: 'Esta etapa já foi finalizada.' });
             }
-             if (etapaParaFinalizar.status === 'Pausada') {
+            if (etapaParaFinalizar.status === 'Pausada') {
                 return res.status(400).json({ status: false, msg: 'Não é possível finalizar uma etapa pausada. Retome-a primeiro.' });
             }
 
-            // Deduz o estoque ANTES de salvar a finalização
+            // 2. Dedução atômica de estoque (gate)
+            // Esta função já é atômica e lança um erro se falhar
             await this.#deduzirEstoque(etapaId, ordem.quantidade);
 
-            etapaParaFinalizar.status = 'Concluída';
-            etapaParaFinalizar.dataFim = new Date();
+            // 3. Preparação da atualização atômica de estado
+            let updatePayload = {
+                $set: { 
+                    'historicoEtapas.$.status': 'Concluída',
+                    'historicoEtapas.$.dataFim': new Date()
+                },
+                $pull: { 
+                    funcionarioAtivo: { funcionario: new mongoose.Types.ObjectId(funcionarioId) } 
+                }
+            };
 
-            ordem.funcionarioAtivo = (ordem.funcionarioAtivo || []).filter(
-                f => f && f.funcionario && f.funcionario.toString() !== funcionarioId
-            );
-
+            // Verifica se esta é a última etapa
             const definicaoDeEtapas = ordem.produto.etapas;
             if (definicaoDeEtapas[definicaoDeEtapas.length - 1]._id.toString() === etapaId) {
-                ordem.status = 'Concluída';
-                if (!ordem.timestampProducao) {
-                    ordem.timestampProducao = {};
-                }
-                ordem.timestampProducao.fim = new Date();
+                updatePayload.$set.status = 'Concluída';
+                updatePayload.$set['timestampProducao.fim'] = new Date();
             }
 
-            await ordem.save();
-            return res.status(200).json({ status: true, msg: 'Etapa finalizada com sucesso!', ordem });
+            // 4. Execução da atualização atômica
+            const result = await OrdemProducao.updateOne(
+                { 
+                    _id: id, 
+                    historicoEtapas: { $elemMatch: { etapa: etapaId, status: 'Em Andamento' } }
+                },
+                updatePayload
+            );
+            
+            // 5. Verificação de sucesso
+            if (result.modifiedCount === 0) {
+                const err = new Error('Conflito: A etapa não estava "Em Andamento". Ação cancelada.');
+                err.name = 'ConflictError';
+                return handleErrors(res, err);
+            }
+
+            const ordemAtualizada = await OrdemProducao.findById(id); // Busca o documento atualizado
+            return res.status(200).json({ status: true, msg: 'Etapa finalizada com sucesso!', ordem: ordemAtualizada });
 
         } catch (error) {
-            console.error("ERRO DETALHADO AO FINALIZAR ETAPA:", error);
-            return res.status(500).json({ status: false, msg: 'Erro ao finalizar etapa.', error: error.message });
+            return handleErrors(res, error, 'Erro ao finalizar etapa.');
         }
     }
 
+    // --- Convertido para operação atômica ---
     static async pausarEtapa(req, res) {
         try {
             const { id, etapaId } = req.params;
@@ -460,59 +550,80 @@ module.exports = class OrdemProducaoController {
                 return res.status(400).json({ status: false, msg: 'Tipo de pausa inválido.' });
             }
 
-            const ordem = await OrdemProducao.findById(id);
-            if (!ordem) return res.status(404).json({ status: false, msg: 'Ordem não encontrada.' });
-            if (ordem.status !== 'Em Andamento') return res.status(400).json({ status: false, msg: 'A ordem não está em andamento.' });
+            const novaPausa = { motivo, inicio: new Date(), tipo };
 
-            const etapaParaPausar = ordem.historicoEtapas.find(e => e.etapa.toString() === etapaId);
-            if (!etapaParaPausar || etapaParaPausar.status !== 'Em Andamento') {
-                return res.status(400).json({ status: false, msg: 'Esta etapa não está em andamento.' });
+            // Operação atômica: só pausa se a OP e a Etapa estiverem "Em Andamento"
+            const result = await OrdemProducao.updateOne(
+                {
+                    _id: id,
+                    status: 'Em Andamento',
+                    historicoEtapas: { $elemMatch: { etapa: etapaId, status: 'Em Andamento' } }
+                },
+                {
+                    $set: {
+                        status: 'Pausada',
+                        'historicoEtapas.$.status': 'Pausada'
+                    },
+                    $push: { pausas: novaPausa }
+                }
+            );
+            
+            if (result.modifiedCount === 0) {
+                const err = new Error('Conflito: A ordem ou a etapa não estava "Em Andamento". Ação cancelada.');
+                err.name = 'ConflictError';
+                return handleErrors(res, err);
             }
 
-            ordem.pausas.push({ motivo, inicio: new Date(), tipo });
-            etapaParaPausar.status = 'Pausada';
-            ordem.status = 'Pausada';
-
-            await ordem.save();
-            return res.status(200).json({ status: true, msg: 'Etapa pausada com sucesso!', ordem });
+            const ordemAtualizada = await OrdemProducao.findById(id);
+            return res.status(200).json({ status: true, msg: 'Etapa pausada com sucesso!', ordem: ordemAtualizada });
         } catch (error) {
-            return res.status(500).json({ status: false, msg: 'Erro ao pausar etapa.', error: error.message });
+            return handleErrors(res, error, 'Erro ao pausar etapa.');
         }
     }
 
+    // --- Convertido para operação atômica ---
     static async retomarEtapa(req, res) {
         try {
             const { id, etapaId } = req.params;
-            const ordem = await OrdemProducao.findById(id);
 
-            if (!ordem) return res.status(404).json({ status: false, msg: 'Ordem de produção não encontrada.' });
-
-            const etapaParaRetomar = ordem.historicoEtapas.find(e => e.etapa.toString() === etapaId);
-            if (!etapaParaRetomar) return res.status(404).json({ status: false, msg: 'Etapa não encontrada na ordem.' });
-
-            if (etapaParaRetomar.status !== 'Pausada') {
-                return res.status(400).json({ status: false, msg: 'A etapa não está pausada.' });
+            // Operação atômica: só retoma se a OP e a Etapa estiverem "Pausada"
+            // Usa "arrayFilters" para atualizar DOIS arrays diferentes (historicoEtapas e pausas)
+            const result = await OrdemProducao.updateOne(
+                {
+                    _id: id,
+                    status: 'Pausada',
+                    historicoEtapas: { $elemMatch: { etapa: etapaId, status: 'Pausada' } }
+                },
+                {
+                    $set: {
+                        status: 'Em Andamento',
+                        'historicoEtapas.$[etapa].status': 'Em Andamento', // $[etapa]
+                        'pausas.$[pausa].fim': new Date()                 // $[pausa]
+                    }
+                },
+                {
+                    arrayFilters: [
+                        { 'etapa.etapa': new mongoose.Types.ObjectId(etapaId) }, // Define o filtro para [etapa]
+                        { 'pausa.fim': { $exists: false } }                      // Define o filtro para [pausa] (a última pausa aberta)
+                    ]
+                }
+            );
+            
+            if (result.modifiedCount === 0) {
+                const err = new Error('Conflito: A ordem ou a etapa não estava "Pausada". Ação cancelada.');
+                err.name = 'ConflictError';
+                return handleErrors(res, err);
             }
             
-            const ultimaPausa = ordem.pausas && ordem.pausas.length > 0 
-                ? ordem.pausas.find(p => !p.fim) 
-                : null;
-
-            if (ultimaPausa) {
-                ultimaPausa.fim = new Date();
-            }
-            
-            etapaParaRetomar.status = 'Em Andamento';
-            ordem.status = 'Em Andamento';
-
-            await ordem.save();
-            return res.status(200).json({ status: true, msg: 'Etapa retomada com sucesso.', ordem });
+            const ordemAtualizada = await OrdemProducao.findById(id);
+            return res.status(200).json({ status: true, msg: 'Etapa retomada com sucesso.', ordem: ordemAtualizada });
         } catch (error) {
-            console.error("ERRO AO RETOMAR ETAPA:", error);
-            return res.status(500).json({ status: false, msg: 'Erro ao retomar etapa.', error: error.message });
+            return handleErrors(res, error, 'Erro ao retomar etapa.');
         }
     }
-        static async atualizarRefugo(req, res) {
+    
+    // --- Convertido para operação atômica e com reversão (rollback) ---
+    static async atualizarRefugo(req, res) {
         try {
             const { id } = req.params;
             const { quantidade, motivoId } = req.body;
@@ -525,33 +636,54 @@ module.exports = class OrdemProducaoController {
                 return res.status(400).json({ status: false, msg: 'O motivo do refugo é obrigatório.' });
             }
 
-            const ordem = await OrdemProducao.findById(id);
-            if (!ordem) {
-                return res.status(404).json({ status: false, msg: 'Ordem de produção não encontrada.' });
-            }
-
-            if (ordem.status === 'Concluída' || ordem.status === 'Cancelada'){
-                return res.status(403).json({ status: false, msg: 'Não é possível alterar o refugo de uma ordem finalizada.' });
-            }
-
-            const novoTotalRefugo = ordem.quantidade_refugo + quantidade;
-            if (novoTotalRefugo > ordem.quantidade) {
-                 return res.status(400).json({ status: false, msg: 'A soma dos refugos não pode ser maior que a quantidade total da ordem.' });
-            }
-
-            ordem.historico_refugo.push({
+            const novoHistorico = {
+                _id: new mongoose.Types.ObjectId(), // Gera um ID para podermos revertê-lo se necessário
                 motivo: motivoId,
                 quantidade: quantidade,
                 funcionario: funcionarioId,
                 data: new Date()
-            });
+            };
 
-            ordem.quantidade_refugo = novoTotalRefugo;
+            // 1. Execução da atualização atômica
+            const ordemAtualizada = await OrdemProducao.findByIdAndUpdate(
+                id,
+                {
+                    $push: { historico_refugo: novoHistorico },
+                    $inc: { quantidade_refugo: quantidade }
+                },
+                { new: true } // Retorna o documento *após* a atualização
+            );
 
-            await ordem.save();
-            return res.status(200).json({ status: true, msg: 'Refugo atualizado!', ordem });
+            if (!ordemAtualizada) {
+                return res.status(404).json({ status: false, msg: 'Ordem de produção não encontrada.' });
+            }
+
+            // 2. Validação Pós-Atualização
+            if (ordemAtualizada.status === 'Concluída' || ordemAtualizada.status === 'Cancelada'){
+                // 3a. Reversão (Rollback)
+                await OrdemProducao.findByIdAndUpdate(id, {
+                    $pull: { historico_refugo: { _id: novoHistorico._id } },
+                    $inc: { quantidade_refugo: -quantidade }
+                });
+                const err = new Error('Não é possível alterar o refugo de uma ordem finalizada.');
+                err.name = 'ForbiddenError';
+                return handleErrors(res, err);
+            }
+
+            if (ordemAtualizada.quantidade_refugo > ordemAtualizada.quantidade) {
+                 // 3b. Reversão (Rollback)
+                 await OrdemProducao.findByIdAndUpdate(id, {
+                    $pull: { historico_refugo: { _id: novoHistorico._id } },
+                    $inc: { quantidade_refugo: -quantidade }
+                });
+                const err = new Error('A soma dos refugos não pode ser maior que a quantidade total da ordem.');
+                err.name = 'ConflictError';
+                return handleErrors(res, err);
+            }
+
+            return res.status(200).json({ status: true, msg: 'Refugo atualizado!', ordem: ordemAtualizada });
         } catch (error) {
-            return res.status(500).json({ status: false, msg: 'Erro ao atualizar refugo.', error: error.message });
+            return handleErrors(res, error, 'Erro ao atualizar refugo.');
         }
     }
 }

@@ -120,7 +120,7 @@
             let componentesUtilizados = {};
 
             if (!produtoId.match(/^[0-9a-fA-F]{24}$/)) {
-                exibirMensagem('Erro!', 'ID do produto inválido na URL.', 'error');
+                exibirMensagem('ID do produto inválido na URL.', 'erro');
                 document.getElementById('form-adicionar-etapa').style.display = 'none';
                 return;
             }
@@ -138,7 +138,7 @@
                     }
                 } catch (error) {
                     console.error('Erro ao buscar próxima sequência:', error);
-                    exibirMensagem("Atenção", "Não foi possível sugerir um número de sequência.", "warning");
+                    exibirMensagem("Não foi possível sugerir um número de sequência.", "erro");
                 }
             }
 
@@ -261,7 +261,7 @@
                     if (!processoCancelado) {
                         componentesConclusaoSelecionados = novosComponentesInfo;
                         atualizarDisplayComponentesConclusao();
-                        exibirMensagem('Sucesso', 'Componentes de conclusão atualizados!', 'success');
+                        exibirMensagem('Componentes de conclusão atualizados!', 'sucesso');
                     }
                 }
             });
@@ -321,7 +321,7 @@
                         window.location.href = `/etapas/produtos/${produtoId}`;
                     }, 1500);
                 } catch (error) {
-                    exibirMensagem("Erro", error.message, "error");
+                    exibirMensagem(error.message, 'erro');
                 }
             });
 
