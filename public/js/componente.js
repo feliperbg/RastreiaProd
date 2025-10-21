@@ -82,24 +82,27 @@
         });
 
         if (isConfirmed) {
+            showLoading('Deletando...');
             try {
-                Swal.fire({ title: 'Deletando...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
                 const response = await fetch(`/api/componentes/${id}`, {
                     method: 'DELETE',
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('authToken')}`
                     }
                 });
-
-                if (!response.ok) throw new Error("Erro ao deletar");
-
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.msg || "Não foi possível deletar o componente.");
+                }
+                
+                hideLoading();
                 Swal.fire('Deletado!', 'Componente removido com sucesso.', 'success');
                 carregarComponentes();
             } catch (error) {
                 console.error(error);
-                Swal.fire('Erro!', 'Não foi possível deletar o componente.', 'error');
-            } finally {
                 hideLoading()
+                Swal.fire('Erro!', error.message, 'error');
             }
         }
     }

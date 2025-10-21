@@ -230,7 +230,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             const forceResultData = await forceResponse.json();
                             if (!forceResponse.ok) throw new Error(forceResultData.msg);
                             Swal.fire('Iniciada!', 'A etapa foi iniciada com sucesso (forçado).', 'success');
-                    hideLoading();
+                            hideLoading();
                             inicializar();
                         }
                     } else {

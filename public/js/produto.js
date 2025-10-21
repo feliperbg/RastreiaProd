@@ -117,8 +117,8 @@
       });
 
       if (isConfirmed) {
+          showLoading('Deletando...');
           try {
-              Swal.fire({ title: 'Deletando...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
               const response = await fetch(`/api/produtos/${id}`, {
                   method: 'DELETE',
                   headers: {
@@ -126,15 +126,17 @@
                   }
               });
 
-              if (!response.ok) throw new Error("Erro ao deletar");
-
+              if (!response.ok) {
+                  const errorData = await response.json();
+                  throw new Error(errorData.msg || "Não foi possível deletar o produto.");
+              }
+              hideLoading();
               Swal.fire('Deletado!', 'Produto removido com sucesso.', 'success');
               carregarTabelaProdutos();
           } catch (error) {
               console.error(error);
-              Swal.fire('Erro!', 'Não foi possível deletar o produto.', 'error');
-          } finally {
               hideLoading();
+              Swal.fire('Erro!', error.message, 'error');
           }
       }
   }
