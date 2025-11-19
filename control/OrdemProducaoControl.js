@@ -54,12 +54,15 @@ module.exports = class OrdemProducaoController {
                 prioridade = { texto: 'Normal', cor: '#6c757d' };
             }
 
+            const historicoEtapas = produtoParaOrdem.etapas.map(etapa => ({ etapa: etapa._id, status: 'Pendente' }));
+
             const novaOrdem = await OrdemProducao.create({ 
                 produto, 
                 quantidade, 
                 dataEntrega,
                 criadoPor,
-                prioridade
+                prioridade,
+                historicoEtapas
             });
             
             return res.status(201).json({ status: true, msg: 'Ordem de produção criada!', ordem: novaOrdem });
